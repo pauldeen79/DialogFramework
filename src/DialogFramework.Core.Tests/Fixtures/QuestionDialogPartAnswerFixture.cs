@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.Tests.Fixtures;
 
-internal class QuestionDialogPartAnswerFixture : QuestionDialogPartAnswer
+internal record QuestionDialogPartAnswerFixture : QuestionDialogPartAnswer
 {
     private readonly Func<string, string> _indexerErrorMessageDelegate;
     private readonly Func<string> _errorDelegate;

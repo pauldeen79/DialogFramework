@@ -67,20 +67,12 @@ public class DialogService : IDialogService
         }
     }
 
-    private static IDialogPart ProcessDecisions(IDialogPart dialogPart, IDialogContext context)
-    {
-        if (dialogPart is IDecisionDialogPart decisionDialogPart)
-        {
-            if (!string.IsNullOrEmpty(decisionDialogPart.Error))
-            {
-                return new ErrorDialogPart(decisionDialogPart.Id, decisionDialogPart.Error);
-            }
-
-            return ProcessDecisions(decisionDialogPart.GetNextPart(context), context);
-        }
-
-        return dialogPart;
-    }
+    private static IDialogPart ProcessDecisions(IDialogPart dialogPart,
+                                                IDialogContext context,
+                                                IEnumerable<KeyValuePair<string, object?>> answerValues)
+        => dialogPart is IDecisionDialogPart decisionDialogPart
+            ? ProcessDecisions(decisionDialogPart.GetNextPart(context, answerValues), context, answerValues)
+            : dialogPart;
 
     private static DialogState GetState(IDialogPart nextPart)
     {
@@ -126,7 +118,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
             }
 
-            return ProcessDecisions(firstPart, context);
+            return ProcessDecisions(firstPart, context, answerValues);
         }
 
         // first perform validation
@@ -145,18 +137,13 @@ public class DialogService : IDialogService
             throw new InvalidOperationException($"Could not determine next part. Dialog does not have next part, based on current step (Id = {currentPart.Id})");
         }
 
-        return ProcessDecisions(nextPartWithIndex.Part, context);
+        return ProcessDecisions(nextPartWithIndex.Part, context, answerValues);
     }
 
-    private static IDialogPart? Validate(IDialogPart currentPart, IEnumerable<KeyValuePair<string, object?>> answerValues)
-    {
-        if (currentPart is IQuestionDialogPart questionDialogPart)
-        {
-            return questionDialogPart.Validate(answerValues);
-        }
-
-        return null;
-    }
+    private static IDialogPart? Validate(IDialogPart part, IEnumerable<KeyValuePair<string, object?>> answerValues)
+        => part is IQuestionDialogPart questionDialogPart
+            ? questionDialogPart.Validate(answerValues)
+            : null;
 
     private static IDialogPartGroup? GetGroup(IDialogPart? part)
         => part is IGroupedDialogPart groupedDialogPart

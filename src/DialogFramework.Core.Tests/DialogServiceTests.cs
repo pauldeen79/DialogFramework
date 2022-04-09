@@ -112,6 +112,26 @@ public class DialogServiceTests
     }
 
     [Fact]
+    public void Continue_Uses_Result_From_DecisionPart_When_DecisionPart_Returns_No_Error()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
+        var currentState = DialogState.InProgress;
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, currentPart, null, currentState, null));
+        var sut = new DialogService(factory);
+        var context = sut.Start(dialog); // start the dialog, this will get the welcome messae
+        context = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>()); // skip the welcome message
+
+        // Act
+        var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Terrible", null) }); // answer the question with 'Terrible', this will trigger a second message
+
+        // Assert
+        result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
+        result.CurrentPart.Id.Should().Be("Message");
+    }
+
+    [Fact]
     public void Start_Throws_When_Context_Could_Not_Be_Created()
     {
         // Arrange
@@ -166,10 +186,10 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!");
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var answer1 = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answer2 = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answer3 = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answer1, answer2, answer3 }, values =>
+        var answerGreat = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var answerOkay = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var answerTerrible = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answerGreat, answerOkay, answerTerrible }, values =>
         {
             if (!values.Any())
             {
@@ -181,7 +201,7 @@ public class DialogServiceTests
                 return "Too many answers selected";
             }
 
-            if (!new[] { "Great", "Okay", "Terrible" }.Contains(values.First().Key))
+            if (!new[] { answerGreat.Id, answerOkay.Id, answerTerrible.Id }.Contains(values.First().Key))
             {
                 return $"Unknown answer: [{values.First().Key}]";
             }
@@ -189,8 +209,16 @@ public class DialogServiceTests
             // If we've made it up to here, everything is okay! (exactly one valid answer)
             return null;
         });
+        var messagePart = new MessageDialogPart("Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
         var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
-        var parts = new IDialogPart[] { welcomePart, questionPart, completedPart, errorDialogPart, abortedPart }.Where(_ => addParts);
+        var decisionPart = new DecisionDialogPartFixture
+        (
+            "Decision",
+            (_, answers) => answers.Any(a => a.Key == answerTerrible.Id)
+                ? messagePart
+                : completedPart
+        );
+        var parts = new IDialogPart[] { welcomePart, questionPart, decisionPart, messagePart, completedPart, errorDialogPart, abortedPart }.Where(_ => addParts);
         return new Dialog(
             "Test",
             "1.0.0",

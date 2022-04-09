@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public abstract class QuestionDialogPartAnswer : IQuestionDialogPartAnswer
+public abstract record QuestionDialogPartAnswer : IQuestionDialogPartAnswer
 {
     protected QuestionDialogPartAnswer(string id,
                                        string title,
