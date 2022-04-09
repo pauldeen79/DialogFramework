@@ -11,7 +11,7 @@ public class DialogService : IDialogService
     {
         try
         {
-            if (context.State == DialogState.Aborted)
+            if (context.CurrentState == DialogState.Aborted)
             {
                 throw new InvalidOperationException("Dialog has already been aborted");
             }
@@ -34,9 +34,9 @@ public class DialogService : IDialogService
     {
         try
         {
-            if (context.State != DialogState.InProgress)
+            if (context.CurrentState != DialogState.InProgress)
             {
-                throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.State}");
+                throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
             var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, answers);

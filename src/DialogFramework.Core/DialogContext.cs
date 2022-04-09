@@ -5,18 +5,18 @@ public abstract class DialogContext : IDialogContext
     protected  DialogContext(IDialog currentDialog,
                              IDialogPart currentPart,
                              IDialogPartGroup? currentGroup,
-                             DialogState state)
+                             DialogState currentState)
     {
         CurrentDialog = currentDialog;
         CurrentPart = currentPart;
         CurrentGroup = currentGroup;
-        State = state;
+        CurrentState = currentState;
     }
 
     public IDialog CurrentDialog { get; }
     public IDialogPart CurrentPart { get; }
     public IDialogPartGroup? CurrentGroup { get; }
-    public DialogState State { get; }
+    public DialogState CurrentState { get; }
 
     public abstract IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup);
     public abstract IDialogContext Continue(IEnumerable<KeyValuePair<string, object?>> answers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state);

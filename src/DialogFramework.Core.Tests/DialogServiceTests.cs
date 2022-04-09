@@ -40,7 +40,7 @@ public class DialogServiceTests
         var actual = sut.Abort(context);
 
         // Assert
-        actual.State.Should().Be(DialogState.Aborted);
+        actual.CurrentState.Should().Be(DialogState.Aborted);
         actual.CurrentPart.Should().Be(abortedPart);
     }
 
