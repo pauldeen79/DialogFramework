@@ -5,9 +5,7 @@ public class DialogService : IDialogService
     private readonly IDialogContextFactory _contextFactory;
 
     public DialogService(IDialogContextFactory contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
+        => _contextFactory = contextFactory;
 
     public IDialogContext Abort(IDialogContext context)
     {
@@ -160,18 +158,8 @@ public class DialogService : IDialogService
         return null;
     }
 
-    private static IDialogPartGroup? GetGroup(IDialogPart? firstPart)
-    {
-        if (firstPart is ICompletedDialogPart completedDialogPart)
-        {
-            return completedDialogPart.Group;
-        }
-
-        if (firstPart is IQuestionDialogPart questionDialogPart)
-        {
-            return questionDialogPart.Group;
-        }
-
-        return null;
-    }
+    private static IDialogPartGroup? GetGroup(IDialogPart? part)
+        => part is IGroupedDialogPart groupedDialogPart
+            ? groupedDialogPart.Group
+            : null;
 }
