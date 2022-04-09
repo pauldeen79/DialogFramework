@@ -41,9 +41,10 @@ public class DialogService : IDialogService
 
             var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, answers);
             var nextGroup = GetGroup(nextPart);
-            var state = GetState(nextPart);
 
-            return context.Continue(answers, nextPart, nextGroup, state);
+            return nextPart is IRedirectDialogPart redirectDialogPart
+                ? Start(redirectDialogPart.RedirectDialog)
+                : context.Continue(answers, nextPart, nextGroup, GetState(nextPart));
         }
         catch (Exception ex)
         {
@@ -59,7 +60,9 @@ public class DialogService : IDialogService
             var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<KeyValuePair<string, object?>>());
             var firstGroup = GetGroup(firstPart);
 
-            return context.Start(firstPart, firstGroup);
+            return firstPart is IRedirectDialogPart redirectDialogPart
+                ? Start(redirectDialogPart.RedirectDialog)
+                : context.Start(firstPart, firstGroup);
         }
         catch (Exception ex)
         {
@@ -84,11 +87,6 @@ public class DialogService : IDialogService
         if (nextPart is ICompletedDialogPart)
         {
             return DialogState.Completed;
-        }
-
-        if (nextPart is IDecisionDialogPart)
-        {
-            throw new InvalidOperationException("Decision dialog part is being returned to the user, this is not allowed!");
         }
 
         if (nextPart is IErrorDialogPart)

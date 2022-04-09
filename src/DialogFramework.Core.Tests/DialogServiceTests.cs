@@ -20,6 +20,7 @@ public class DialogServiceTests
         var result = sut.Abort(context);
 
         // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.ErrorMessage.Should().Be("Dialog has already been aborted");
@@ -67,6 +68,7 @@ public class DialogServiceTests
         var result = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>());
 
         // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.ErrorMessage.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
@@ -87,6 +89,7 @@ public class DialogServiceTests
         var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Great", null) });
 
         // Assert
+        result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
         result.CurrentPart.Id.Should().Be("Completed");
     }
@@ -106,6 +109,7 @@ public class DialogServiceTests
         var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Unknown answer", null) });
 
         // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
         questionDialogPart.ErrorMessage.Should().Be("Unknown answer: [Unknown answer]");
@@ -127,8 +131,102 @@ public class DialogServiceTests
         var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Terrible", null) }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
         result.CurrentPart.Id.Should().Be("Message");
+    }
+
+    [Fact]
+    public void Continue_Uses_Result_From_RedirectPart()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!");
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var dialog2 = new Dialog
+        (
+            "Dialog2",
+            "1.0.0",
+            new IDialogPart[] { welcomePart, completedPart, errorDialogPart, abortedPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            new[] { group1, group2 }
+        );
+        var redirectPart = new RedirectDialogPart("Redirect", dialog2);
+        var dialog1 = new Dialog
+        (
+            "Dialog1",
+            "1.0.0",
+            new IDialogPart[] { welcomePart, redirectPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            Enumerable.Empty<IDialogPartGroup>()
+        );
+        var factory = new DialogContextFactoryFixture(d =>
+            d.Id == dialog1.Id
+                ? new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null)
+                : new DialogContextFixture(dialog2, welcomePart, null, DialogState.Initial, null));
+        var sut = new DialogService(factory);
+        var context = sut.Start(dialog1); // this will trigger the message on dialog 1
+
+        // Act
+        var result = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>()); // this will trigger the redirect to dialog 2
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
+        result.CurrentDialog.Id.Should().Be(dialog2.Id);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
+    }
+
+    [Fact]
+    public void Start_Uses_Result_From_RedirectPart()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!");
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var dialog2 = new Dialog
+        (
+            "Dialog2",
+            "1.0.0",
+            new IDialogPart[] { welcomePart, completedPart, errorDialogPart, abortedPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            new[] { group1, group2 }
+        );
+        var redirectPart = new RedirectDialogPart("Redirect", dialog2);
+        var dialog1 = new Dialog
+        (
+            "Dialog1",
+            "1.0.0",
+            new[] { redirectPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            Enumerable.Empty<IDialogPartGroup>()
+        );
+        var factory = new DialogContextFactoryFixture(d =>
+            d.Id == dialog1.Id
+                ? new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null)
+                : new DialogContextFixture(dialog2, welcomePart, null, DialogState.Initial, null));
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Start(dialog1);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
+        result.CurrentDialog.Id.Should().Be(dialog2.Id);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -218,7 +316,16 @@ public class DialogServiceTests
                 ? messagePart
                 : completedPart
         );
-        var parts = new IDialogPart[] { welcomePart, questionPart, decisionPart, messagePart, completedPart, errorDialogPart, abortedPart }.Where(_ => addParts);
+        var parts = new IDialogPart[]
+        {
+            welcomePart,
+            questionPart,
+            decisionPart,
+            messagePart,
+            completedPart,
+            errorDialogPart,
+            abortedPart
+        }.Where(_ => addParts);
         return new Dialog(
             "Test",
             "1.0.0",
