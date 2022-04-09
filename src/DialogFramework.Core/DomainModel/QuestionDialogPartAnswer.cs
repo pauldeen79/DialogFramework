@@ -1,26 +1,19 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public class QuestionDialogPartAnswer : IQuestionDialogPartAnswer
+public abstract class QuestionDialogPartAnswer : IQuestionDialogPartAnswer
 {
-    private readonly Func<string, string> _indexerErrorMessageDelegate;
-    private readonly Func<string> _errorDelegate;
-
-    public QuestionDialogPartAnswer(string id,
-                                    string title,
-                                    AnswerValueType valueType,
-                                    Func<string, string> indexerErrorMessageDelegate,
-                                    Func<string> errorDelegate)
+    protected QuestionDialogPartAnswer(string id,
+                                       string title,
+                                       AnswerValueType valueType)
     {
         Id = id;
         Title = title;
         ValueType = valueType;
-        _indexerErrorMessageDelegate = indexerErrorMessageDelegate;
-        _errorDelegate = errorDelegate;
     }
 
-    public string this[string columnName] => _indexerErrorMessageDelegate(columnName);
+    public abstract string this[string columnName] { get; }
     public string Id { get; }
     public string Title { get; }
     public AnswerValueType ValueType { get; }
-    public string Error => _errorDelegate();
+    public abstract string Error { get; }
 }

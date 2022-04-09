@@ -166,9 +166,9 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!");
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var answer1 = new QuestionDialogPartAnswer("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answer2 = new QuestionDialogPartAnswer("Okay", "I feel kind of okay", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answer3 = new QuestionDialogPartAnswer("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var answer1 = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var answer2 = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None, _ => string.Empty, () => string.Empty);
+        var answer3 = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None, _ => string.Empty, () => string.Empty);
         var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answer1, answer2, answer3 }, values =>
         {
             if (!values.Any())
