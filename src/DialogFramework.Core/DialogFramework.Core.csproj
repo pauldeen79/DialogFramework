@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+	<Nullable>enable</Nullable>
+    <PackageId>pauldeen79.DialogFramework.Core</PackageId>
+	<RepositoryUrl>https://github.com/pauldeen79/DialogFramework</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>
