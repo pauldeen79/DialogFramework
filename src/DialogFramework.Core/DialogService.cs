@@ -59,11 +59,6 @@ public class DialogService : IDialogService
         try
         {
             var firstPart = GetNextPart(dialog, null, Enumerable.Empty<KeyValuePair<string, object?>>());
-            if (firstPart == null)
-            {
-                throw new InvalidOperationException("Could not determine first part");
-            }
-
             var firstGroup = GetGroup(firstPart);
 
             return context.Start(firstPart, firstGroup);

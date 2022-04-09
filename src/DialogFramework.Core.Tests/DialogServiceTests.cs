@@ -88,6 +88,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
+        result.CurrentPart.Id.Should().Be("Completed");
     }
 
     [Fact]
@@ -110,11 +111,59 @@ public class DialogServiceTests
         questionDialogPart.ErrorMessage.Should().Be("Unknown answer: [Unknown answer]");
     }
 
-    private static Dialog CreateDialog()
+    [Fact]
+    public void Start_Throws_When_Context_Could_Not_Be_Created()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var factory = new DialogContextFactoryFixture(_ => throw new Exception("Kaboom"));
+        var sut = new DialogService(factory);
+        var start = new Action(() => sut.Start(dialog));
+
+        // Act
+        start.Should().Throw<Exception>().WithMessage("Kaboom");
+    }
+
+    [Fact]
+    public void Start_Returns_ErrorDialogPart_When_First_DialogPart_Could_Not_Be_Determined()
+    {
+        // Arrange
+        var dialog = CreateDialog(false);
+        var context = new DialogContextFixture(dialog, new ErrorDialogPart("Error", "Not initialized yet"), null, default, null);
+        var factory = new DialogContextFactoryFixture(_ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Start(dialog);
+
+        // Assert
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        errorDialogPart.ErrorMessage.Should().Be("Could not determine next part. Dialog does not have any parts.");
+    }
+
+    [Fact]
+    public void Start_Returns_First_DialogPart_When_It_Could_Be_Determined()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var context = new DialogContextFixture(dialog, new ErrorDialogPart("Error", "Not initialized yet"), null, default, null);
+        var factory = new DialogContextFactoryFixture(_ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Start(dialog);
+
+        // Assert
+        result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
+        result.CurrentPart.Id.Should().Be("Welcome");
+    }
+
+    private static Dialog CreateDialog(bool addParts = true)
     {
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var welcomePart = new MessageDialogPart("Message1", "Welcome! I would like to answer a question", group1);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!");
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var answer1 = new QuestionDialogPartAnswer("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
@@ -140,8 +189,8 @@ public class DialogServiceTests
             // If we've made it up to here, everything is okay! (exactly one valid answer)
             return null;
         });
-        var completedPart = new CompletedDialogPart("Complete", "Thank you for your input!", group2);
-        var parts = new IDialogPart[] { welcomePart, questionPart, completedPart, errorDialogPart, abortedPart };
+        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var parts = new IDialogPart[] { welcomePart, questionPart, completedPart, errorDialogPart, abortedPart }.Where(_ => addParts);
         return new Dialog(
             "Test",
             "1.0.0",
