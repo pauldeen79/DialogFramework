@@ -111,9 +111,7 @@ public class DialogService : IDialogService
             return DialogState.ErrorOccured;
         }
 
-        if (nextPart is IMessageDialogPart
-            || nextPart is IOutcomeDialogPart
-            || nextPart is IQuestionDialogPart)
+        if (nextPart is IMessageDialogPart || nextPart is IQuestionDialogPart)
         {
             return DialogState.InProgress;
         }
