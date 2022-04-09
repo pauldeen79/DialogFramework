@@ -1,4 +1,4 @@
-namespace DialogFramework.Core.Tests;
+﻿namespace DialogFramework.Core.Tests;
 
 public class DialogServiceTests
 {
@@ -116,12 +116,12 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = CreateDialog();
-        var factory = new DialogContextFactoryFixture(_ => throw new Exception("Kaboom"));
+        var factory = new DialogContextFactoryFixture(_ => throw new InvalidOperationException("Kaboom"));
         var sut = new DialogService(factory);
         var start = new Action(() => sut.Start(dialog));
 
         // Act
-        start.Should().Throw<Exception>().WithMessage("Kaboom");
+        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
     [Fact]
