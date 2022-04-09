@@ -12,7 +12,5 @@ public record ErrorDialogPart : IErrorDialogPart
     public string Id { get; }
 
     public virtual IErrorDialogPart ForException(Exception ex)
-    {
-        return new ErrorDialogPart(Id, ex.Message);
-    }
+        => new ErrorDialogPart(Id, ex.Message);
 }

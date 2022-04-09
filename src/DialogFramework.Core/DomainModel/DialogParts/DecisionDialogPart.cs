@@ -3,10 +3,8 @@
 public abstract record DecisionDialogPart : IDecisionDialogPart
 {
     protected DecisionDialogPart(string id)
-    {
-        Id = id;
-    }
-                              
+        => Id = id;
+
     public abstract string this[string columnName] { get; }
     public abstract IDialogPart GetNextPart(IDialogContext context);
     public string Id { get; }
