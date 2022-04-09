@@ -144,7 +144,6 @@ public class DialogServiceTests
         var parts = new IDialogPart[] { welcomePart, questionPart, completedPart, errorDialogPart, abortedPart };
         return new Dialog(
             "Test",
-            "Tite",
             "1.0.0",
             parts,
             errorDialogPart,

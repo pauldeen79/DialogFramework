@@ -3,7 +3,6 @@
 public class Dialog : IDialog
 {
     public Dialog(string id,
-                  string title,
                   string version,
                   IEnumerable<IDialogPart> parts,
                   IErrorDialogPart errorDialogPart,
@@ -12,7 +11,6 @@ public class Dialog : IDialog
                   IEnumerable<IDialogPartGroup> partGroups)
     {
         Id = id;
-        Title = title;
         Version = version;
         Parts = new ValueCollection<IDialogPart>(parts);
         ErrorPart = errorDialogPart;
@@ -22,7 +20,6 @@ public class Dialog : IDialog
     }
 
     public string Id { get; }
-    public string Title { get; }
     public string Version { get; }
     public ValueCollection<IDialogPart> Parts { get; }
     public IErrorDialogPart ErrorPart { get; }
