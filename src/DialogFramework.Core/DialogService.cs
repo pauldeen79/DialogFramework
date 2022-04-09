@@ -41,7 +41,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.State}");
             }
 
-            var nextPart = GetNextPart(context.CurrentDialog, context.CurrentPart, answers);
+            var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, answers);
             var nextGroup = GetGroup(nextPart);
             var state = GetState(nextPart);
 
@@ -58,7 +58,7 @@ public class DialogService : IDialogService
         var context = _contextFactory.Create(dialog);
         try
         {
-            var firstPart = GetNextPart(dialog, null, Enumerable.Empty<KeyValuePair<string, object?>>());
+            var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<KeyValuePair<string, object?>>());
             var firstGroup = GetGroup(firstPart);
 
             return context.Start(firstPart, firstGroup);
@@ -69,7 +69,7 @@ public class DialogService : IDialogService
         }
     }
 
-    private static IDialogPart ProcessDecisions(IDialogPart dialogPart)
+    private static IDialogPart ProcessDecisions(IDialogPart dialogPart, IDialogContext context)
     {
         if (dialogPart is IDecisionDialogPart decisionDialogPart)
         {
@@ -78,12 +78,7 @@ public class DialogService : IDialogService
                 return new ErrorDialogPart(decisionDialogPart.Id, decisionDialogPart.Error);
             }
 
-            if (decisionDialogPart.NextPart == null)
-            {
-                throw new InvalidOperationException($"Decision dialog part with Id [{decisionDialogPart.Id}] did not provide a next part");
-            }
-
-            return ProcessDecisions(decisionDialogPart.NextPart);
+            return ProcessDecisions(decisionDialogPart.GetNextPart(context), context);
         }
 
         return dialogPart;
@@ -119,7 +114,10 @@ public class DialogService : IDialogService
         throw new InvalidOperationException($"Could not determine dialog state. Next part is of type: {nextPart.GetType()}");
     }
 
-    private static IDialogPart GetNextPart(IDialog dialog, IDialogPart? currentPart, IEnumerable<KeyValuePair<string, object?>> answerValues)
+    private static IDialogPart GetNextPart(IDialog dialog,
+                                           IDialogContext context,
+                                           IDialogPart? currentPart,
+                                           IEnumerable<KeyValuePair<string, object?>> answerValues)
     {
         if (currentPart == null)
         {
@@ -130,7 +128,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
             }
 
-            return ProcessDecisions(firstPart);
+            return ProcessDecisions(firstPart, context);
         }
 
         // first perform validation
@@ -149,7 +147,7 @@ public class DialogService : IDialogService
             throw new InvalidOperationException($"Could not determine next part. Dialog does not have next part, based on current step (Id = {currentPart.Id})");
         }
 
-        return ProcessDecisions(nextPartWithIndex.Part);
+        return ProcessDecisions(nextPartWithIndex.Part, context);
     }
 
     private static IDialogPart? Validate(IDialogPart currentPart, IEnumerable<KeyValuePair<string, object?>> answerValues)

@@ -2,5 +2,5 @@
 
 public interface IDecisionDialogPart : IDialogPart, IDataErrorInfo
 {
-    IDialogPart? NextPart { get; }
+    IDialogPart GetNextPart(IDialogContext context);
 }

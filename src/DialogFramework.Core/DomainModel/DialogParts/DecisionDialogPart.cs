@@ -8,7 +8,7 @@ public abstract record DecisionDialogPart : IDecisionDialogPart
     }
                               
     public abstract string this[string columnName] { get; }
-    public abstract IDialogPart? NextPart { get; }
+    public abstract IDialogPart GetNextPart(IDialogContext context);
     public string Id { get; }
     public abstract string Error { get; }
 }
