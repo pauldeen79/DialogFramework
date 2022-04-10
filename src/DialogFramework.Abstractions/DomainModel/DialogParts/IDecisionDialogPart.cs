@@ -2,5 +2,5 @@
 
 public interface IDecisionDialogPart : IDialogPart
 {
-    IDialogPart GetNextPart(IDialogContext context, IEnumerable<KeyValuePair<string, object?>> answerValues);
+    IDialogPart GetNextPart(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers);
 }

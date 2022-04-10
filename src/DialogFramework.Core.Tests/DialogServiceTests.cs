@@ -65,7 +65,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>());
+        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>());
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
@@ -86,7 +86,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Great", null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(x => x.Id == "Great"), null) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -104,9 +104,11 @@ public class DialogServiceTests
         var context = new DialogContextFixture(dialog, currentPart, null, currentState, null);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
+        var answerMock = new Mock<IQuestionDialogPartAnswer>();
+        answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
 
         // Act
-        var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Unknown answer", null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, answerMock.Object, null) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -125,10 +127,10 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, currentPart, null, currentState, null));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome messae
-        context = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>()); // skip the welcome message
+        context = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // skip the welcome message
 
         // Act
-        var result = sut.Continue(context, new[] { new KeyValuePair<string, object?>("Terrible", null) }); // answer the question with 'Terrible', this will trigger a second message
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(a => a.Id == "Terrible"), null) }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -175,7 +177,7 @@ public class DialogServiceTests
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<KeyValuePair<string, object?>>()); // this will trigger the redirect to dialog 2
+        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the redirect to dialog 2
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -299,9 +301,9 @@ public class DialogServiceTests
                 return "Too many answers selected";
             }
 
-            if (!new[] { answerGreat.Id, answerOkay.Id, answerTerrible.Id }.Contains(values.First().Key))
+            if (!new[] { answerGreat.Id, answerOkay.Id, answerTerrible.Id }.Contains(values.First().Answer.Id))
             {
-                return $"Unknown answer: [{values.First().Key}]";
+                return $"Unknown answer: [{values.First().Answer.Id}]";
             }
 
             // If we've made it up to here, everything is okay! (exactly one valid answer)
@@ -312,7 +314,7 @@ public class DialogServiceTests
         var decisionPart = new DecisionDialogPartFixture
         (
             "Decision",
-            (_, answers) => answers.Any(a => a.Key == answerTerrible.Id)
+            (_, answers) => answers.Any(a => a.Answer.Id == answerTerrible.Id)
                 ? messagePart
                 : completedPart
         );

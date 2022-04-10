@@ -3,6 +3,6 @@
 public interface IDialogService
 {
     IDialogContext Start(IDialog dialog);
-    IDialogContext Continue(IDialogContext context, IEnumerable<KeyValuePair<string, object?>> answers);
+    IDialogContext Continue(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers);
     IDialogContext Abort(IDialogContext context);
 }

@@ -12,17 +12,17 @@ internal class DialogContextFixture : DialogContext
         Exception = exception;
     }
 
-    public List<KeyValuePair<IDialogPart, IEnumerable<KeyValuePair<string, object?>>>> Answers { get; }
-        = new List<KeyValuePair<IDialogPart, IEnumerable<KeyValuePair<string, object?>>>>();
+    public List<IProvidedAnswer> Answers { get; }
+        = new List<IProvidedAnswer>();
 
     public Exception? Exception { get; }
 
     public override IDialogContext Abort(IAbortedDialogPart abortDialogPart)
         => new DialogContextFixture(CurrentDialog, abortDialogPart, null, DialogState.Aborted, null);
 
-    public override IDialogContext Continue(IEnumerable<KeyValuePair<string, object?>> answers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state)
+    public override IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state)
     {
-        Answers.Add(new KeyValuePair<IDialogPart, IEnumerable<KeyValuePair<string, object?>>>(CurrentPart, answers));
+        Answers.AddRange(providedAnswers);
         return new DialogContextFixture(CurrentDialog, nextPart, nextGroup, state, null);
     }
 

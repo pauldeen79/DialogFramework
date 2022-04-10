@@ -19,7 +19,7 @@ public abstract class DialogContext : IDialogContext
     public DialogState CurrentState { get; }
 
     public abstract IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup);
-    public abstract IDialogContext Continue(IEnumerable<KeyValuePair<string, object?>> answers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state);
+    public abstract IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state);
     public abstract IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     public abstract IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
 }

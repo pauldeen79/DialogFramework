@@ -18,5 +18,5 @@ public abstract record QuestionDialogPart : IQuestionDialogPart
     public ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
     public string Id { get; }
     public string? ErrorMessage { get; protected set; }
-    public abstract IDialogPart? Validate(IEnumerable<KeyValuePair<string, object?>> answerValues);
+    public abstract IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers);
 }

@@ -30,7 +30,7 @@ public class DialogService : IDialogService
         }
     }
 
-    public IDialogContext Continue(IDialogContext context, IEnumerable<KeyValuePair<string, object?>> answers)
+    public IDialogContext Continue(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers)
     {
         try
         {
@@ -39,12 +39,12 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, answers);
+            var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, providedAnswers);
             var nextGroup = GetGroup(nextPart);
 
             return nextPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
-                : context.Continue(answers, nextPart, nextGroup, GetState(nextPart));
+                : context.Continue(providedAnswers, nextPart, nextGroup, GetState(nextPart));
         }
         catch (Exception ex)
         {
@@ -57,7 +57,7 @@ public class DialogService : IDialogService
         var context = _contextFactory.Create(dialog);
         try
         {
-            var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<KeyValuePair<string, object?>>());
+            var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<IProvidedAnswer>());
             var firstGroup = GetGroup(firstPart);
 
             return firstPart is IRedirectDialogPart redirectDialogPart
@@ -72,9 +72,9 @@ public class DialogService : IDialogService
 
     private static IDialogPart ProcessDecisions(IDialogPart dialogPart,
                                                 IDialogContext context,
-                                                IEnumerable<KeyValuePair<string, object?>> answerValues)
+                                                IEnumerable<IProvidedAnswer> providedAnswers)
         => dialogPart is IDecisionDialogPart decisionDialogPart
-            ? ProcessDecisions(decisionDialogPart.GetNextPart(context, answerValues), context, answerValues)
+            ? ProcessDecisions(decisionDialogPart.GetNextPart(context, providedAnswers), context, providedAnswers)
             : dialogPart;
 
     private static DialogState GetState(IDialogPart nextPart)
@@ -105,7 +105,7 @@ public class DialogService : IDialogService
     private static IDialogPart GetNextPart(IDialog dialog,
                                            IDialogContext context,
                                            IDialogPart? currentPart,
-                                           IEnumerable<KeyValuePair<string, object?>> answerValues)
+                                           IEnumerable<IProvidedAnswer> providedAnswers)
     {
         if (currentPart == null)
         {
@@ -116,11 +116,11 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
             }
 
-            return ProcessDecisions(firstPart, context, answerValues);
+            return ProcessDecisions(firstPart, context, providedAnswers);
         }
 
         // first perform validation
-        var error = Validate(currentPart, answerValues);
+        var error = Validate(currentPart, providedAnswers);
         if (error != null)
         {
             return error;
@@ -135,12 +135,12 @@ public class DialogService : IDialogService
             throw new InvalidOperationException($"Could not determine next part. Dialog does not have next part, based on current step (Id = {currentPart.Id})");
         }
 
-        return ProcessDecisions(nextPartWithIndex.Part, context, answerValues);
+        return ProcessDecisions(nextPartWithIndex.Part, context, providedAnswers);
     }
 
-    private static IDialogPart? Validate(IDialogPart part, IEnumerable<KeyValuePair<string, object?>> answerValues)
+    private static IDialogPart? Validate(IDialogPart part, IEnumerable<IProvidedAnswer> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart
-            ? questionDialogPart.Validate(answerValues)
+            ? questionDialogPart.Validate(providedAnswers)
             : null;
 
     private static IDialogPartGroup? GetGroup(IDialogPart? part)

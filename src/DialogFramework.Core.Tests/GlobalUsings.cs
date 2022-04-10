@@ -6,6 +6,7 @@ global using DialogFramework.Core.DomainModel;
 global using DialogFramework.Core.DomainModel.DialogParts;
 global using DialogFramework.Core.Tests.Fixtures;
 global using FluentAssertions;
+global using Moq;
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
