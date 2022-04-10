@@ -2,15 +2,17 @@
 
 public record ErrorDialogPart : IErrorDialogPart
 {
-    public ErrorDialogPart(string id, string errorMessage)
+    public ErrorDialogPart(string id, string errorMessage, Exception? exception)
     {
         Id = id;
         ErrorMessage = errorMessage;
+        Exception = exception;
     }
 
     public string ErrorMessage { get; }
     public string Id { get; }
+    public Exception? Exception { get; }
 
     public virtual IErrorDialogPart ForException(Exception ex)
-        => new ErrorDialogPart(Id, ex.Message);
+        => new ErrorDialogPart(Id, ErrorMessage, ex);
 }

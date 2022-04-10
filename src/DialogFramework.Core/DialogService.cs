@@ -77,7 +77,7 @@ public class DialogService : IDialogService
             ? ProcessDecisions(decisionDialogPart.GetNextPart(context, providedAnswers), context, providedAnswers)
             : dialogPart;
 
-    private static DialogState GetState(IDialogPart nextPart)
+    public static DialogState GetState(IDialogPart nextPart)
     {
         if (nextPart is IAbortedDialogPart)
         {
