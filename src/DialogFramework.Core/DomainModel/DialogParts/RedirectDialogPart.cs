@@ -11,4 +11,5 @@ public record RedirectDialogPart : IRedirectDialogPart
 
     public IDialog RedirectDialog { get; }
     public string Id { get; }
+    public DialogState State => DialogState.InProgress;
 }

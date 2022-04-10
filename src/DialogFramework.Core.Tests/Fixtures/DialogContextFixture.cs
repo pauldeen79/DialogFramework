@@ -39,7 +39,7 @@ internal class DialogContextFixture : DialogContext
         => new DialogContextFixture(CurrentDialog, errorDialogPart, null, DialogState.ErrorOccured, ex);
 
     public override IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup)
-        => new DialogContextFixture(CurrentDialog, firstPart, firstGroup, DialogService.GetState(firstPart), null);
+        => new DialogContextFixture(CurrentDialog, firstPart, firstGroup, firstPart.State, null);
 
     public DialogContextFixture WithState(DialogState state)
         => new DialogContextFixture(CurrentDialog, CurrentPart, CurrentGroup, state, Exception, Answers);

@@ -18,5 +18,6 @@ public abstract record QuestionDialogPart : IQuestionDialogPart
     public ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
     public string Id { get; }
     public string? ErrorMessage { get; protected set; }
+    public DialogState State => DialogState.InProgress;
     public abstract IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers);
 }

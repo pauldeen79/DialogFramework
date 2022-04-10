@@ -7,4 +7,5 @@ public abstract record DecisionDialogPart : IDecisionDialogPart
 
     public abstract IDialogPart GetNextPart(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers);
     public string Id { get; }
+    public DialogState State => DialogState.InProgress;
 }

@@ -187,41 +187,6 @@ public class DialogServiceTests
         result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
 
-    [Fact]
-    public void Continue_Returns_ErrorDialogPart_On_Unsupported_DialogPart()
-    {
-        // Arrange
-        var group1 = new DialogPartGroup("Part1", "Give information", 1);
-        var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
-        var unknownPart = new Mock<IDialogPart>().Object;
-        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
-        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
-        var dialog = new Dialog
-        (
-            "Test",
-            "1.0.0",
-            new IDialogPart[] { welcomePart, unknownPart, completedPart, errorDialogPart, abortedPart },
-            errorDialogPart,
-            abortedPart,
-            completedPart,
-            new[] { group1, group2 }
-        );
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, welcomePart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
-        var sut = new DialogService(factory);
-        var context = sut.Start(dialog); // this will trigger the message
-
-        // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the unknown part
-
-        // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        ((IErrorDialogPart)result.CurrentPart).Exception.Should().NotBeNull();
-        ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be("Could not determine dialog state. Next part is of type: Castle.Proxies.IDialogPartProxy");
-    }
-
     [Theory]
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.Completed)]

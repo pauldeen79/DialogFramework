@@ -13,4 +13,5 @@ public record CompletedDialogPart : ICompletedDialogPart
     public string Message { get; }
     public IDialogPartGroup Group { get; }
     public string Id { get; }
+    public DialogState State => DialogState.Completed;
 }

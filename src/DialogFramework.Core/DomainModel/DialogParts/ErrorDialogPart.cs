@@ -12,6 +12,7 @@ public record ErrorDialogPart : IErrorDialogPart
     public string ErrorMessage { get; }
     public string Id { get; }
     public Exception? Exception { get; }
+    public DialogState State => DialogState.ErrorOccured;
 
     public virtual IErrorDialogPart ForException(Exception ex)
         => new ErrorDialogPart(Id, ErrorMessage, ex);

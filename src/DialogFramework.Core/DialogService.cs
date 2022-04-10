@@ -44,7 +44,7 @@ public class DialogService : IDialogService
 
             return nextPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
-                : context.Continue(providedAnswers, nextPart, nextGroup, GetState(nextPart));
+                : context.Continue(providedAnswers, nextPart, nextGroup, nextPart.State);
         }
         catch (Exception ex)
         {
@@ -76,31 +76,6 @@ public class DialogService : IDialogService
         => dialogPart is IDecisionDialogPart decisionDialogPart
             ? ProcessDecisions(decisionDialogPart.GetNextPart(context, providedAnswers), context, providedAnswers)
             : dialogPart;
-
-    public static DialogState GetState(IDialogPart nextPart)
-    {
-        if (nextPart is IAbortedDialogPart)
-        {
-            return DialogState.Aborted;
-        }
-
-        if (nextPart is ICompletedDialogPart)
-        {
-            return DialogState.Completed;
-        }
-
-        if (nextPart is IErrorDialogPart)
-        {
-            return DialogState.ErrorOccured;
-        }
-
-        if (nextPart is IMessageDialogPart || nextPart is IQuestionDialogPart)
-        {
-            return DialogState.InProgress;
-        }
-
-        throw new InvalidOperationException($"Could not determine dialog state. Next part is of type: {nextPart.GetType()}");
-    }
 
     private static IDialogPart GetNextPart(IDialog dialog,
                                            IDialogContext context,

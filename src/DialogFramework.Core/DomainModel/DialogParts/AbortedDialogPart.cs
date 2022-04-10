@@ -10,4 +10,5 @@ public record AbortedDialogPart : IAbortedDialogPart
 
     public string Message { get; }
     public string Id { get; }
+    public DialogState State => DialogState.Aborted;
 }
