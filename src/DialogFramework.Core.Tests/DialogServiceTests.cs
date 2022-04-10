@@ -259,7 +259,7 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
-        ((DialogContextFixture)context).SetState(currentState);
+        context = ((DialogContextFixture)context).WithState(currentState);
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the redirect to dialog 2

@@ -1,44 +1,46 @@
 ﻿namespace DialogFramework.Core.Tests.Fixtures;
 
-internal class DialogContextFixture : IDialogContext
+internal class DialogContextFixture : DialogContext
 {
     public DialogContextFixture(IDialog currentDialog,
                                 IDialogPart currentPart,
                                 IDialogPartGroup? currentGroup,
-                                DialogState currentState,
-                                Exception? exception,
-                                IEnumerable<IProvidedAnswer> answers)
+                                DialogState state,
+                                Exception? exception)
+        : base(currentDialog, currentPart, currentGroup, state)
     {
-        CurrentDialog = currentDialog;
-        CurrentPart = currentPart;
-        CurrentGroup = currentGroup;
-        CurrentState = currentState;
+        Answers = new List<IProvidedAnswer>();
         Exception = exception;
-        Answers.AddRange(answers);
     }
 
-    public IDialog CurrentDialog { get; }
-    public IDialogPart CurrentPart { get; }
-    public IDialogPartGroup? CurrentGroup { get; }
-    public DialogState CurrentState { get; private set; }
+    public DialogContextFixture(IDialog currentDialog,
+                                IDialogPart currentPart,
+                                IDialogPartGroup? currentGroup,
+                                DialogState state,
+                                Exception? exception,
+                                IEnumerable<IProvidedAnswer> answers)
+        : base(currentDialog, currentPart, currentGroup, state)
+    {
+        Answers = new List<IProvidedAnswer>(answers);
+        Exception = exception;
+    }
 
     public List<IProvidedAnswer> Answers { get; }
-        = new List<IProvidedAnswer>();
 
     public Exception? Exception { get; }
 
-    public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
-        => new DialogContextFixture(CurrentDialog, abortDialogPart, null, DialogState.Aborted, null, Answers);
+    public override IDialogContext Abort(IAbortedDialogPart abortDialogPart)
+        => new DialogContextFixture(CurrentDialog, abortDialogPart, null, DialogState.Aborted, null);
 
-    public IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state)
+    public override IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state)
         => new DialogContextFixture(CurrentDialog, nextPart, nextGroup, state, null, Answers.Concat(providedAnswers));
 
-    public IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
-        => new DialogContextFixture(CurrentDialog, errorDialogPart, null, DialogState.ErrorOccured, ex, Answers);
+    public override IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
+        => new DialogContextFixture(CurrentDialog, errorDialogPart, null, DialogState.ErrorOccured, ex);
 
-    public IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup)
-        => new DialogContextFixture(CurrentDialog, firstPart, firstGroup, DialogService.GetState(firstPart), null, Answers);
+    public override IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup)
+        => new DialogContextFixture(CurrentDialog, firstPart, firstGroup, DialogService.GetState(firstPart), null);
 
-    internal void SetState(DialogState currentState)
-        => CurrentState = currentState;
+    public DialogContextFixture WithState(DialogState state)
+        => new DialogContextFixture(CurrentDialog, CurrentPart, CurrentGroup, state, Exception, Answers);
 }
