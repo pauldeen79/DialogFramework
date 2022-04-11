@@ -120,6 +120,29 @@ public class DialogServiceTests
     }
 
     [Fact]
+    public void Continue_Returns_Same_DialogPart_On_Answers_From_Wrong_Question()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
+        var currentState = DialogState.InProgress;
+        var context = new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var factory = new DialogContextFactoryFixture(_ => context);
+        var sut = new DialogService(factory);
+        var answerMock = new Mock<IQuestionDialogPartAnswer>();
+        answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
+
+        // Act
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(new Mock<IQuestionDialogPart>().Object, answerMock.Object, null) });
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
+        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
+        var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
+        questionDialogPart.ErrorMessage.Should().Be("Provided answers from wrong question");
+    }
+
+    [Fact]
     public void Continue_Uses_Result_From_DecisionPart_When_DecisionPart_Returns_No_Error()
     {
         // Arrange
@@ -447,6 +470,11 @@ public class DialogServiceTests
             if (values.Count() > 1)
             {
                 return "Too many answers selected";
+            }
+
+            if (!values.All(a => a.Question.Id == "Question1"))
+            {
+                return "Provided answers from wrong question";
             }
 
             if (!new[] { answerGreat.Id, answerOkay.Id, answerTerrible.Id }.Contains(values.First().Answer.Id))
