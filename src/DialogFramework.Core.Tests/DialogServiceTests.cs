@@ -173,8 +173,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d =>
             d.Id == dialog1.Id
-                ? new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>())
-                : new DialogContextFixture(dialog2, welcomePart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+                ? new DialogContextFixture(dialog1)
+                : new DialogContextFixture(dialog2));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
 
@@ -221,7 +221,7 @@ public class DialogServiceTests
             completedPart,
             Enumerable.Empty<IDialogPartGroup>()
         );
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog1));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
         context = ((DialogContextFixture)context).WithState(currentState);
@@ -256,7 +256,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, welcomePart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // this will trigger the message
 
@@ -299,10 +299,10 @@ public class DialogServiceTests
             completedPart,
             Enumerable.Empty<IDialogPartGroup>()
         );
-        var factory = new DialogContextFactoryFixture(d =>
-            d.Id == dialog1.Id
-                ? new DialogContextFixture(dialog1, redirectPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>())
-                : new DialogContextFixture(dialog2, welcomePart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(dialog =>
+            dialog.Id == dialog1.Id
+                ? new DialogContextFixture(dialog1)
+                : new DialogContextFixture(dialog2));
         var sut = new DialogService(factory);
 
         // Act
@@ -383,7 +383,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, decisionPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
 
         // Act
@@ -415,7 +415,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, decisionPart, null, DialogState.Initial, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
 
         // Act

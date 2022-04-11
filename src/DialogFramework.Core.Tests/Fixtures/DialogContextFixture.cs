@@ -2,6 +2,12 @@
 
 internal class DialogContextFixture : DialogContext
 {
+    public DialogContextFixture(IDialog currentDialog)
+        : base(currentDialog)
+    {
+        Answers = new List<IProvidedAnswer>();
+    }
+
     public DialogContextFixture(IDialog currentDialog,
                                 IDialogPart currentPart,
                                 IDialogPartGroup? currentGroup,
