@@ -107,7 +107,7 @@ public class DialogService : IDialogService
         var nextPartWithIndex = parts.Where(p => p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
         if (nextPartWithIndex == null)
         {
-            throw new InvalidOperationException($"Could not determine next part. Dialog does not have next part, based on current step (Id = {currentPart.Id})");
+            return ProcessDecisions(dialog.CompletedPart, context, providedAnswers);
         }
 
         return ProcessDecisions(nextPartWithIndex.Part, context, providedAnswers);

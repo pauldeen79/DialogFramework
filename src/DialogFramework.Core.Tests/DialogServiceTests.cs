@@ -154,7 +154,7 @@ public class DialogServiceTests
         (
             "Dialog2",
             "1.0.0",
-            new IDialogPart[] { welcomePart, completedPart, errorDialogPart, abortedPart },
+            new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
             completedPart,
@@ -204,7 +204,7 @@ public class DialogServiceTests
         (
             "Dialog2",
             "1.0.0",
-            new IDialogPart[] { welcomePart, completedPart, errorDialogPart, abortedPart },
+            new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
             completedPart,
@@ -237,7 +237,7 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void Continue_Returns_ErrorDialogPart_When_There_Is_No_Next_DialogPart()
+    public void Continue_Returns_CompletedDialogPart_When_There_Is_No_Next_DialogPart()
     {
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
@@ -261,13 +261,11 @@ public class DialogServiceTests
         var context = sut.Start(dialog); // this will trigger the message
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the error
+        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the completion
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        ((IErrorDialogPart)result.CurrentPart).Exception.Should().NotBeNull();
-        ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be("Could not determine next part. Dialog does not have next part, based on current step (Id = Welcome)");
+        result.CurrentState.Should().Be(DialogState.Completed);
+        result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
     }
 
     [Fact]
@@ -284,7 +282,7 @@ public class DialogServiceTests
         (
             "Dialog2",
             "1.0.0",
-            new IDialogPart[] { welcomePart, completedPart, errorDialogPart, abortedPart },
+            new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
             completedPart,
@@ -379,7 +377,7 @@ public class DialogServiceTests
         (
             "Test",
             "1.0.0",
-            new IDialogPart[] { decisionPart, completedPart, errorDialogPart, abortedPart },
+            new IDialogPart[] { decisionPart },
             errorDialogPart,
             abortedPart,
             completedPart,
@@ -411,7 +409,7 @@ public class DialogServiceTests
         (
             "Test",
             "1.0.0",
-            new IDialogPart[] { decisionPart, completedPart, errorDialogPart, abortedPart },
+            new IDialogPart[] { decisionPart },
             errorDialogPart,
             abortedPart,
             completedPart,
