@@ -1,4 +1,8 @@
-﻿global using DialogFramework.Abstractions;
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using CrossCutting.Common;
+global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
@@ -7,7 +11,4 @@ global using DialogFramework.Core.DomainModel.DialogParts;
 global using DialogFramework.Core.Tests.Fixtures;
 global using FluentAssertions;
 global using Moq;
-global using System;
-global using System.Collections.Generic;
-global using System.Linq;
 global using Xunit;

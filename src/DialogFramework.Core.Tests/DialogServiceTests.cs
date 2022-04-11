@@ -116,7 +116,8 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
-        questionDialogPart.ErrorMessage.Should().Be("Unknown answer: [Unknown answer]");
+        questionDialogPart.ErrorMessages.Should().ContainSingle();
+        questionDialogPart.ErrorMessages[0].Should().Be("Unknown answer: [Unknown answer]");
     }
 
     [Fact]
@@ -131,15 +132,18 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartAnswer>();
         answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
+        var wrongQuestionMock = new Mock<IQuestionDialogPart>();
+        wrongQuestionMock.SetupGet(x => x.Answers).Returns(new ValueCollection<IQuestionDialogPartAnswer>());
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(new Mock<IQuestionDialogPart>().Object, answerMock.Object, null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(wrongQuestionMock.Object, answerMock.Object, null) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
-        questionDialogPart.ErrorMessage.Should().Be("Provided answers from wrong question");
+        questionDialogPart.ErrorMessages.Should().ContainSingle();
+        questionDialogPart.ErrorMessages[0].Should().Be("Provided answer from wrong question");
     }
 
     [Fact]
@@ -457,34 +461,10 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var answerGreat = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answerOkay = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var answerTerrible = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None, _ => string.Empty, () => string.Empty);
-        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answerGreat, answerOkay, answerTerrible }, values =>
-        {
-            if (!values.Any())
-            {
-                return "No answer selected";
-            }
-
-            if (values.Count() > 1)
-            {
-                return "Too many answers selected";
-            }
-
-            if (!values.All(a => a.Question.Id == "Question1"))
-            {
-                return "Provided answers from wrong question";
-            }
-
-            if (!new[] { answerGreat.Id, answerOkay.Id, answerTerrible.Id }.Contains(values.First().Answer.Id))
-            {
-                return $"Unknown answer: [{values.First().Answer.Id}]";
-            }
-
-            // If we've made it up to here, everything is okay! (exactly one valid answer)
-            return null;
-        });
+        var answerGreat = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None);
+        var answerOkay = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None);
+        var answerTerrible = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None);
+        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answerGreat, answerOkay, answerTerrible });
         var messagePart = new MessageDialogPart("Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
         var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
         var decisionPart = new DecisionDialogPartFixture

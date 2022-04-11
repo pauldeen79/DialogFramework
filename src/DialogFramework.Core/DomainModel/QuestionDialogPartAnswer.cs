@@ -11,9 +11,7 @@ public abstract record QuestionDialogPartAnswer : IQuestionDialogPartAnswer
         ValueType = valueType;
     }
 
-    public abstract string this[string columnName] { get; }
     public string Id { get; }
     public string Title { get; }
     public AnswerValueType ValueType { get; }
-    public abstract string Error { get; }
 }

@@ -11,13 +11,44 @@ public abstract record QuestionDialogPart : IQuestionDialogPart
         Title = title;
         Group = group;
         Answers = new ValueCollection<IQuestionDialogPartAnswer>(answers);
+        ErrorMessages = new ValueCollection<string>();
     }
 
     public string Title { get; }
     public IDialogPartGroup Group { get; }
     public ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
     public string Id { get; }
-    public string? ErrorMessage { get; protected set; }
+    public ValueCollection<string> ErrorMessages { get; protected set; }
     public DialogState State => DialogState.InProgress;
-    public abstract IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers);
+    public IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers)
+    {
+        ErrorMessages.Clear();
+        HandleValidate(providedAnswers);
+
+        if (ErrorMessages.Any())
+        {
+            return this;
+        }
+
+        return null;
+    }
+
+    protected virtual void HandleValidate(IEnumerable<IProvidedAnswer> providedAnswers)
+    {
+        foreach (var providedAnswer in providedAnswers)
+        {
+            if (providedAnswer.Question.Id == Id)
+            {
+                var validationContext = new ValidationContext(providedAnswer);
+                foreach (var validationError in providedAnswer.Validate(validationContext).Where(x => !string.IsNullOrEmpty(x.ErrorMessage)))
+                {
+                    ErrorMessages.Add(validationError.ErrorMessage!);
+                }
+            }
+            else
+            {
+                ErrorMessages.Add("Provided answer from wrong question");
+            }
+        }
+    }
 }
