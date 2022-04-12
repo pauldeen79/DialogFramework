@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using CrossCutting.Common.Extensions;
+
+namespace DialogFramework.Core.DomainModel.DialogParts;
 
 public abstract record QuestionDialogPart : IQuestionDialogPart
 {
@@ -25,30 +27,25 @@ public abstract record QuestionDialogPart : IQuestionDialogPart
         ErrorMessages.Clear();
         HandleValidate(providedAnswers);
 
-        if (ErrorMessages.Any())
-        {
-            return this;
-        }
-
-        return null;
+        return ErrorMessages.Count > 0
+            ? this
+            : null;
     }
 
     protected virtual void HandleValidate(IEnumerable<IProvidedAnswer> providedAnswers)
     {
         foreach (var providedAnswer in providedAnswers)
         {
-            if (providedAnswer.Question.Id == Id)
-            {
-                var validationContext = new ValidationContext(providedAnswer);
-                foreach (var validationError in providedAnswer.Validate(validationContext).Where(x => !string.IsNullOrEmpty(x.ErrorMessage)))
-                {
-                    ErrorMessages.Add(validationError.ErrorMessage!);
-                }
-            }
-            else
+            if (providedAnswer.Question.Id != Id)
             {
                 ErrorMessages.Add("Provided answer from wrong question");
+                continue;
             }
+
+            var validationContext = new ValidationContext(providedAnswer);
+            ErrorMessages.AddRange(providedAnswer.Validate(validationContext)
+                                                 .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
+                                                 .Select(x => x.ErrorMessage));
         }
     }
 }
