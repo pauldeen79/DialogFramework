@@ -101,12 +101,13 @@ public class DialogService : IDialogService
             return error;
         }
 
-        // get the next part
+        // if validation succeeds, then get the next part
         var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
         var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart!.Id);
         var nextPartWithIndex = parts.Where(p => p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
         if (nextPartWithIndex == null)
         {
+            // there is no next part, so get the completed part
             return ProcessDecisions(dialog.CompletedPart, context, providedAnswers);
         }
 
