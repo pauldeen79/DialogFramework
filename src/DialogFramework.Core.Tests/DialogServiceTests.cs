@@ -88,7 +88,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(x => x.Id == "Great"), null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(x => x.Id == "Great")) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -110,7 +110,7 @@ public class DialogServiceTests
         answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, answerMock.Object, null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, answerMock.Object) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -136,7 +136,7 @@ public class DialogServiceTests
         wrongQuestionMock.SetupGet(x => x.Answers).Returns(new ValueCollection<IQuestionDialogPartAnswer>());
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(wrongQuestionMock.Object, answerMock.Object, null) });
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(wrongQuestionMock.Object, answerMock.Object) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -159,7 +159,7 @@ public class DialogServiceTests
         context = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // skip the welcome message
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(a => a.Id == "Terrible"), null) }); // answer the question with 'Terrible', this will trigger a second message
+        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(a => a.Id == "Terrible")) }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);

@@ -7,3 +7,4 @@ global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
+global using DialogFramework.Abstractions.DomainModel.ProvidedAnswerValues;
