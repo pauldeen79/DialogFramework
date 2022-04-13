@@ -40,11 +40,10 @@ public class DialogService : IDialogService
             }
 
             var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, providedAnswers);
-            var nextGroup = GetGroup(nextPart);
 
             return nextPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
-                : context.Continue(providedAnswers, nextPart, nextGroup, nextPart.State);
+                : context.Continue(providedAnswers, nextPart, nextPart.State);
         }
         catch (Exception ex)
         {
@@ -58,11 +57,10 @@ public class DialogService : IDialogService
         try
         {
             var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<IProvidedAnswer>());
-            var firstGroup = GetGroup(firstPart);
 
             return firstPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
-                : context.Start(firstPart, firstGroup);
+                : context.Start(firstPart);
         }
         catch (Exception ex)
         {
@@ -117,10 +115,5 @@ public class DialogService : IDialogService
     private static IDialogPart? Validate(IDialogPart part, IEnumerable<IProvidedAnswer> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart
             ? questionDialogPart.Validate(providedAnswers)
-            : null;
-
-    private static IDialogPartGroup? GetGroup(IDialogPart? part)
-        => part is IGroupedDialogPart groupedDialogPart
-            ? groupedDialogPart.Group
             : null;
 }

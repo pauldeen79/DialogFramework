@@ -3,19 +3,20 @@
 public abstract class DialogContext : IDialogContext
 {
     protected DialogContext(IDialog currentDialog)
-        : this(currentDialog, new EmptyDialogPart(), null, DialogState.Initial)
+        : this(currentDialog, new EmptyDialogPart(), DialogState.Initial)
     {
     }
 
     protected DialogContext(IDialog currentDialog,
                             IDialogPart currentPart,
-                            IDialogPartGroup? currentGroup,
                             DialogState currentState)
     {
         CurrentDialog = currentDialog;
         CurrentPart = currentPart;
-        CurrentGroup = currentGroup;
         CurrentState = currentState;
+        CurrentGroup = currentPart is IGroupedDialogPart groupedDialogPart
+            ? groupedDialogPart.Group
+            : null;
     }
 
     public IDialog CurrentDialog { get; }
@@ -23,8 +24,8 @@ public abstract class DialogContext : IDialogContext
     public IDialogPartGroup? CurrentGroup { get; }
     public DialogState CurrentState { get; }
 
-    public abstract IDialogContext Start(IDialogPart firstPart, IDialogPartGroup? firstGroup);
-    public abstract IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, IDialogPartGroup? nextGroup, DialogState state);
+    public abstract IDialogContext Start(IDialogPart firstPart);
+    public abstract IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, DialogState state);
     public abstract IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     public abstract IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
 

@@ -12,7 +12,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = CreateDialog();
         var abortedPart = dialog.Parts.OfType<IAbortedDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, abortedPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, abortedPart, currentState);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
@@ -34,7 +34,7 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var abortedPart = dialog.Parts.OfType<IAbortedDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, questionPart, questionPart.Group, DialogState.InProgress, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
@@ -61,7 +61,7 @@ public class DialogServiceTests
             DialogState.ErrorOccured => dialog.Parts.OfType<IErrorDialogPart>().First(),
             _ => throw new NotImplementedException()
         };
-        var context = new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
@@ -83,7 +83,7 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
@@ -103,7 +103,7 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartAnswer>();
@@ -127,7 +127,7 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartAnswer>();
@@ -153,7 +153,7 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, currentPart, null, currentState, null, Enumerable.Empty<IProvidedAnswer>()));
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog, currentPart, currentState));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome messae
         context = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // skip the welcome message
@@ -359,7 +359,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = CreateDialog(false);
-        var context = new DialogContextFixture(dialog, new ErrorDialogPart("Error", "Not initialized yet", null), null, default, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog/*, new ErrorDialogPart("Error", "Not initialized yet", null), null, default*/);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
@@ -378,7 +378,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = CreateDialog();
-        var context = new DialogContextFixture(dialog, new ErrorDialogPart("Error", "Not initialized yet", null), null, default, null, Enumerable.Empty<IProvidedAnswer>());
+        var context = new DialogContextFixture(dialog/*, new ErrorDialogPart("Error", "Not initialized yet", null), null, default, null*/);
         var factory = new DialogContextFactoryFixture(_ => context);
         var sut = new DialogService(factory);
 
