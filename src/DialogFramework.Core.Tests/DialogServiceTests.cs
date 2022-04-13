@@ -203,7 +203,7 @@ public class DialogServiceTests
             errorDialogPart,
             abortedPart,
             completedPart,
-            Enumerable.Empty<IDialogPartGroup>()
+            new[] { group1 }
         );
         var factory = new DialogContextFactoryFixture(d =>
             d.Id == dialog1.Id
@@ -254,7 +254,7 @@ public class DialogServiceTests
             errorDialogPart,
             abortedPart,
             completedPart,
-            Enumerable.Empty<IDialogPartGroup>()
+            new[] { group1 }
         );
         var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog1));
         var sut = new DialogService(factory);
