@@ -4,5 +4,5 @@ public interface IDialogPartGroup
 {
     string Id { get; }
     string Title { get; }
-    int GroupNumber { get; }
+    int Number { get; }
 }

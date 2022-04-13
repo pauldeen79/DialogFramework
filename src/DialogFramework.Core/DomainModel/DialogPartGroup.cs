@@ -4,14 +4,14 @@ public class DialogPartGroup : IDialogPartGroup
 {
     public DialogPartGroup(string id,
                            string title,
-                           int groupNumber)
+                           int number)
     {
         Id = id;
         Title = title;
-        GroupNumber = groupNumber;
+        Number = number;
     }
 
     public string Id { get; }
     public string Title { get; }
-    public int GroupNumber { get; }
+    public int Number { get; }
 }
