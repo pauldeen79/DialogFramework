@@ -175,8 +175,8 @@ public class DialogServiceTests
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var completedPart = new CompletedDialogPart("Completed", "Thank you", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
             "Dialog2",
@@ -225,8 +225,8 @@ public class DialogServiceTests
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
             "Dialog2",
@@ -269,10 +269,10 @@ public class DialogServiceTests
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var dialog = new Dialog
         (
             "Test",
@@ -303,8 +303,8 @@ public class DialogServiceTests
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
             "Dialog2",
@@ -398,7 +398,7 @@ public class DialogServiceTests
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => errorDialogPart);
         var dialog = new Dialog
         (
@@ -430,7 +430,7 @@ public class DialogServiceTests
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => abortedPart);
         var dialog = new Dialog
         (
@@ -458,15 +458,15 @@ public class DialogServiceTests
     {
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome! I would like to answer a question", group1);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var answerGreat = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None);
         var answerOkay = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None);
         var answerTerrible = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None);
-        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel?", group1, new[] { answerGreat, answerOkay, answerTerrible });
-        var messagePart = new MessageDialogPart("Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
-        var completedPart = new CompletedDialogPart("Completed", "Thank you for your input!", group2);
+        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel", "Please tell us how you feel", group1, new[] { answerGreat, answerOkay, answerTerrible });
+        var messagePart = new MessageDialogPart("Message", "Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var decisionPart = new DecisionDialogPartFixture
         (
             "Decision",

@@ -3,10 +3,11 @@
 internal record QuestionDialogPartFixture : QuestionDialogPart
 {
     public QuestionDialogPartFixture(string id,
-                                     string title,
+                                     string heading,
+                                     string message,
                                      IDialogPartGroup group,
                                      IEnumerable<IQuestionDialogPartAnswer> answers)
-        : base(id, title, group, answers)
+        : base(id, heading, message, group, answers)
     {
     }
 }

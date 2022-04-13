@@ -5,18 +5,21 @@ namespace DialogFramework.Core.DomainModel.DialogParts;
 public abstract record QuestionDialogPart : IQuestionDialogPart
 {
     protected QuestionDialogPart(string id,
-                                 string title,
+                                 string heading,
+                                 string message,
                                  IDialogPartGroup group,
                                  IEnumerable<IQuestionDialogPartAnswer> answers)
     {
         Id = id;
-        Title = title;
+        Heading = heading;
+        Message = message;
         Group = group;
         Answers = new ValueCollection<IQuestionDialogPartAnswer>(answers);
         ErrorMessages = new ValueCollection<string>();
     }
 
-    public string Title { get; }
+    public string Message { get; }
+    public string Heading { get; }
     public IDialogPartGroup Group { get; }
     public ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
     public string Id { get; }

@@ -31,6 +31,7 @@ public abstract class DialogContext : IDialogContext
     private sealed class EmptyDialogPart : IDialogPart
     {
         public string Id => "Empty";
+        public string Heading => "Empty";
         public DialogState State => DialogState.Initial;
     }
 }
