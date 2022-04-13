@@ -39,7 +39,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            var nextPart = GetNextPart(context.CurrentDialog, context, context.CurrentPart, providedAnswers);
+            var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, providedAnswers);
 
             return nextPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
@@ -56,7 +56,7 @@ public class DialogService : IDialogService
         var context = _contextFactory.Create(dialog);
         try
         {
-            var firstPart = GetNextPart(dialog, context, null, Enumerable.Empty<IProvidedAnswer>());
+            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IProvidedAnswer>());
 
             return firstPart is IRedirectDialogPart redirectDialogPart
                 ? Start(redirectDialogPart.RedirectDialog)
@@ -67,53 +67,4 @@ public class DialogService : IDialogService
             return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
         }
     }
-
-    private static IDialogPart ProcessDecisions(IDialogPart dialogPart,
-                                                IDialogContext context,
-                                                IEnumerable<IProvidedAnswer> providedAnswers)
-        => dialogPart is IDecisionDialogPart decisionDialogPart
-            ? ProcessDecisions(decisionDialogPart.GetNextPart(context, providedAnswers), context, providedAnswers)
-            : dialogPart;
-
-    private static IDialogPart GetNextPart(IDialog dialog,
-                                           IDialogContext context,
-                                           IDialogPart? currentPart,
-                                           IEnumerable<IProvidedAnswer> providedAnswers)
-    {
-        if (currentPart == null)
-        {
-            // get the first part
-            var firstPart = dialog.Parts.FirstOrDefault();
-            if (firstPart == null)
-            {
-                throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
-            }
-
-            return ProcessDecisions(firstPart, context, providedAnswers);
-        }
-
-        // first perform validation
-        var error = Validate(currentPart, providedAnswers);
-        if (error != null)
-        {
-            return error;
-        }
-
-        // if validation succeeds, then get the next part
-        var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
-        var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart!.Id);
-        var nextPartWithIndex = parts.Where(p => p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
-        if (nextPartWithIndex == null)
-        {
-            // there is no next part, so get the completed part
-            return ProcessDecisions(dialog.CompletedPart, context, providedAnswers);
-        }
-
-        return ProcessDecisions(nextPartWithIndex.Part, context, providedAnswers);
-    }
-
-    private static IDialogPart? Validate(IDialogPart part, IEnumerable<IProvidedAnswer> providedAnswers)
-        => part is IQuestionDialogPart questionDialogPart
-            ? questionDialogPart.Validate(providedAnswers)
-            : null;
 }
