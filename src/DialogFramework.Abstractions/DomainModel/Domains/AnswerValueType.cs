@@ -7,5 +7,5 @@ public enum AnswerValueType
     Number,
     Date,
     DateTime,
-    Yesno
+    YesNo
 }
