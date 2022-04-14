@@ -520,7 +520,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => errorDialogPart);
+        var decisionPart = new DecisionDialogPartFixture("Decision", _ => errorDialogPart);
         var dialog = new Dialog
         (
             "Test",
@@ -553,7 +553,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => abortedPart);
+        var decisionPart = new DecisionDialogPartFixture("Decision", _ => abortedPart);
         var dialog = new Dialog
         (
             "Test",
@@ -593,7 +593,7 @@ public class DialogServiceTests
         var decisionPart = new DecisionDialogPartFixture
         (
             "Decision",
-            (_, answers) => answers.Any(a => a.Answer.Id == answerTerrible.Id)
+            ctx => ((DialogContextFixture)ctx).Answers.Any(a => a.Question.Id == questionPart.Id && a.Answer.Id == answerTerrible.Id)
                 ? messagePart
                 : completedPart
         );

@@ -41,6 +41,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
+            context = context.ProvideAnswers(providedAnswers);
             var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, providedAnswers);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
@@ -53,7 +54,7 @@ public class DialogService : IDialogService
                 nextPart = navigationDialogPart.GetNextPart(context);
             }
 
-            return context.Continue(providedAnswers, nextPart, nextPart.State);
+            return context.Continue(nextPart, nextPart.State);
         }
         catch (Exception ex)
         {

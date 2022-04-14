@@ -8,9 +8,8 @@ internal static class DialogPartExtensions
             : null;
 
     internal static IDialogPart ProcessDecisions(this IDialogPart dialogPart,
-                                                 IDialogContext context,
-                                                 IEnumerable<IProvidedAnswer> providedAnswers)
+                                                 IDialogContext context)
     => dialogPart is IDecisionDialogPart decisionDialogPart
-        ? ProcessDecisions(decisionDialogPart.GetNextPart(context, providedAnswers), context, providedAnswers)
+        ? ProcessDecisions(decisionDialogPart.GetNextPart(context), context)
         : dialogPart;
 }

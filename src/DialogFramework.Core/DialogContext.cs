@@ -25,7 +25,8 @@ public abstract class DialogContext : IDialogContext
     public DialogState CurrentState { get; }
 
     public abstract IDialogContext Start(IDialogPart firstPart);
-    public abstract IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, DialogState state);
+    public abstract IDialogContext ProvideAnswers(IEnumerable<IProvidedAnswer> providedAnswers);
+    public abstract IDialogContext Continue(IDialogPart nextPart, DialogState state);
     public abstract IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     public abstract IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
 

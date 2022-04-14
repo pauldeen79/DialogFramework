@@ -9,7 +9,8 @@ public interface IDialogContext
     IDialogPartGroup? CurrentGroup { get; }
     DialogState CurrentState { get; }
     IDialogContext Start(IDialogPart firstPart);
-    IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, DialogState state);
+    IDialogContext ProvideAnswers(IEnumerable<IProvidedAnswer> providedAnswers);
+    IDialogContext Continue(IDialogPart nextPart, DialogState state);
     IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
 }

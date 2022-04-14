@@ -16,7 +16,7 @@ internal static class DialogExtensions
                 throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
             }
 
-            return firstPart.ProcessDecisions(context, providedAnswers);
+            return firstPart.ProcessDecisions(context);
         }
 
         // first perform validation
@@ -33,9 +33,9 @@ internal static class DialogExtensions
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return dialog.CompletedPart.ProcessDecisions(context, providedAnswers);
+            return dialog.CompletedPart.ProcessDecisions(context);
         }
 
-        return nextPartWithIndex.Part.ProcessDecisions(context, providedAnswers);
+        return nextPartWithIndex.Part.ProcessDecisions(context);
     }
 }

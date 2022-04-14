@@ -9,8 +9,8 @@ internal class DialogContextFixture : DialogContext
     }
 
     public DialogContextFixture(IDialog currentDialog,
-                               IDialogPart currentPart,
-                               DialogState state)
+                                IDialogPart currentPart,
+                                DialogState state)
         : base(currentDialog, currentPart, state)
     {
         Answers = new List<IProvidedAnswer>();
@@ -27,10 +27,10 @@ internal class DialogContextFixture : DialogContext
     }
 
     private DialogContextFixture(IDialog currentDialog,
-                                IDialogPart currentPart,
-                                DialogState state,
-                                Exception? exception,
-                                IEnumerable<IProvidedAnswer> answers)
+                                 IDialogPart currentPart,
+                                 DialogState state,
+                                 Exception? exception,
+                                 IEnumerable<IProvidedAnswer> answers)
         : base(currentDialog, currentPart, state)
     {
         Answers = new List<IProvidedAnswer>(answers);
@@ -44,8 +44,11 @@ internal class DialogContextFixture : DialogContext
     public override IDialogContext Abort(IAbortedDialogPart abortDialogPart)
         => new DialogContextFixture(CurrentDialog, abortDialogPart, DialogState.Aborted);
 
-    public override IDialogContext Continue(IEnumerable<IProvidedAnswer> providedAnswers, IDialogPart nextPart, DialogState state)
-        => new DialogContextFixture(CurrentDialog, nextPart, state, null, Answers.Concat(providedAnswers));
+    public override IDialogContext ProvideAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
+        => new DialogContextFixture(CurrentDialog, CurrentPart, CurrentState, null, Answers.Concat(providedAnswers));
+
+    public override IDialogContext Continue(IDialogPart nextPart, DialogState state)
+        => new DialogContextFixture(CurrentDialog, nextPart, state, null, Answers);
 
     public override IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
         => new DialogContextFixture(CurrentDialog, errorDialogPart, DialogState.ErrorOccured, ex);

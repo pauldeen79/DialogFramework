@@ -2,12 +2,12 @@
 
 internal record DecisionDialogPartFixture : DecisionDialogPart
 {
-    private readonly Func<IDialogContext, IEnumerable<IProvidedAnswer>, IDialogPart> _getNextPartDelegate;
+    private readonly Func<IDialogContext, IDialogPart> _getNextPartDelegate;
 
     public DecisionDialogPartFixture(string id,
-                                     Func<IDialogContext, IEnumerable<IProvidedAnswer>, IDialogPart> getNextPartDelegate)
+                                     Func<IDialogContext, IDialogPart> getNextPartDelegate)
         : base(id) => _getNextPartDelegate = getNextPartDelegate;
 
-    public override IDialogPart GetNextPart(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers)
-        => _getNextPartDelegate(context, providedAnswers);
+    public override IDialogPart GetNextPart(IDialogContext context)
+        => _getNextPartDelegate(context);
 }
