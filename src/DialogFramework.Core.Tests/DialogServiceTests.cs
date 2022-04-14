@@ -4,8 +4,6 @@ public class DialogServiceTests
 {
     [Theory]
     [InlineData(DialogState.Aborted)]
-    [InlineData(DialogState.Completed)]
-    [InlineData(DialogState.ErrorOccured)]
     [InlineData(DialogState.InProgress)]
     public void Abort_Returns_ErrorDialogPart_When_Already_Aborted(DialogState currentState)
     {
@@ -26,6 +24,48 @@ public class DialogServiceTests
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be("Dialog has already been aborted");
+    }
+
+    [Fact]
+    public void Abort_Returns_ErrorDialogPart_When_Already_Completed()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var context = new DialogContextFixture(dialog, dialog.CompletedPart, DialogState.Completed);
+        var factory = new DialogContextFactoryFixture(_ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Abort(context);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroup.Should().BeNull();
+        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        errorDialogPart.Exception.Should().NotBeNull();
+        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
+    }
+
+    [Fact]
+    public void Abort_Returns_ErrorDialogPart_When_Dialog_Is_In_ErrorState()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var context = new DialogContextFixture(dialog, dialog.ErrorPart, DialogState.ErrorOccured);
+        var factory = new DialogContextFactoryFixture(_ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Abort(context);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroup.Should().BeNull();
+        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        errorDialogPart.Exception.Should().NotBeNull();
+        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
     }
 
     [Fact]

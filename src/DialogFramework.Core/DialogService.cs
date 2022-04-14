@@ -11,6 +11,11 @@ public class DialogService : IDialogService
     {
         try
         {
+            if (context.CurrentState == DialogState.ErrorOccured || context.CurrentState == DialogState.Completed)
+            {
+                throw new InvalidOperationException("Dialog cannot be aborted");
+            }
+
             if (context.CurrentState == DialogState.Aborted)
             {
                 throw new InvalidOperationException("Dialog has already been aborted");
