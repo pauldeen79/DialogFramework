@@ -7,27 +7,16 @@ public class DialogService : IDialogService
     public DialogService(IDialogContextFactory contextFactory)
         => _contextFactory = contextFactory;
 
-    public IDialogContext Abort(IDialogContext context)
+    public IDialogContext Start(IDialog dialog)
     {
+        var context = _contextFactory.Create(dialog);
         try
         {
-            if (context.CurrentState == DialogState.ErrorOccured || context.CurrentState == DialogState.Completed)
-            {
-                throw new InvalidOperationException("Dialog cannot be aborted");
-            }
+            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IProvidedAnswer>());
 
-            if (context.CurrentState == DialogState.Aborted)
-            {
-                throw new InvalidOperationException("Dialog has already been aborted");
-            }
-
-            var abortDialogPart = context.CurrentDialog.AbortedPart;
-            if (context.CurrentPart.Id == abortDialogPart.Id)
-            {
-                throw new InvalidOperationException("Dialog has already been aborted");
-            }
-
-            return context.Abort(abortDialogPart);
+            return firstPart is IRedirectDialogPart redirectDialogPart
+                ? Start(redirectDialogPart.RedirectDialog)
+                : context.Start(firstPart);
         }
         catch (Exception ex)
         {
@@ -56,16 +45,27 @@ public class DialogService : IDialogService
         }
     }
 
-    public IDialogContext Start(IDialog dialog)
+    public IDialogContext Abort(IDialogContext context)
     {
-        var context = _contextFactory.Create(dialog);
         try
         {
-            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IProvidedAnswer>());
+            if (context.CurrentState == DialogState.ErrorOccured || context.CurrentState == DialogState.Completed)
+            {
+                throw new InvalidOperationException("Dialog cannot be aborted");
+            }
 
-            return firstPart is IRedirectDialogPart redirectDialogPart
-                ? Start(redirectDialogPart.RedirectDialog)
-                : context.Start(firstPart);
+            if (context.CurrentState == DialogState.Aborted)
+            {
+                throw new InvalidOperationException("Dialog has already been aborted");
+            }
+
+            var abortDialogPart = context.CurrentDialog.AbortedPart;
+            if (context.CurrentPart.Id == abortDialogPart.Id)
+            {
+                throw new InvalidOperationException("Dialog has already been aborted");
+            }
+
+            return context.Abort(abortDialogPart);
         }
         catch (Exception ex)
         {
