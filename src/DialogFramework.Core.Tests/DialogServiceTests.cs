@@ -262,6 +262,41 @@ public class DialogServiceTests
         result.CurrentGroup.Should().Be(welcomePart.Group);
     }
 
+    [Fact]
+    public void Continue_Uses_Result_From_NavigationPart()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Thank you", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
+        var navigatedPart = new MessageDialogPart("Navigated", "Navigated", "This shows that navigation works", group2);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart);
+        var dialog = new Dialog
+        (
+            "Test",
+            "1.0.0",
+            new IDialogPart[] { welcomePart, navigationPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            new[] { group1 }
+        );
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog));
+        var sut = new DialogService(factory);
+        var context = sut.Start(dialog); // this will trigger the message
+
+        // Act
+        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the navigation
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
+        result.CurrentPart.Id.Should().Be(navigatedPart.Id);
+        result.CurrentGroup.Should().Be(navigatedPart.Group);
+    }
+
     [Theory]
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.Completed)]
@@ -388,6 +423,39 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentDialog.Id.Should().Be(dialog2.Id);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
+        result.CurrentGroup.Should().Be(welcomePart.Group);
+    }
+
+    [Fact]
+    public void Start_Uses_Result_From_NavigationPart()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart);
+        var dialog = new Dialog
+        (
+            "Test",
+            "1.0.0",
+            new[] { navigationPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            Enumerable.Empty<IDialogPartGroup>()
+        );
+        var factory = new DialogContextFactoryFixture(_ => new DialogContextFixture(dialog));
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Start(dialog);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentPart.Id.Should().Be(welcomePart.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
     }

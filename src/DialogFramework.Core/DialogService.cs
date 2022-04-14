@@ -14,9 +14,17 @@ public class DialogService : IDialogService
         {
             var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IProvidedAnswer>());
 
-            return firstPart is IRedirectDialogPart redirectDialogPart
-                ? Start(redirectDialogPart.RedirectDialog)
-                : context.Start(firstPart);
+            if (firstPart is IRedirectDialogPart redirectDialogPart)
+            {
+                return Start(redirectDialogPart.RedirectDialog);
+            }
+            
+            if (firstPart is INavigationDialogPart navigationDialogPart)
+            {
+                firstPart = navigationDialogPart.GetNextPart(context);
+            }
+
+            return context.Start(firstPart);
         }
         catch (Exception ex)
         {
@@ -35,9 +43,17 @@ public class DialogService : IDialogService
 
             var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, providedAnswers);
 
-            return nextPart is IRedirectDialogPart redirectDialogPart
-                ? Start(redirectDialogPart.RedirectDialog)
-                : context.Continue(providedAnswers, nextPart, nextPart.State);
+            if (nextPart is IRedirectDialogPart redirectDialogPart)
+            {
+                return Start(redirectDialogPart.RedirectDialog);
+            }
+
+            if (nextPart is INavigationDialogPart navigationDialogPart)
+            {
+                nextPart = navigationDialogPart.GetNextPart(context);
+            }
+
+            return context.Continue(providedAnswers, nextPart, nextPart.State);
         }
         catch (Exception ex)
         {

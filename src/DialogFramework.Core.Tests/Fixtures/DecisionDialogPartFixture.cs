@@ -6,10 +6,7 @@ internal record DecisionDialogPartFixture : DecisionDialogPart
 
     public DecisionDialogPartFixture(string id,
                                      Func<IDialogContext, IEnumerable<IProvidedAnswer>, IDialogPart> getNextPartDelegate)
-        : base(id)
-    {
-        _getNextPartDelegate = getNextPartDelegate;
-    }
+        : base(id) => _getNextPartDelegate = getNextPartDelegate;
 
     public override IDialogPart GetNextPart(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers)
         => _getNextPartDelegate(context, providedAnswers);
