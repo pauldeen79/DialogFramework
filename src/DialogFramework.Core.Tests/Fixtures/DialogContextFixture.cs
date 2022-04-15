@@ -48,7 +48,7 @@ internal class DialogContextFixture : DialogContext
         => new DialogContextFixture(CurrentDialog, CurrentPart, CurrentState, null, ReplaceAnswers(providedAnswers));
 
     public override IDialogContext Continue(IDialogPart nextPart, DialogState state)
-        => new DialogContextFixture(CurrentDialog, nextPart, state, null, Answers /*FilterAnswersUntilPart(nextPart)*/);
+        => new DialogContextFixture(CurrentDialog, nextPart, state, null, Answers);
 
     public override IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
         => new DialogContextFixture(CurrentDialog, errorDialogPart, DialogState.ErrorOccured, ex);
