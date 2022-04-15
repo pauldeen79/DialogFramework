@@ -6,6 +6,7 @@ global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
+global using DialogFramework.Abstractions.DomainModel.ProvidedAnswerValues;
 global using DialogFramework.Core.DomainModel;
 global using DialogFramework.Core.DomainModel.DialogParts;
 global using DialogFramework.Core.Tests.Fixtures;

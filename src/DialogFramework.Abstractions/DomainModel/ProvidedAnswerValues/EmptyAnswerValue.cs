@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions.DomainModel.ProvidedAnswerValues;
 
-public class EmptyAnswer : IProvidedAnswerValue
+public class EmptyAnswerValue : IProvidedAnswerValue
 {
     public object? Value => null;
 }

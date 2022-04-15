@@ -8,7 +8,7 @@ public class DialogServiceTests
     public void Abort_Returns_ErrorDialogPart_When_Already_Aborted(DialogState currentState)
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, abortedPart, currentState);
         var factory = new DialogContextFactory();
@@ -30,7 +30,7 @@ public class DialogServiceTests
     public void Abort_Returns_ErrorDialogPart_When_Already_Completed()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var context = new DialogContextFixture(dialog, dialog.CompletedPart, DialogState.Completed);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
@@ -51,7 +51,7 @@ public class DialogServiceTests
     public void Abort_Returns_ErrorDialogPart_When_Dialog_Is_In_ErrorState()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var context = new DialogContextFixture(dialog, dialog.ErrorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
@@ -72,7 +72,7 @@ public class DialogServiceTests
     public void Abort_Returns_AbortDialogPart_Dialog_When_Dialog_Is_InProgress()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
@@ -97,7 +97,7 @@ public class DialogServiceTests
     public void CanAbort_Returns_Correct_Result_Based_On_Current_State(DialogState currentState, bool expectedResult)
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
@@ -114,7 +114,7 @@ public class DialogServiceTests
     public void CanAbort_Returns_False_When_CurrentPart_Is_AbortedPart()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, abortedPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
@@ -134,7 +134,7 @@ public class DialogServiceTests
     public void Continue_Returns_ErrorDialogPart_On_Invalid_State(DialogState currentState)
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         IDialogPart currentPart = currentState switch
         {
             DialogState.Aborted => dialog.AbortedPart,
@@ -162,7 +162,7 @@ public class DialogServiceTests
     public void Continue_Returns_Next_DialogPart_When_Current_State_Is_Question_And_Answer_Is_Valid()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(dialog, currentPart, currentState);
@@ -182,7 +182,7 @@ public class DialogServiceTests
     public void Continue_Returns_Same_DialogPart_When_Current_State_Is_Question_And_Answer_Is_Not_Valid()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(dialog, currentPart, currentState);
@@ -207,7 +207,7 @@ public class DialogServiceTests
     public void Continue_Returns_Same_DialogPart_On_Answers_From_Wrong_Question()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(dialog, currentPart, currentState);
@@ -234,7 +234,7 @@ public class DialogServiceTests
     public void Continue_Uses_Result_From_DecisionPart_When_DecisionPart_Returns_No_Error()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog, currentPart, currentState));
@@ -425,7 +425,7 @@ public class DialogServiceTests
     public void CanContinue_Returns_Correct_Result_Based_On_Current_State(DialogState currentState, bool expectedResult)
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
@@ -444,7 +444,7 @@ public class DialogServiceTests
         // Arrange
         var factory = new DialogContextFactoryFixture(_ => false, _ => throw new InvalidOperationException("Not intended to get to this point"));
         var sut = new DialogService(factory);
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var act = new Action(() => sut.Start(dialog));
 
         // Act
@@ -535,7 +535,7 @@ public class DialogServiceTests
     public void Start_Throws_When_Context_Could_Not_Be_Created()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => throw new InvalidOperationException("Kaboom"));
         var sut = new DialogService(factory);
         var start = new Action(() => sut.Start(dialog));
@@ -548,7 +548,7 @@ public class DialogServiceTests
     public void Start_Returns_ErrorDialogPart_When_First_DialogPart_Could_Not_Be_Determined()
     {
         // Arrange
-        var dialog = CreateDialog(false);
+        var dialog = DialogFixture.CreateDialog(false);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -567,7 +567,7 @@ public class DialogServiceTests
     public void Start_Returns_First_DialogPart_When_It_Could_Be_Determined()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -650,7 +650,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_False_When_Parts_Does_Not_Contain_Current_Part()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var completedPart = dialog.CompletedPart;
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
@@ -668,7 +668,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_False_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var errorPart = dialog.ErrorPart;
         var completedPart = dialog.CompletedPart;
         var context = new DialogContextFixture(dialog, errorPart, DialogState.ErrorOccured);
@@ -686,7 +686,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_False_When_Requested_Part_Is_After_Current_Part()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
@@ -704,7 +704,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Current_Part()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
@@ -721,7 +721,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Before_Current_Part()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
@@ -739,7 +739,7 @@ public class DialogServiceTests
     public void NavigateTo_Throws_When_CanNavigateTo_Is_False()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
@@ -755,7 +755,7 @@ public class DialogServiceTests
     public void NavigateTo_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
     {
         // Arrange
-        var dialog = CreateDialog();
+        var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
@@ -770,43 +770,5 @@ public class DialogServiceTests
         result.CurrentGroup.Should().Be(messagePart.Group);
         result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
         result.CurrentPart.Id.Should().Be(messagePart.Id);
-    }
-
-    private static Dialog CreateDialog(bool addParts = true)
-    {
-        var group1 = new DialogPartGroup("Part1", "Give information", 1);
-        var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
-        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
-        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
-        var answerGreat = new QuestionDialogPartAnswerFixture("Great", "I feel great, thank you!", AnswerValueType.None);
-        var answerOkay = new QuestionDialogPartAnswerFixture("Okay", "I feel kind of okay", AnswerValueType.None);
-        var answerTerrible = new QuestionDialogPartAnswerFixture("Terrible", "I feel terrible, don't want to talk about it", AnswerValueType.None);
-        var questionPart = new QuestionDialogPartFixture("Question1", "How do you feel", "Please tell us how you feel", group1, new[] { answerGreat, answerOkay, answerTerrible });
-        var messagePart = new MessageDialogPart("Message", "Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
-        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture
-        (
-            "Decision",
-            ctx => ((DialogContext)ctx).Answers.Any(a => a.Question.Id == questionPart.Id && a.Answer.Id == answerTerrible.Id)
-                ? messagePart
-                : completedPart
-        );
-        var parts = new IDialogPart[]
-        {
-            welcomePart,
-            questionPart,
-            decisionPart,
-            messagePart
-        }.Where(_ => addParts);
-        return new Dialog(
-            "Test",
-            "1.0.0",
-            parts,
-            errorDialogPart,
-            abortedPart,
-            completedPart,
-            new[] { group1, group2 }
-            );
     }
 }

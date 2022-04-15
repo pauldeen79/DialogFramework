@@ -4,7 +4,7 @@ public record ProvidedAnswer : IProvidedAnswer
 {
     public ProvidedAnswer(IQuestionDialogPart question,
                           IQuestionDialogPartAnswer answer)
-        : this(question, answer, new EmptyAnswer())
+        : this(question, answer, new EmptyAnswerValue())
     {
     }
 
