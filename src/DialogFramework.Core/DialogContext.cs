@@ -80,19 +80,10 @@ public class DialogContext : IDialogContext
 
         // possibly need to merge provided answers, in case the user navigated back and re-entered the answers
         var workingCopy = new List<IDialogPartResult>(Answers);
-        foreach (var dialogPartResult in dialogPartResults)
+        foreach (var dialogPartGroupedResults in dialogPartResults.GroupBy(x => x.DialogPart.Id))
         {
-            var index = workingCopy.FindIndex(x => x.DialogPart.Id == dialogPartResult.DialogPart.Id);
-            if (index > -1)
-            {
-                // replace existing answer
-                workingCopy[index] = dialogPartResult;
-            }
-            else
-            {
-                // add new answer
-                workingCopy.Add(dialogPartResult);
-            }
+            workingCopy.RemoveAll(x => x.DialogPart.Id == dialogPartGroupedResults.Key);
+            workingCopy.AddRange(dialogPartGroupedResults);
         }
 
         return workingCopy;
