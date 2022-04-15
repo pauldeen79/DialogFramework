@@ -35,7 +35,7 @@ public class DialogContext : IDialogContext
     public IDialogPart CurrentPart { get; }
     public IDialogPartGroup? CurrentGroup { get; }
     public DialogState CurrentState { get; }
-    public List<IProvidedAnswer> Answers { get; }
+    protected List<IProvidedAnswer> Answers { get; }
     public Exception? Exception { get; }
 
     public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
