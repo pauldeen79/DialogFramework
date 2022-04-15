@@ -1,10 +1,10 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public abstract record QuestionDialogPartAnswer : IQuestionDialogPartAnswer
+public record QuestionDialogPartResult : IQuestionDialogPartResult
 {
-    protected QuestionDialogPartAnswer(string id,
-                                       string title,
-                                       AnswerValueType valueType)
+    public QuestionDialogPartResult(string id,
+                                    string title,
+                                    AnswerValueType valueType)
     {
         Id = id;
         Title = title;

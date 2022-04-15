@@ -5,7 +5,7 @@ internal static class DialogExtensions
     internal static IDialogPart GetNextPart(this IDialog dialog,
                                             IDialogContext context,
                                             IDialogPart? currentPart,
-                                            IEnumerable<IProvidedAnswer> providedAnswers)
+                                            IEnumerable<IDialogPartResult> providedAnswers)
     {
         if (currentPart == null)
         {

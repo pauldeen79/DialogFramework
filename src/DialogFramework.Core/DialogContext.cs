@@ -11,7 +11,7 @@ public class DialogContext : IDialogContext
                             IDialogPart currentPart,
                             DialogState currentState)
     {
-        Answers = new List<IProvidedAnswer>();
+        Answers = new List<IDialogPartResult>();
         CurrentDialog = currentDialog;
         CurrentPart = currentPart;
         CurrentState = currentState;
@@ -24,7 +24,7 @@ public class DialogContext : IDialogContext
                             IDialogPart currentPart,
                             DialogState currentState,
                             Exception? exception,
-                            IEnumerable<IProvidedAnswer> answers)
+                            IEnumerable<IDialogPartResult> answers)
         : this(currentDialog, currentPart, currentState)
     {
         Exception = exception;
@@ -35,14 +35,14 @@ public class DialogContext : IDialogContext
     public IDialogPart CurrentPart { get; }
     public IDialogPartGroup? CurrentGroup { get; }
     public DialogState CurrentState { get; }
-    protected List<IProvidedAnswer> Answers { get; }
+    protected List<IDialogPartResult> Answers { get; }
     public Exception? Exception { get; }
 
     public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
         => new DialogContext(CurrentDialog, abortDialogPart, DialogState.Aborted);
 
-    public IDialogContext ProvideAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
-        => new DialogContext(CurrentDialog, CurrentPart, CurrentState, null, ReplaceAnswers(providedAnswers));
+    public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults)
+        => new DialogContext(CurrentDialog, CurrentPart, CurrentState, null, ReplaceAnswers(dialogPartResults));
 
     public IDialogContext Continue(IDialogPart nextPart, DialogState state)
         => new DialogContext(CurrentDialog, nextPart, state, null, Answers);
@@ -59,10 +59,10 @@ public class DialogContext : IDialogContext
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
         => new DialogContext(CurrentDialog, navigateToPart, CurrentState, null, Answers);
 
-    public IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart)
+    public IDialogPartResult? GetDialogPartResultByPart(IDialogPart dialogPart)
         => Answers.Find(x => x.DialogPart.Id == dialogPart.Id);
 
-    public IDialogContext ResetProvidedAnswerByPart(IDialogPart dialogPart)
+    public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
     {
         var answerIndex = Answers.FindIndex(x => x.DialogPart.Id == dialogPart.Id);
         return answerIndex == -1
@@ -70,28 +70,28 @@ public class DialogContext : IDialogContext
             : new DialogContext(CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Take(answerIndex));
     }
 
-    protected IEnumerable<IProvidedAnswer> ReplaceAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
+    protected IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        if (!providedAnswers.Any())
+        if (!dialogPartResults.Any())
         {
             // no current provided answers, so no need to merge
-            return Answers.Concat(providedAnswers);
+            return Answers.Concat(dialogPartResults);
         }
 
         // possibly need to merge provided answers, in case the user navigated back and re-entered the answers
-        var workingCopy = new List<IProvidedAnswer>(Answers);
-        foreach (var providedAnswer in providedAnswers)
+        var workingCopy = new List<IDialogPartResult>(Answers);
+        foreach (var dialogPartResult in dialogPartResults)
         {
-            var index = workingCopy.FindIndex(x => x.DialogPart.Id == providedAnswer.DialogPart.Id);
+            var index = workingCopy.FindIndex(x => x.DialogPart.Id == dialogPartResult.DialogPart.Id);
             if (index > -1)
             {
                 // replace existing answer
-                workingCopy[index] = providedAnswer;
+                workingCopy[index] = dialogPartResult;
             }
             else
             {
                 // add new answer
-                workingCopy.Add(providedAnswer);
+                workingCopy.Add(dialogPartResult);
             }
         }
 

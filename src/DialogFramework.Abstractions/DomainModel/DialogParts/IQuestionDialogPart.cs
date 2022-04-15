@@ -3,6 +3,7 @@
 public interface IQuestionDialogPart : IGroupedDialogPart
 {
     string Message { get; }
-    ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
-    IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers);
+    ValueCollection<IQuestionDialogPartResult> Results { get; }
+    IDialogPart? Validate(IEnumerable<IDialogPartResult> dialogPartResults);
+    ValueCollection<string> ErrorMessages { get; }
 }

@@ -147,7 +147,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>());
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
@@ -170,7 +170,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(x => x.Id == "Great")) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, currentPart.Results.Single(x => x.Id == "Great")) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -188,17 +188,17 @@ public class DialogServiceTests
         var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IQuestionDialogPartAnswer>();
+        var answerMock = new Mock<IQuestionDialogPartResult>();
         answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, answerMock.Object) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, answerMock.Object) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentGroup.Should().Be(currentPart.Group);
-        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
-        var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
+        result.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
+        var questionDialogPart = (IQuestionDialogPart)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
         questionDialogPart.ErrorMessages[0].Should().Be("Unknown answer: [Unknown answer]");
     }
@@ -213,19 +213,19 @@ public class DialogServiceTests
         var context = new DialogContextFixture(dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IQuestionDialogPartAnswer>();
+        var answerMock = new Mock<IQuestionDialogPartResult>();
         answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
-        wrongQuestionMock.SetupGet(x => x.Answers).Returns(new ValueCollection<IQuestionDialogPartAnswer>());
+        wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IQuestionDialogPartResult>());
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(wrongQuestionMock.Object, answerMock.Object) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(wrongQuestionMock.Object, answerMock.Object) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentGroup.Should().Be(currentPart.Group);
-        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
-        var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
+        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
+        var questionDialogPart = (QuestionDialogPart)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
         questionDialogPart.ErrorMessages[0].Should().Be("Provided answer from wrong question");
     }
@@ -240,10 +240,10 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog, currentPart, currentState));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome message
-        context = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // skip the welcome message
+        context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
 
         // Act
-        var result = sut.Continue(context, new[] { new ProvidedAnswer(currentPart, currentPart.Answers.Single(a => a.Id == "Terrible")) }); // answer the question with 'Terrible', this will trigger a second message
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, currentPart.Results.Single(a => a.Id == "Terrible")) }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -290,7 +290,7 @@ public class DialogServiceTests
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the redirect to dialog 2
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the redirect to dialog 2
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -326,7 +326,7 @@ public class DialogServiceTests
         var context = sut.Start(dialog); // this will trigger the message
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the navigation
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the navigation
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -373,7 +373,7 @@ public class DialogServiceTests
         var context = new DialogContextFixture(dialog1, dialog1.Parts.First(), currentState);
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the redirect to dialog 2
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the redirect to dialog 2
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
@@ -408,7 +408,7 @@ public class DialogServiceTests
         var context = sut.Start(dialog); // this will trigger the message
 
         // Act
-        var result = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // this will trigger the completion
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the completion
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -725,7 +725,7 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
-        context = context.ProvideAnswers(new[] { new ProvidedAnswer(messagePart) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
@@ -761,7 +761,7 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
-        context = context.ProvideAnswers(new[] { new ProvidedAnswer(messagePart) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);

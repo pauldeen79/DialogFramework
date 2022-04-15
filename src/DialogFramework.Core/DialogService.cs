@@ -12,7 +12,7 @@ public class DialogService : IDialogService
         var context = _contextFactory.Create(dialog);
         try
         {
-            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IProvidedAnswer>());
+            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IDialogPartResult>());
 
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
@@ -35,7 +35,7 @@ public class DialogService : IDialogService
     public bool CanContinue(IDialogContext context)
         => context.CurrentState == DialogState.InProgress;
 
-    public IDialogContext Continue(IDialogContext context, IEnumerable<IProvidedAnswer> providedAnswers)
+    public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
         try
         {
@@ -44,8 +44,8 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            context = context.ProvideAnswers(providedAnswers);
-            var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, providedAnswers);
+            context = context.AddDialogPartResults(dialogPartResults);
+            var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {

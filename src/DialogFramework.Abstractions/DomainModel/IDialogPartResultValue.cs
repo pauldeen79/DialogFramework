@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions.DomainModel;
 
-public interface IProvidedAnswerValue
+public interface IDialogPartResultValue
 {
     object? Value { get; }
 }

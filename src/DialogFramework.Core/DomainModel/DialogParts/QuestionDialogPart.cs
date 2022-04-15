@@ -1,52 +1,52 @@
 ﻿namespace DialogFramework.Core.DomainModel.DialogParts;
 
-public abstract record QuestionDialogPart : IQuestionDialogPart
+public record QuestionDialogPart : IQuestionDialogPart
 {
-    protected QuestionDialogPart(string id,
-                                 string heading,
-                                 string message,
-                                 IDialogPartGroup group,
-                                 IEnumerable<IQuestionDialogPartAnswer> answers)
+    public QuestionDialogPart(string id,
+                              string heading,
+                              string message,
+                              IDialogPartGroup group,
+                              IEnumerable<IQuestionDialogPartResult> results)
     {
         Id = id;
         Heading = heading;
         Message = message;
         Group = group;
-        Answers = new ValueCollection<IQuestionDialogPartAnswer>(answers);
+        Results = new ValueCollection<IQuestionDialogPartResult>(results);
         ErrorMessages = new ValueCollection<string>();
     }
 
     public string Message { get; }
     public string Heading { get; }
     public IDialogPartGroup Group { get; }
-    public ValueCollection<IQuestionDialogPartAnswer> Answers { get; }
+    public ValueCollection<IQuestionDialogPartResult> Results { get; }
     public string Id { get; }
-    public ValueCollection<string> ErrorMessages { get; protected set; }
+    public ValueCollection<string> ErrorMessages { get; }
     public DialogState State => DialogState.InProgress;
-    public IDialogPart? Validate(IEnumerable<IProvidedAnswer> providedAnswers)
+    public IDialogPart? Validate(IEnumerable<IDialogPartResult> dialogPartResults)
     {
         ErrorMessages.Clear();
-        HandleValidate(providedAnswers);
+        HandleValidate(dialogPartResults);
 
         return ErrorMessages.Count > 0
             ? this
             : null;
     }
 
-    protected virtual void HandleValidate(IEnumerable<IProvidedAnswer> providedAnswers)
+    protected virtual void HandleValidate(IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        foreach (var providedAnswer in providedAnswers)
+        foreach (var dialogPartResult in dialogPartResults)
         {
-            if (providedAnswer.DialogPart.Id != Id)
+            if (dialogPartResult.DialogPart.Id != Id)
             {
                 ErrorMessages.Add("Provided answer from wrong question");
                 continue;
             }
 
-            var validationContext = new ValidationContext(providedAnswer);
-            ErrorMessages.AddRange(providedAnswer.Validate(validationContext)
-                                                 .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
-                                                 .Select(x => x.ErrorMessage));
+            var validationContext = new ValidationContext(dialogPartResult);
+            ErrorMessages.AddRange(dialogPartResult.Validate(validationContext)
+                                                   .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
+                                                   .Select(x => x.ErrorMessage));
         }
     }
 }

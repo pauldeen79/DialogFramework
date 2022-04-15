@@ -2,7 +2,7 @@
 
 internal static class DialogPartExtensions
 {
-    internal static IDialogPart? Validate(this IDialogPart part, IEnumerable<IProvidedAnswer> providedAnswers)
+    internal static IDialogPart? Validate(this IDialogPart part, IEnumerable<IDialogPartResult> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart
             ? questionDialogPart.Validate(providedAnswers)
             : null;
