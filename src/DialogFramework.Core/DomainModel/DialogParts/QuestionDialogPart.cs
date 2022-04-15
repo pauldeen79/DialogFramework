@@ -37,7 +37,7 @@ public abstract record QuestionDialogPart : IQuestionDialogPart
     {
         foreach (var providedAnswer in providedAnswers)
         {
-            if (providedAnswer.Question.Id != Id)
+            if (providedAnswer.DialogPart.Id != Id)
             {
                 ErrorMessages.Add("Provided answer from wrong question");
                 continue;

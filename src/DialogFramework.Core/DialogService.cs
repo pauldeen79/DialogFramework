@@ -98,14 +98,7 @@ public class DialogService : IDialogService
     }
 
     public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
-    {
-        var partsWithIndex = context.CurrentDialog.Parts.Select((part, index) => new { Part = part, Index = index }).ToArray();
-        var requestedPartWithIndex = partsWithIndex.FirstOrDefault(x => x.Part.Id == navigateToPart.Id);
-        var currentPartWithIndex = partsWithIndex.FirstOrDefault(x => x.Part.Id == context.CurrentPart.Id);
-        return requestedPartWithIndex != null
-            && currentPartWithIndex != null
-            && requestedPartWithIndex.Index <= currentPartWithIndex.Index;
-    }
+        => context.CanNavigateTo(navigateToPart);
 
     public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
     {

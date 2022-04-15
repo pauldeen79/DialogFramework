@@ -6,6 +6,7 @@ global using CrossCutting.Common;
 global using CrossCutting.Common.Extensions;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
+global using DialogFramework.Abstractions.DomainModel.DialogPartAnswers;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
 global using DialogFramework.Abstractions.DomainModel.ProvidedAnswerValues;

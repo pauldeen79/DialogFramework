@@ -53,18 +53,21 @@ public class DialogContext : IDialogContext
     public IDialogContext Start(IDialogPart firstPart)
         => new DialogContext(CurrentDialog, firstPart, firstPart.State);
 
+    public bool CanNavigateTo(IDialogPart navigateToPart)
+        => CurrentPart.Id == navigateToPart.Id || Answers.Any(x => x.DialogPart.Id == navigateToPart.Id);
+
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
         => new DialogContext(CurrentDialog, navigateToPart, CurrentState, null, Answers);
 
     public IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart)
-        => Answers.Find(x => x.Question.Id == dialogPart.Id);
+        => Answers.Find(x => x.DialogPart.Id == dialogPart.Id);
 
     public IDialogContext ResetProvidedAnswerByPart(IDialogPart dialogPart)
     {
-        var answer = Answers.Find(x => x.Question.Id == dialogPart.Id);
-        return answer == null
+        var answerIndex = Answers.FindIndex(x => x.DialogPart.Id == dialogPart.Id);
+        return answerIndex == -1
             ? this
-            : new DialogContext(CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Where(x => x != answer));
+            : new DialogContext(CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Take(answerIndex));
     }
 
     protected IEnumerable<IProvidedAnswer> ReplaceAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
@@ -79,7 +82,7 @@ public class DialogContext : IDialogContext
         var workingCopy = new List<IProvidedAnswer>(Answers);
         foreach (var providedAnswer in providedAnswers)
         {
-            var index = workingCopy.FindIndex(x => x.Question.Id == providedAnswer.Question.Id);
+            var index = workingCopy.FindIndex(x => x.DialogPart.Id == providedAnswer.DialogPart.Id);
             if (index > -1)
             {
                 // replace existing answer

@@ -2,7 +2,7 @@
 
 public interface IProvidedAnswer : IValidatableObject
 {
-    IQuestionDialogPart Question { get; }
+    IDialogPart DialogPart { get; }
     IQuestionDialogPartAnswer Answer { get; }
     IProvidedAnswerValue AnswerValue { get; }
 }

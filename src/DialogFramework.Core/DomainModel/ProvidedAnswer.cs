@@ -2,28 +2,44 @@
 
 public record ProvidedAnswer : IProvidedAnswer
 {
-    public ProvidedAnswer(IQuestionDialogPart question,
+    /// <summary>
+    /// Constructs a provided answer from a non-question dialog part.
+    /// </summary>
+    public ProvidedAnswer(IDialogPart dialogPart)
+        : this(dialogPart, new NonQuestionDialogPartAnswer(), new EmptyAnswerValue())
+    {
+        
+    }
+
+    /// <summary>
+    /// Constructs a provided answer from a question dialog part, without a value.
+    /// </summary>
+    public ProvidedAnswer(IDialogPart dialogPart,
                           IQuestionDialogPartAnswer answer)
-        : this(question, answer, new EmptyAnswerValue())
+        : this(dialogPart, answer, new EmptyAnswerValue())
     {
     }
 
-    public ProvidedAnswer(IQuestionDialogPart question,
+    /// <summary>
+    /// Constructs a provided answer from a question dialog part, with a value.
+    /// </summary>
+    public ProvidedAnswer(IDialogPart dialogPart,
                           IQuestionDialogPartAnswer answer,
                           IProvidedAnswerValue answerValue)
     {
-        Question = question;
+        DialogPart = dialogPart;
         Answer = answer;
         AnswerValue = answerValue;
     }
 
-    public IQuestionDialogPart Question { get; }
+    public IDialogPart DialogPart { get; }
     public IQuestionDialogPartAnswer Answer { get; }
     public IProvidedAnswerValue AnswerValue { get; }
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (!Question.Answers.Any(a => a.Id == Answer.Id))
+        var questionDialogPart = DialogPart as IQuestionDialogPart;
+        if (questionDialogPart != null && !questionDialogPart.Answers.Any(a => a.Id == Answer.Id))
         {
             yield return new ValidationResult($"Unknown answer: [{Answer.Id}]");
         }
