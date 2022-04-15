@@ -30,6 +30,7 @@ public abstract class DialogContext : IDialogContext
     public abstract IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     public abstract IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
     public abstract IDialogContext NavigateTo(IDialogPart navigateToPart);
+    public abstract IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart);
 
     private sealed class EmptyDialogPart : IDialogPart
     {

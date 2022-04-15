@@ -62,6 +62,9 @@ internal class DialogContextFixture : DialogContext
     public override IDialogContext NavigateTo(IDialogPart navigateToPart)
         => new DialogContextFixture(CurrentDialog, navigateToPart, CurrentState, null, Answers);
 
+    public override IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart)
+        => Answers.Find(x => x.Question.Id == dialogPart.Id);
+
     private IEnumerable<IProvidedAnswer> ReplaceAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
     {
         if (!providedAnswers.Any())
@@ -88,4 +91,5 @@ internal class DialogContextFixture : DialogContext
         }
         return workingCopy;
     }
+
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DialogFramework.Abstractions;
+﻿namespace DialogFramework.Abstractions;
 
 public interface IDialogContext
 {
@@ -14,4 +12,5 @@ public interface IDialogContext
     IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
     IDialogContext NavigateTo(IDialogPart navigateToPart);
+    IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart);
 }

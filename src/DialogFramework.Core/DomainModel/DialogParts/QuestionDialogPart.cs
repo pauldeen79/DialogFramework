@@ -1,6 +1,4 @@
-﻿using CrossCutting.Common.Extensions;
-
-namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿namespace DialogFramework.Core.DomainModel.DialogParts;
 
 public abstract record QuestionDialogPart : IQuestionDialogPart
 {
