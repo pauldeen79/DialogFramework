@@ -7,16 +7,8 @@ public class DialogService : IDialogService
     public DialogService(IDialogContextFactory contextFactory)
         => _contextFactory = contextFactory;
 
-    public bool CanStart(IDialog dialog)
-        => _contextFactory.CanCreate(dialog);
-
     public IDialogContext Start(IDialog dialog)
     {
-        if (!_contextFactory.CanCreate(dialog))
-        {
-            throw new InvalidOperationException("Can not start this type of dialog");
-        }
-
         var context = _contextFactory.Create(dialog);
         try
         {
