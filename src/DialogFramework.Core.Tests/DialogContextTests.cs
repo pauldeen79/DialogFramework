@@ -33,4 +33,25 @@ public class DialogContextTests
         // Assert
         result.Should().NotBeNull();
     }
+
+    [Fact]
+    public void ProvideAnswers_Overwrites_Answers_When_Already_Filled_In()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        IDialogContext context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+
+        // Act 1
+        context = context.ProvideAnswers(new[] { new ProvidedAnswer(questionPart, questionPart.Answers.First(), new EmptyAnswerValue()) });
+        // Assert 1
+        context.GetProvidedAnswerByPart(questionPart).Should().NotBeNull();
+        context.GetProvidedAnswerByPart(questionPart)!.Answer.Id.Should().Be(questionPart.Answers.First().Id);
+
+        // Act 1
+        context = context.ProvideAnswers(new[] { new ProvidedAnswer(questionPart, questionPart.Answers.Last(), new EmptyAnswerValue()) });
+        // Assert 1
+        context.GetProvidedAnswerByPart(questionPart).Should().NotBeNull();
+        context.GetProvidedAnswerByPart(questionPart)!.Answer.Id.Should().Be(questionPart.Answers.Last().Id);
+    }
 }
