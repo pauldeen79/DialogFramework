@@ -59,6 +59,14 @@ public class DialogContext : IDialogContext
     public IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart)
         => Answers.Find(x => x.Question.Id == dialogPart.Id);
 
+    public IDialogContext ResetProvidedAnswerByPart(IDialogPart dialogPart)
+    {
+        var answer = Answers.Find(x => x.Question.Id == dialogPart.Id);
+        return answer == null
+            ? this
+            : new DialogContext(CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Where(x => x != answer));
+    }
+
     protected IEnumerable<IProvidedAnswer> ReplaceAnswers(IEnumerable<IProvidedAnswer> providedAnswers)
     {
         if (!providedAnswers.Any())

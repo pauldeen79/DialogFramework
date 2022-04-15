@@ -13,4 +13,5 @@ public interface IDialogContext
     IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
     IDialogContext NavigateTo(IDialogPart navigateToPart);
     IProvidedAnswer? GetProvidedAnswerByPart(IDialogPart dialogPart);
+    IDialogContext ResetProvidedAnswerByPart(IDialogPart dialogPart);
 }
