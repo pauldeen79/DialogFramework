@@ -1,0 +1,13 @@
+graph TB
+A(Welcome) --> B(How old are you?)
+B --> C{Age}
+C -->|<= 10| D(Too young)
+C -->|> 10| E(Old enough)
+E --> F(What type of sports do you do?)
+F --> G{Type of sports}
+G -->|None| H(Advice to do sports)
+G -->|<> None| I(Healthy)
+H --> J
+I --> J
+D --> J(Provide e-mail address)
+J --> K(Thank you)
