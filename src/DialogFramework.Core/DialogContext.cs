@@ -29,6 +29,7 @@ public abstract class DialogContext : IDialogContext
     public abstract IDialogContext Continue(IDialogPart nextPart, DialogState state);
     public abstract IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     public abstract IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
+    public abstract IDialogContext NavigateTo(IDialogPart navigateToPart);
 
     private sealed class EmptyDialogPart : IDialogPart
     {

@@ -13,4 +13,5 @@ public interface IDialogContext
     IDialogContext Continue(IDialogPart nextPart, DialogState state);
     IDialogContext Abort(IAbortedDialogPart abortDialogPart);
     IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
+    IDialogContext NavigateTo(IDialogPart navigateToPart);
 }

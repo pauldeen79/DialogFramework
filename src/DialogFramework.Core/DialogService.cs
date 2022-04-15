@@ -104,4 +104,24 @@ public class DialogService : IDialogService
             return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
         }
     }
+
+    public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
+    {
+        var partsWithIndex = context.CurrentDialog.Parts.Select((part, index) => new { Part = part, Index = index }).ToArray();
+        var requestedPartWithIndex = partsWithIndex.FirstOrDefault(x => x.Part.Id == navigateToPart.Id);
+        var currentPartWithIndex = partsWithIndex.FirstOrDefault(x => x.Part.Id == context.CurrentPart.Id);
+        return requestedPartWithIndex != null
+            && currentPartWithIndex != null
+            && requestedPartWithIndex.Index <= currentPartWithIndex.Index;
+    }
+
+    public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
+    {
+        if (!CanNavigateTo(context, navigateToPart))
+        {
+            throw new InvalidOperationException("Cannot navigate to requested dialog part");
+        }
+
+        return context.NavigateTo(navigateToPart);
+    }
 }

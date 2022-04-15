@@ -9,7 +9,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = CreateDialog();
-        var abortedPart = dialog.Parts.OfType<IAbortedDialogPart>().Single();
+        var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, abortedPart, currentState);
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
         var sut = new DialogService(factory);
@@ -19,8 +19,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be("Dialog has already been aborted");
@@ -40,8 +40,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
@@ -61,8 +61,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
@@ -74,7 +74,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var abortedPart = dialog.Parts.OfType<IAbortedDialogPart>().Single();
+        var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
         var sut = new DialogService(factory);
@@ -115,7 +115,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = CreateDialog();
-        var abortedPart = dialog.Parts.OfType<IAbortedDialogPart>().Single();
+        var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(dialog, abortedPart, DialogState.InProgress);
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
         var sut = new DialogService(factory);
@@ -137,9 +137,9 @@ public class DialogServiceTests
         var dialog = CreateDialog();
         IDialogPart currentPart = currentState switch
         {
-            DialogState.Aborted => dialog.Parts.OfType<IAbortedDialogPart>().Single(),
-            DialogState.Completed => dialog.Parts.OfType<ICompletedDialogPart>().First(),
-            DialogState.ErrorOccured => dialog.Parts.OfType<IErrorDialogPart>().First(),
+            DialogState.Aborted => dialog.AbortedPart,
+            DialogState.Completed => dialog.CompletedPart,
+            DialogState.ErrorOccured => dialog.ErrorPart,
             _ => throw new NotImplementedException()
         };
         var context = new DialogContextFixture(dialog, currentPart, currentState);
@@ -151,8 +151,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
@@ -174,7 +174,6 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
         result.CurrentPart.Id.Should().Be("Completed");
         result.CurrentGroup.Should().Be(dialog.CompletedPart.Group);
     }
@@ -197,8 +196,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         result.CurrentGroup.Should().Be(currentPart.Group);
+        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
         questionDialogPart.ErrorMessages[0].Should().Be("Unknown answer: [Unknown answer]");
@@ -224,8 +223,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         result.CurrentGroup.Should().Be(currentPart.Group);
+        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPartFixture>();
         var questionDialogPart = (QuestionDialogPartFixture)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
         questionDialogPart.ErrorMessages[0].Should().Be("Provided answer from wrong question");
@@ -240,7 +239,7 @@ public class DialogServiceTests
         var currentState = DialogState.InProgress;
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog, currentPart, currentState));
         var sut = new DialogService(factory);
-        var context = sut.Start(dialog); // start the dialog, this will get the welcome messae
+        var context = sut.Start(dialog); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IProvidedAnswer>()); // skip the welcome message
 
         // Act
@@ -248,7 +247,6 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
         result.CurrentPart.Id.Should().Be("Message");
         result.CurrentGroup.Should().Be(dialog.Parts.OfType<IMessageDialogPart>().First(x => x.Id == "Message").Group);
     }
@@ -297,8 +295,8 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentDialog.Id.Should().Be(dialog2.Id);
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -332,8 +330,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentPart.Id.Should().Be(navigatedPart.Id);
         result.CurrentGroup.Should().Be(navigatedPart.Group);
+        result.CurrentPart.Id.Should().Be(navigatedPart.Id);
     }
 
     [Theory]
@@ -380,8 +378,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         ((IErrorDialogPart)result.CurrentPart).Exception.Should().NotBeNull();
         ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
     }
@@ -415,8 +413,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
         result.CurrentGroup.Should().Be(completedPart.Group);
+        result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
     }
 
     [Theory]
@@ -497,8 +495,8 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentDialog.Id.Should().Be(dialog2.Id);
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -530,8 +528,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
+        result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -560,8 +558,8 @@ public class DialogServiceTests
         var result = sut.Start(dialog);
 
         // Assert
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
         errorDialogPart.Exception!.Message.Should().Be("Could not determine next part. Dialog does not have any parts.");
@@ -580,9 +578,9 @@ public class DialogServiceTests
         var result = sut.Start(dialog);
 
         // Assert
+        result.CurrentGroup.Should().Be(dialog.Parts.OfType<IMessageDialogPart>().First().Group);
         result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
         result.CurrentPart.Id.Should().Be("Welcome");
-        result.CurrentGroup.Should().Be(dialog.Parts.OfType<IMessageDialogPart>().First().Group);
     }
 
     [Fact]
@@ -613,9 +611,9 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentPart.Id.Should().Be(errorDialogPart.Id);
-        result.CurrentGroup.Should().BeNull();
     }
 
     [Fact]
@@ -646,9 +644,9 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Aborted);
+        result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IAbortedDialogPart>();
         result.CurrentPart.Id.Should().Be(abortedPart.Id);
-        result.CurrentGroup.Should().BeNull();
     }
 
     [Theory]
@@ -666,6 +664,132 @@ public class DialogServiceTests
 
         // Assert
         result.Should().Be(expectedResult);
+    }
+
+    [Fact]
+    public void CanNavigateTo_Returns_False_When_Parts_Does_Not_Contain_Current_Part()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var completedPart = dialog.CompletedPart;
+        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanNavigateTo(context, completedPart);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanNavigateTo_Returns_False_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var errorPart = dialog.ErrorPart;
+        var completedPart = dialog.CompletedPart;
+        var context = new DialogContextFixture(dialog, errorPart, DialogState.ErrorOccured);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanNavigateTo(context, completedPart);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanNavigateTo_Returns_False_When_Requested_Part_Is_After_Current_Part()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanNavigateTo(context, questionPart);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Current_Part()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanNavigateTo(context, questionPart);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Before_Current_Part()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanNavigateTo(context, messagePart);
+
+        // Assert
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public void NavigateTo_Throws_When_CanNavigateTo_Is_False()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+        var navigateTo = new Action(() => sut.NavigateTo(context, questionPart));
+
+        // Act & Assert
+        navigateTo.Should().Throw<InvalidOperationException>();
+    }
+
+    [Fact]
+    public void NavigateTo_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
+    {
+        // Arrange
+        var dialog = CreateDialog();
+        var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => context);
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.NavigateTo(context, messagePart);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.InProgress);
+        result.CurrentGroup.Should().Be(messagePart.Group);
+        result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
+        result.CurrentPart.Id.Should().Be(messagePart.Id);
     }
 
     private static Dialog CreateDialog(bool addParts = true)
@@ -693,10 +817,7 @@ public class DialogServiceTests
             welcomePart,
             questionPart,
             decisionPart,
-            messagePart,
-            completedPart,
-            errorDialogPart,
-            abortedPart
+            messagePart
         }.Where(_ => addParts);
         return new Dialog(
             "Test",
