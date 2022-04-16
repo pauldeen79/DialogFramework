@@ -37,10 +37,13 @@ public record DialogPartResult : IDialogPartResult
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        var questionDialogPart = DialogPart as IQuestionDialogPart;
-        if (questionDialogPart != null && !questionDialogPart.Results.Any(a => a.Id == Result.Id))
+        if (!string.IsNullOrEmpty(Result.Id))
         {
-            yield return new ValidationResult($"Unknown result: [{Result.Id}]");
+            var questionDialogPart = DialogPart as IQuestionDialogPart;
+            if (questionDialogPart != null && !questionDialogPart.Results.Any(a => a.Id == Result.Id))
+            {
+                yield return new ValidationResult($"Unknown result: [{Result.Id}]");
+            }
         }
     }
 }

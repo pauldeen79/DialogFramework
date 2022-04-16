@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Core.DomainModel.QuestionDialogParts;
 
-public record SingleRequiredQuestionDialogPart : QuestionDialogPart
+public record SingleOptionalQuestionDialogPart : QuestionDialogPart
 {
-    public SingleRequiredQuestionDialogPart(string id,
+    public SingleOptionalQuestionDialogPart(string id,
                                             string heading,
                                             string message,
                                             IDialogPartGroup group,
@@ -15,11 +15,7 @@ public record SingleRequiredQuestionDialogPart : QuestionDialogPart
     {
         base.HandleValidate(dialogPartResults);
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.Result.Id));
-        if (answerCount == 0)
-        {
-            ErrorMessages.Add("Answer is required");
-        }
-        else if (answerCount > 1)
+        if (answerCount > 1)
         {
             ErrorMessages.Add("Only one answer is allowed");
         }
