@@ -24,23 +24,23 @@ public record DialogPartResult : IDialogPartResult
     /// </summary>
     public DialogPartResult(IDialogPart dialogPart,
                             IQuestionDialogPartResult answer,
-                            IDialogPartResultValue answerValue)
+                            IDialogPartResultValue value)
     {
         DialogPart = dialogPart;
         Result = answer;
-        AnswerValue = answerValue;
+        Value = value;
     }
 
     public IDialogPart DialogPart { get; }
     public IQuestionDialogPartResult Result { get; }
-    public IDialogPartResultValue AnswerValue { get; }
+    public IDialogPartResultValue Value { get; }
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         var questionDialogPart = DialogPart as IQuestionDialogPart;
         if (questionDialogPart != null && !questionDialogPart.Results.Any(a => a.Id == Result.Id))
         {
-            yield return new ValidationResult($"Unknown answer: [{Result.Id}]");
+            yield return new ValidationResult($"Unknown result: [{Result.Id}]");
         }
     }
 }

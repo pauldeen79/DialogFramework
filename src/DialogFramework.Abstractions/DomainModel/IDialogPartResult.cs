@@ -4,5 +4,5 @@ public interface IDialogPartResult : IValidatableObject
 {
     IDialogPart DialogPart { get; }
     IQuestionDialogPartResult Result { get; }
-    IDialogPartResultValue AnswerValue { get; }
+    IDialogPartResultValue Value { get; }
 }

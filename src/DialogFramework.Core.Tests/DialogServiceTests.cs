@@ -191,7 +191,7 @@ public class DialogServiceTests
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartResult>();
-        answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
+        answerMock.SetupGet(x => x.Id).Returns("Unknown result");
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, answerMock.Object) });
@@ -202,7 +202,7 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
-        questionDialogPart.ErrorMessages[0].Should().Be("Unknown answer: [Unknown answer]");
+        questionDialogPart.ErrorMessages[0].Should().Be("Unknown result: [Unknown result]");
     }
 
     [Fact]
