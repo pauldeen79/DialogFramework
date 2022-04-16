@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public class Dialog : IDialog
+public record Dialog : IDialog
 {
     public Dialog(string id,
                   string version,

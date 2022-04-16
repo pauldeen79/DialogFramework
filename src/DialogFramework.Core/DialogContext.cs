@@ -63,8 +63,8 @@ public class DialogContext : IDialogContext
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
         => new DialogContext(Id, CurrentDialog, navigateToPart, CurrentState, null, Answers);
 
-    public IDialogPartResult? GetDialogPartResultByPart(IDialogPart dialogPart)
-        => Answers.Find(x => x.DialogPart.Id == dialogPart.Id);
+    public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
+        => Answers.FindAll(x => x.DialogPart.Id == dialogPart.Id);
 
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
     {

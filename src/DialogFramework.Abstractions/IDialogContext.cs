@@ -14,6 +14,6 @@ public interface IDialogContext
     IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
     bool CanNavigateTo(IDialogPart navigateToPart);
     IDialogContext NavigateTo(IDialogPart navigateToPart);
-    IDialogPartResult? GetDialogPartResultByPart(IDialogPart dialogPart);
+    IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart);
     IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart);
 }
