@@ -7,8 +7,8 @@ internal class DialogContextFixture : DialogContext
     {
     }
 
-    public DialogContextFixture(IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
-        : base(currentDialog, currentPart, currentState)
+    public DialogContextFixture(string id, IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
+        : base(id, currentDialog, currentPart, currentState)
     {
     }
 }

@@ -2,6 +2,7 @@
 
 public interface IDialogContext
 {
+    string Id { get; }
     IDialog CurrentDialog { get; }
     IDialogPart CurrentPart { get; }
     IDialogPartGroup? CurrentGroup { get; }

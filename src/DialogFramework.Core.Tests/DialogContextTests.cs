@@ -2,6 +2,8 @@
 
 public class DialogContextTests
 {
+    private static string Id => Guid.NewGuid().ToString();
+
     [Fact]
     public void GetProvidedAnswerByPart_Returns_Null_When_No_Provided_Answers_Found_In_Current_Context()
     {
@@ -9,7 +11,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateDialog();
         var welcomePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, welcomePart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, welcomePart, DialogState.InProgress);
 
         // Act
         var result = context.GetDialogPartResultByPart(questionPart);
@@ -24,7 +26,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First(), new EmptyDialogPartResultValue()) });
 
         // Act
@@ -40,7 +42,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
         context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First(), new EmptyDialogPartResultValue()) });
@@ -61,7 +63,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First(), new EmptyDialogPartResultValue()) });
         context.GetDialogPartResultByPart(questionPart).Should().NotBeNull();
         context.GetDialogPartResultByPart(questionPart)!.Result.Id.Should().Be(questionPart.Results.First().Id);

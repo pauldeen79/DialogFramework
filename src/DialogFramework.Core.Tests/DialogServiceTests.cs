@@ -2,6 +2,8 @@
 
 public class DialogServiceTests
 {
+    private static string Id => Guid.NewGuid().ToString();
+
     [Theory]
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.InProgress)]
@@ -10,7 +12,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var abortedPart = dialog.AbortedPart;
-        var context = new DialogContextFixture(dialog, abortedPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, abortedPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -31,7 +33,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = DialogFixture.CreateDialog();
-        var context = new DialogContextFixture(dialog, dialog.CompletedPart, DialogState.Completed);
+        var context = new DialogContextFixture(Id, dialog, dialog.CompletedPart, DialogState.Completed);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -52,7 +54,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = DialogFixture.CreateDialog();
-        var context = new DialogContextFixture(dialog, dialog.ErrorPart, DialogState.ErrorOccured);
+        var context = new DialogContextFixture(Id, dialog, dialog.ErrorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -75,7 +77,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var abortedPart = dialog.AbortedPart;
-        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -99,7 +101,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, questionPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -116,7 +118,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var abortedPart = dialog.AbortedPart;
-        var context = new DialogContextFixture(dialog, abortedPart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, abortedPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -142,7 +144,7 @@ public class DialogServiceTests
             DialogState.ErrorOccured => dialog.ErrorPart,
             _ => throw new NotImplementedException()
         };
-        var context = new DialogContextFixture(dialog, currentPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -165,7 +167,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -185,7 +187,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartResult>();
@@ -210,7 +212,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var context = new DialogContextFixture(dialog, currentPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
         var answerMock = new Mock<IQuestionDialogPartResult>();
@@ -237,7 +239,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog, currentPart, currentState));
+        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(Id, dialog, currentPart, currentState));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
@@ -370,7 +372,7 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Id == dialog1.Id, _ => new DialogContextFixture(dialog1));
         var sut = new DialogService(factory);
-        var context = new DialogContextFixture(dialog1, dialog1.Parts.First(), currentState);
+        var context = new DialogContextFixture(Id, dialog1, dialog1.Parts.First(), currentState);
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the redirect to dialog 2
@@ -428,7 +430,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, questionPart, currentState);
+        var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -654,7 +656,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var completedPart = dialog.CompletedPart;
-        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -672,7 +674,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var errorPart = dialog.ErrorPart;
         var completedPart = dialog.CompletedPart;
-        var context = new DialogContextFixture(dialog, errorPart, DialogState.ErrorOccured);
+        var context = new DialogContextFixture(Id, dialog, errorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -690,7 +692,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -707,7 +709,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, questionPart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -725,7 +727,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
@@ -745,7 +747,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
         var navigateTo = new Action(() => sut.NavigateTo(context, questionPart));
@@ -761,7 +763,7 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(dialog, messagePart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
