@@ -5,7 +5,7 @@ public class DialogContextTests
     private static string Id => Guid.NewGuid().ToString();
 
     [Fact]
-    public void GetProvidedAnswerByPart_Returns_Null_When_No_Provided_Answers_Found_In_Current_Context()
+    public void GetProvidedAnswerByPart_Returns_Empty_Result_When_No_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
         var dialog = DialogFixture.CreateDialog();
@@ -17,7 +17,7 @@ public class DialogContextTests
         var result = context.GetDialogPartResultsByPart(questionPart);
 
         // Assert
-        result.Should().BeNull();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -71,11 +71,11 @@ public class DialogContextTests
         // Act 1 - Call reset while there is an answer
         context = context.ResetDialogPartResultByPart(questionPart);
         // Assert 1
-        context.GetDialogPartResultsByPart(questionPart).Should().BeNull();
+        context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
         context = context.ResetDialogPartResultByPart(questionPart);
         // Assert 2
-        context.GetDialogPartResultsByPart(questionPart).Should().BeNull();
+        context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
     }
 }
