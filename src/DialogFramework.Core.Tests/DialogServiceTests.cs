@@ -379,8 +379,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        ((IErrorDialogPart)result.CurrentPart).Exception.Should().NotBeNull();
-        ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
+        var currentDialogErrorPart = (IErrorDialogPart)result.CurrentPart;
+        currentDialogErrorPart.Exception.Should().NotBeNull();
+        currentDialogErrorPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
     }
 
     [Fact]
