@@ -4,7 +4,7 @@ public record QuestionDialogPartResult : IDialogPartResultDefinition
 {
     public QuestionDialogPartResult(string id,
                                     string title,
-                                    AnswerValueType valueType)
+                                    ResultValueType valueType)
     {
         Id = id;
         Title = title;
@@ -13,5 +13,5 @@ public record QuestionDialogPartResult : IDialogPartResultDefinition
 
     public string Id { get; }
     public string Title { get; }
-    public AnswerValueType ValueType { get; }
+    public ResultValueType ValueType { get; }
 }

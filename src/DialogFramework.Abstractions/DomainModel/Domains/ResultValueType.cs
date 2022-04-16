@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions.DomainModel.Domains;
 
-public enum AnswerValueType
+public enum ResultValueType
 {
     None,
     Text,

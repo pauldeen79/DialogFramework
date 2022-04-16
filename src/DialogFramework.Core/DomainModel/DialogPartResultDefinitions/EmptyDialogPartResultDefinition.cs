@@ -4,5 +4,5 @@ public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
 {
     public string Id => string.Empty;
     public string Title => string.Empty;
-    public AnswerValueType ValueType => AnswerValueType.None;
+    public ResultValueType ValueType => ResultValueType.None;
 }

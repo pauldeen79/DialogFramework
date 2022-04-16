@@ -4,5 +4,5 @@ public interface IDialogPartResultDefinition
 {
     string Id { get; }
     string Title { get; }
-    AnswerValueType ValueType { get; }
+    ResultValueType ValueType { get; }
 }
