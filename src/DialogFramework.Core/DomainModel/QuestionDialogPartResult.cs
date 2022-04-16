@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public record QuestionDialogPartResult : IQuestionDialogPartResult
+public record QuestionDialogPartResult : IDialogPartResultDefinition
 {
     public QuestionDialogPartResult(string id,
                                     string title,

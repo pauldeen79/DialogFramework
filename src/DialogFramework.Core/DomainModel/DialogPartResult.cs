@@ -6,33 +6,33 @@ public record DialogPartResult : IDialogPartResult
     /// Constructs a dialog part result from a non-question dialog part.
     /// </summary>
     public DialogPartResult(IDialogPart dialogPart)
-        : this(dialogPart, new NonQuestionDialogPartResult(), new EmptyDialogPartResultValue())
+        : this(dialogPart, new EmptyDialogPartResultDefinition(), new EmptyDialogPartResultValue())
     {
     }
 
     /// <summary>
-    /// Constructs a dialog part result from a question dialog part, without a value.
+    /// Constructs a dialog part result from a question dialog part, without a result.
     /// </summary>
     public DialogPartResult(IDialogPart dialogPart,
-                            IQuestionDialogPartResult answer)
-        : this(dialogPart, answer, new EmptyDialogPartResultValue())
+                            IDialogPartResultDefinition result)
+        : this(dialogPart, result, new EmptyDialogPartResultValue())
     {
     }
 
     /// <summary>
-    /// Constructs a dialog part result from a question dialog part, with a value.
+    /// Constructs a dialog part result from a question dialog part, with a result.
     /// </summary>
     public DialogPartResult(IDialogPart dialogPart,
-                            IQuestionDialogPartResult answer,
+                            IDialogPartResultDefinition result,
                             IDialogPartResultValue value)
     {
         DialogPart = dialogPart;
-        Result = answer;
+        Result = result;
         Value = value;
     }
 
     public IDialogPart DialogPart { get; }
-    public IQuestionDialogPartResult Result { get; }
+    public IDialogPartResultDefinition Result { get; }
     public IDialogPartResultValue Value { get; }
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

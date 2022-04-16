@@ -3,6 +3,6 @@
 public interface IDialogPartResult : IValidatableObject
 {
     IDialogPart DialogPart { get; }
-    IQuestionDialogPartResult Result { get; }
+    IDialogPartResultDefinition Result { get; }
     IDialogPartResultValue Value { get; }
 }

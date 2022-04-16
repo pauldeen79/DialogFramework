@@ -190,7 +190,7 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IQuestionDialogPartResult>();
+        var answerMock = new Mock<IDialogPartResultDefinition>();
         answerMock.SetupGet(x => x.Id).Returns("Unknown result");
 
         // Act
@@ -215,10 +215,10 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IQuestionDialogPartResult>();
+        var answerMock = new Mock<IDialogPartResultDefinition>();
         answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
-        wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IQuestionDialogPartResult>());
+        wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IDialogPartResultDefinition>());
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(wrongQuestionMock.Object, answerMock.Object) });

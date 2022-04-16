@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions.DomainModel;
 
-public interface IQuestionDialogPartResult
+public interface IDialogPartResultDefinition
 {
     string Id { get; }
     string Title { get; }

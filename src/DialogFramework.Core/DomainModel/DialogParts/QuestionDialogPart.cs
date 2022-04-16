@@ -6,20 +6,20 @@ public record QuestionDialogPart : IQuestionDialogPart
                               string heading,
                               string message,
                               IDialogPartGroup group,
-                              IEnumerable<IQuestionDialogPartResult> results)
+                              IEnumerable<IDialogPartResultDefinition> results)
     {
         Id = id;
         Heading = heading;
         Message = message;
         Group = group;
-        Results = new ValueCollection<IQuestionDialogPartResult>(results);
+        Results = new ValueCollection<IDialogPartResultDefinition>(results);
         ErrorMessages = new ValueCollection<string>();
     }
 
     public string Message { get; }
     public string Heading { get; }
     public IDialogPartGroup Group { get; }
-    public ValueCollection<IQuestionDialogPartResult> Results { get; }
+    public ValueCollection<IDialogPartResultDefinition> Results { get; }
     public string Id { get; }
     public ValueCollection<string> ErrorMessages { get; }
     public DialogState State => DialogState.InProgress;
