@@ -10,6 +10,7 @@ global using DialogFramework.Core.DomainModel.DialogPartResultDefinitions;
 global using DialogFramework.Core.DomainModel.DialogPartResultValues;
 global using DialogFramework.Core.DomainModel.DialogParts;
 global using DialogFramework.Core.DomainModel.QuestionDialogParts;
+global using DialogFramework.Core.NavigationDialogParts;
 global using DialogFramework.Core.Tests.Fixtures;
 global using FluentAssertions;
 global using Moq;
