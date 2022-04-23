@@ -490,6 +490,30 @@ public class DialogServiceTests
     }
 
     [Fact]
+    public void CanStart_Returns_False_When_CurrentState_Is_InProgress()
+    {
+        // Arrange
+        var errorDialogPartMock = new Mock<IErrorDialogPart>();
+        var abortedDialogPartMock = new Mock<IAbortedDialogPart>();
+        var completedDialogPartMock = new Mock<ICompletedDialogPart>();
+        var dialog = new Dialog(new DialogMetadata("Id", "Name", "1.0.0", canStart: true), // metadata says we can start
+                                Enumerable.Empty<IDialogPart>(),
+                                errorDialogPartMock.Object,
+                                abortedDialogPartMock.Object,
+                                completedDialogPartMock.Object,
+                                Enumerable.Empty<IDialogPartGroup>());
+        var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                             dialog => new DialogContextFixture("Id", dialog, errorDialogPartMock.Object, DialogState.InProgress)); // dialog state is already in progress
+        var service = new DialogService(contextFactory);
+
+        // Act
+        var actual = service.CanStart(dialog);
+
+        // Assert
+        actual.Should().BeFalse();
+    }
+
+    [Fact]
     public void Start_Throws_When_ContextFactory_CanCreate_Returns_False()
     {
         // Arrange
