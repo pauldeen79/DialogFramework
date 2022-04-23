@@ -80,6 +80,11 @@ public record TestFlowDialog : IDialog
         var dialogPartIds = newDialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
         return existingDialogPartResults.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(newDialogPartResults);
     }
+
+    public IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart)
+    {
+        return existingDialogPartResults.Where(x => x.DialogPart.Id != currentPart.Id);
+    }
 }
 
 /*

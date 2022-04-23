@@ -27,7 +27,16 @@ public record Dialog : IDialog
     public virtual IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
                                                                  IEnumerable<IDialogPartResult> newDialogPartResults)
     {
+        // Decision: By default, only the results from the requested part are replaced.
+        // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
         var dialogPartIds = newDialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
         return existingDialogPartResults.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(newDialogPartResults);
+    }
+
+    public virtual IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart)
+    {
+        // Decision: By default, only remove the results from the requested part.
+        // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
+        return existingDialogPartResults.Where(x => x.DialogPart.Id != currentPart.Id);
     }
 }

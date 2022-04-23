@@ -70,12 +70,7 @@ public class DialogContext : IDialogContext
         => Answers.FindAll(x => x.DialogPart.Id == dialogPart.Id);
 
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
-    {
-        var answerIndex = Answers.FindIndex(x => x.DialogPart.Id == dialogPart.Id);
-        return answerIndex == -1
-            ? this
-            : new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Take(answerIndex));
-    }
+        => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, CurrentDialog.ResetDialogPartResultByPart(Answers, CurrentPart));
 
     private sealed class EmptyDialogPart : IDialogPart
     {
