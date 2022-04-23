@@ -61,7 +61,7 @@ public class DialogContext : IDialogContext
         => new DialogContext(Id, CurrentDialog, firstPart, firstPart.State);
 
     public bool CanNavigateTo(IDialogPart navigateToPart)
-        => CurrentPart.Id == navigateToPart.Id || Answers.Any(x => x.DialogPart.Id == navigateToPart.Id);
+        => CurrentDialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
 
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
         => new DialogContext(Id, CurrentDialog, navigateToPart, CurrentState, null, Answers);

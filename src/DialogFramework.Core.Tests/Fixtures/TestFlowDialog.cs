@@ -82,9 +82,10 @@ public record TestFlowDialog : IDialog
     }
 
     public IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart)
-    {
-        return existingDialogPartResults.Where(x => x.DialogPart.Id != currentPart.Id);
-    }
+        => existingDialogPartResults.Where(x => x.DialogPart.Id != currentPart.Id);
+
+    public bool CanNavigateTo(IDialogPart currentPart, IDialogPart navigateToPart, IEnumerable<IDialogPartResult> existingDialogPartResults)
+        => currentPart.Id == navigateToPart.Id || existingDialogPartResults.Any(x => x.DialogPart.Id == navigateToPart.Id);
 }
 
 /*
