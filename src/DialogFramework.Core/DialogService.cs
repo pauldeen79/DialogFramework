@@ -8,10 +8,7 @@ public class DialogService : IDialogService
         => _contextFactory = contextFactory;
 
     public bool CanStart(IDialog dialog)
-    {
-        var context = _contextFactory.Create(dialog);
-        return context.CanStart();
-    }
+        => _contextFactory.Create(dialog).CanStart();
 
     public IDialogContext Start(IDialog dialog)
     {
