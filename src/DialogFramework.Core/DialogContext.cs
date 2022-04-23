@@ -86,14 +86,8 @@ public class DialogContext : IDialogContext
         }
 
         // possibly need to merge provided answers, in case the user navigated back and re-entered the answers
-        var workingCopy = new List<IDialogPartResult>(Answers);
-        foreach (var dialogPartGroupedResults in dialogPartResults.GroupBy(x => x.DialogPart.Id))
-        {
-            workingCopy.RemoveAll(x => x.DialogPart.Id == dialogPartGroupedResults.Key);
-            workingCopy.AddRange(dialogPartGroupedResults);
-        }
-
-        return workingCopy;
+        var dialogPartIds = dialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
+        return Answers.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(dialogPartResults);
     }
 
     private sealed class EmptyDialogPart : IDialogPart
