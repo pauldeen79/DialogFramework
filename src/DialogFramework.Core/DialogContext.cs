@@ -46,7 +46,7 @@ public class DialogContext : IDialogContext
         => new DialogContext(Id, CurrentDialog, abortDialogPart, DialogState.Aborted);
 
     public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults)
-        => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, null, ReplaceAnswers(dialogPartResults));
+        => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, null, CurrentDialog.ReplaceAnswers(Answers, dialogPartResults));
 
     public IDialogContext Continue(IDialogPart nextPart, DialogState state)
         => new DialogContext(Id, CurrentDialog, nextPart, state, null, Answers);
@@ -75,19 +75,6 @@ public class DialogContext : IDialogContext
         return answerIndex == -1
             ? this
             : new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, Answers.Take(answerIndex));
-    }
-
-    protected IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        if (!dialogPartResults.Any())
-        {
-            // no current provided answers, so no need to merge
-            return Answers.Concat(dialogPartResults);
-        }
-
-        // possibly need to merge provided answers, in case the user navigated back and re-entered the answers
-        var dialogPartIds = dialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
-        return Answers.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(dialogPartResults);
     }
 
     private sealed class EmptyDialogPart : IDialogPart

@@ -8,4 +8,6 @@ public interface IDialog
     IAbortedDialogPart AbortedPart { get; }
     ICompletedDialogPart CompletedPart { get; }
     ValueCollection<IDialogPartGroup> PartGroups { get; }
+    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
+                                                  IEnumerable<IDialogPartResult> newDialogPartResults);
 }

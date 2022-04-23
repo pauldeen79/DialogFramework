@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System.Collections.Generic;
+
+namespace DialogFramework.Core.Tests.Fixtures;
 
 public record TestFlowDialog : IDialog
 {
@@ -70,6 +72,13 @@ public record TestFlowDialog : IDialog
         AbortedPart = new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again.");
         CompletedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for using this application. Please come back soon!", completedGroup);
         PartGroups = new ValueCollection<IDialogPartGroup>(new[] { welcomeGroup, getInformationGroup, completedGroup });
+    }
+
+    public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
+                                                         IEnumerable<IDialogPartResult> newDialogPartResults)
+    {
+        var dialogPartIds = newDialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
+        return existingDialogPartResults.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(newDialogPartResults);
     }
 }
 
