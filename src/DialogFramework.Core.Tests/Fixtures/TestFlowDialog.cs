@@ -2,8 +2,7 @@
 
 public record TestFlowDialog : IDialog
 {
-    public string Id => nameof(TestFlowDialog);
-    public string Version => "1.0.0";
+    public IDialogMetadata Metadata => new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true);
 
     public ValueCollection<IDialogPart> Parts { get; }
     public IErrorDialogPart ErrorPart { get; }

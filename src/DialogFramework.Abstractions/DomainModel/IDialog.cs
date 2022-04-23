@@ -2,8 +2,7 @@
 
 public interface IDialog
 {
-    string Id { get; }
-    string Version { get; }
+    IDialogMetadata Metadata { get; }
     ValueCollection<IDialogPart> Parts { get; }
     IErrorDialogPart ErrorPart { get; }
     IAbortedDialogPart AbortedPart { get; }

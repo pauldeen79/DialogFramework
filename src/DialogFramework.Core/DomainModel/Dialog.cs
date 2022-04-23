@@ -2,16 +2,14 @@
 
 public record Dialog : IDialog
 {
-    public Dialog(string id,
-                  string version,
+    public Dialog(IDialogMetadata metadata,
                   IEnumerable<IDialogPart> parts,
                   IErrorDialogPart errorDialogPart,
                   IAbortedDialogPart abortedPart,
                   ICompletedDialogPart completedPart,
                   IEnumerable<IDialogPartGroup> partGroups)
     {
-        Id = id;
-        Version = version;
+        Metadata = metadata;
         Parts = new ValueCollection<IDialogPart>(parts);
         ErrorPart = errorDialogPart;
         AbortedPart = abortedPart;
@@ -19,8 +17,7 @@ public record Dialog : IDialog
         PartGroups = new ValueCollection<IDialogPartGroup>(partGroups);
     }
 
-    public string Id { get; }
-    public string Version { get; }
+    public IDialogMetadata Metadata { get; }
     public ValueCollection<IDialogPart> Parts { get; }
     public IErrorDialogPart ErrorPart { get; }
     public IAbortedDialogPart AbortedPart { get; }

@@ -7,6 +7,7 @@ public interface IDialogContext
     IDialogPart CurrentPart { get; }
     IDialogPartGroup? CurrentGroup { get; }
     DialogState CurrentState { get; }
+    bool CanStart();
     IDialogContext Start(IDialogPart firstPart);
     IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults);
     IDialogContext Continue(IDialogPart nextPart, DialogState state);

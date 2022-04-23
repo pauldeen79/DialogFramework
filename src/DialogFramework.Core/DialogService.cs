@@ -7,6 +7,12 @@ public class DialogService : IDialogService
     public DialogService(IDialogContextFactory contextFactory)
         => _contextFactory = contextFactory;
 
+    public bool CanStart(IDialog dialog)
+    {
+        var context = _contextFactory.Create(dialog);
+        return context.CanStart();
+    }
+
     public IDialogContext Start(IDialog dialog)
     {
         var context = _contextFactory.Create(dialog);

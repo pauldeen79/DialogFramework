@@ -54,6 +54,9 @@ public class DialogContext : IDialogContext
     public IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
         => new DialogContext(Id, CurrentDialog, errorDialogPart, DialogState.ErrorOccured, ex, Answers);
 
+    public bool CanStart()
+       => CurrentDialog.Metadata.CanStart;
+
     public IDialogContext Start(IDialogPart firstPart)
         => new DialogContext(Id, CurrentDialog, firstPart, firstPart.State);
 

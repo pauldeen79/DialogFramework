@@ -30,8 +30,11 @@ internal static class DialogFixture
             messagePart
         }.Where(_ => addParts);
         return new Dialog(
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             parts,
             errorDialogPart,
             abortedPart,

@@ -239,7 +239,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var currentState = DialogState.InProgress;
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(Id, dialog, currentPart, currentState));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(Id, dialog, currentPart, currentState));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
@@ -265,8 +266,11 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
-            "Dialog2",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog2",
+                "Dialog 2",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
@@ -276,18 +280,21 @@ public class DialogServiceTests
         var redirectPart = new RedirectDialogPart("Redirect", dialog2);
         var dialog1 = new Dialog
         (
-            "Dialog1",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog1",
+                "Dialog 1",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart, redirectPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog1.Id || d.Id == dialog2.Id, d =>
-            d.Id == dialog1.Id
-                ? new DialogContextFixture(dialog1)
-                : new DialogContextFixture(dialog2));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog1.Metadata.Id || d.Metadata.Id == dialog2.Metadata.Id,
+                                                      d => d.Metadata.Id == dialog1.Metadata.Id
+                                                          ? new DialogContextFixture(dialog1)
+                                                          : new DialogContextFixture(dialog2));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
 
@@ -296,7 +303,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentDialog.Id.Should().Be(dialog2.Id);
+        result.CurrentDialog.Metadata.Id.Should().Be(dialog2.Metadata.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
         result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
@@ -315,15 +322,19 @@ public class DialogServiceTests
         var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart);
         var dialog = new Dialog
         (
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart, navigationPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // this will trigger the message
 
@@ -351,8 +362,11 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
-            "Dialog2",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog2",
+                "Dialog 2",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
@@ -362,15 +376,19 @@ public class DialogServiceTests
         var redirectPart = new RedirectDialogPart("Redirect", dialog2);
         var dialog1 = new Dialog
         (
-            "Dialog1",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog1",
+                "Dialog 1",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart, redirectPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog1.Id, _ => new DialogContextFixture(dialog1));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog1.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog1));
         var sut = new DialogService(factory);
         var context = new DialogContextFixture(Id, dialog1, dialog1.Parts.First(), currentState);
 
@@ -398,15 +416,19 @@ public class DialogServiceTests
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var dialog = new Dialog
         (
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
         var context = sut.Start(dialog); // this will trigger the message
 
@@ -441,11 +463,38 @@ public class DialogServiceTests
         result.Should().Be(expectedResult);
     }
 
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
+    public void CanStart_Returns_Correct_Value_Based_On_Dialog_CanStart(bool dialogCanStart, bool expectedResult)
+    {
+        // Arrange
+        var errorDialogPartMock = new Mock<IErrorDialogPart>();
+        var abortedDialogPartMock = new Mock<IAbortedDialogPart>();
+        var completedDialogPartMock = new Mock<ICompletedDialogPart>();
+        var dialog = new Dialog(new DialogMetadata("Id", "Name", "1.0.0", dialogCanStart),
+                                Enumerable.Empty<IDialogPart>(),
+                                errorDialogPartMock.Object,
+                                abortedDialogPartMock.Object,
+                                completedDialogPartMock.Object,
+                                Enumerable.Empty<IDialogPartGroup>());
+        var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                             dialog => new DialogContextFixture(dialog));
+        var service = new DialogService(contextFactory);
+
+        // Act
+        var actual = service.CanStart(dialog);
+
+        // Assert
+        actual.Should().Be(expectedResult);
+    }
+
     [Fact]
     public void Start_Throws_When_ContextFactory_CanCreate_Returns_False()
     {
         // Arrange
-        var factory = new DialogContextFactoryFixture(_ => false, _ => throw new InvalidOperationException("Not intended to get to this point"));
+        var factory = new DialogContextFactoryFixture(_ => false,
+                                                      _ => throw new InvalidOperationException("Not intended to get to this point"));
         var sut = new DialogService(factory);
         var dialog = DialogFixture.CreateDialog();
         var act = new Action(() => sut.Start(dialog));
@@ -466,8 +515,11 @@ public class DialogServiceTests
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var dialog2 = new Dialog
         (
-            "Dialog2",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog2",
+                "Dialog 2",
+                "1.0.0",
+                true),
             new IDialogPart[] { welcomePart },
             errorDialogPart,
             abortedPart,
@@ -477,18 +529,21 @@ public class DialogServiceTests
         var redirectPart = new RedirectDialogPart("Redirect", dialog2);
         var dialog1 = new Dialog
         (
-            "Dialog1",
-            "1.0.0",
+            new DialogMetadata(
+                "Dialog1",
+                "Dialog 1",
+                "1.0.0",
+                true),
             new[] { redirectPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             Enumerable.Empty<IDialogPartGroup>()
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog1.Id || d.Id == dialog2.Id, dialog =>
-            dialog.Id == dialog1.Id
-                ? new DialogContextFixture(dialog1)
-                : new DialogContextFixture(dialog2));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog1.Metadata.Id || d.Metadata.Id == dialog2.Metadata.Id,
+                                                      dialog => dialog.Metadata.Id == dialog1.Metadata.Id
+                                                          ? new DialogContextFixture(dialog1)
+                                                          : new DialogContextFixture(dialog2));
         var sut = new DialogService(factory);
 
         // Act
@@ -496,7 +551,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentDialog.Id.Should().Be(dialog2.Id);
+        result.CurrentDialog.Metadata.Id.Should().Be(dialog2.Metadata.Id);
         result.CurrentGroup.Should().Be(welcomePart.Group);
         result.CurrentPart.Id.Should().Be(welcomePart.Id);
     }
@@ -514,15 +569,19 @@ public class DialogServiceTests
         var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart);
         var dialog = new Dialog
         (
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             new[] { navigationPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             Enumerable.Empty<IDialogPartGroup>()
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
 
         // Act
@@ -539,7 +598,8 @@ public class DialogServiceTests
     {
         // Arrange
         var dialog = DialogFixture.CreateDialog();
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => throw new InvalidOperationException("Kaboom"));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => throw new InvalidOperationException("Kaboom"));
         var sut = new DialogService(factory);
         var start = new Action(() => sut.Start(dialog));
 
@@ -595,15 +655,19 @@ public class DialogServiceTests
         var decisionPart = new DecisionDialogPartFixture("Decision", _ => errorDialogPart);
         var dialog = new Dialog
         (
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             new IDialogPart[] { decisionPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
 
         // Act
@@ -628,15 +692,19 @@ public class DialogServiceTests
         var decisionPart = new DecisionDialogPartFixture("Decision", _ => abortedPart);
         var dialog = new Dialog
         (
-            "Test",
-            "1.0.0",
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
             new IDialogPart[] { decisionPart },
             errorDialogPart,
             abortedPart,
             completedPart,
             new[] { group1, group2 }
         );
-        var factory = new DialogContextFactoryFixture(d => d.Id == dialog.Id, _ => new DialogContextFixture(dialog));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
         var sut = new DialogService(factory);
 
         // Act
