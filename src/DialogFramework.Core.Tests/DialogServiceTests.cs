@@ -238,7 +238,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var currentPart = dialog.Parts.OfType<IQuestionDialogPart>().First();
-        var currentState = DialogState.InProgress;
+        var currentState = DialogState.Initial;
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(Id, dialog, currentPart, currentState));
         var sut = new DialogService(factory);
@@ -524,7 +524,26 @@ public class DialogServiceTests
         var act = new Action(() => sut.Start(dialog));
 
         // Act
-        act.Should().Throw<InvalidOperationException>();
+        act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not create context");
+    }
+
+    [Fact]
+    public void Start_Throws_When_CanStart_Is_False()
+    {
+        // Arrange
+        var dialogMetadataMock = new Mock<IDialogMetadata>();
+        dialogMetadataMock.SetupGet(x => x.CanStart).Returns(false);
+        var dialogMock = new Mock<IDialog>();
+        dialogMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
+        var dialogPartMock = new Mock<IDialogPart>();
+        var factory = new DialogContextFactoryFixture(_ => true,
+                                                      _ => new DialogContextFixture("Id", dialogMock.Object, dialogPartMock.Object, DialogState.Initial));
+        var sut = new DialogService(factory);
+        var dialog = DialogFixture.CreateDialog();
+        var act = new Action(() => sut.Start(dialog));
+
+        // Act
+        act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not start dialog");
     }
 
     [Fact]

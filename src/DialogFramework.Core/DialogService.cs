@@ -12,7 +12,15 @@ public class DialogService : IDialogService
 
     public IDialogContext Start(IDialog dialog)
     {
+        if (!_contextFactory.CanCreate(dialog))
+        {
+            throw new InvalidOperationException("Could not create context");
+        }
         var context = _contextFactory.Create(dialog);
+        if (!context.CanStart())
+        {
+            throw new InvalidOperationException("Could not start dialog");
+        }
         try
         {
             var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IDialogPartResult>());
