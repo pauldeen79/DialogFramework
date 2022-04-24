@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public class DialogMetadata : IDialogMetadata
+public record DialogMetadata : IDialogMetadata
 {
     public string Id { get; }
     public string FriendlyName { get; }

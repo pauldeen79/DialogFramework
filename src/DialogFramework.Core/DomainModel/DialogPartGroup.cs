@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Core.DomainModel;
 
-public class DialogPartGroup : IDialogPartGroup
+public record DialogPartGroup : IDialogPartGroup
 {
     public DialogPartGroup(string id,
                            string title,
