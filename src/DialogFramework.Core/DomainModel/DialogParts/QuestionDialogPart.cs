@@ -43,6 +43,12 @@ public record QuestionDialogPart : IQuestionDialogPart
                 continue;
             }
 
+            var resultValueType = dialogPartResult.DialogPart.GetResultValueType(dialogPartResult);
+            if (resultValueType != null && dialogPartResult.Value.ResultValueType != resultValueType.Value)
+            {
+                ErrorMessages.Add($"Result should be of type [{resultValueType.Value}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
+            }
+
             var validationContext = new ValidationContext(dialogPartResult);
             ErrorMessages.AddRange(dialogPartResult.Validate(validationContext)
                                                    .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))

@@ -23,7 +23,7 @@ public class DialogService : IDialogService
         }
         try
         {
-            var firstPart = dialog.GetNextPart(context, null, Enumerable.Empty<IDialogPartResult>());
+            var firstPart = dialog.GetFirstPart(context);
 
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {

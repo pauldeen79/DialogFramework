@@ -2,23 +2,22 @@
 
 internal static class DialogExtensions
 {
-    internal static IDialogPart GetNextPart(this IDialog dialog,
-                                            IDialogContext context,
-                                            IDialogPart? currentPart,
-                                            IEnumerable<IDialogPartResult> providedAnswers)
+    internal static IDialogPart GetFirstPart(this IDialog dialog, IDialogContext context)
     {
-        if (currentPart == null)
+        var firstPart = dialog.Parts.FirstOrDefault();
+        if (firstPart == null)
         {
-            // get the first part
-            var firstPart = dialog.Parts.FirstOrDefault();
-            if (firstPart == null)
-            {
-                throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
-            }
-
-            return firstPart.ProcessDecisions(context);
+            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
         }
 
+        return firstPart.ProcessDecisions(context);
+    }
+
+    internal static IDialogPart GetNextPart(this IDialog dialog,
+                                            IDialogContext context,
+                                            IDialogPart currentPart,
+                                            IEnumerable<IDialogPartResult> providedAnswers)
+    {
         // first perform validation
         var error = currentPart.Validate(providedAnswers);
         if (error != null)

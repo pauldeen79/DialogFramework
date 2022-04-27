@@ -7,9 +7,13 @@ internal static class DialogPartExtensions
             ? questionDialogPart.Validate(providedAnswers)
             : null;
 
-    internal static IDialogPart ProcessDecisions(this IDialogPart dialogPart,
-                                                 IDialogContext context)
-    => dialogPart is IDecisionDialogPart decisionDialogPart
-        ? ProcessDecisions(decisionDialogPart.GetNextPart(context), context)
-        : dialogPart;
+    internal static IDialogPart ProcessDecisions(this IDialogPart dialogPart, IDialogContext context)
+        => dialogPart is IDecisionDialogPart decisionDialogPart
+            ? ProcessDecisions(decisionDialogPart.GetNextPart(context), context)
+            : dialogPart;
+
+    internal static ResultValueType? GetResultValueType(this IDialogPart dialogPart, IDialogPartResult dialogPartResult)
+        => dialogPart is IQuestionDialogPart questionDialogPart
+            ? questionDialogPart.Results.FirstOrDefault(x => x.Id == dialogPartResult.Result.Id)?.ValueType
+            : null;
 }
