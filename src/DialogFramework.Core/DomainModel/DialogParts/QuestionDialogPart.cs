@@ -4,19 +4,19 @@ public record QuestionDialogPart : IQuestionDialogPart
 {
     public QuestionDialogPart(string id,
                               string heading,
-                              string message,
+                              string title,
                               IDialogPartGroup group,
                               IEnumerable<IDialogPartResultDefinition> results)
     {
         Id = id;
         Heading = heading;
-        Message = message;
+        Title = title;
         Group = group;
         Results = new ValueCollection<IDialogPartResultDefinition>(results);
         ErrorMessages = new ValueCollection<string>();
     }
 
-    public string Message { get; }
+    public string Title { get; }
     public string Heading { get; }
     public IDialogPartGroup Group { get; }
     public ValueCollection<IDialogPartResultDefinition> Results { get; }

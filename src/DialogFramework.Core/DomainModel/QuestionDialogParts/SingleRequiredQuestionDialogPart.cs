@@ -4,10 +4,10 @@ public record SingleRequiredQuestionDialogPart : QuestionDialogPart
 {
     public SingleRequiredQuestionDialogPart(string id,
                                             string heading,
-                                            string message,
+                                            string title,
                                             IDialogPartGroup group,
                                             IEnumerable<IDialogPartResultDefinition> results)
-        : base(id, heading, message, group, results)
+        : base(id, heading, title, group, results)
     {
     }
 

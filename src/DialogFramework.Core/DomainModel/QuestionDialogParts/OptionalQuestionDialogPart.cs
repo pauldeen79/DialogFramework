@@ -4,10 +4,10 @@ public record OptionalQuestionDialogPart : QuestionDialogPart
 {
     public OptionalQuestionDialogPart(string id,
                                       string heading,
-                                      string message,
+                                      string title,
                                       IDialogPartGroup group,
                                       IEnumerable<IDialogPartResultDefinition> results)
-        : base(id, heading, message, group, results)
+        : base(id, heading, title, group, results)
     {
     }
 }

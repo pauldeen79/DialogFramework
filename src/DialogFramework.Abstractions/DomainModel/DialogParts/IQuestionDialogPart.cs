@@ -2,7 +2,7 @@
 
 public interface IQuestionDialogPart : IGroupedDialogPart
 {
-    string Message { get; }
+    string Title { get; }
     ValueCollection<IDialogPartResultDefinition> Results { get; }
     IDialogPart? Validate(IEnumerable<IDialogPartResult> dialogPartResults);
     ValueCollection<string> ErrorMessages { get; }
