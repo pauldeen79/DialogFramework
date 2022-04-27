@@ -29,10 +29,17 @@ public class DialogService : IDialogService
             {
                 return Start(redirectDialogPart.RedirectDialog);
             }
-            
-            if (firstPart is INavigationDialogPart navigationDialogPart)
+
+            while (true)
             {
-                firstPart = navigationDialogPart.GetNextPart(context);
+                if (firstPart is INavigationDialogPart navigationDialogPart)
+                {
+                    firstPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return context.Start(firstPart);
@@ -63,9 +70,16 @@ public class DialogService : IDialogService
                 return Start(redirectDialogPart.RedirectDialog);
             }
 
-            if (nextPart is INavigationDialogPart navigationDialogPart)
+            while (true)
             {
-                nextPart = navigationDialogPart.GetNextPart(context);
+                if (nextPart is INavigationDialogPart navigationDialogPart)
+                {
+                    nextPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
+                }
+                else
+                {
+                    break;
+                }
             }
 
             return context.Continue(nextPart, nextPart.State);
