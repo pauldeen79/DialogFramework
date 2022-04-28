@@ -8,6 +8,7 @@ global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
+global using DialogFramework.Core.DomainModel;
 global using DialogFramework.Core.DomainModel.DialogPartResultDefinitions;
 global using DialogFramework.Core.DomainModel.DialogPartResultValues;
 global using DialogFramework.Core.DomainModel.DialogParts;
