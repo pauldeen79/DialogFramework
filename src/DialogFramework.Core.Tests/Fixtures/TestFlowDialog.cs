@@ -42,7 +42,7 @@ public record TestFlowDialog : IDialog
                 new AgeDecisionDialogPart("AgeDecision"),
                 new MessageDialogPart("TooYoung", "Completed", "Too bad, you are too young. We can't give advice on kids.", completedGroup),
                 new StaticNavigationDialogPart("TooYoungNavigation", emailPart),
-                new OptionalQuestionDialogPart
+                new QuestionDialogPart
                 (
                     "SportsTypes",
                     "Sports types",
