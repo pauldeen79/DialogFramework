@@ -111,7 +111,7 @@ public class SimpleFormFlowDialogTests
             (
                 context.CurrentPart.Id,
                 "TelephoneNumber",
-                new TextDialogPartResultValue(string.Empty)
+                new TextDialogPartResultValue(null)
             ),
             new DialogPartResult
             (
