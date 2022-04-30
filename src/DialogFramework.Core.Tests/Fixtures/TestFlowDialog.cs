@@ -39,7 +39,7 @@ public record TestFlowDialog : IDialog
                 ),
                 new AgeDecisionDialogPart("AgeDecision"),
                 new MessageDialogPart("TooYoung", "Completed", "Too bad, you are too young. We can't give advice on kids.", completedGroup),
-                new StaticNavigationDialogPart("TooYoungNavigation", emailPart),
+                new StaticNavigationDialogPart("TooYoungNavigation", emailPart.Id),
                 new QuestionDialogPart
                 (
                     "SportsTypes",
@@ -60,9 +60,9 @@ public record TestFlowDialog : IDialog
                 ),
                 new SportsTypeDecisionDialogPart("SportsTypeDecision"),
                 new MessageDialogPart("Healthy", "Healthy", "You're all good! Keep up the good work.", completedGroup),
-                new StaticNavigationDialogPart("HealthyNavigation", emailPart),
+                new StaticNavigationDialogPart("HealthyNavigation", emailPart.Id),
                 new MessageDialogPart("Unhealthy", "Unhealthy", "Our advice: It's time to do some sports, mate!", completedGroup),
-                new StaticNavigationDialogPart("UnhealthyNavigation", emailPart),
+                new StaticNavigationDialogPart("UnhealthyNavigation", emailPart.Id),
                 emailPart
             }
         );

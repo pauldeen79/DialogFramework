@@ -5,15 +5,15 @@ public class StaticNavigationDialogPart : INavigationDialogPart
     public string Id { get; }
     public DialogState State { get; }
 
-    private readonly IDialogPart _nextPart;
+    private readonly string _nextPartId;
 
-    public StaticNavigationDialogPart(string id, IDialogPart nextPart)
+    public StaticNavigationDialogPart(string id, string nextPartId)
     {
         Id = id;
         State = DialogState.InProgress;
-        _nextPart = nextPart;
+        _nextPartId = nextPartId;
     }
 
-    public IDialogPart GetNextPart(IDialogContext context)
-        => _nextPart;
+    public string GetNextPartId(IDialogContext context)
+        => _nextPartId;
 }

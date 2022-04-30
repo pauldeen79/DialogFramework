@@ -315,7 +315,7 @@ public class DialogServiceTests
         var completedPart = new CompletedDialogPart("Completed", "Thank you", "Thank you for your input!", group2);
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var navigatedPart = new MessageDialogPart("Navigated", "Navigated", "This shows that navigation works", group2);
-        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -323,7 +323,7 @@ public class DialogServiceTests
                 "Test dialog",
                 "1.0.0",
                 true),
-            new IDialogPart[] { welcomePart, navigationPart },
+            new IDialogPart[] { welcomePart, navigationPart, navigatedPart },
             errorDialogPart,
             abortedPart,
             completedPart,
@@ -605,7 +605,7 @@ public class DialogServiceTests
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
-        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -613,7 +613,7 @@ public class DialogServiceTests
                 "Test dialog",
                 "1.0.0",
                 true),
-            new[] { navigationPart },
+            new IDialogPart[] { navigationPart, welcomePart },
             errorDialogPart,
             abortedPart,
             completedPart,
