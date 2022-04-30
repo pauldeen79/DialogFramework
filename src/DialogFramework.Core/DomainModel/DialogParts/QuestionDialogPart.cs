@@ -37,22 +37,33 @@ public record QuestionDialogPart : IQuestionDialogPart
     {
         foreach (var dialogPartResult in dialogPartResults)
         {
-            if (dialogPartResult.DialogPart.Id != Id)
+            if (dialogPartResult.DialogPartId != Id)
             {
                 ErrorMessages.Add("Provided answer from wrong question");
                 continue;
             }
 
-            var resultValueType = dialogPartResult.DialogPart.GetResultValueType(dialogPartResult);
-            if (resultValueType != null && dialogPartResult.Value.ResultValueType != resultValueType.Value)
+            if (!string.IsNullOrEmpty(dialogPartResult.ResultId))
             {
-                ErrorMessages.Add($"Result should be of type [{resultValueType.Value}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
-            }
+                var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
+                if (dialogPartResultDefinition == null)
+                {
+                    ErrorMessages.Add($"Unknown Result Id: [{dialogPartResult.ResultId}]");
+                }
+                else
+                {
+                    var resultValueType = dialogPartResultDefinition.ValueType;
+                    if (dialogPartResult.Value.ResultValueType != resultValueType)
+                    {
+                        ErrorMessages.Add($"Result for [{Id}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
+                    }
 
-            var validationContext = new ValidationContext(dialogPartResult);
-            ErrorMessages.AddRange(dialogPartResult.Validate(validationContext)
-                                                   .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
-                                                   .Select(x => x.ErrorMessage));
+                    var validationContext = new ValidationContext(this);
+                    ErrorMessages.AddRange(dialogPartResult.Validate(validationContext)
+                                                           .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
+                                                           .Select(x => x.ErrorMessage));
+                }
+            }
         }
     }
 }

@@ -14,8 +14,8 @@ public record AllRequiredQuestionDialogPart : QuestionDialogPart
     protected override void HandleValidate(IEnumerable<IDialogPartResult> dialogPartResults)
     {
         base.HandleValidate(dialogPartResults);
-        var partCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.Result.Id)).GroupBy(x => x.DialogPart.Id).Count();
-        if (partCount != Results.Count)
+        var submittedPartCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.ResultId)).GroupBy(x => x.ResultId).Count();
+        if (submittedPartCount != Results.Count)
         {
             ErrorMessages.Add($"All {Results.Count} answers are required");
         }

@@ -13,7 +13,7 @@ public class SingleRequiredQuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut) });
+        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id) });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();
@@ -33,7 +33,7 @@ public class SingleRequiredQuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut, sut.Results.Single(x => x.Id == "A"), new YesNoDialogPartResultValue(true)) });
+        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, sut.Results.Single(x => x.Id == "A").Id, new YesNoDialogPartResultValue(true)) });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
@@ -51,7 +51,11 @@ public class SingleRequiredQuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut, sut.Results.Single(x => x.Id == "A"), new YesNoDialogPartResultValue(true)), new DialogPartResult(sut, sut.Results.Single(x => x.Id == "B"), new YesNoDialogPartResultValue(true)) });
+        var actual = service.Continue(context, new[]
+        {
+            new DialogPartResult(sut.Id, sut.Results.Single(x => x.Id == "A").Id, new YesNoDialogPartResultValue(true)),
+            new DialogPartResult(sut.Id, sut.Results.Single(x => x.Id == "B").Id, new YesNoDialogPartResultValue(true))
+        });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();

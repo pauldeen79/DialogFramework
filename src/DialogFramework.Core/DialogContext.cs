@@ -67,7 +67,7 @@ public class DialogContext : IDialogContext
         => new DialogContext(Id, CurrentDialog, navigateToPart, CurrentState, null, Answers);
 
     public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
-        => Answers.FindAll(x => x.DialogPart.Id == dialogPart.Id);
+        => Answers.FindAll(x => x.DialogPartId == dialogPart.Id);
 
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
         => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, CurrentDialog.ResetDialogPartResultByPart(Answers, CurrentPart));

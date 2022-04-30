@@ -27,7 +27,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First()) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
 
         // Act
         var result = context.GetDialogPartResultsByPart(questionPart);
@@ -45,16 +45,16 @@ public class DialogContextTests
         IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First()) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
         // Assert 1
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().Result.Id.Should().Be(questionPart.Results.First().Id);
+        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 2 - Call GetProvidedAnswerByPart second time, after changing the provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.Last()) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id) });
         // Assert 2
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().Result.Id.Should().Be(questionPart.Results.Last().Id);
+        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
     }
 
     [Fact]
@@ -64,9 +64,9 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart, questionPart.Results.First()) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().Result.Id.Should().Be(questionPart.Results.First().Id);
+        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
         context = context.ResetDialogPartResultByPart(questionPart);

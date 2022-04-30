@@ -5,45 +5,36 @@ public record DialogPartResult : IDialogPartResult
     /// <summary>
     /// Constructs a dialog part result from a non-question dialog part.
     /// </summary>
-    public DialogPartResult(IDialogPart dialogPart)
-        : this(dialogPart, new EmptyDialogPartResultDefinition(), new EmptyDialogPartResultValue())
+    public DialogPartResult(string dialogPartId)
+        : this(dialogPartId, new EmptyDialogPartResultDefinition().Id, new EmptyDialogPartResultValue())
     {
     }
 
     /// <summary>
-    /// Constructs a dialog part result from a question dialog part, without a result.
+    /// Constructs a dialog part result from a question dialog part id, without a result.
     /// </summary>
-    public DialogPartResult(IDialogPart dialogPart,
-                            IDialogPartResultDefinition result)
-        : this(dialogPart, result, new EmptyDialogPartResultValue())
+    public DialogPartResult(string dialogPartId,
+                            string resultId)
+        : this(dialogPartId, resultId, new EmptyDialogPartResultValue())
     {
     }
 
     /// <summary>
-    /// Constructs a dialog part result from a question dialog part, with a result.
+    /// Constructs a dialog part result from a question dialog part id, with a result.
     /// </summary>
-    public DialogPartResult(IDialogPart dialogPart,
-                            IDialogPartResultDefinition result,
+    public DialogPartResult(string dialogPartId,
+                            string resultId,
                             IDialogPartResultValue value)
     {
-        DialogPart = dialogPart;
-        Result = result;
+        DialogPartId = dialogPartId;
+        ResultId = resultId;
         Value = value;
     }
 
-    public IDialogPart DialogPart { get; }
-    public IDialogPartResultDefinition Result { get; }
+    public string DialogPartId { get; }
+    public string ResultId { get; }
     public IDialogPartResultValue Value { get; }
 
     public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-    {
-        if (!string.IsNullOrEmpty(Result.Id))
-        {
-            var questionDialogPart = DialogPart as IQuestionDialogPart;
-            if (questionDialogPart != null && !questionDialogPart.Results.Any(a => a.Id == Result.Id))
-            {
-                yield return new ValidationResult($"Unknown result: [{Result.Id}]");
-            }
-        }
-    }
+        => Enumerable.Empty<ValidationResult>();
 }

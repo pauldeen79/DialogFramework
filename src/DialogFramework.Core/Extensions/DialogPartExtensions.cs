@@ -11,9 +11,4 @@ internal static class DialogPartExtensions
         => dialogPart is IDecisionDialogPart decisionDialogPart
             ? ProcessDecisions(decisionDialogPart.GetNextPart(context), context)
             : dialogPart;
-
-    internal static ResultValueType? GetResultValueType(this IDialogPart dialogPart, IDialogPartResult dialogPartResult)
-        => dialogPart is IQuestionDialogPart questionDialogPart
-            ? questionDialogPart.Results.FirstOrDefault(x => x.Id == dialogPartResult.Result.Id)?.ValueType
-            : null;
 }

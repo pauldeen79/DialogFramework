@@ -2,7 +2,7 @@
 
 public interface IDialogPartResult : IValidatableObject
 {
-    IDialogPart DialogPart { get; }
-    IDialogPartResultDefinition Result { get; }
+    string DialogPartId { get; }
+    string ResultId { get; }
     IDialogPartResultValue Value { get; }
 }

@@ -13,13 +13,13 @@ public class QuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut, new DialogPartResultDefinition("C", "Title", ResultValueType.YesNo), new YesNoDialogPartResultValue(true)) });
+        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
         var currentPart = (QuestionDialogPart)actual.CurrentPart;
         currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Unknown result: [C]");
+        currentPart.ErrorMessages.Single().Should().Be("Unknown Result Id: [C]");
     }
 
     [Fact]
@@ -33,13 +33,13 @@ public class QuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut, new DialogPartResultDefinition("A", "Title", ResultValueType.YesNo), new EmptyDialogPartResultValue()) });
+        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
         var currentPart = (QuestionDialogPart)actual.CurrentPart;
         currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Result should be of type [YesNo], but type [None] was answered");
+        currentPart.ErrorMessages.Single().Should().Be("Result for [Test] should be of type [YesNo], but type [None] was answered");
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class QuestionDialogPartTests
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut, new DialogPartResultDefinition("A", "Title", ResultValueType.YesNo), new YesNoDialogPartResultValue(true)) });
+        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();

@@ -172,7 +172,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory);
 
         // Act
-        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, currentPart.Results.Single(x => x.Id == "Great")) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, currentPart.Results.Single(x => x.Id == "Great").Id) });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -190,11 +190,9 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IDialogPartResultDefinition>();
-        answerMock.SetupGet(x => x.Id).Returns("Unknown result");
 
         // Act
-        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, answerMock.Object) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, "Unknown result") });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -202,7 +200,7 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)result.CurrentPart;
         questionDialogPart.ErrorMessages.Should().ContainSingle();
-        questionDialogPart.ErrorMessages[0].Should().Be("Unknown result: [Unknown result]");
+        questionDialogPart.ErrorMessages[0].Should().Be("Unknown Result Id: [Unknown result]");
     }
 
     [Fact]
@@ -215,13 +213,11 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
-        var answerMock = new Mock<IDialogPartResultDefinition>();
-        answerMock.SetupGet(x => x.Id).Returns("Unknown answer");
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
         wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IDialogPartResultDefinition>());
 
         // Act
-        var result = sut.Continue(context, new[] { new DialogPartResult(wrongQuestionMock.Object, answerMock.Object) });
+        var result = sut.Continue(context, new[] { new DialogPartResult(wrongQuestionMock.Object.Id, "Unknown answer") });
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -246,7 +242,7 @@ public class DialogServiceTests
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
 
         // Act
-        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart, currentPart.Results.Single(a => a.Id == "Terrible")) }); // answer the question with 'Terrible', this will trigger a second message
+        var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, currentPart.Results.Single(a => a.Id == "Terrible").Id) }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -839,7 +835,7 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
@@ -875,7 +871,7 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);

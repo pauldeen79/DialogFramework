@@ -14,7 +14,7 @@ public record SingleOptionalQuestionDialogPart : QuestionDialogPart
     protected override void HandleValidate(IEnumerable<IDialogPartResult> dialogPartResults)
     {
         base.HandleValidate(dialogPartResults);
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.Result.Id));
+        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
         if (answerCount > 1)
         {
             ErrorMessages.Add("Only one answer is allowed");

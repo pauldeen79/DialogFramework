@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace DialogFramework.Core.Tests.Fixtures;
+﻿namespace DialogFramework.Core.Tests.Fixtures;
 
 public record TestFlowDialog : IDialog
 {
@@ -77,15 +75,15 @@ public record TestFlowDialog : IDialog
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
                                                          IEnumerable<IDialogPartResult> newDialogPartResults)
     {
-        var dialogPartIds = newDialogPartResults.GroupBy(x => x.DialogPart.Id).Select(x => x.Key).ToArray();
-        return existingDialogPartResults.Where(x => !dialogPartIds.Contains(x.DialogPart.Id)).Concat(newDialogPartResults);
+        var dialogPartIds = newDialogPartResults.GroupBy(x => x.DialogPartId).Select(x => x.Key).ToArray();
+        return existingDialogPartResults.Where(x => !dialogPartIds.Contains(x.DialogPartId)).Concat(newDialogPartResults);
     }
 
     public IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart)
-        => existingDialogPartResults.Where(x => x.DialogPart.Id != currentPart.Id);
+        => existingDialogPartResults.Where(x => x.DialogPartId != currentPart.Id);
 
     public bool CanNavigateTo(IDialogPart currentPart, IDialogPart navigateToPart, IEnumerable<IDialogPartResult> existingDialogPartResults)
-        => currentPart.Id == navigateToPart.Id || existingDialogPartResults.Any(x => x.DialogPart.Id == navigateToPart.Id);
+        => currentPart.Id == navigateToPart.Id || existingDialogPartResults.Any(x => x.DialogPartId == navigateToPart.Id);
 }
 
 /*
