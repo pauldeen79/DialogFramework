@@ -17,9 +17,9 @@ public record SimpleFormFlowDialog : Dialog
                 GetInformationGroup,
                 new IDialogPartResultDefinition[]
                 {
-                    new DefaultDialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text),
-                    new DefaultDialogPartResultDefinition("TelephoneNumber", "Telephone number", ResultValueType.Text),
-                    new DefaultDialogPartResultDefinition("SignUpForNewsletter", "Subscribe to newsletter (optional)", ResultValueType.YesNo)
+                    new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text, new[] { new ValueTypeValidator(typeof(string)) }),
+                    new DialogPartResultDefinition("TelephoneNumber", "Telephone number", ResultValueType.Text, new[] { new ValueTypeValidator(typeof(string)) }),
+                    new DialogPartResultDefinition("SignUpForNewsletter", "Subscribe to newsletter (optional)", ResultValueType.YesNo, new[] { new ValueTypeValidator(typeof(bool)) })
                 }
             )
         },

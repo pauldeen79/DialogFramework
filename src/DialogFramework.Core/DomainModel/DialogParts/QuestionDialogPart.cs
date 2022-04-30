@@ -55,7 +55,7 @@ public record QuestionDialogPart : IQuestionDialogPart
                     var resultValueType = dialogPartResultDefinition.ValueType;
                     if (dialogPartResult.Value.ResultValueType != resultValueType)
                     {
-                        ErrorMessages.Add($"Result for [{Id}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
+                        ErrorMessages.Add($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
                     }
 
                     var validationContext = new ValidationContext(this);

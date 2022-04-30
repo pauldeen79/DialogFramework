@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Core.NavigationDialogParts;
+﻿namespace DialogFramework.Core.DomainModel.NavigationDialogParts;
 
 public class StaticNavigationDialogPart : INavigationDialogPart
 {
