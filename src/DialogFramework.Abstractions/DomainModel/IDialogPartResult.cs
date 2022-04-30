@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions.DomainModel;
 
-public interface IDialogPartResult : IValidatableObject
+public interface IDialogPartResult
 {
     string DialogPartId { get; }
     string ResultId { get; }

@@ -59,9 +59,9 @@ public record QuestionDialogPart : IQuestionDialogPart
                     }
 
                     var validationContext = new ValidationContext(this);
-                    ErrorMessages.AddRange(dialogPartResult.Validate(validationContext)
-                                                           .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
-                                                           .Select(x => x.ErrorMessage));
+                    ErrorMessages.AddRange(dialogPartResultDefinition.Validate(validationContext, dialogPartResult)
+                                                                     .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
+                                                                     .Select(x => x.ErrorMessage));
                 }
             }
         }

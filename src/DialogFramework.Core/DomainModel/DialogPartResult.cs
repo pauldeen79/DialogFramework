@@ -13,8 +13,7 @@ public record DialogPartResult : IDialogPartResult
     /// <summary>
     /// Constructs a dialog part result from a question dialog part id, without a result.
     /// </summary>
-    public DialogPartResult(string dialogPartId,
-                            string resultId)
+    public DialogPartResult(string dialogPartId, string resultId)
         : this(dialogPartId, resultId, new EmptyDialogPartResultValue())
     {
     }
@@ -22,9 +21,7 @@ public record DialogPartResult : IDialogPartResult
     /// <summary>
     /// Constructs a dialog part result from a question dialog part id, with a result.
     /// </summary>
-    public DialogPartResult(string dialogPartId,
-                            string resultId,
-                            IDialogPartResultValue value)
+    public DialogPartResult(string dialogPartId, string resultId, IDialogPartResultValue value)
     {
         DialogPartId = dialogPartId;
         ResultId = resultId;
@@ -34,7 +31,4 @@ public record DialogPartResult : IDialogPartResult
     public string DialogPartId { get; }
     public string ResultId { get; }
     public IDialogPartResultValue Value { get; }
-
-    public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        => Enumerable.Empty<ValidationResult>();
 }

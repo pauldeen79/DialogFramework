@@ -20,12 +20,12 @@ public record TestFlowDialog : Dialog
                 GetInformationGroup,
                 new IDialogPartResultDefinition[]
                 {
-                    new DialogPartResultDefinition("<10", "0 to 9 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("10-19", "10 to 19 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("20-29", "20 to 29 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("30-39", "30 to 39 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("40-49", "40 to 49 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("50+", "Older than 50 years", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("<10", "0 to 9 years old", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("10-19", "10 to 19 years old", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("20-29", "20 to 29 years old", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("30-39", "30 to 39 years old", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("40-49", "40 to 49 years old", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("50+", "Older than 50 years", ResultValueType.None),
                 }
             ),
             new AgeDecisionDialogPart("AgeDecision"),
@@ -39,14 +39,14 @@ public record TestFlowDialog : Dialog
                 GetInformationGroup,
                 new IDialogPartResultDefinition[]
                 {
-                    new DialogPartResultDefinition("Bicycle", "Bicycle riding", ResultValueType.None),
-                    new DialogPartResultDefinition("Soccer", "Socced", ResultValueType.None),
-                    new DialogPartResultDefinition("Swimming", "Swimming", ResultValueType.None),
-                    new DialogPartResultDefinition("Aerobics", "Aerobics", ResultValueType.None),
-                    new DialogPartResultDefinition("Tennis", "Tennis", ResultValueType.None),
-                    new DialogPartResultDefinition("Baseball", "Baseball", ResultValueType.None),
-                    new DialogPartResultDefinition("Hockey", "Hockey", ResultValueType.None),
-                    new DialogPartResultDefinition("Other", "Other sports (please specify)", ResultValueType.Text),
+                    new DefaultDialogPartResultDefinition("Bicycle", "Bicycle riding", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Soccer", "Socced", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Swimming", "Swimming", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Aerobics", "Aerobics", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Tennis", "Tennis", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Baseball", "Baseball", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Hockey", "Hockey", ResultValueType.None),
+                    new DefaultDialogPartResultDefinition("Other", "Other sports (please specify)", ResultValueType.Text),
                 }
             ),
             new SportsTypeDecisionDialogPart("SportsTypeDecision"),
@@ -54,7 +54,7 @@ public record TestFlowDialog : Dialog
             new StaticNavigationDialogPart("HealthyNavigation", EmailPartId),
             new MessageDialogPart("Unhealthy", "Unhealthy", "Our advice: It's time to do some sports, mate!", CompletedGroup),
             new StaticNavigationDialogPart("UnhealthyNavigation", EmailPartId),
-            new SingleOptionalQuestionDialogPart(EmailPartId, "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) })
+            new SingleOptionalQuestionDialogPart(EmailPartId, "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DefaultDialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) })
         },
         new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
         new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),

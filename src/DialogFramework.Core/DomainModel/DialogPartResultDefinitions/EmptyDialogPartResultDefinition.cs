@@ -5,4 +5,7 @@ public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
     public string Id => string.Empty;
     public string Title => string.Empty;
     public ResultValueType ValueType => ResultValueType.None;
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext, IDialogPartResult dialogPartResult)
+        => Enumerable.Empty<ValidationResult>();
 }

@@ -7,7 +7,7 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DefaultDialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DefaultDialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
@@ -27,7 +27,7 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DefaultDialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DefaultDialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
@@ -45,7 +45,7 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DefaultDialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DefaultDialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
         var service = new DialogService(new Mock<IDialogContextFactory>().Object);
