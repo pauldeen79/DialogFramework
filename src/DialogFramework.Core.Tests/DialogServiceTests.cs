@@ -343,6 +343,45 @@ public class DialogServiceTests
         result.CurrentPart.Id.Should().Be(navigatedPart.Id);
     }
 
+    [Fact]
+    public void Continue_Returns_Error_When_NavigationPart_Returns_Unknown_PartId()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Thank you", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => "Unknown Id");
+        var dialog = new Dialog
+        (
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
+            new IDialogPart[] { welcomePart, navigationPart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            new[] { group1 }
+        );
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
+        var sut = new DialogService(factory);
+        var context = sut.Start(dialog); // this will trigger the message
+
+        // Act
+        var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the navigation
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        ((IErrorDialogPart)result.CurrentPart).Exception.Should().BeAssignableTo<InvalidOperationException>();
+        ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be("Unknown Part Id: [Unknown Id]");
+    }
+
     [Theory]
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.Completed)]
@@ -630,6 +669,44 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentGroup.Should().Be(welcomePart.Group);
         result.CurrentPart.Id.Should().Be(welcomePart.Id);
+    }
+
+    [Fact]
+    public void Start_Returns_Error_When_NavigationPart_Returns_Unknown_PartId()
+    {
+        // Arrange
+        var group1 = new DialogPartGroup("Part1", "Give information", 1);
+        var group2 = new DialogPartGroup("Part2", "Completed", 2);
+        var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
+        var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
+        var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
+        var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => "Unknown Id");
+        var dialog = new Dialog
+        (
+            new DialogMetadata(
+                "Test",
+                "Test dialog",
+                "1.0.0",
+                true),
+            new IDialogPart[] { navigationPart, welcomePart },
+            errorDialogPart,
+            abortedPart,
+            completedPart,
+            Enumerable.Empty<IDialogPartGroup>()
+        );
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog));
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.Start(dialog);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        ((IErrorDialogPart)result.CurrentPart).Exception.Should().BeAssignableTo<InvalidOperationException>();
+        ((IErrorDialogPart)result.CurrentPart).Exception!.Message.Should().Be("Unknown Part Id: [Unknown Id]");
     }
 
     [Fact]
