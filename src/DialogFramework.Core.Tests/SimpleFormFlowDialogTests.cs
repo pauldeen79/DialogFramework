@@ -70,7 +70,7 @@ public class SimpleFormFlowDialogTests
                 "SignUpForNewsletter",
                 new TextDialogPartResultValue("yes please")
             )
-        ); // ContactInfo -> Completed
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         context.CurrentPart.Id.Should().Be("ContactInfo");
@@ -119,7 +119,7 @@ public class SimpleFormFlowDialogTests
                 "SignUpForNewsletter",
                 new YesNoDialogPartResultValue(false)
             )
-        ); // ContactInfo -> Completed
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         context.CurrentPart.Id.Should().Be("ContactInfo");
@@ -164,7 +164,7 @@ public class SimpleFormFlowDialogTests
                 "SignUpForNewsletter",
                 new QuirkYesNoDialogPartResultValue()
             )
-        ); // ContactInfo -> Completed
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         context.CurrentPart.Id.Should().Be("ContactInfo");
