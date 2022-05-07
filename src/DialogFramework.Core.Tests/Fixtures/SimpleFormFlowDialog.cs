@@ -9,7 +9,7 @@ public record SimpleFormFlowDialog : Dialog
         new DialogMetadata(nameof(TestFlowDialog), "Simple fom flow dialog", "1.0.0", true),
         new IDialogPart[]
         {
-            new AllRequiredQuestionDialogPart
+            new QuestionDialogPart
             (
                 "ContactInfo",
                 "Contact information",

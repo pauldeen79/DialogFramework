@@ -42,28 +42,32 @@ public record QuestionDialogPart : IQuestionDialogPart
                 ErrorMessages.Add("Provided answer from wrong question");
                 continue;
             }
-
-            if (!string.IsNullOrEmpty(dialogPartResult.ResultId))
+            if (string.IsNullOrEmpty(dialogPartResult.ResultId))
             {
-                var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
-                if (dialogPartResultDefinition == null)
+                continue;
+            }
+            var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
+            if (dialogPartResultDefinition == null)
+            {
+                ErrorMessages.Add($"Unknown Result Id: [{dialogPartResult.ResultId}]");
+            }
+            else
+            {
+                var resultValueType = dialogPartResultDefinition.ValueType;
+                if (dialogPartResult.Value.ResultValueType != resultValueType)
                 {
-                    ErrorMessages.Add($"Unknown Result Id: [{dialogPartResult.ResultId}]");
-                }
-                else
-                {
-                    var resultValueType = dialogPartResultDefinition.ValueType;
-                    if (dialogPartResult.Value.ResultValueType != resultValueType)
-                    {
-                        ErrorMessages.Add($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
-                    }
-
-                    var validationContext = new ValidationContext(this);
-                    ErrorMessages.AddRange(dialogPartResultDefinition.Validate(validationContext, dialogPartResult)
-                                                                     .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
-                                                                     .Select(x => x.ErrorMessage));
+                    ErrorMessages.Add($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered");
                 }
             }
+        }
+
+        foreach (var dialogPartResultDefinition in Results)
+        {
+            var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
+            var validationContext = new ValidationContext(this);
+            ErrorMessages.AddRange(dialogPartResultDefinition.Validate(validationContext, this, dialogPartResultsByPart)
+                                                             .Where(x => !string.IsNullOrEmpty(x.ErrorMessage))
+                                                             .Select(x => x.ErrorMessage));
         }
     }
 }

@@ -6,5 +6,7 @@ public interface IDialogPartResultDefinition
     string Title { get; }
     ResultValueType ValueType { get; }
     ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
-    IEnumerable<ValidationResult> Validate(ValidationContext validationContext, IDialogPartResult dialogPartResult);
+    IEnumerable<ValidationResult> Validate(ValidationContext validationContext,
+                                           IDialogPart dialogPart,
+                                           IEnumerable<IDialogPartResult> dialogPartResults);
 }

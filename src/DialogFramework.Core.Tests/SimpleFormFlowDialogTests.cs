@@ -133,6 +133,30 @@ public class SimpleFormFlowDialogTests
     }
 
     [Fact]
+    public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
+    {
+        // Arrange
+        var dialog = new SimpleFormFlowDialog();
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var context = sut.Start(dialog);
+        context.CurrentPart.Id.Should().Be("ContactInfo");
+        context = sut.Continue(context); // Current part remains ContactInfo because of validation errors
+
+        // Assert
+        context.CurrentPart.Id.Should().Be("ContactInfo");
+        context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
+        var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
+        questionDialogPart.ErrorMessages.Should().BeEquivalentTo(new[]
+        {
+            "Result value of [ContactInfo.EmailAddress] is required",
+            "Result value of [ContactInfo.TelephoneNumber] is required"
+        });
+    }
+
+    [Fact]
     public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
         // Arrange

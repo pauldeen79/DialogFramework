@@ -8,6 +8,8 @@ public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
 
     public ValueCollection<IDialogPartResultDefinitionValidator> Validators => new();
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext, IDialogPartResult dialogPartResult)
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext,
+                                                  IDialogPart dialogPart,
+                                                  IEnumerable<IDialogPartResult> dialogPartResults)
         => Enumerable.Empty<ValidationResult>();
 }
