@@ -11,13 +11,13 @@ public record SingleOptionalQuestionDialogPart : QuestionDialogPart
     {
     }
 
-    protected override void HandleValidate(IEnumerable<IDialogPartResult> dialogPartResults)
+    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        base.HandleValidate(dialogPartResults);
+        base.HandleValidate(context, dialogPartResults);
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
         if (answerCount > 1)
         {
-            ErrorMessages.Add("Only one answer is allowed");
+            ValidationErrors.Add(new DialogValidationResult("Only one answer is allowed"));
         }
     }
 }

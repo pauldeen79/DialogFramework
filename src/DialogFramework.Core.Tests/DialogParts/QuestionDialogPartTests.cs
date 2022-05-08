@@ -18,8 +18,8 @@ public class QuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
         var currentPart = (QuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Unknown Result Id: [C]");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [C]");
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class QuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
         var currentPart = (QuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Result for [Test.A] should be of type [YesNo], but type [None] was answered");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Result for [Test.A] should be of type [YesNo], but type [None] was answered");
     }
 
     [Fact]

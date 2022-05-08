@@ -4,6 +4,6 @@ public interface IQuestionDialogPart : IGroupedDialogPart
 {
     string Title { get; }
     ValueCollection<IDialogPartResultDefinition> Results { get; }
-    IDialogPart? Validate(IEnumerable<IDialogPartResult> dialogPartResults);
-    ValueCollection<string> ErrorMessages { get; }
+    IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
+    ValueCollection<IDialogValidationResult> ValidationErrors { get; }
 }

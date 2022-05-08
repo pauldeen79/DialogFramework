@@ -2,15 +2,30 @@
 
 public class RequiredValidator : IDialogPartResultDefinitionValidator
 {
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext,
-                                                  IDialogPart dialogPart,
-                                                  IDialogPartResultDefinition dialogPartResultDefinition,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults)
+    private readonly bool _checkForSingleOccurence;
+
+    public RequiredValidator() : this(false)
+    {
+    }
+
+    public RequiredValidator(bool checkForSingleOccurence)
+    {
+        _checkForSingleOccurence = checkForSingleOccurence;
+    }
+
+    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                         IDialogPart dialogPart,
+                                                         IDialogPartResultDefinition dialogPartResultDefinition,
+                                                         IEnumerable<IDialogPartResult> dialogPartResults)
     {
         if (!dialogPartResults.Any()
             || dialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
         {
-            yield return new ValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required");
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+        }
+        else if (_checkForSingleOccurence && dialogPartResults.Count() > 1)
+        {
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
         }
     }
 }

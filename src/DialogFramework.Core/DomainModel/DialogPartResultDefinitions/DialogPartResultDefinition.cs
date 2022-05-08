@@ -25,13 +25,13 @@ public record DialogPartResultDefinition : IDialogPartResultDefinition
     public ResultValueType ValueType { get; }
     public ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
 
-    public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext,
-                                                          IDialogPart dialogPart,
-                                                          IEnumerable<IDialogPartResult> dialogPartResults)
+    public virtual IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                                 IDialogPart dialogPart,
+                                                                 IEnumerable<IDialogPartResult> dialogPartResults)
     {
         foreach (var validator in Validators)
         {
-            foreach (var validationError in validator.Validate(validationContext, dialogPart, this, dialogPartResults))
+            foreach (var validationError in validator.Validate(context, dialogPart, this, dialogPartResults))
             {
                 yield return validationError;
             }

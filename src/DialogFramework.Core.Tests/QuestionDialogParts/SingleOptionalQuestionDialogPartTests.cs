@@ -58,7 +58,7 @@ public class SingleOptionalQuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<SingleOptionalQuestionDialogPart>();
         var currentPart = (SingleOptionalQuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Only one answer is allowed");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Only one answer is allowed");
     }
 }

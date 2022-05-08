@@ -76,7 +76,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
-        questionDialogPart.ErrorMessages.Should().BeEquivalentTo(new[]
+        questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
             "Result value of [ContactInfo.EmailAddress] is not of type [System.String]",
@@ -125,7 +125,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
-        questionDialogPart.ErrorMessages.Should().BeEquivalentTo(new[]
+        questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result value of [ContactInfo.EmailAddress] is required",
             "Result value of [ContactInfo.TelephoneNumber] is required"
@@ -149,7 +149,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
-        questionDialogPart.ErrorMessages.Should().BeEquivalentTo(new[]
+        questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result value of [ContactInfo.EmailAddress] is required",
             "Result value of [ContactInfo.TelephoneNumber] is required"
@@ -194,7 +194,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
-        questionDialogPart.ErrorMessages.Should().BeEquivalentTo(new[]
+        questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result value of [ContactInfo.SignUpForNewsletter] is not of type [System.Boolean]"
         });

@@ -18,8 +18,8 @@ public class SingleRequiredQuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();
         var currentPart = (SingleRequiredQuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Answer is required");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Answer is required");
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class SingleRequiredQuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();
         var currentPart = (SingleRequiredQuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("Only one answer is allowed");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Only one answer is allowed");
     }
 }

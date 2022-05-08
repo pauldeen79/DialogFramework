@@ -18,8 +18,8 @@ public class AllRequiredQuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<AllRequiredQuestionDialogPart>();
         var currentPart = (AllRequiredQuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("All 2 answers are required");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]
@@ -38,8 +38,8 @@ public class AllRequiredQuestionDialogPartTests
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<AllRequiredQuestionDialogPart>();
         var currentPart = (AllRequiredQuestionDialogPart)actual.CurrentPart;
-        currentPart.ErrorMessages.Should().ContainSingle();
-        currentPart.ErrorMessages.Single().Should().Be("All 2 answers are required");
+        currentPart.ValidationErrors.Should().ContainSingle();
+        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]

@@ -11,13 +11,13 @@ public record AllRequiredQuestionDialogPart : QuestionDialogPart
     {
     }
 
-    protected override void HandleValidate(IEnumerable<IDialogPartResult> dialogPartResults)
+    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        base.HandleValidate(dialogPartResults);
+        base.HandleValidate(context, dialogPartResults);
         var submittedPartCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.ResultId)).GroupBy(x => x.ResultId).Count();
         if (submittedPartCount != Results.Count)
         {
-            ErrorMessages.Add($"All {Results.Count} answers are required");
+            ValidationErrors.Add(new DialogValidationResult($"All {Results.Count} answers are required"));
         }
     }
 }

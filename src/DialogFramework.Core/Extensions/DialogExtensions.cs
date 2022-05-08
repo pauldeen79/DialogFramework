@@ -19,7 +19,7 @@ internal static class DialogExtensions
                                             IEnumerable<IDialogPartResult> providedAnswers)
     {
         // first perform validation
-        var error = currentPart.Validate(providedAnswers);
+        var error = currentPart.Validate(context, providedAnswers);
         if (error != null)
         {
             return error;
