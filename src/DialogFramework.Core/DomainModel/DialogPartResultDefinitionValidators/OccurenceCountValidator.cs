@@ -32,5 +32,4 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] {messageSuffix}", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
         }
     }
-
 }
