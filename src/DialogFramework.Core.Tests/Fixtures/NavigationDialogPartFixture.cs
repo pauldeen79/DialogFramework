@@ -2,11 +2,11 @@
 
 internal record NavigationDialogPartFixture : NavigationDialogPart
 {
-    private readonly Func<IDialogContext, string> _getNextPartIdDelegate;
+    private readonly Func<IDialogContext, IDialogPart> _getNextPartDelegate;
 
-    public NavigationDialogPartFixture(string id, Func<IDialogContext, string> getNextPartIdDelegate)
-        : base(id) => _getNextPartIdDelegate = getNextPartIdDelegate;
+    public NavigationDialogPartFixture(string id, Func<IDialogContext, IDialogPart> getNextPartDelegate)
+        : base(id) => _getNextPartDelegate = getNextPartDelegate;
 
-    public override string GetNextPartId(IDialogContext context)
-        => _getNextPartIdDelegate(context);
+    public override IDialogPart GetNextPart(IDialogContext context)
+        => _getNextPartDelegate(context);
 }

@@ -5,7 +5,7 @@ public record TestFlowDialog : Dialog
     private static readonly IDialogPartGroup WelcomeGroup = new DialogPartGroup("Welcome", "Welcome", 1);
     private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 2);
     private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 3);
-    private const string EmailPartId = "Email";
+    private static readonly IDialogPart EmailPart = new SingleOptionalQuestionDialogPart("Email", "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) });
 
     public TestFlowDialog() : base(
         new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true),
@@ -30,7 +30,7 @@ public record TestFlowDialog : Dialog
             ),
             new AgeDecisionDialogPart("AgeDecision"),
             new MessageDialogPart("TooYoung", "Completed", "Too bad, you are too young. We can't give advice on kids.", CompletedGroup),
-            new StaticNavigationDialogPart("TooYoungNavigation", EmailPartId),
+            new StaticNavigationDialogPart("TooYoungNavigation", EmailPart),
             new QuestionDialogPart
             (
                 "SportsTypes",
@@ -51,10 +51,9 @@ public record TestFlowDialog : Dialog
             ),
             new SportsTypeDecisionDialogPart("SportsTypeDecision"),
             new MessageDialogPart("Healthy", "Healthy", "You're all good! Keep up the good work.", CompletedGroup),
-            new StaticNavigationDialogPart("HealthyNavigation", EmailPartId),
+            new StaticNavigationDialogPart("HealthyNavigation", EmailPart),
             new MessageDialogPart("Unhealthy", "Unhealthy", "Our advice: It's time to do some sports, mate!", CompletedGroup),
-            new StaticNavigationDialogPart("UnhealthyNavigation", EmailPartId),
-            new SingleOptionalQuestionDialogPart(EmailPartId, "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) })
+            new StaticNavigationDialogPart("UnhealthyNavigation", EmailPart)
         },
         new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
         new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),

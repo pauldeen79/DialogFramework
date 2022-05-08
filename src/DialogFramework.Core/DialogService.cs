@@ -34,13 +34,7 @@ public class DialogService : IDialogService
             {
                 if (firstPart is INavigationDialogPart navigationDialogPart)
                 {
-                    var navigateToPartId = navigationDialogPart.GetNextPartId(context);
-                    var navigateToPart = dialog.Parts.SingleOrDefault(x => x.Id == navigateToPartId);
-                    if (navigateToPart == null)
-                    {
-                        throw new InvalidOperationException($"Unknown Part Id: [{navigateToPartId}]");
-                    }
-                    firstPart = navigateToPart.ProcessDecisions(context);
+                    firstPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
                 }
                 else
                 {
@@ -80,13 +74,7 @@ public class DialogService : IDialogService
             {
                 if (nextPart is INavigationDialogPart navigationDialogPart)
                 {
-                    var navigateToPartId = navigationDialogPart.GetNextPartId(context);
-                    var navigateToPart = context.CurrentDialog.Parts.SingleOrDefault(x => x.Id == navigateToPartId);
-                    if (navigateToPart == null)
-                    {
-                        throw new InvalidOperationException($"Unknown Part Id: [{navigateToPartId}]");
-                    }
-                    nextPart = navigateToPart.ProcessDecisions(context);
+                    nextPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
                 }
                 else
                 {
