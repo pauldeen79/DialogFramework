@@ -6,7 +6,7 @@ public class TestFlowTests
     public void Can_Complete_TestFlow_Dialog_With_Unhealthy_Advice()
     {
         // Arrange
-        var dialog = new TestFlowDialog();
+        var dialog = new TestDialogRepository().GetDialog(TestFlowDialog.DialogMetadata);
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 

@@ -2,11 +2,12 @@
 
 public record SimpleFormFlowDialog : Dialog
 {
+    public static IDialogMetadata DialogMetadata => new DialogMetadata(nameof(SimpleFormFlowDialog), "Simple fom flow dialog", "1.0.0", true);
     private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 1);
     private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 2);
 
     public SimpleFormFlowDialog() : base(
-        new DialogMetadata(nameof(TestFlowDialog), "Simple fom flow dialog", "1.0.0", true),
+        DialogMetadata,
         new IDialogPart[]
         {
             new QuestionDialogPart

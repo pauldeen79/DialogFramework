@@ -2,13 +2,14 @@
 
 public record TestFlowDialog : Dialog
 {
+    public static IDialogMetadata DialogMetadata => new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true);
     private static readonly IDialogPartGroup WelcomeGroup = new DialogPartGroup("Welcome", "Welcome", 1);
     private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 2);
     private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 3);
     private static readonly IDialogPart EmailPart = new SingleOptionalQuestionDialogPart("Email", "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) });
 
     public TestFlowDialog() : base(
-        new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true),
+        DialogMetadata,
         new IDialogPart[]
         {
             new MessageDialogPart("Welcome", "Welcome", "Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.", WelcomeGroup),
