@@ -939,4 +939,25 @@ public class DialogServiceTests
         // Assert
         result.Should().BeTrue();
     }
+
+    [Fact]
+    public void ResetCurrentState_Resets_Answers_From_Current_Question()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
+        context.AddAnswer(new DialogPartResult(questionPart.Id, "Terrible"));
+        context.AddAnswer(new DialogPartResult("Other part", "Other value"));
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.ResetCurrentState(context);
+
+        // Assert
+        var dialogPartResults = result.GetAllDialogPartResults();
+        dialogPartResults.Should().ContainSingle();
+        dialogPartResults.Single().DialogPartId.Should().Be("Other part");
+    }
 }

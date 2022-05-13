@@ -16,5 +16,6 @@ public interface IDialogContext
     bool CanNavigateTo(IDialogPart navigateToPart);
     IDialogContext NavigateTo(IDialogPart navigateToPart);
     IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart);
+    IEnumerable<IDialogPartResult> GetAllDialogPartResults();
     IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart);
 }

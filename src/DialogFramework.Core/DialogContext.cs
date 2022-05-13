@@ -69,6 +69,8 @@ public class DialogContext : IDialogContext
     public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
         => Answers.FindAll(x => x.DialogPartId == dialogPart.Id);
 
+    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Answers.AsReadOnly();
+
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
         => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, CurrentDialog.ResetDialogPartResultByPart(Answers, CurrentPart));
 

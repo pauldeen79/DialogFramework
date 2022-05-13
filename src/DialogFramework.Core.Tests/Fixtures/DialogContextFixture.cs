@@ -11,4 +11,6 @@ internal class DialogContextFixture : DialogContext
         : base(id, currentDialog, currentPart, currentState)
     {
     }
+
+    public void AddAnswer(IDialogPartResult result) => Answers.Add(result);
 }
