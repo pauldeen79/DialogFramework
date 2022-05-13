@@ -11,6 +11,6 @@ internal class TestDialogRepository : IDialogRepository
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
         => _dialogs.Select(x => x.Metadata);
 
-    public IDialog GetDialog(IDialogMetadata metadata)
-        => _dialogs.Single(x => x.Metadata.Id == metadata.Id && x.Metadata.Version == metadata.Version);
+    public IDialog GetDialog(string id, string version)
+        => _dialogs.Single(x => x.Metadata.Id == id && x.Metadata.Version == version);
 }

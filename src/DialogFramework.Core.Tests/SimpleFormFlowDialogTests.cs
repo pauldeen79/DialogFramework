@@ -6,7 +6,7 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -57,7 +57,7 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -135,7 +135,7 @@ public class SimpleFormFlowDialogTests
     public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -176,7 +176,7 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -215,7 +215,7 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
@@ -239,7 +239,7 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(SimpleFormFlowDialog.DialogMetadata);
+        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 

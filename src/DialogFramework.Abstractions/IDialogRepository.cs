@@ -3,5 +3,5 @@
 public interface IDialogRepository
 {
     IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas();
-    IDialog GetDialog(IDialogMetadata metadata);
+    IDialog GetDialog(string id, string version);
 }
