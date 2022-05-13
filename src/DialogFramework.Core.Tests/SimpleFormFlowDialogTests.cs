@@ -3,14 +3,14 @@
 public class SimpleFormFlowDialogTests
 {
     [Fact]
-    public void Can_Complete_SimpleFormFlow_Dialog()
+    public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
         var dialog = new SimpleFormFlowDialog();
         var factory = new DialogContextFactory();
         var sut = new DialogService(factory);
 
-        // Act & Assert
+        // Act
         var context = sut.Start(dialog);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
@@ -39,7 +39,96 @@ public class SimpleFormFlowDialogTests
                 new YesNoDialogPartResultValue(false)
             )
         ); // Newsletter -> Completed
+
+        // Assert
         context.CurrentPart.Id.Should().Be("Completed");
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+        });
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+        });
+    }
+
+    [Fact]
+    public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
+    {
+        // Arrange
+        var dialog = new SimpleFormFlowDialog();
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var context = sut.Start(dialog);
+        context.CurrentPart.Id.Should().Be("ContactInfo");
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "EmailAddress",
+                new TextDialogPartResultValue("wrong@address.com")
+            ),
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "TelephoneNumber",
+                new TextDialogPartResultValue("911")
+            )
+        ); // ContactInfo -> Newsletter
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "SignUpForNewsletter",
+                new YesNoDialogPartResultValue(true)
+            )
+        ); // Newsletter -> Completed
+        context = sut.NavigateTo(context, dialog.Parts.Single(x => x.Id == "ContactInfo")); // navigate back: Completed -> ContactInfo
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "EmailAddress",
+                new TextDialogPartResultValue("email@address.com")
+            ),
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "TelephoneNumber",
+                new TextDialogPartResultValue("911")
+            )
+        ); // ContactInfo -> Newsletter
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResult
+            (
+                context.CurrentPart.Id,
+                "SignUpForNewsletter",
+                new YesNoDialogPartResultValue(false)
+            )
+        ); // Newsletter -> Completed
+
+        // Assert
+        context.CurrentPart.Id.Should().Be("Completed");
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+        });
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+        });
     }
 
     [Fact]

@@ -64,7 +64,7 @@ public class DialogContext : IDialogContext
         => CurrentDialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
 
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
-        => new DialogContext(Id, CurrentDialog, navigateToPart, CurrentState, null, Answers);
+        => new DialogContext(Id, CurrentDialog, navigateToPart, navigateToPart.State, null, Answers);
 
     public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
         => Answers.FindAll(x => x.DialogPartId == dialogPart.Id);
