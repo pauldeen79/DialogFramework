@@ -25,7 +25,7 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
         errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be("Dialog has already been aborted");
+        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
     }
 
     [Fact]

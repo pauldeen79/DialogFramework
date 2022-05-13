@@ -57,7 +57,7 @@ public class DialogService : IDialogService
     {
         try
         {
-            if (context.CurrentState != DialogState.InProgress)
+            if (!CanContinue(context))
             {
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
@@ -98,23 +98,12 @@ public class DialogService : IDialogService
     {
         try
         {
-            if (context.CurrentState == DialogState.ErrorOccured || context.CurrentState == DialogState.Completed)
+            if (!CanAbort(context))
             {
                 throw new InvalidOperationException("Dialog cannot be aborted");
             }
 
-            if (context.CurrentState == DialogState.Aborted)
-            {
-                throw new InvalidOperationException("Dialog has already been aborted");
-            }
-
-            var abortDialogPart = context.CurrentDialog.AbortedPart;
-            if (context.CurrentPart.Id == abortDialogPart.Id)
-            {
-                throw new InvalidOperationException("Dialog has already been aborted");
-            }
-
-            return context.Abort(abortDialogPart);
+            return context.Abort(context.CurrentDialog.AbortedPart);
         }
         catch (Exception ex)
         {
@@ -123,7 +112,8 @@ public class DialogService : IDialogService
     }
 
     public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
-        => context.CanNavigateTo(navigateToPart);
+        => (context.CurrentState == DialogState.InProgress || context.CurrentState == DialogState.Completed)
+        && context.CanNavigateTo(navigateToPart);
 
     public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
     {
@@ -143,14 +133,9 @@ public class DialogService : IDialogService
     {
         try
         {
-            if (context.CurrentState != DialogState.InProgress)
+            if (!CanResetCurrentState(context))
             {
-                throw new InvalidOperationException("Current state cannot be reset, because dialog is not in progress");
-            }
-
-            if (context.CurrentPart is not IQuestionDialogPart)
-            {
-                throw new InvalidOperationException("Current state cannot be reset, because current part does not have state");
+                throw new InvalidOperationException("Current state cannot be reset");
             }
 
             return context.ResetDialogPartResultByPart(context.CurrentPart);
