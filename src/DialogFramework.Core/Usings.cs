@@ -1,8 +1,4 @@
-﻿global using System;
-global using System.Collections.Generic;
-global using System.ComponentModel.DataAnnotations;
-global using System.Linq;
-global using CrossCutting.Common;
+﻿global using CrossCutting.Common;
 global using CrossCutting.Common.Extensions;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
