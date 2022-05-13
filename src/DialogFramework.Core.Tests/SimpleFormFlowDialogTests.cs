@@ -27,14 +27,18 @@ public class SimpleFormFlowDialogTests
                 context.CurrentPart.Id,
                 "TelephoneNumber",
                 new TextDialogPartResultValue("911")
-            ),
+            )
+        ); // ContactInfo -> Newsletter
+        context = sut.Continue
+        (
+            context,
             new DialogPartResult
             (
                 context.CurrentPart.Id,
                 "SignUpForNewsletter",
                 new YesNoDialogPartResultValue(false)
             )
-        ); // ContactInfo -> Completed
+        ); // Newsletter -> Completed
         context.CurrentPart.Id.Should().Be("Completed");
     }
 
@@ -63,12 +67,6 @@ public class SimpleFormFlowDialogTests
                 context.CurrentPart.Id,
                 "TelephoneNumber",
                 new YesNoDialogPartResultValue(true)
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new TextDialogPartResultValue("yes please")
             )
         ); // Current part remains ContactInfo because of validation errors
 
@@ -81,9 +79,7 @@ public class SimpleFormFlowDialogTests
             "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
             "Result value of [ContactInfo.EmailAddress] is not of type [System.String]",
             "Result for [ContactInfo.TelephoneNumber] should be of type [Text], but type [YesNo] was answered",
-            "Result value of [ContactInfo.TelephoneNumber] is not of type [System.String]",
-            "Result for [ContactInfo.SignUpForNewsletter] should be of type [YesNo], but type [Text] was answered",
-            "Result value of [ContactInfo.SignUpForNewsletter] is not of type [System.Boolean]"
+            "Result value of [ContactInfo.TelephoneNumber] is not of type [System.String]"
         });
     }
 
@@ -112,12 +108,6 @@ public class SimpleFormFlowDialogTests
                 context.CurrentPart.Id,
                 "TelephoneNumber",
                 new TextDialogPartResultValue(null)
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new YesNoDialogPartResultValue(false)
             )
         ); // Current part remains ContactInfo because of validation errors
 
@@ -174,19 +164,13 @@ public class SimpleFormFlowDialogTests
             (
                 context.CurrentPart.Id,
                 "EmailAddress",
-                new TextDialogPartResultValue("email@address.com")
+                new NumberDialogPartResultValue(1)
             ),
             new DialogPartResult
             (
                 context.CurrentPart.Id,
                 "TelephoneNumber",
                 new TextDialogPartResultValue("911")
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new QuirkYesNoDialogPartResultValue()
             )
         ); // Current part remains ContactInfo because of validation errors
 
@@ -196,13 +180,8 @@ public class SimpleFormFlowDialogTests
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
         questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
-            "Result value of [ContactInfo.SignUpForNewsletter] is not of type [System.Boolean]"
+            "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
+            "Result value of [ContactInfo.EmailAddress] is not of type [System.String]"
         });
-    }
-
-    private sealed class QuirkYesNoDialogPartResultValue : IDialogPartResultValue
-    {
-        public object? Value => "no boolean";
-        public ResultValueType ResultValueType => ResultValueType.YesNo;
     }
 }
