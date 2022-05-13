@@ -885,4 +885,58 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
         result.CurrentPart.Id.Should().Be(messagePart.Id);
     }
+
+    [Theory]
+    [InlineData(DialogState.Aborted)]
+    [InlineData(DialogState.Completed)]
+    [InlineData(DialogState.ErrorOccured)]
+    [InlineData(DialogState.Initial)]
+    public void CanResetCurrentState_Returns_False_When_CurrentState_Is(DialogState currentState)
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanResetCurrentState(context);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanResetCurrentState_Returns_False_When_Current_DialogPart_Is_Not_QuestionDialogPart()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateDialog();
+        var context = new DialogContextFixture(Id, dialog, dialog.CompletedPart, DialogState.InProgress); // note that this actually invalid state, but we currently can't prevent it on the interface
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanResetCurrentState(context);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public void CanResetCurrentState_Returns_True_When_CurrentState_Is_InProgress_And_Current_DialogPart_Is_QuestionDialogPart()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateDialog();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
+        var factory = new DialogContextFactory();
+        var sut = new DialogService(factory);
+
+        // Act
+        var result = sut.CanResetCurrentState(context);
+
+        // Assert
+        result.Should().BeTrue();
+    }
 }

@@ -10,4 +10,6 @@ public interface IDialogService
     IDialogContext Abort(IDialogContext context);
     bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart);
     IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart);
+    bool CanResetCurrentState(IDialogContext context);
+    IDialogContext ResetCurrentState(IDialogContext context);
 }

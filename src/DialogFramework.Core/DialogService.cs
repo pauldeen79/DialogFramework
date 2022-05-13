@@ -134,4 +134,30 @@ public class DialogService : IDialogService
 
         return context.NavigateTo(navigateToPart);
     }
+
+    public bool CanResetCurrentState(IDialogContext context)
+        => context.CurrentState == DialogState.InProgress
+        && context.CurrentPart is IQuestionDialogPart;
+
+    public IDialogContext ResetCurrentState(IDialogContext context)
+    {
+        try
+        {
+            if (context.CurrentState != DialogState.InProgress)
+            {
+                throw new InvalidOperationException("Current state cannot be reset, because dialog is not in progress");
+            }
+
+            if (context.CurrentPart is not IQuestionDialogPart)
+            {
+                throw new InvalidOperationException("Current state cannot be reset, because current part does not have state");
+            }
+
+            return context.ResetDialogPartResultByPart(context.CurrentPart);
+        }
+        catch (Exception ex)
+        {
+            return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
+        }
+    }
 }
