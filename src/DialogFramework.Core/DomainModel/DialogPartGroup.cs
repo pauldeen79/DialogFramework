@@ -1,17 +1,20 @@
-﻿namespace DialogFramework.Core.DomainModel;
+﻿using DialogFramework.Abstractions.DomainModel;
 
-public record DialogPartGroup : IDialogPartGroup
+namespace DialogFramework.Core.DomainModel
 {
-    public DialogPartGroup(string id,
-                           string title,
-                           int number)
+    public record DialogPartGroup : IDialogPartGroup
     {
-        Id = id;
-        Title = title;
-        Number = number;
-    }
+        public DialogPartGroup(string id,
+                               string title,
+                               int number)
+        {
+            Id = id;
+            Title = title;
+            Number = number;
+        }
 
-    public string Id { get; }
-    public string Title { get; }
-    public int Number { get; }
+        public string Id { get; }
+        public string Title { get; }
+        public int Number { get; }
+    }
 }

@@ -1,8 +1,9 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
-
-public interface IDialogPartResult
+﻿namespace DialogFramework.Abstractions.DomainModel
 {
-    string DialogPartId { get; }
-    string ResultId { get; }
-    IDialogPartResultValue Value { get; }
+    public interface IDialogPartResult
+    {
+        string DialogPartId { get; }
+        string ResultId { get; }
+        IDialogPartResultValue Value { get; }
+    }
 }

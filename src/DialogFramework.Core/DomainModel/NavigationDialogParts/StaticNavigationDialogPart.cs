@@ -1,19 +1,25 @@
-﻿namespace DialogFramework.Core.DomainModel.NavigationDialogParts;
+﻿using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public class StaticNavigationDialogPart : INavigationDialogPart
+namespace DialogFramework.Core.DomainModel.NavigationDialogParts
 {
-    public string Id { get; }
-    public DialogState State { get; }
-
-    private readonly IDialogPart _nextPart;
-
-    public StaticNavigationDialogPart(string id, IDialogPart nextPart)
+    public class StaticNavigationDialogPart : INavigationDialogPart
     {
-        Id = id;
-        State = DialogState.InProgress;
-        _nextPart = nextPart;
-    }
+        public string Id { get; }
+        public DialogState State { get; }
 
-    public IDialogPart GetNextPart(IDialogContext context)
-        => _nextPart;
+        private readonly IDialogPart _nextPart;
+
+        public StaticNavigationDialogPart(string id, IDialogPart nextPart)
+        {
+            Id = id;
+            State = DialogState.InProgress;
+            _nextPart = nextPart;
+        }
+
+        public IDialogPart GetNextPart(IDialogContext context)
+            => _nextPart;
+    }
 }

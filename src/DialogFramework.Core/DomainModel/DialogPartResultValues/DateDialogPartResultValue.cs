@@ -1,8 +1,13 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultValues;
+﻿using System;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record DateDialogPartResultValue : IDialogPartResultValue
+namespace DialogFramework.Core.DomainModel.DialogPartResultValues
 {
-    public DateDialogPartResultValue(DateTime value) => Value = value.Date;
-    public object? Value { get; }
-    public ResultValueType ResultValueType => ResultValueType.Date;
+    public record DateDialogPartResultValue : IDialogPartResultValue
+    {
+        public DateDialogPartResultValue(DateTime value) => Value = value.Date;
+        public object? Value { get; }
+        public ResultValueType ResultValueType => ResultValueType.Date;
+    }
 }

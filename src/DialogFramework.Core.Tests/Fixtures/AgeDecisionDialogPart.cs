@@ -1,17 +1,23 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-internal record AgeDecisionDialogPart : DecisionDialogPart
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    public AgeDecisionDialogPart(string id) : base(id)
+    internal record AgeDecisionDialogPart : DecisionDialogPart
     {
-    }
+        public AgeDecisionDialogPart(string id) : base(id)
+        {
+        }
 
-    public override IDialogPart GetNextPart(IDialogContext context)
-    {
-        var nextId = context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "Age"))
-                            .Single().DialogPartId == "<10"
-            ? "TooYoung"
-            : "SportsTypes";
-        return context.CurrentDialog.Parts.Single(x => x.Id == nextId);
+        public override IDialogPart GetNextPart(IDialogContext context)
+        {
+            var nextId = context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "Age"))
+                                .Single().DialogPartId == "<10"
+                ? "TooYoung"
+                : "SportsTypes";
+            return context.CurrentDialog.Parts.Single(x => x.Id == nextId);
+        }
     }
 }

@@ -1,12 +1,18 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-internal record NavigationDialogPartFixture : NavigationDialogPart
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    private readonly Func<IDialogContext, IDialogPart> _getNextPartDelegate;
+    internal record NavigationDialogPartFixture : NavigationDialogPart
+    {
+        private readonly Func<IDialogContext, IDialogPart> _getNextPartDelegate;
 
-    public NavigationDialogPartFixture(string id, Func<IDialogContext, IDialogPart> getNextPartDelegate)
-        : base(id) => _getNextPartDelegate = getNextPartDelegate;
+        public NavigationDialogPartFixture(string id, Func<IDialogContext, IDialogPart> getNextPartDelegate)
+            : base(id) => _getNextPartDelegate = getNextPartDelegate;
 
-    public override IDialogPart GetNextPart(IDialogContext context)
-        => _getNextPartDelegate(context);
+        public override IDialogPart GetNextPart(IDialogContext context)
+            => _getNextPartDelegate(context);
+    }
 }

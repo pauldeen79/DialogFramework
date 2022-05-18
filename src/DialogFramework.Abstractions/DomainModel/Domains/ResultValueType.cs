@@ -1,11 +1,12 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.Domains;
-
-public enum ResultValueType
+﻿namespace DialogFramework.Abstractions.DomainModel.Domains
 {
-    None,
-    Text,
-    Number,
-    Date,
-    DateTime,
-    YesNo
+    public enum ResultValueType
+    {
+        None,
+        Text,
+        Number,
+        Date,
+        DateTime,
+        YesNo
+    }
 }

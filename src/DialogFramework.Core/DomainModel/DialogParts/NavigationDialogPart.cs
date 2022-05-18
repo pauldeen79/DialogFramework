@@ -1,11 +1,17 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public abstract record NavigationDialogPart : INavigationDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    protected NavigationDialogPart(string id)
-        => Id = id;
+    public abstract record NavigationDialogPart : INavigationDialogPart
+    {
+        protected NavigationDialogPart(string id)
+            => Id = id;
 
-    public abstract IDialogPart GetNextPart(IDialogContext context);
-    public string Id { get; }
-    public DialogState State => DialogState.InProgress;
+        public abstract IDialogPart GetNextPart(IDialogContext context);
+        public string Id { get; }
+        public DialogState State => DialogState.InProgress;
+    }
 }

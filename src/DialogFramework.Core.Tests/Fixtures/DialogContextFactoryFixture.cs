@@ -1,20 +1,25 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-internal class DialogContextFactoryFixture : IDialogContextFactory
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    private readonly Func<IDialog, IDialogContext> _createDelegate;
-    private readonly Func<IDialog, bool> _canCreateDelegate;
-
-    public DialogContextFactoryFixture(Func<IDialog, bool> canCreateDelegate,
-                                       Func<IDialog, IDialogContext> createDelegate)
+    internal class DialogContextFactoryFixture : IDialogContextFactory
     {
-        _canCreateDelegate = canCreateDelegate;
-        _createDelegate = createDelegate;
+        private readonly Func<IDialog, IDialogContext> _createDelegate;
+        private readonly Func<IDialog, bool> _canCreateDelegate;
+
+        public DialogContextFactoryFixture(Func<IDialog, bool> canCreateDelegate,
+                                           Func<IDialog, IDialogContext> createDelegate)
+        {
+            _canCreateDelegate = canCreateDelegate;
+            _createDelegate = createDelegate;
+        }
+
+        public bool CanCreate(IDialog dialog)
+            => _canCreateDelegate(dialog);
+
+        public IDialogContext Create(IDialog dialog)
+            => _createDelegate(dialog);
     }
-
-    public bool CanCreate(IDialog dialog)
-        => _canCreateDelegate(dialog);
-
-    public IDialogContext Create(IDialog dialog)
-        => _createDelegate(dialog);
 }

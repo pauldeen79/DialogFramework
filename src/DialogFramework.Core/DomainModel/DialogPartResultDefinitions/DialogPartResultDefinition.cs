@@ -1,39 +1,47 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CrossCutting.Common;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record DialogPartResultDefinition : IDialogPartResultDefinition
+namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitions
 {
-    public DialogPartResultDefinition(string id,
-                                      string title,
-                                      ResultValueType valueType)
-        : this(id, title, valueType, Enumerable.Empty<IDialogPartResultDefinitionValidator>())
+    public record DialogPartResultDefinition : IDialogPartResultDefinition
     {
-    }
-
-    public DialogPartResultDefinition(string id,
-                                      string title,
-                                      ResultValueType valueType,
-                                      IEnumerable<IDialogPartResultDefinitionValidator> validators)
-    {
-        Id = id;
-        Title = title;
-        ValueType = valueType;
-        Validators = new ValueCollection<IDialogPartResultDefinitionValidator>(validators);
-    }
-
-    public string Id { get; }
-    public string Title { get; }
-    public ResultValueType ValueType { get; }
-    public ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
-
-    public virtual IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                                 IDialogPart dialogPart,
-                                                                 IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        foreach (var validator in Validators)
+        public DialogPartResultDefinition(string id,
+                                          string title,
+                                          ResultValueType valueType)
+            : this(id, title, valueType, Enumerable.Empty<IDialogPartResultDefinitionValidator>())
         {
-            foreach (var validationError in validator.Validate(context, dialogPart, this, dialogPartResults))
+        }
+
+        public DialogPartResultDefinition(string id,
+                                          string title,
+                                          ResultValueType valueType,
+                                          IEnumerable<IDialogPartResultDefinitionValidator> validators)
+        {
+            Id = id;
+            Title = title;
+            ValueType = valueType;
+            Validators = new ValueCollection<IDialogPartResultDefinitionValidator>(validators);
+        }
+
+        public string Id { get; }
+        public string Title { get; }
+        public ResultValueType ValueType { get; }
+        public ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
+
+        public virtual IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                                     IDialogPart dialogPart,
+                                                                     IEnumerable<IDialogPartResult> dialogPartResults)
+        {
+            foreach (var validator in Validators)
             {
-                yield return validationError;
+                foreach (var validationError in validator.Validate(context, dialogPart, this, dialogPartResults))
+                {
+                    yield return validationError;
+                }
             }
         }
     }

@@ -1,15 +1,20 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record RedirectDialogPart : IRedirectDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public RedirectDialogPart(string id,
-                              IDialog redirectDialog)
+    public record RedirectDialogPart : IRedirectDialogPart
     {
-        Id = id;
-        RedirectDialog = redirectDialog;
-    }
+        public RedirectDialogPart(string id,
+                                  IDialog redirectDialog)
+        {
+            Id = id;
+            RedirectDialog = redirectDialog;
+        }
 
-    public IDialog RedirectDialog { get; }
-    public string Id { get; }
-    public DialogState State => DialogState.InProgress;
+        public IDialog RedirectDialog { get; }
+        public string Id { get; }
+        public DialogState State => DialogState.InProgress;
+    }
 }

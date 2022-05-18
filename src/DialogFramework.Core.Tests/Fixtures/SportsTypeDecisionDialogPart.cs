@@ -1,16 +1,22 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-internal record SportsTypeDecisionDialogPart : DecisionDialogPart
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    public SportsTypeDecisionDialogPart(string id) : base(id)
+    internal record SportsTypeDecisionDialogPart : DecisionDialogPart
     {
-    }
+        public SportsTypeDecisionDialogPart(string id) : base(id)
+        {
+        }
 
-    public override IDialogPart GetNextPart(IDialogContext context)
-    {
-        var nextId = context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "SportsTypes")).Any()
-            ? "Unhealthy"
-            : "Healthy";
-        return context.CurrentDialog.Parts.Single(x => x.Id == nextId);
+        public override IDialogPart GetNextPart(IDialogContext context)
+        {
+            var nextId = context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "SportsTypes")).Any()
+                ? "Unhealthy"
+                : "Healthy";
+            return context.CurrentDialog.Parts.Single(x => x.Id == nextId);
+        }
     }
 }

@@ -1,14 +1,21 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
+using DialogFramework.Core.DomainModel;
+using DialogFramework.Core.DomainModel.DialogPartResultDefinitions;
+using DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-public record SimpleFormFlowDialog : Dialog
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 1);
-    private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 2);
+    public record SimpleFormFlowDialog : Dialog
+    {
+        private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 1);
+        private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 2);
 
-    public SimpleFormFlowDialog() : base(
-        new DialogMetadata(nameof(SimpleFormFlowDialog), "Simple fom flow dialog", "1.0.0", true),
-        new IDialogPart[]
-        {
+        public SimpleFormFlowDialog() : base(
+            new DialogMetadata(nameof(SimpleFormFlowDialog), "Simple fom flow dialog", "1.0.0", true),
+            new IDialogPart[]
+            {
             new QuestionDialogPart
             (
                 "ContactInfo",
@@ -32,12 +39,13 @@ public record SimpleFormFlowDialog : Dialog
                     new DialogPartResultDefinition("SignUpForNewsletter", "Subscribe to newsletter (optional)", ResultValueType.YesNo, new[] { new ValueTypeValidator(typeof(bool)) })
                 }
             )
-        },
-        new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
-        new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),
-        new CompletedDialogPart("Completed", "Completed", "Thank you for using this application. Please come back soon!", CompletedGroup),
-        new[] { GetInformationGroup, CompletedGroup }
-        )
-    {
+            },
+            new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
+            new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),
+            new CompletedDialogPart("Completed", "Completed", "Thank you for using this application. Please come back soon!", CompletedGroup),
+            new[] { GetInformationGroup, CompletedGroup }
+            )
+        {
+        }
     }
 }

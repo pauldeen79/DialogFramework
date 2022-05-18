@@ -1,6 +1,7 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
-
-public interface INavigationDialogPart : IDialogPart
+﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    IDialogPart GetNextPart(IDialogContext context);
+    public interface INavigationDialogPart : IDialogPart
+    {
+        IDialogPart GetNextPart(IDialogContext context);
+    }
 }

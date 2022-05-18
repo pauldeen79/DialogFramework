@@ -1,23 +1,30 @@
-﻿namespace DialogFramework.Core.DomainModel.QuestionDialogParts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-public record AllRequiredQuestionDialogPart : QuestionDialogPart
+namespace DialogFramework.Core.DomainModel.QuestionDialogParts
 {
-    public AllRequiredQuestionDialogPart(string id,
-                                         string heading,
-                                         string title,
-                                         IDialogPartGroup group,
-                                         IEnumerable<IDialogPartResultDefinition> results)
-        : base(id, heading, title, group, results)
+    public record AllRequiredQuestionDialogPart : QuestionDialogPart
     {
-    }
-
-    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        base.HandleValidate(context, dialogPartResults);
-        var submittedPartCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.ResultId)).GroupBy(x => x.ResultId).Count();
-        if (submittedPartCount != Results.Count)
+        public AllRequiredQuestionDialogPart(string id,
+                                             string heading,
+                                             string title,
+                                             IDialogPartGroup group,
+                                             IEnumerable<IDialogPartResultDefinition> results)
+            : base(id, heading, title, group, results)
         {
-            ValidationErrors.Add(new DialogValidationResult($"All {Results.Count} answers are required"));
+        }
+
+        protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+        {
+            base.HandleValidate(context, dialogPartResults);
+            var submittedPartCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.ResultId)).GroupBy(x => x.ResultId).Count();
+            if (submittedPartCount != Results.Count)
+            {
+                ValidationErrors.Add(new DialogValidationResult($"All {Results.Count} answers are required"));
+            }
         }
     }
 }

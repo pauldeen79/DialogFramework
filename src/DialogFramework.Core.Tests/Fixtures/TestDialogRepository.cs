@@ -1,16 +1,22 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-internal class TestDialogRepository : IDialogRepository
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    private static readonly IDialog[] _dialogs = new IDialog[]
+    internal class TestDialogRepository : IDialogRepository
     {
-        new TestFlowDialog(),
-        new SimpleFormFlowDialog()
-    };
+        private static readonly IDialog[] _dialogs = new IDialog[]
+        {
+            new TestFlowDialog(),
+            new SimpleFormFlowDialog()
+        };
 
-    public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
-        => _dialogs.Select(x => x.Metadata);
+        public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
+            => _dialogs.Select(x => x.Metadata);
 
-    public IDialog GetDialog(string id, string version)
-        => _dialogs.Single(x => x.Metadata.Id == id && x.Metadata.Version == version);
+        public IDialog GetDialog(string id, string version)
+            => _dialogs.Single(x => x.Metadata.Id == id && x.Metadata.Version == version);
+    }
 }

@@ -1,31 +1,38 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CrossCutting.Common;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-public class RequiredValidator : IDialogPartResultDefinitionValidator
+namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators
 {
-    private readonly bool _checkForSingleOccurence;
-
-    public RequiredValidator() : this(false)
+    public class RequiredValidator : IDialogPartResultDefinitionValidator
     {
-    }
+        private readonly bool _checkForSingleOccurence;
 
-    public RequiredValidator(bool checkForSingleOccurence)
-    {
-        _checkForSingleOccurence = checkForSingleOccurence;
-    }
-
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialogPart dialogPart,
-                                                         IDialogPartResultDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        if (!dialogPartResults.Any()
-            || dialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
+        public RequiredValidator() : this(false)
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
         }
-        else if (_checkForSingleOccurence && dialogPartResults.Count() > 1)
+
+        public RequiredValidator(bool checkForSingleOccurence)
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            _checkForSingleOccurence = checkForSingleOccurence;
+        }
+
+        public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                             IDialogPart dialogPart,
+                                                             IDialogPartResultDefinition dialogPartResultDefinition,
+                                                             IEnumerable<IDialogPartResult> dialogPartResults)
+        {
+            if (!dialogPartResults.Any()
+                || dialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
+            {
+                yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            }
+            else if (_checkForSingleOccurence && dialogPartResults.Count() > 1)
+            {
+                yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            }
         }
     }
 }

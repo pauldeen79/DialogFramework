@@ -1,10 +1,11 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.Domains;
-
-public enum DialogState
+﻿namespace DialogFramework.Abstractions.DomainModel.Domains
 {
-    Initial,
-    InProgress,
-    Completed,
-    Aborted,
-    ErrorOccured
+    public enum DialogState
+    {
+        Initial,
+        InProgress,
+        Completed,
+        Aborted,
+        ErrorOccured
+    }
 }

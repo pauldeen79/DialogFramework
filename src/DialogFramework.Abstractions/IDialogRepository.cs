@@ -1,7 +1,11 @@
-﻿namespace DialogFramework.Abstractions;
+﻿using System.Collections.Generic;
+using DialogFramework.Abstractions.DomainModel;
 
-public interface IDialogRepository
+namespace DialogFramework.Abstractions
 {
-    IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas();
-    IDialog GetDialog(string id, string version);
+    public interface IDialogRepository
+    {
+        IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas();
+        IDialog GetDialog(string id, string version);
+    }
 }

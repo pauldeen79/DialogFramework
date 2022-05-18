@@ -1,6 +1,7 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
-
-public interface IMessageDialogPart : IGroupedDialogPart
+﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    string Message { get; }
+    public interface IMessageDialogPart : IGroupedDialogPart
+    {
+        string Message { get; }
+    }
 }

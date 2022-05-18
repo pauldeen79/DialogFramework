@@ -1,21 +1,26 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record MessageDialogPart : IMessageDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public MessageDialogPart(string id,
-                             string heading,
-                             string message,
-                             IDialogPartGroup group)
+    public record MessageDialogPart : IMessageDialogPart
     {
-        Id = id;
-        Heading = heading;
-        Message = message;
-        Group = group;
-    }
+        public MessageDialogPart(string id,
+                                 string heading,
+                                 string message,
+                                 IDialogPartGroup group)
+        {
+            Id = id;
+            Heading = heading;
+            Message = message;
+            Group = group;
+        }
 
-    public string Message { get; }
-    public string Heading { get; }
-    public IDialogPartGroup Group { get; }
-    public string Id { get; }
-    public DialogState State => DialogState.InProgress;
+        public string Message { get; }
+        public string Heading { get; }
+        public IDialogPartGroup Group { get; }
+        public string Id { get; }
+        public DialogState State => DialogState.InProgress;
+    }
 }

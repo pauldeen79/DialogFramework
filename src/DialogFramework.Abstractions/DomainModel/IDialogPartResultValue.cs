@@ -1,7 +1,10 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using DialogFramework.Abstractions.DomainModel.Domains;
 
-public interface IDialogPartResultValue
+namespace DialogFramework.Abstractions.DomainModel
 {
-    object? Value { get; }
-    ResultValueType ResultValueType { get; }
+    public interface IDialogPartResultValue
+    {
+        object? Value { get; }
+        ResultValueType ResultValueType { get; }
+    }
 }

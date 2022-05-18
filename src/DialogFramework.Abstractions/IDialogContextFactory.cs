@@ -1,7 +1,10 @@
-﻿namespace DialogFramework.Abstractions;
+﻿using DialogFramework.Abstractions.DomainModel;
 
-public interface IDialogContextFactory
+namespace DialogFramework.Abstractions
 {
-    bool CanCreate(IDialog dialog);
-    IDialogContext Create(IDialog dialog);
+    public interface IDialogContextFactory
+    {
+        bool CanCreate(IDialog dialog);
+        IDialogContext Create(IDialog dialog);
+    }
 }

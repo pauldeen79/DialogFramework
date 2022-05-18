@@ -1,8 +1,12 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultValues;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record TextDialogPartResultValue : IDialogPartResultValue
+namespace DialogFramework.Core.DomainModel.DialogPartResultValues
 {
-    public TextDialogPartResultValue(string? value) => Value = value;
-    public object? Value { get; }
-    public ResultValueType ResultValueType => ResultValueType.Text;
+    public record TextDialogPartResultValue : IDialogPartResultValue
+    {
+        public TextDialogPartResultValue(string? value) => Value = value;
+        public object? Value { get; }
+        public ResultValueType ResultValueType => ResultValueType.Text;
+    }
 }

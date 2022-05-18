@@ -1,9 +1,12 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using System.Collections.Generic;
 
-public interface IDialogPartResultDefinitionValidator
+namespace DialogFramework.Abstractions.DomainModel
 {
-    IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                  IDialogPart dialogPart,
-                                                  IDialogPartResultDefinition dialogPartResultDefinition,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults);
+    public interface IDialogPartResultDefinitionValidator
+    {
+        IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                      IDialogPart dialogPart,
+                                                      IDialogPartResultDefinition dialogPartResultDefinition,
+                                                      IEnumerable<IDialogPartResult> dialogPartResults);
+    }
 }

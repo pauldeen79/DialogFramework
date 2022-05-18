@@ -1,7 +1,10 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using CrossCutting.Common;
 
-public interface IDialogValidationResult
+namespace DialogFramework.Abstractions.DomainModel
 {
-    string ErrorMessage { get; }
-    ValueCollection<string> DialogPartResultIds { get; }
+    public interface IDialogValidationResult
+    {
+        string ErrorMessage { get; }
+        ValueCollection<string> DialogPartResultIds { get; }
+    }
 }

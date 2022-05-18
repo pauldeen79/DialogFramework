@@ -1,12 +1,17 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using System.Collections.Generic;
+using CrossCutting.Common;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public interface IDialogPartResultDefinition
+namespace DialogFramework.Abstractions.DomainModel
 {
-    string Id { get; }
-    string Title { get; }
-    ResultValueType ValueType { get; }
-    ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
-    IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                  IDialogPart dialogPart,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults);
+    public interface IDialogPartResultDefinition
+    {
+        string Id { get; }
+        string Title { get; }
+        ResultValueType ValueType { get; }
+        ValueCollection<IDialogPartResultDefinitionValidator> Validators { get; }
+        IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                      IDialogPart dialogPart,
+                                                      IEnumerable<IDialogPartResult> dialogPartResults);
+    }
 }

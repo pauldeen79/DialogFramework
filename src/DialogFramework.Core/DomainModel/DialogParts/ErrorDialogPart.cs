@@ -1,19 +1,24 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using System;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record ErrorDialogPart : IErrorDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public ErrorDialogPart(string id, string errorMessage, Exception? exception)
+    public record ErrorDialogPart : IErrorDialogPart
     {
-        Id = id;
-        ErrorMessage = errorMessage;
-        Exception = exception;
+        public ErrorDialogPart(string id, string errorMessage, Exception? exception)
+        {
+            Id = id;
+            ErrorMessage = errorMessage;
+            Exception = exception;
+        }
+
+        public string ErrorMessage { get; }
+        public string Id { get; }
+        public Exception? Exception { get; }
+        public DialogState State => DialogState.ErrorOccured;
+
+        public virtual IErrorDialogPart ForException(Exception ex)
+            => new ErrorDialogPart(Id, ErrorMessage, ex);
     }
-
-    public string ErrorMessage { get; }
-    public string Id { get; }
-    public Exception? Exception { get; }
-    public DialogState State => DialogState.ErrorOccured;
-
-    public virtual IErrorDialogPart ForException(Exception ex)
-        => new ErrorDialogPart(Id, ErrorMessage, ex);
 }

@@ -1,8 +1,9 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
-
-public interface IDialogPartGroup
+﻿namespace DialogFramework.Abstractions.DomainModel
 {
-    string Id { get; }
-    string Title { get; }
-    int Number { get; }
+    public interface IDialogPartGroup
+    {
+        string Id { get; }
+        string Title { get; }
+        int Number { get; }
+    }
 }

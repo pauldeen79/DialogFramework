@@ -1,71 +1,81 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CrossCutting.Common;
+using CrossCutting.Common.Extensions;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record QuestionDialogPart : IQuestionDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public QuestionDialogPart(string id,
-                              string heading,
-                              string title,
-                              IDialogPartGroup group,
-                              IEnumerable<IDialogPartResultDefinition> results)
+    public record QuestionDialogPart : IQuestionDialogPart
     {
-        Id = id;
-        Heading = heading;
-        Title = title;
-        Group = group;
-        Results = new ValueCollection<IDialogPartResultDefinition>(results);
-        ValidationErrors = new ValueCollection<IDialogValidationResult>();
-    }
-
-    public string Title { get; }
-    public string Heading { get; }
-    public IDialogPartGroup Group { get; }
-    public ValueCollection<IDialogPartResultDefinition> Results { get; }
-    public string Id { get; }
-    public ValueCollection<IDialogValidationResult> ValidationErrors { get; }
-    public DialogState State => DialogState.InProgress;
-    public IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        ValidationErrors.Clear();
-        HandleValidate(context, dialogPartResults);
-
-        return ValidationErrors.Count > 0
-            ? this
-            : null;
-    }
-
-    protected virtual void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        foreach (var dialogPartResult in dialogPartResults)
+        public QuestionDialogPart(string id,
+                                  string heading,
+                                  string title,
+                                  IDialogPartGroup group,
+                                  IEnumerable<IDialogPartResultDefinition> results)
         {
-            if (dialogPartResult.DialogPartId != Id)
-            {
-                ValidationErrors.Add(new DialogValidationResult("Provided answer from wrong question"));
-                continue;
-            }
-            if (string.IsNullOrEmpty(dialogPartResult.ResultId))
-            {
-                continue;
-            }
-            var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
-            if (dialogPartResultDefinition == null)
-            {
-                ValidationErrors.Add(new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]"));
-            }
-            else
-            {
-                var resultValueType = dialogPartResultDefinition.ValueType;
-                if (dialogPartResult.Value.ResultValueType != resultValueType)
-                {
-                    ValidationErrors.Add(new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered"));
-                }
-            }
+            Id = id;
+            Heading = heading;
+            Title = title;
+            Group = group;
+            Results = new ValueCollection<IDialogPartResultDefinition>(results);
+            ValidationErrors = new ValueCollection<IDialogValidationResult>();
         }
 
-        foreach (var dialogPartResultDefinition in Results)
+        public string Title { get; }
+        public string Heading { get; }
+        public IDialogPartGroup Group { get; }
+        public ValueCollection<IDialogPartResultDefinition> Results { get; }
+        public string Id { get; }
+        public ValueCollection<IDialogValidationResult> ValidationErrors { get; }
+        public DialogState State => DialogState.InProgress;
+        public IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
         {
-            var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
-            ValidationErrors.AddRange(dialogPartResultDefinition.Validate(context, this, dialogPartResultsByPart)
-                                                             .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
+            ValidationErrors.Clear();
+            HandleValidate(context, dialogPartResults);
+
+            return ValidationErrors.Count > 0
+                ? this
+                : null;
+        }
+
+        protected virtual void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+        {
+            foreach (var dialogPartResult in dialogPartResults)
+            {
+                if (dialogPartResult.DialogPartId != Id)
+                {
+                    ValidationErrors.Add(new DialogValidationResult("Provided answer from wrong question"));
+                    continue;
+                }
+                if (string.IsNullOrEmpty(dialogPartResult.ResultId))
+                {
+                    continue;
+                }
+                var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
+                if (dialogPartResultDefinition == null)
+                {
+                    ValidationErrors.Add(new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]"));
+                }
+                else
+                {
+                    var resultValueType = dialogPartResultDefinition.ValueType;
+                    if (dialogPartResult.Value.ResultValueType != resultValueType)
+                    {
+                        ValidationErrors.Add(new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered"));
+                    }
+                }
+            }
+
+            foreach (var dialogPartResultDefinition in Results)
+            {
+                var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
+                ValidationErrors.AddRange(dialogPartResultDefinition.Validate(context, this, dialogPartResultsByPart)
+                                                                    .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
+            }
         }
     }
 }

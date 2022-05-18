@@ -1,10 +1,14 @@
-﻿namespace DialogFramework.Core;
+﻿using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-public class DialogContextFactory : IDialogContextFactory
+namespace DialogFramework.Core
 {
-    public virtual bool CanCreate(IDialog dialog)
-        => true;
+    public class DialogContextFactory : IDialogContextFactory
+    {
+        public virtual bool CanCreate(IDialog dialog)
+            => true;
 
-    public IDialogContext Create(IDialog dialog)
-        => new DialogContext(dialog);
+        public IDialogContext Create(IDialog dialog)
+            => new DialogContext(dialog);
+    }
 }

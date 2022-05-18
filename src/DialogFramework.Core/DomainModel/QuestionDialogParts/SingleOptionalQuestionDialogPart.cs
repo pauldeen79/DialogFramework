@@ -1,23 +1,30 @@
-﻿namespace DialogFramework.Core.DomainModel.QuestionDialogParts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-public record SingleOptionalQuestionDialogPart : QuestionDialogPart
+namespace DialogFramework.Core.DomainModel.QuestionDialogParts
 {
-    public SingleOptionalQuestionDialogPart(string id,
-                                            string heading,
-                                            string title,
-                                            IDialogPartGroup group,
-                                            IEnumerable<IDialogPartResultDefinition> results)
-        : base(id, heading, title, group, results)
+    public record SingleOptionalQuestionDialogPart : QuestionDialogPart
     {
-    }
-
-    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        base.HandleValidate(context, dialogPartResults);
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
-        if (answerCount > 1)
+        public SingleOptionalQuestionDialogPart(string id,
+                                                string heading,
+                                                string title,
+                                                IDialogPartGroup group,
+                                                IEnumerable<IDialogPartResultDefinition> results)
+            : base(id, heading, title, group, results)
         {
-            ValidationErrors.Add(new DialogValidationResult("Only one answer is allowed"));
+        }
+
+        protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+        {
+            base.HandleValidate(context, dialogPartResults);
+            var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
+            if (answerCount > 1)
+            {
+                ValidationErrors.Add(new DialogValidationResult("Only one answer is allowed"));
+            }
         }
     }
 }

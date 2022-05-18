@@ -1,27 +1,34 @@
-﻿namespace DialogFramework.Core.DomainModel.QuestionDialogParts;
+﻿using System.Collections.Generic;
+using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel.DialogParts;
 
-public record SingleRequiredQuestionDialogPart : QuestionDialogPart
+namespace DialogFramework.Core.DomainModel.QuestionDialogParts
 {
-    public SingleRequiredQuestionDialogPart(string id,
-                                            string heading,
-                                            string title,
-                                            IDialogPartGroup group,
-                                            IEnumerable<IDialogPartResultDefinition> results)
-        : base(id, heading, title, group, results)
+    public record SingleRequiredQuestionDialogPart : QuestionDialogPart
     {
-    }
-
-    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        base.HandleValidate(context, dialogPartResults);
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
-        if (answerCount == 0)
+        public SingleRequiredQuestionDialogPart(string id,
+                                                string heading,
+                                                string title,
+                                                IDialogPartGroup group,
+                                                IEnumerable<IDialogPartResultDefinition> results)
+            : base(id, heading, title, group, results)
         {
-            ValidationErrors.Add(new DialogValidationResult("Answer is required"));
         }
-        else if (answerCount > 1)
+
+        protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
         {
-            ValidationErrors.Add(new DialogValidationResult("Only one answer is allowed"));
+            base.HandleValidate(context, dialogPartResults);
+            var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
+            if (answerCount == 0)
+            {
+                ValidationErrors.Add(new DialogValidationResult("Answer is required"));
+            }
+            else if (answerCount > 1)
+            {
+                ValidationErrors.Add(new DialogValidationResult("Only one answer is allowed"));
+            }
         }
     }
 }

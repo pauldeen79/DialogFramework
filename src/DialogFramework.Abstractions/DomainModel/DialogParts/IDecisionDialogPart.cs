@@ -1,6 +1,7 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
-
-public interface IDecisionDialogPart : IDialogPart
+﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    IDialogPart GetNextPart(IDialogContext context);
+    public interface IDecisionDialogPart : IDialogPart
+    {
+        IDialogPart GetNextPart(IDialogContext context);
+    }
 }

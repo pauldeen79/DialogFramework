@@ -1,62 +1,76 @@
-﻿namespace DialogFramework.Core.Tests.DialogParts;
+﻿using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
+using DialogFramework.Core.DomainModel;
+using DialogFramework.Core.DomainModel.DialogPartResultDefinitions;
+using DialogFramework.Core.DomainModel.DialogPartResultValues;
+using DialogFramework.Core.DomainModel.DialogParts;
+using DialogFramework.Core.Tests.Fixtures;
+using FluentAssertions;
+using Moq;
+using Xunit;
 
-public class QuestionDialogPartTests
+namespace DialogFramework.Core.Tests.DialogParts
 {
-    [Fact]
-    public void Validate_With_Unknown_Id_Gives_ValidationError()
+    public class QuestionDialogPartTests
     {
-        // Arrange
-        var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
-        var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
-        var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object);
+        [Fact]
+        public void Validate_With_Unknown_Id_Gives_ValidationError()
+        {
+            // Arrange
+            var group = new DialogPartGroup("Group", "Group", 1);
+            var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+            var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
+            var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
+            var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
-        // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) });
+            // Act
+            var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) });
 
-        // Assert
-        actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
-        var currentPart = (QuestionDialogPart)actual.CurrentPart;
-        currentPart.ValidationErrors.Should().ContainSingle();
-        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [C]");
-    }
+            // Assert
+            actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
+            var currentPart = (QuestionDialogPart)actual.CurrentPart;
+            currentPart.ValidationErrors.Should().ContainSingle();
+            currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [C]");
+        }
 
-    [Fact]
-    public void Validate_With_Known_Id_And_Wrong_ValueType_Gives_ValidationError()
-    {
-        // Arrange
-        var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
-        var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
-        var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object);
+        [Fact]
+        public void Validate_With_Known_Id_And_Wrong_ValueType_Gives_ValidationError()
+        {
+            // Arrange
+            var group = new DialogPartGroup("Group", "Group", 1);
+            var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+            var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
+            var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
+            var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
-        // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) });
+            // Act
+            var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) });
 
-        // Assert
-        actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
-        var currentPart = (QuestionDialogPart)actual.CurrentPart;
-        currentPart.ValidationErrors.Should().ContainSingle();
-        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Result for [Test.A] should be of type [YesNo], but type [None] was answered");
-    }
+            // Assert
+            actual.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
+            var currentPart = (QuestionDialogPart)actual.CurrentPart;
+            currentPart.ValidationErrors.Should().ContainSingle();
+            currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Result for [Test.A] should be of type [YesNo], but type [None] was answered");
+        }
 
-    [Fact]
-    public void Validate_With_Known_Id_And_Correct_ValueType_Gives_No_ValidationError()
-    {
-        // Arrange
-        var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
-        var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
-        var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object);
+        [Fact]
+        public void Validate_With_Known_Id_And_Correct_ValueType_Gives_No_ValidationError()
+        {
+            // Arrange
+            var group = new DialogPartGroup("Group", "Group", 1);
+            var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+            var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
+            var context = new DialogContextFixture("Id", dialog, sut, DialogState.InProgress);
+            var service = new DialogService(new Mock<IDialogContextFactory>().Object);
 
-        // Act
-        var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });
+            // Act
+            var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });
 
-        // Assert
-        actual.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
-        actual.CurrentState.Should().Be(DialogState.Completed);
+            // Assert
+            actual.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
+            actual.CurrentState.Should().Be(DialogState.Completed);
+        }
     }
 }

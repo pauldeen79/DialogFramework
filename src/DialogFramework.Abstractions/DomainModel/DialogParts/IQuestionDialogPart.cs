@@ -1,9 +1,13 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
+﻿using System.Collections.Generic;
+using CrossCutting.Common;
 
-public interface IQuestionDialogPart : IGroupedDialogPart
+namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    string Title { get; }
-    ValueCollection<IDialogPartResultDefinition> Results { get; }
-    IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
-    ValueCollection<IDialogValidationResult> ValidationErrors { get; }
+    public interface IQuestionDialogPart : IGroupedDialogPart
+    {
+        string Title { get; }
+        ValueCollection<IDialogPartResultDefinition> Results { get; }
+        IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
+        ValueCollection<IDialogValidationResult> ValidationErrors { get; }
+    }
 }

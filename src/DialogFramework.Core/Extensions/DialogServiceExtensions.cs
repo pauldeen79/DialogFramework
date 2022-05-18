@@ -1,10 +1,16 @@
-﻿namespace DialogFramework.Core.Extensions;
+﻿using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel;
 
-public static class DialogServiceExtensions
+namespace DialogFramework.Core.Extensions
 {
-    public static IDialogContext Continue(this IDialogService instance, IDialogContext context)
-        => instance.Continue(context, new[] { new DialogPartResult(context.CurrentPart.Id) });
+    public static class DialogServiceExtensions
+    {
+        public static IDialogContext Continue(this IDialogService instance, IDialogContext context)
+            => instance.Continue(context, new[] { new DialogPartResult(context.CurrentPart.Id) });
 
-    public static IDialogContext Continue(this IDialogService instance, IDialogContext context, params IDialogPartResult[] results)
-        => instance.Continue(context, results.AsEnumerable());
+        public static IDialogContext Continue(this IDialogService instance, IDialogContext context, params IDialogPartResult[] results)
+            => instance.Continue(context, results.AsEnumerable());
+    }
 }

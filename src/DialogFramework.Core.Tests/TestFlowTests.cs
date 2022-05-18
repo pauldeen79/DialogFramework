@@ -1,29 +1,36 @@
-﻿namespace DialogFramework.Core.Tests;
+﻿using DialogFramework.Core.DomainModel;
+using DialogFramework.Core.Extensions;
+using DialogFramework.Core.Tests.Fixtures;
+using FluentAssertions;
+using Xunit;
 
-public class TestFlowTests
+namespace DialogFramework.Core.Tests
 {
-    [Fact]
-    public void Can_Complete_TestFlow_Dialog_With_Unhealthy_Advice()
+    public class TestFlowTests
     {
-        // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(TestFlowDialog), "1.0.0");
-        var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        [Fact]
+        public void Can_Complete_TestFlow_Dialog_With_Unhealthy_Advice()
+        {
+            // Arrange
+            var dialog = new TestDialogRepository().GetDialog(nameof(TestFlowDialog), "1.0.0");
+            var factory = new DialogContextFactory();
+            var sut = new DialogService(factory);
 
-        // Act & Assert
-        var context = sut.Start(dialog); // empty -> Welcome
-        context.CurrentPart.Id.Should().Be("Welcome");
-        context = sut.Continue(context); // Welcome -> How old are you?
-        context.CurrentPart.Id.Should().Be("Age");
-        context = sut.Continue(context); // How old are you -> empty answer -> validation error
-        context.CurrentPart.Id.Should().Be("Age");
-        context = sut.Continue(context, new DialogPartResult(context.CurrentPart.Id, "10-19")); // How old are you -> 10-19 -> decision -> sports types
-        context.CurrentPart.Id.Should().Be("SportsTypes");
-        context = sut.Continue(context); // Sports types -> empty answer -> unhealthy
-        context.CurrentPart.Id.Should().Be("Unhealthy");
-        context = sut.Continue(context); // Unhealthy -> e-mail address
-        context.CurrentPart.Id.Should().Be("Email");
-        context = sut.Continue(context); // E-mail address -> empty answer -> completed
-        context.CurrentPart.Id.Should().Be("Completed");
+            // Act & Assert
+            var context = sut.Start(dialog); // empty -> Welcome
+            context.CurrentPart.Id.Should().Be("Welcome");
+            context = sut.Continue(context); // Welcome -> How old are you?
+            context.CurrentPart.Id.Should().Be("Age");
+            context = sut.Continue(context); // How old are you -> empty answer -> validation error
+            context.CurrentPart.Id.Should().Be("Age");
+            context = sut.Continue(context, new DialogPartResult(context.CurrentPart.Id, "10-19")); // How old are you -> 10-19 -> decision -> sports types
+            context.CurrentPart.Id.Should().Be("SportsTypes");
+            context = sut.Continue(context); // Sports types -> empty answer -> unhealthy
+            context.CurrentPart.Id.Should().Be("Unhealthy");
+            context = sut.Continue(context); // Unhealthy -> e-mail address
+            context.CurrentPart.Id.Should().Be("Email");
+            context = sut.Continue(context); // E-mail address -> empty answer -> completed
+            context.CurrentPart.Id.Should().Be("Completed");
+        }
     }
 }

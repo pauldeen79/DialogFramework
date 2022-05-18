@@ -1,6 +1,7 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
-
-public interface IAbortedDialogPart : IDialogPart
+﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    string Message { get; }
+    public interface IAbortedDialogPart : IDialogPart
+    {
+        string Message { get; }
+    }
 }

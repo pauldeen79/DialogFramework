@@ -1,40 +1,47 @@
-﻿namespace DialogFramework.Core.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-internal static class DialogExtensions
+namespace DialogFramework.Core.Extensions
 {
-    internal static IDialogPart GetFirstPart(this IDialog dialog, IDialogContext context)
+    internal static class DialogExtensions
     {
-        var firstPart = dialog.Parts.FirstOrDefault();
-        if (firstPart == null)
+        internal static IDialogPart GetFirstPart(this IDialog dialog, IDialogContext context)
         {
-            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
+            var firstPart = dialog.Parts.FirstOrDefault();
+            if (firstPart == null)
+            {
+                throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
+            }
+
+            return firstPart.ProcessDecisions(context);
         }
 
-        return firstPart.ProcessDecisions(context);
-    }
-
-    internal static IDialogPart GetNextPart(this IDialog dialog,
-                                            IDialogContext context,
-                                            IDialogPart currentPart,
-                                            IEnumerable<IDialogPartResult> providedAnswers)
-    {
-        // first perform validation
-        var error = currentPart.Validate(context, providedAnswers);
-        if (error != null)
+        internal static IDialogPart GetNextPart(this IDialog dialog,
+                                                IDialogContext context,
+                                                IDialogPart currentPart,
+                                                IEnumerable<IDialogPartResult> providedAnswers)
         {
-            return error;
-        }
+            // first perform validation
+            var error = currentPart.Validate(context, providedAnswers);
+            if (error != null)
+            {
+                return error;
+            }
 
-        // if validation succeeds, then get the next part
-        var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
-        var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart.Id);
-        var nextPartWithIndex = parts.Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
-        if (nextPartWithIndex == null)
-        {
-            // there is no next part, so get the completed part
-            return dialog.CompletedPart.ProcessDecisions(context);
-        }
+            // if validation succeeds, then get the next part
+            var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
+            var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart.Id);
+            var nextPartWithIndex = parts.Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
+            if (nextPartWithIndex == null)
+            {
+                // there is no next part, so get the completed part
+                return dialog.CompletedPart.ProcessDecisions(context);
+            }
 
-        return nextPartWithIndex.Part.ProcessDecisions(context);
+            return nextPartWithIndex.Part.ProcessDecisions(context);
+        }
     }
 }

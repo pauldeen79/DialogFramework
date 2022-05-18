@@ -1,8 +1,12 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultValues;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record YesNoDialogPartResultValue : IDialogPartResultValue
+namespace DialogFramework.Core.DomainModel.DialogPartResultValues
 {
-    public YesNoDialogPartResultValue(bool value) => Value = value;
-    public object? Value { get; }
-    public ResultValueType ResultValueType => ResultValueType.YesNo;
+    public record YesNoDialogPartResultValue : IDialogPartResultValue
+    {
+        public YesNoDialogPartResultValue(bool value) => Value = value;
+        public object? Value { get; }
+        public ResultValueType ResultValueType => ResultValueType.YesNo;
+    }
 }

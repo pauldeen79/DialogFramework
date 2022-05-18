@@ -1,14 +1,18 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record AbortedDialogPart : IAbortedDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public AbortedDialogPart(string id, string message)
+    public record AbortedDialogPart : IAbortedDialogPart
     {
-        Id = id;
-        Message = message;
-    }
+        public AbortedDialogPart(string id, string message)
+        {
+            Id = id;
+            Message = message;
+        }
 
-    public string Message { get; }
-    public string Id { get; }
-    public DialogState State => DialogState.Aborted;
+        public string Message { get; }
+        public string Id { get; }
+        public DialogState State => DialogState.Aborted;
+    }
 }

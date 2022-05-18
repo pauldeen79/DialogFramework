@@ -1,20 +1,25 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogParts;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record CompletedDialogPart : ICompletedDialogPart
+namespace DialogFramework.Core.DomainModel.DialogParts
 {
-    public CompletedDialogPart(string id,
-                               string heading,
-                               string message,
-                               IDialogPartGroup group)
+    public record CompletedDialogPart : ICompletedDialogPart
     {
-        Id = id;
-        Heading = heading;
-        Message = message;
-        Group = group;
+        public CompletedDialogPart(string id,
+                                   string heading,
+                                   string message,
+                                   IDialogPartGroup group)
+        {
+            Id = id;
+            Heading = heading;
+            Message = message;
+            Group = group;
+        }
+        public string Message { get; }
+        public string Heading { get; }
+        public IDialogPartGroup Group { get; }
+        public string Id { get; }
+        public DialogState State => DialogState.Completed;
     }
-    public string Message { get; }
-    public string Heading { get; }
-    public IDialogPartGroup Group { get; }
-    public string Id { get; }
-    public DialogState State => DialogState.Completed;
 }

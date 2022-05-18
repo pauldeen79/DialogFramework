@@ -1,83 +1,92 @@
-﻿namespace DialogFramework.Core.Tests.DialogPartResultDefinitionValidators;
+﻿using System.Linq;
+using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Core.DomainModel;
+using DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators;
+using FluentAssertions;
+using Moq;
+using Xunit;
 
-public class OccurenceCountValidatorTests
+namespace DialogFramework.Core.Tests.DialogPartResultDefinitionValidators
 {
-    [Fact]
-    public void Validate_Returns_Empty_Result_When_OccurenceCount_Is_Correct()
+    public class OccurenceCountValidatorTests
     {
-        // Arrange
-        var sut = new OccurenceCountValidator(1);
-        var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
-        var dialogPartMock = new Mock<IDialogPart>();
-        dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
-        dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
+        [Fact]
+        public void Validate_Returns_Empty_Result_When_OccurenceCount_Is_Correct()
+        {
+            // Arrange
+            var sut = new OccurenceCountValidator(1);
+            var dialogMock = new Mock<IDialog>();
+            var context = new DialogContext(dialogMock.Object);
+            var dialogPartMock = new Mock<IDialogPart>();
+            dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
+            var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+            dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
-        // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id) });
+            // Act
+            var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id) });
 
-        // Assert
-        actual.Should().BeEmpty();
-    }
+            // Assert
+            actual.Should().BeEmpty();
+        }
 
-    [Fact]
-    public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_One()
-    {
-        // Arrange
-        var sut = new OccurenceCountValidator(1);
-        var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
-        var dialogPartMock = new Mock<IDialogPart>();
-        dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
-        dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
+        [Fact]
+        public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_One()
+        {
+            // Arrange
+            var sut = new OccurenceCountValidator(1);
+            var dialogMock = new Mock<IDialog>();
+            var context = new DialogContext(dialogMock.Object);
+            var dialogPartMock = new Mock<IDialogPart>();
+            dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
+            var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+            dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
-        // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+            // Act
+            var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
-        // Assert
-        actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] is required");
-    }
+            // Assert
+            actual.Should().ContainSingle();
+            actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] is required");
+        }
 
-    [Fact]
-    public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_Larger_Than_One_And_Range()
-    {
-        // Arrange
-        var sut = new OccurenceCountValidator(1, 2);
-        var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
-        var dialogPartMock = new Mock<IDialogPart>();
-        dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
-        dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
+        [Fact]
+        public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_Larger_Than_One_And_Range()
+        {
+            // Arrange
+            var sut = new OccurenceCountValidator(1, 2);
+            var dialogMock = new Mock<IDialog>();
+            var context = new DialogContext(dialogMock.Object);
+            var dialogPartMock = new Mock<IDialogPart>();
+            dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
+            var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+            dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
-        // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+            // Act
+            var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
-        // Assert
-        actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] should be supplied between 1 and 2 times");
-    }
+            // Assert
+            actual.Should().ContainSingle();
+            actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] should be supplied between 1 and 2 times");
+        }
 
-    [Fact]
-    public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_Larger_Than_One_And_No_Range()
-    {
-        // Arrange
-        var sut = new OccurenceCountValidator(2, 2);
-        var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
-        var dialogPartMock = new Mock<IDialogPart>();
-        dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
-        dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
+        [Fact]
+        public void Validate_Returns_NonEmpty_Result_When_OccurenceCount_Is_Not_Correct_And_Times_Is_Larger_Than_One_And_No_Range()
+        {
+            // Arrange
+            var sut = new OccurenceCountValidator(2, 2);
+            var dialogMock = new Mock<IDialog>();
+            var context = new DialogContext(dialogMock.Object);
+            var dialogPartMock = new Mock<IDialogPart>();
+            dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
+            var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+            dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
-        // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+            // Act
+            var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
-        // Assert
-        actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] should be supplied 2 times");
+            // Assert
+            actual.Should().ContainSingle();
+            actual.First().ErrorMessage.Should().Be("Result value of [PartId.PartResultId] should be supplied 2 times");
+        }
     }
 }

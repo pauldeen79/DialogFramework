@@ -1,6 +1,7 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
-
-public interface IRedirectDialogPart : IDialogPart
+﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    IDialog RedirectDialog { get; }
+    public interface IRedirectDialogPart : IDialogPart
+    {
+        IDialog RedirectDialog { get; }
+    }
 }

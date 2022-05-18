@@ -1,15 +1,20 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using System.Collections.Generic;
+using CrossCutting.Common;
+using DialogFramework.Abstractions.DomainModel.DialogParts;
 
-public interface IDialog
+namespace DialogFramework.Abstractions.DomainModel
 {
-    IDialogMetadata Metadata { get; }
-    ValueCollection<IDialogPart> Parts { get; }
-    IErrorDialogPart ErrorPart { get; }
-    IAbortedDialogPart AbortedPart { get; }
-    ICompletedDialogPart CompletedPart { get; }
-    ValueCollection<IDialogPartGroup> PartGroups { get; }
-    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
-                                                  IEnumerable<IDialogPartResult> newDialogPartResults);
-    IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart);
-    bool CanNavigateTo(IDialogPart currentPart, IDialogPart navigateToPart, IEnumerable<IDialogPartResult> existingDialogPartResults);
+    public interface IDialog
+    {
+        IDialogMetadata Metadata { get; }
+        ValueCollection<IDialogPart> Parts { get; }
+        IErrorDialogPart ErrorPart { get; }
+        IAbortedDialogPart AbortedPart { get; }
+        ICompletedDialogPart CompletedPart { get; }
+        ValueCollection<IDialogPartGroup> PartGroups { get; }
+        IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
+                                                      IEnumerable<IDialogPartResult> newDialogPartResults);
+        IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults, IDialogPart currentPart);
+        bool CanNavigateTo(IDialogPart currentPart, IDialogPart navigateToPart, IEnumerable<IDialogPartResult> existingDialogPartResults);
+    }
 }

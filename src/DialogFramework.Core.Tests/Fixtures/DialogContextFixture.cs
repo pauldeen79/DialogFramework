@@ -1,16 +1,20 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-internal class DialogContextFixture : DialogContext
+namespace DialogFramework.Core.Tests.Fixtures
 {
-    public DialogContextFixture(IDialog currentDialog)
-        : base(currentDialog)
+    internal class DialogContextFixture : DialogContext
     {
-    }
+        public DialogContextFixture(IDialog currentDialog)
+            : base(currentDialog)
+        {
+        }
 
-    public DialogContextFixture(string id, IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
-        : base(id, currentDialog, currentPart, currentState)
-    {
-    }
+        public DialogContextFixture(string id, IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
+            : base(id, currentDialog, currentPart, currentState)
+        {
+        }
 
-    public void AddAnswer(IDialogPartResult result) => Answers.Add(result);
+        public void AddAnswer(IDialogPartResult result) => Answers.Add(result);
+    }
 }

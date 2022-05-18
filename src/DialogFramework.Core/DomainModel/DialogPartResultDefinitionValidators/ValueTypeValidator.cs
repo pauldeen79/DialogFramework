@@ -1,18 +1,26 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CrossCutting.Common;
+using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 
-public class ValueTypeValidator : IDialogPartResultDefinitionValidator
+namespace DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidators
 {
-    public Type Type { get; }
-    public ValueTypeValidator(Type type) => Type = type;
-
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialogPart dialogPart,
-                                                         IDialogPartResultDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+    public class ValueTypeValidator : IDialogPartResultDefinitionValidator
     {
-        if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
+        public Type Type { get; }
+        public ValueTypeValidator(Type type) => Type = type;
+
+        public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                             IDialogPart dialogPart,
+                                                             IDialogPartResultDefinition dialogPartResultDefinition,
+                                                             IEnumerable<IDialogPartResult> dialogPartResults)
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id  }));
+            if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
+            {
+                yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            }
         }
     }
 }

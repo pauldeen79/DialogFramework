@@ -1,9 +1,10 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
-
-public interface IDialogMetadata
+﻿namespace DialogFramework.Abstractions.DomainModel
 {
-    string Id { get; }
-    string FriendlyName { get; }
-    string Version { get; }
-    bool CanStart { get; }
+    public interface IDialogMetadata
+    {
+        string Id { get; }
+        string FriendlyName { get; }
+        string Version { get; }
+        bool CanStart { get; }
+    }
 }

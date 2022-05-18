@@ -1,8 +1,11 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.DialogParts;
+﻿using System;
 
-public interface IErrorDialogPart : IDialogPart
+namespace DialogFramework.Abstractions.DomainModel.DialogParts
 {
-    string ErrorMessage { get; }
-    Exception? Exception { get; }
-    IErrorDialogPart ForException(Exception ex);
+    public interface IErrorDialogPart : IDialogPart
+    {
+        string ErrorMessage { get; }
+        Exception? Exception { get; }
+        IErrorDialogPart ForException(Exception ex);
+    }
 }

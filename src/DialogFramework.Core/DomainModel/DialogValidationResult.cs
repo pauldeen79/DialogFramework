@@ -1,17 +1,21 @@
-﻿namespace DialogFramework.Core.DomainModel;
+﻿using CrossCutting.Common;
+using DialogFramework.Abstractions.DomainModel;
 
-public class DialogValidationResult : IDialogValidationResult
+namespace DialogFramework.Core.DomainModel
 {
-    public DialogValidationResult(string errorMessage) : this(errorMessage, new ValueCollection<string>())
+    public class DialogValidationResult : IDialogValidationResult
     {
-    }
+        public DialogValidationResult(string errorMessage) : this(errorMessage, new ValueCollection<string>())
+        {
+        }
 
-    public DialogValidationResult(string errorMessage, ValueCollection<string> dialogPartResultIds)
-    {
-        ErrorMessage = errorMessage;
-        DialogPartResultIds = dialogPartResultIds;
-    }
+        public DialogValidationResult(string errorMessage, ValueCollection<string> dialogPartResultIds)
+        {
+            ErrorMessage = errorMessage;
+            DialogPartResultIds = dialogPartResultIds;
+        }
 
-    public string ErrorMessage { get; }
-    public ValueCollection<string> DialogPartResultIds { get; }
+        public string ErrorMessage { get; }
+        public ValueCollection<string> DialogPartResultIds { get; }
+    }
 }

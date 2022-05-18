@@ -1,7 +1,10 @@
-﻿namespace DialogFramework.Abstractions.DomainModel;
+﻿using DialogFramework.Abstractions.DomainModel.Domains;
 
-public interface IDialogPart
+namespace DialogFramework.Abstractions.DomainModel
 {
-    string Id { get; }
-    DialogState State { get; }
+    public interface IDialogPart
+    {
+        string Id { get; }
+        DialogState State { get; }
+    }
 }

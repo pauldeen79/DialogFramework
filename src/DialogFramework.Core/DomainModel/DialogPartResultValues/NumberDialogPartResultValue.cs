@@ -1,8 +1,12 @@
-﻿namespace DialogFramework.Core.DomainModel.DialogPartResultValues;
+﻿using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.Abstractions.DomainModel.Domains;
 
-public record NumberDialogPartResultValue : IDialogPartResultValue
+namespace DialogFramework.Core.DomainModel.DialogPartResultValues
 {
-    public NumberDialogPartResultValue(decimal value) => Value = value;
-    public object? Value { get; }
-    public ResultValueType ResultValueType => ResultValueType.Number;
+    public record NumberDialogPartResultValue : IDialogPartResultValue
+    {
+        public NumberDialogPartResultValue(decimal value) => Value = value;
+        public object? Value { get; }
+        public ResultValueType ResultValueType => ResultValueType.Number;
+    }
 }

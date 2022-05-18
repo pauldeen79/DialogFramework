@@ -1,15 +1,19 @@
-﻿namespace DialogFramework.Abstractions;
+﻿using System.Collections.Generic;
+using DialogFramework.Abstractions.DomainModel;
 
-public interface IDialogService
+namespace DialogFramework.Abstractions
 {
-    bool CanStart(IDialog dialog);
-    IDialogContext Start(IDialog dialog);
-    bool CanContinue(IDialogContext context);
-    IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
-    bool CanAbort(IDialogContext context);
-    IDialogContext Abort(IDialogContext context);
-    bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart);
-    IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart);
-    bool CanResetCurrentState(IDialogContext context);
-    IDialogContext ResetCurrentState(IDialogContext context);
+    public interface IDialogService
+    {
+        bool CanStart(IDialog dialog);
+        IDialogContext Start(IDialog dialog);
+        bool CanContinue(IDialogContext context);
+        IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
+        bool CanAbort(IDialogContext context);
+        IDialogContext Abort(IDialogContext context);
+        bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart);
+        IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart);
+        bool CanResetCurrentState(IDialogContext context);
+        IDialogContext ResetCurrentState(IDialogContext context);
+    }
 }
