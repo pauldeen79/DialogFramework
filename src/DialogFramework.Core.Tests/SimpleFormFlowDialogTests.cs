@@ -56,13 +56,13 @@ namespace DialogFramework.Core.Tests
             context.CurrentPart.Id.Should().Be("Completed");
             context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
-        });
+                new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+                new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            });
             context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
-        });
+                new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            });
         }
 
         [Fact]
@@ -136,13 +136,13 @@ namespace DialogFramework.Core.Tests
             context.CurrentPart.Id.Should().Be("Completed");
             context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
-        });
+                new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+                new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            });
             context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
-        });
+                new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            });
         }
 
         [Fact]
@@ -201,13 +201,13 @@ namespace DialogFramework.Core.Tests
             result.CurrentPart.Id.Should().Be("Completed");
             result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
-        });
+                new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+                new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            });
             result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
             {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
-        });
+                new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            });
         }
 
         [Fact]
@@ -246,11 +246,11 @@ namespace DialogFramework.Core.Tests
             var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
             questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
             {
-            "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
-            "Result value of [ContactInfo.EmailAddress] is not of type [System.String]",
-            "Result for [ContactInfo.TelephoneNumber] should be of type [Text], but type [YesNo] was answered",
-            "Result value of [ContactInfo.TelephoneNumber] is not of type [System.String]"
-        });
+                "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
+                "Result value of [ContactInfo.EmailAddress] is not of type [System.String]",
+                "Result for [ContactInfo.TelephoneNumber] should be of type [Text], but type [YesNo] was answered",
+                "Result value of [ContactInfo.TelephoneNumber] is not of type [System.String]"
+            });
         }
 
         [Fact]
@@ -289,9 +289,9 @@ namespace DialogFramework.Core.Tests
             var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
             questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
             {
-            "Result value of [ContactInfo.EmailAddress] is required",
-            "Result value of [ContactInfo.TelephoneNumber] is required"
-        });
+                "Result value of [ContactInfo.EmailAddress] is required",
+                "Result value of [ContactInfo.TelephoneNumber] is required"
+            });
         }
 
         [Fact]
@@ -315,9 +315,9 @@ namespace DialogFramework.Core.Tests
             var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
             questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
             {
-            "Result value of [ContactInfo.EmailAddress] is required",
-            "Result value of [ContactInfo.TelephoneNumber] is required"
-        });
+                "Result value of [ContactInfo.EmailAddress] is required",
+                "Result value of [ContactInfo.TelephoneNumber] is required"
+            });
         }
 
         [Fact]
@@ -356,9 +356,9 @@ namespace DialogFramework.Core.Tests
             var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
             questionDialogPart.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
             {
-            "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
-            "Result value of [ContactInfo.EmailAddress] is not of type [System.String]"
-        });
+                "Result for [ContactInfo.EmailAddress] should be of type [Text], but type [Number] was answered",
+                "Result value of [ContactInfo.EmailAddress] is not of type [System.String]"
+            });
         }
     }
 }
