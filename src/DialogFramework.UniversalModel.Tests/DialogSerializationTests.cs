@@ -8,7 +8,7 @@ namespace DialogFramework.UniversalModel.Tests
 {
     public class DialogSerializationTests
     {
-        [Fact(Skip = "Need to think of something else, as Newtonsoft doesn't like abstract or interface types in c'tor")]
+        [Fact]
         public void Can_Serialize_And_Deserialize_Dialog()
         {
             // Arrange
@@ -20,12 +20,18 @@ namespace DialogFramework.UniversalModel.Tests
                 .WithErrorPart(new ErrorDialogPartBuilder().WithErrorMessage("Something went wrong"))
                 .AddPartGroups(completedGroup)
                 .Build();
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
 
             // Serialize
-            var json = JsonConvert.SerializeObject(dialogToSerialize);
+            var json = JsonConvert.SerializeObject(dialogToSerialize, settings);
 
             // Deserialize
-            var deserializedDialog = JsonConvert.DeserializeObject<Dialog>(json);
+            var deserializedDialog = JsonConvert.DeserializeObject<Dialog>(json, settings);
 
             // Assert
             deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
