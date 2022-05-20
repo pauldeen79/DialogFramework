@@ -8,7 +8,7 @@ public class CodeGenerationTests
     (
         basePath: Path.Combine(Directory.GetCurrentDirectory(), @"../../../../"),
         generateMultipleFiles: true,
-        dryRun: true
+        dryRun: false
     );
 
     //// Bootstrap test that generates c# code for the model used in code generation :)

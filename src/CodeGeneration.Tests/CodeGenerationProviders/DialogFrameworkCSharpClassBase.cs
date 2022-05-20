@@ -114,6 +114,11 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 property.WithConstructorNullCheck(false);
             }
         }
+
+        //if (classBuilder.Name == "DialogPartResultDefinition")
+        //{
+        //    classBuilder.AddProperties(new ClassPropertyBuilder().WithName("Validators").WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<DialogPartResultDefinitionValidator>"));
+        //}
     }
 
     private static string GetDefaultValueForDialogState(string classBuilderName)

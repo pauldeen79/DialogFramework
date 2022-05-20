@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DialogFramework.Abstractions.DomainModel;
+﻿using DialogFramework.Abstractions.DomainModel;
 
 namespace DialogFramework.UniversalModel.DomainModel.Builders
 {
     public class DialogPartResultDefinitionValidatorBuilder
     {
-        public DialogPartResultDefinitionValidatorBuilder(IDialogPartResultDefinitionValidator x)
+        private readonly IDialogPartResultDefinitionValidator _validator;
+
+        public DialogPartResultDefinitionValidatorBuilder(IDialogPartResultDefinitionValidator validator)
         {
+            _validator = validator;
         }
 
-        internal IDialogPartResultDefinitionValidator Build()
+        public IDialogPartResultDefinitionValidator Build()
         {
-            throw new NotImplementedException();
+            return _validator;
         }
     }
 }

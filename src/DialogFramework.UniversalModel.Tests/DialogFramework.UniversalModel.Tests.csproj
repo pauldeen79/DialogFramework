@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DialogFramework.Core\DialogFramework.Core.csproj" />
     <ProjectReference Include="..\DialogFramework.UniversalModel\DialogFramework.UniversalModel.csproj" />
   </ItemGroup>
 

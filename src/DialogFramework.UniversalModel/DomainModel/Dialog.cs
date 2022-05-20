@@ -26,6 +26,10 @@ namespace DialogFramework.UniversalModel.DomainModel
         public bool CanNavigateTo(IDialogPart currentPart,
                                   IDialogPart navigateToPart,
                                   IEnumerable<IDialogPartResult> existingDialogPartResults)
-            => currentPart.Id == navigateToPart.Id;
+        {
+            // Decision: By default, you can navigate to either the current part, or any part you have already visited.
+            // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
+            return currentPart.Id == navigateToPart.Id || existingDialogPartResults.Any(x => x.DialogPartId == navigateToPart.Id);
+        }
     }
 }

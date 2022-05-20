@@ -65,7 +65,7 @@ public record QuestionDialogPart : IQuestionDialogPart
         {
             var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
             ValidationErrors.AddRange(dialogPartResultDefinition.Validate(context, this, dialogPartResultsByPart)
-                                                             .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
+                                                                .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
         }
     }
 }
