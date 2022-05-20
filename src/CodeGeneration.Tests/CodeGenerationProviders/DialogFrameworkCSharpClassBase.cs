@@ -1,4 +1,5 @@
 ﻿using CrossCutting.Common;
+using DialogFramework.Abstractions;
 using DialogFramework.Abstractions.DomainModel;
 using DialogFramework.Abstractions.DomainModel.DialogParts;
 using DialogFramework.Abstractions.DomainModel.Domains;
@@ -38,6 +39,13 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             return string.Empty;
         }
 
+        if (instance.Namespace == "DialogFramework.UniversalModel")
+        {
+            return forCreate
+                ? "DialogFramework.UniversalModel." + instance.Name
+                : "DialogFramework.Abstractions.I" + instance.Name;
+        }
+
         if (instance.Namespace == "DialogFramework.UniversalModel.DomainModel")
         {
             return forCreate
@@ -75,7 +83,9 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                         .Replace("Abstractions.DomainModel.I", "UniversalModel.DomainModel.Builders.", StringComparison.InvariantCulture)
                         .Replace("Abstractions.DomainModel.DialogParts.I", "UniversalModel.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
                         + "Builder",
-                    $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))" //HACK
+                    property.IsNullable
+                        ? $"_{property.Name.ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
+                        : $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))" //HACK
                 );
             }
             else if (typeName.Contains("Collection<DialogFramework."))
@@ -119,6 +129,23 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         //{
         //    classBuilder.AddProperties(new ClassPropertyBuilder().WithName("Validators").WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<DialogPartResultDefinitionValidator>"));
         //}
+
+        if (classBuilder.Name == "DialogContext")
+        {
+            classBuilder.AddProperties
+            (
+                new ClassPropertyBuilder()
+                    .WithName("Answers")
+                    .WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<{typeof(IDialogPartResult).FullName!}>")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<{typeof(IDialogPartResult).FullName!}>(Answers)")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Answers"), //HACK
+                new ClassPropertyBuilder()
+                    .WithName("Exception")
+                    .WithType(typeof(Exception))
+                    .WithIsNullable()
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_exceptionDelegate = new (() => default)") //HACK
+            );
+        }
     }
 
     private static string GetDefaultValueForDialogState(string classBuilderName)
@@ -135,12 +162,18 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     private static string GetClassName(string typeName)
     {
         var name = typeName.GetClassName().Substring(1);
-        return typeName.EndsWith("DialogPart")
+        return typeName.Contains(".DialogParts") //typeName.EndsWith("DialogPart")
             ? $"DialogFramework.UniversalModel.DomainModel.DialogParts.Builders.{name}"
             : $"DialogFramework.UniversalModel.DomainModel.Builders.{name}";
     }
 
     protected static Type[] GetCoreModelTypes()
+        => new[]
+        {
+            typeof(IDialogContext),
+        };
+
+    protected static Type[] GetDomainModelModelTypes()
         => new[]
         {
             typeof(IDialog),

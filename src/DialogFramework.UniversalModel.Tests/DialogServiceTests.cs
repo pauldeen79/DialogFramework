@@ -1,11 +1,12 @@
 ﻿using DialogFramework.Abstractions.DomainModel.DialogParts;
 using DialogFramework.Abstractions.DomainModel.Domains;
-using DialogFramework.Core;
 using DialogFramework.Core.DomainModel.DialogPartResultValues;
 using DialogFramework.Core.Extensions;
 using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.Tests.Fixtures;
 using FluentAssertions;
+using Newtonsoft.Json;
+using DialogService = DialogFramework.Core.DialogService;
 
 namespace DialogFramework.UniversalModel.Tests
 {
@@ -142,69 +143,70 @@ namespace DialogFramework.UniversalModel.Tests
             });
         }
 
-        //[Fact]
-        //public void Can_Complete_SimpleFormFlow_In_Different_Session()
-        //{
-        //    // Arrange
-        //    var dialog = SimpleFormFlowDialog.Create();
-        //    var factory = new DialogContextFactory();
-        //    var sut = new DialogService(factory);
+        [Fact]
+        public void Can_Complete_SimpleFormFlow_In_Different_Session()
+        {
+            // Arrange
+            var dialog = SimpleFormFlowDialog.Create();
+            var factory = new DialogContextFactory();
+            var sut = new DialogService(factory);
 
-        //    // Act step 1: Start a session, submit first question
-        //    var context = sut.Start(dialog);
-        //    context.CurrentPart.Id.Should().Be("ContactInfo");
-        //    context = sut.Continue
-        //    (
-        //        context,
-        //        new DialogPartResult
-        //        (
-        //            context.CurrentPart.Id,
-        //            "EmailAddress",
-        //            new TextDialogPartResultValue("email@address.com")
-        //        ),
-        //        new DialogPartResult
-        //        (
-        //            context.CurrentPart.Id,
-        //            "TelephoneNumber",
-        //            new TextDialogPartResultValue("911")
-        //        )
-        //    ); // ContactInfo -> Newsletter
+            // Act step 1: Start a session, submit first question
+            var context = sut.Start(dialog);
+            context.CurrentPart.Id.Should().Be("ContactInfo");
+            context = sut.Continue
+            (
+                context,
+                new DialogPartResult
+                (
+                    context.CurrentPart.Id,
+                    "EmailAddress",
+                    new TextDialogPartResultValue("email@address.com")
+                ),
+                new DialogPartResult
+                (
+                    context.CurrentPart.Id,
+                    "TelephoneNumber",
+                    new TextDialogPartResultValue("911")
+                )
+            ); // ContactInfo -> Newsletter
 
-        //    // *** Now, just imagine at this point that the results are saved, and the user comes back at a later moment ***
-        //    // ...
-        //    // *** Hey, the user is back again! Let's continue ***
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
 
-        //    // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        //    var dialog2 = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0"); // simulate getting the dialog again, in a new session
-        //    var context2 = new DialogContextFixture(context.Id, dialog2, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
-        //    foreach (var answer in context.GetAllDialogPartResults()) // simulate filling the previously submitted answers again
-        //    {
-        //        context2.AddAnswer(answer);
-        //    }
-        //    var result = sut.Continue
-        //    (
-        //        context2,
-        //        new DialogPartResult
-        //        (
-        //            context2.CurrentPart.Id,
-        //            "SignUpForNewsletter",
-        //            new YesNoDialogPartResultValue(false)
-        //        )
-        //    ); // Newsletter -> Completed
+            // Serialize
+            var json = JsonConvert.SerializeObject(context, settings);
 
-        //    // Assert
-        //    result.CurrentState.Should().Be(DialogState.Completed);
-        //    result.CurrentPart.Id.Should().Be("Completed");
-        //    result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
-        //    {
-        //        new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-        //        new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
-        //    });
-        //    result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
-        //    {
-        //        new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
-        //    });
-        //}
+            // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
+            var context2 = JsonConvert.DeserializeObject<DialogContext>(json, settings);
+            var result = sut.Continue
+            (
+                context2,
+                new DialogPartResult
+                (
+                    context2.CurrentPart.Id,
+                    "SignUpForNewsletter",
+                    new YesNoDialogPartResultValue(false)
+                )
+            ); // Newsletter -> Completed
+
+            // Assert
+            result.CurrentState.Should().Be(DialogState.Completed);
+            result.CurrentPart.Id.Should().Be("Completed");
+            result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+            {
+                new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
+                new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            });
+            result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+            {
+                new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            });
+        }
 
         [Fact]
         public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()

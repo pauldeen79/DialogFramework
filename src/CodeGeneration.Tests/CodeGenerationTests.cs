@@ -28,6 +28,8 @@ public class CodeGenerationTests
         // Act
         GenerateCode.For<CoreBuilders>(Settings, multipleContentBuilder);
         GenerateCode.For<CoreRecords>(Settings, multipleContentBuilder);
+        GenerateCode.For<DomainModelBuilders>(Settings, multipleContentBuilder);
+        GenerateCode.For<DomainModelRecords>(Settings, multipleContentBuilder);
         GenerateCode.For<DialogPartBuilders>(Settings, multipleContentBuilder);
         GenerateCode.For<DialogPartRecords>(Settings, multipleContentBuilder);
 
