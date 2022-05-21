@@ -28,5 +28,27 @@ namespace DialogFramework.UniversalModel.Tests
             // Assert
             deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
         }
+
+        [Fact]
+        public void Can_Serialize_And_Deserialize_DialogContext()
+        {
+            // Arrange
+            var dialogContextToSerialize = new DialogContextFactory().Create(SimpleFormFlowDialog.Create());
+            var settings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
+
+            // Serialize
+            var json = JsonConvert.SerializeObject(dialogContextToSerialize, settings);
+
+            // Deserialize
+            var deserializedDialog = JsonConvert.DeserializeObject<DialogContext>(json, settings);
+
+            // Assert
+            deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);
+        }
     }
 }
