@@ -14,7 +14,8 @@ public class DialogServiceTests
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(Id, dialog, abortedPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Abort(context);
@@ -35,7 +36,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var context = new DialogContextFixture(Id, dialog, dialog.CompletedPart, DialogState.Completed);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Abort(context);
@@ -56,7 +58,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var context = new DialogContextFixture(Id, dialog, dialog.ErrorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Abort(context);
@@ -79,7 +82,8 @@ public class DialogServiceTests
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Abort(context);
@@ -103,7 +107,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanAbort(context);
@@ -120,7 +125,8 @@ public class DialogServiceTests
         var abortedPart = dialog.AbortedPart;
         var context = new DialogContextFixture(Id, dialog, abortedPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanAbort(context);
@@ -146,7 +152,8 @@ public class DialogServiceTests
         };
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>());
@@ -169,7 +176,8 @@ public class DialogServiceTests
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, currentPart.Results.Single(x => x.Id == "Great").Id) });
@@ -189,7 +197,8 @@ public class DialogServiceTests
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, "Unknown result") });
@@ -212,7 +221,8 @@ public class DialogServiceTests
         var currentState = DialogState.InProgress;
         var context = new DialogContextFixture(Id, dialog, currentPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
         wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IDialogPartResultDefinition>());
 
@@ -237,7 +247,8 @@ public class DialogServiceTests
         var currentState = DialogState.Initial;
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(Id, dialog, currentPart, currentState));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var context = sut.Start(dialog); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
 
@@ -273,7 +284,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var redirectPart = new RedirectDialogPart("Redirect", dialog2);
+        var redirectPart = new RedirectDialogPart("Redirect", dialog2.Metadata);
         var dialog1 = new Dialog
         (
             new DialogMetadata(
@@ -291,7 +302,14 @@ public class DialogServiceTests
                                                       d => d.Metadata.Id == dialog1.Metadata.Id
                                                           ? new DialogContextFixture(dialog1)
                                                           : new DialogContextFixture(dialog2));
-        var sut = new DialogService(factory);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((id, version) =>
+        {
+            if (id == dialog1.Metadata.Id && version == dialog1.Metadata.Version) return dialog1;
+            if (id == dialog2.Metadata.Id && version == dialog2.Metadata.Version) return dialog2;
+            throw new NotSupportedException($"Unsupported dialog: id [{id}], version [{version}]");
+        });
+        var sut = new DialogService(factory, repositoryMock.Object);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
 
         // Act
@@ -315,7 +333,7 @@ public class DialogServiceTests
         var completedPart = new CompletedDialogPart("Completed", "Thank you", "Thank you for your input!", group2);
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
         var navigatedPart = new MessageDialogPart("Navigated", "Navigated", "This shows that navigation works", group2);
-        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => navigatedPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -331,7 +349,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var context = sut.Start(dialog); // this will trigger the message
 
         // Act
@@ -369,7 +388,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var redirectPart = new RedirectDialogPart("Redirect", dialog2);
+        var redirectPart = new RedirectDialogPart("Redirect", dialog2.Metadata);
         var dialog1 = new Dialog
         (
             new DialogMetadata(
@@ -385,7 +404,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog1.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog1));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var context = new DialogContextFixture(Id, dialog1, dialog1.Parts.First(), currentState);
 
         // Act
@@ -425,7 +445,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var context = sut.Start(dialog); // this will trigger the message
 
         // Act
@@ -450,7 +471,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanContinue(context);
@@ -476,7 +498,8 @@ public class DialogServiceTests
                                 Enumerable.Empty<IDialogPartGroup>());
         var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                              dialog => new DialogContextFixture(dialog));
-        var service = new DialogService(contextFactory);
+        var repository = new TestDialogRepository();
+        var service = new DialogService(contextFactory, repository);
 
         // Act
         var actual = service.CanStart(dialog);
@@ -500,7 +523,8 @@ public class DialogServiceTests
                                 Enumerable.Empty<IDialogPartGroup>());
         var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                              dialog => new DialogContextFixture("Id", dialog, errorDialogPartMock.Object, DialogState.InProgress)); // dialog state is already in progress
-        var service = new DialogService(contextFactory);
+        var repository = new TestDialogRepository();
+        var service = new DialogService(contextFactory, repository);
 
         // Act
         var actual = service.CanStart(dialog);
@@ -515,7 +539,8 @@ public class DialogServiceTests
         // Arrange
         var factory = new DialogContextFactoryFixture(_ => false,
                                                       _ => throw new InvalidOperationException("Not intended to get to this point"));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var dialog = DialogFixture.CreateDialog();
         var act = new Action(() => sut.Start(dialog));
 
@@ -534,7 +559,8 @@ public class DialogServiceTests
         var dialogPartMock = new Mock<IDialogPart>();
         var factory = new DialogContextFactoryFixture(_ => true,
                                                       _ => new DialogContextFixture("Id", dialogMock.Object, dialogPartMock.Object, DialogState.Initial));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var dialog = DialogFixture.CreateDialog();
         var act = new Action(() => sut.Start(dialog));
 
@@ -565,7 +591,7 @@ public class DialogServiceTests
             completedPart,
             new[] { group1, group2 }
         );
-        var redirectPart = new RedirectDialogPart("Redirect", dialog2);
+        var redirectPart = new RedirectDialogPart("Redirect", dialog2.Metadata);
         var dialog1 = new Dialog
         (
             new DialogMetadata(
@@ -583,7 +609,14 @@ public class DialogServiceTests
                                                       dialog => dialog.Metadata.Id == dialog1.Metadata.Id
                                                           ? new DialogContextFixture(dialog1)
                                                           : new DialogContextFixture(dialog2));
-        var sut = new DialogService(factory);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((id, version) =>
+        {
+            if (id == dialog1.Metadata.Id && version == dialog1.Metadata.Version) return dialog1;
+            if (id == dialog2.Metadata.Id && version == dialog2.Metadata.Version) return dialog2;
+            throw new NotSupportedException($"Unsupported dialog: id [{id}], version [{version}]");
+        });
+        var sut = new DialogService(factory, repositoryMock.Object);
 
         // Act
         var result = sut.Start(dialog1);
@@ -605,7 +638,7 @@ public class DialogServiceTests
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var welcomePart = new MessageDialogPart("Welcome", "Welcome", "Welcome! I would like to answer a question", group1);
-        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart);
+        var navigationPart = new NavigationDialogPartFixture("Navigate", _ => welcomePart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -621,7 +654,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Start(dialog);
@@ -639,7 +673,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => throw new InvalidOperationException("Kaboom"));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var start = new Action(() => sut.Start(dialog));
 
         // Act
@@ -652,7 +687,8 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog(false);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Start(dialog);
@@ -671,7 +707,8 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Start(dialog);
@@ -691,7 +728,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", _ => errorDialogPart);
+        var decisionPart = new DecisionDialogPartFixture("Decision", _ => errorDialogPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -707,7 +744,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Start(dialog);
@@ -728,7 +766,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", _ => abortedPart);
+        var decisionPart = new DecisionDialogPartFixture("Decision", _ => abortedPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -744,7 +782,8 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog));
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.Start(dialog);
@@ -765,7 +804,8 @@ public class DialogServiceTests
         var completedPart = dialog.CompletedPart;
         var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanNavigateTo(context, completedPart);
@@ -783,7 +823,8 @@ public class DialogServiceTests
         var completedPart = dialog.CompletedPart;
         var context = new DialogContextFixture(Id, dialog, errorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanNavigateTo(context, completedPart);
@@ -801,7 +842,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanNavigateTo(context, questionPart);
@@ -818,7 +860,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanNavigateTo(context, questionPart);
@@ -838,7 +881,8 @@ public class DialogServiceTests
         context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanNavigateTo(context, messagePart);
@@ -856,7 +900,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
         var navigateTo = new Action(() => sut.NavigateTo(context, questionPart));
 
         // Act & Assert
@@ -874,7 +919,8 @@ public class DialogServiceTests
         context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id) });
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.NavigateTo(context, messagePart);
@@ -898,7 +944,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, questionPart, currentState);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -914,7 +961,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var context = new DialogContextFixture(Id, dialog, dialog.CompletedPart, DialogState.InProgress); // note that this actually invalid state, but we currently can't prevent it on the interface
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -931,7 +979,8 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -950,7 +999,8 @@ public class DialogServiceTests
         context.AddAnswer(new DialogPartResult(questionPart.Id, "Terrible"));
         context.AddAnswer(new DialogPartResult("Other part", "Other value"));
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var result = sut.ResetCurrentState(context);

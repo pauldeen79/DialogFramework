@@ -8,7 +8,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);
@@ -61,7 +62,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);
@@ -141,7 +143,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act step 1: Start a session, submit first question
         var context = sut.Start(dialog);
@@ -206,7 +209,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);
@@ -249,7 +253,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);
@@ -290,7 +295,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);
@@ -316,7 +322,8 @@ public class SimpleFormFlowDialogTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act
         var context = sut.Start(dialog);

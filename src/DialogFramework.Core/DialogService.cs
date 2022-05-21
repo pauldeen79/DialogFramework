@@ -3,9 +3,13 @@
 public class DialogService : IDialogService
 {
     private readonly IDialogContextFactory _contextFactory;
+    private readonly IDialogRepository _dialogRepository;
 
-    public DialogService(IDialogContextFactory contextFactory)
-        => _contextFactory = contextFactory;
+    public DialogService(IDialogContextFactory contextFactory, IDialogRepository dialogRepository)
+    {
+        _contextFactory = contextFactory;
+        _dialogRepository = dialogRepository;
+    }
 
     public bool CanStart(IDialog dialog)
         => _contextFactory.Create(dialog).CanStart();
@@ -27,14 +31,16 @@ public class DialogService : IDialogService
 
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
-                return Start(redirectDialogPart.RedirectDialog);
+                var metadata = redirectDialogPart.RedirectDialogMetadata;
+                return Start(_dialogRepository.GetDialog(metadata.Id, metadata.Version));
             }
 
             while (true)
             {
                 if (firstPart is INavigationDialogPart navigationDialogPart)
                 {
-                    firstPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
+                    var id = navigationDialogPart.GetNextPartId(context);
+                    firstPart = dialog.GetPartById(id).ProcessDecisions(context);
                 }
                 else
                 {
@@ -67,14 +73,16 @@ public class DialogService : IDialogService
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {
-                return Start(redirectDialogPart.RedirectDialog);
+                var metadata = redirectDialogPart.RedirectDialogMetadata;
+                return Start(_dialogRepository.GetDialog(metadata.Id, metadata.Version));
             }
 
             while (true)
             {
                 if (nextPart is INavigationDialogPart navigationDialogPart)
                 {
-                    nextPart = navigationDialogPart.GetNextPart(context).ProcessDecisions(context);
+                    var id = navigationDialogPart.GetNextPartId(context);
+                    nextPart = context.CurrentDialog.GetPartById(id).ProcessDecisions(context);
                 }
                 else
                 {

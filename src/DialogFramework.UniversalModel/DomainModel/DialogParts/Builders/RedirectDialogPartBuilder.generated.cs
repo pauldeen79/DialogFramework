@@ -17,15 +17,15 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
 #nullable enable
     public partial class RedirectDialogPartBuilder
     {
-        public DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder RedirectDialog
+        public DialogFramework.UniversalModel.DomainModel.Builders.DialogMetadataBuilder RedirectDialogMetadata
         {
             get
             {
-                return _redirectDialogDelegate.Value;
+                return _redirectDialogMetadataDelegate.Value;
             }
             set
             {
-                _redirectDialogDelegate = new (() => value);
+                _redirectDialogMetadataDelegate = new (() => value);
             }
         }
 
@@ -56,7 +56,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
         public DialogFramework.Abstractions.DomainModel.DialogParts.IRedirectDialogPart Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogParts.RedirectDialogPart(RedirectDialog?.Build(), Id, State);
+            return new DialogFramework.UniversalModel.DomainModel.DialogParts.RedirectDialogPart(RedirectDialogMetadata?.Build(), Id, State);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -72,15 +72,15 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             return this;
         }
 
-        public RedirectDialogPartBuilder WithRedirectDialog(DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder redirectDialog)
+        public RedirectDialogPartBuilder WithRedirectDialogMetadata(DialogFramework.UniversalModel.DomainModel.Builders.DialogMetadataBuilder redirectDialogMetadata)
         {
-            RedirectDialog = redirectDialog;
+            RedirectDialogMetadata = redirectDialogMetadata;
             return this;
         }
 
-        public RedirectDialogPartBuilder WithRedirectDialog(System.Func<DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder> redirectDialogDelegate)
+        public RedirectDialogPartBuilder WithRedirectDialogMetadata(System.Func<DialogFramework.UniversalModel.DomainModel.Builders.DialogMetadataBuilder> redirectDialogMetadataDelegate)
         {
-            _redirectDialogDelegate = new (redirectDialogDelegate);
+            _redirectDialogMetadataDelegate = new (redirectDialogMetadataDelegate);
             return this;
         }
 
@@ -99,7 +99,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
         public RedirectDialogPartBuilder()
         {
             #pragma warning disable CS8603 // Possible null reference return.
-            _redirectDialogDelegate = new (() => default);
+            _redirectDialogMetadataDelegate = new (() => default);
             _idDelegate = new (() => string.Empty);
             _stateDelegate = new (() => DialogFramework.Abstractions.DomainModel.Domains.DialogState.InProgress);
             #pragma warning restore CS8603 // Possible null reference return.
@@ -111,12 +111,12 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             {
                 throw new System.ArgumentNullException("source");
             }
-            _redirectDialogDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder(source.RedirectDialog));
+            _redirectDialogMetadataDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogMetadataBuilder(source.RedirectDialogMetadata));
             _idDelegate = new (() => source.Id);
             _stateDelegate = new (() => source.State);
         }
 
-        private System.Lazy<DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder> _redirectDialogDelegate;
+        private System.Lazy<DialogFramework.UniversalModel.DomainModel.Builders.DialogMetadataBuilder> _redirectDialogMetadataDelegate;
 
         private System.Lazy<string> _idDelegate;
 

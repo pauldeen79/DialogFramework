@@ -17,7 +17,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
 #nullable enable
     public partial record RedirectDialogPart : DialogFramework.Abstractions.DomainModel.DialogParts.IRedirectDialogPart
     {
-        public DialogFramework.Abstractions.DomainModel.IDialog RedirectDialog
+        public DialogFramework.Abstractions.DomainModel.IDialogMetadata RedirectDialogMetadata
         {
             get;
         }
@@ -32,10 +32,10 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
-        public RedirectDialogPart(DialogFramework.Abstractions.DomainModel.IDialog redirectDialog, string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
+        public RedirectDialogPart(DialogFramework.Abstractions.DomainModel.IDialogMetadata redirectDialogMetadata, string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
         {
-            if (redirectDialog == null) throw new System.ArgumentNullException("redirectDialog");
-            this.RedirectDialog = redirectDialog;
+            if (redirectDialogMetadata == null) throw new System.ArgumentNullException("redirectDialogMetadata");
+            this.RedirectDialogMetadata = redirectDialogMetadata;
             this.Id = id;
             this.State = state;
             System.ComponentModel.DataAnnotations.Validator.ValidateObject(this, new System.ComponentModel.DataAnnotations.ValidationContext(this, null, null), true);

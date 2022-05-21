@@ -18,7 +18,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);
@@ -70,7 +71,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);
@@ -149,7 +151,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act step 1: Start a session, submit first question
             var context = sut.Start(dialog);
@@ -214,7 +217,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);
@@ -256,7 +260,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);
@@ -296,7 +301,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);
@@ -321,7 +327,8 @@ namespace DialogFramework.UniversalModel.Tests
             // Arrange
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
-            var sut = new DialogService(factory);
+            var repository = new TestDialogRepository();
+            var sut = new DialogService(factory, repository);
 
             // Act
             var context = sut.Start(dialog);

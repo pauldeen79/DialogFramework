@@ -2,5 +2,5 @@
 
 public interface IRedirectDialogPart : IDialogPart
 {
-    IDialog RedirectDialog { get; }
+    IDialogMetadata RedirectDialogMetadata { get; }
 }

@@ -8,7 +8,8 @@ public class TestFlowTests
         // Arrange
         var dialog = new TestDialogRepository().GetDialog(nameof(TestFlowDialog), "1.0.0");
         var factory = new DialogContextFactory();
-        var sut = new DialogService(factory);
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository);
 
         // Act & Assert
         var context = sut.Start(dialog); // empty -> Welcome

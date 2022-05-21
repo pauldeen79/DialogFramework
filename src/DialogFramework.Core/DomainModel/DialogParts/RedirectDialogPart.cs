@@ -2,14 +2,13 @@
 
 public record RedirectDialogPart : IRedirectDialogPart
 {
-    public RedirectDialogPart(string id,
-                              IDialog redirectDialog)
+    public RedirectDialogPart(string id, IDialogMetadata redirectDialogMetadata)
     {
         Id = id;
-        RedirectDialog = redirectDialog;
+        RedirectDialogMetadata = redirectDialogMetadata;
     }
 
-    public IDialog RedirectDialog { get; }
+    public IDialogMetadata RedirectDialogMetadata { get; }
     public string Id { get; }
     public DialogState State => DialogState.InProgress;
 }

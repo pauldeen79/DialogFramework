@@ -19,8 +19,8 @@ internal static class DialogFixture
         (
             "Decision",
             ctx => ctx.GetDialogPartResultsByPart(questionPart).Single().ResultId == answerTerrible.Id
-                ? messagePart
-                : completedPart
+                ? messagePart.Id
+                : completedPart.Id
         );
         var parts = new IDialogPart[]
         {

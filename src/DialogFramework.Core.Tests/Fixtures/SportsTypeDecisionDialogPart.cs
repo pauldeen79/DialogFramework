@@ -6,11 +6,8 @@ internal record SportsTypeDecisionDialogPart : DecisionDialogPart
     {
     }
 
-    public override IDialogPart GetNextPart(IDialogContext context)
-    {
-        var nextId = context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "SportsTypes")).Any()
+    public override string GetNextPartId(IDialogContext context)
+        => context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "SportsTypes")).Any()
             ? "Unhealthy"
             : "Healthy";
-        return context.CurrentDialog.Parts.Single(x => x.Id == nextId);
-    }
 }

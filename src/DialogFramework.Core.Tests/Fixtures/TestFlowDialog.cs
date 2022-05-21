@@ -30,7 +30,7 @@ public record TestFlowDialog : Dialog
             ),
             new AgeDecisionDialogPart("AgeDecision"),
             new MessageDialogPart("TooYoung", "Completed", "Too bad, you are too young. We can't give advice on kids.", CompletedGroup),
-            new StaticNavigationDialogPart("TooYoungNavigation", EmailPart),
+            new StaticNavigationDialogPart("TooYoungNavigation", EmailPart.Id),
             new QuestionDialogPart
             (
                 "SportsTypes",
@@ -51,9 +51,10 @@ public record TestFlowDialog : Dialog
             ),
             new SportsTypeDecisionDialogPart("SportsTypeDecision"),
             new MessageDialogPart("Healthy", "Healthy", "You're all good! Keep up the good work.", CompletedGroup),
-            new StaticNavigationDialogPart("HealthyNavigation", EmailPart),
+            new StaticNavigationDialogPart("HealthyNavigation", EmailPart.Id),
             new MessageDialogPart("Unhealthy", "Unhealthy", "Our advice: It's time to do some sports, mate!", CompletedGroup),
-            new StaticNavigationDialogPart("UnhealthyNavigation", EmailPart)
+            new StaticNavigationDialogPart("UnhealthyNavigation", EmailPart.Id),
+            EmailPart
         },
         new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
         new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),

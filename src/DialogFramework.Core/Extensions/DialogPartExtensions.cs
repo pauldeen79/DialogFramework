@@ -8,7 +8,13 @@ internal static class DialogPartExtensions
             : null;
 
     internal static IDialogPart ProcessDecisions(this IDialogPart dialogPart, IDialogContext context)
-        => dialogPart is IDecisionDialogPart decisionDialogPart
-            ? ProcessDecisions(decisionDialogPart.GetNextPart(context), context)
-            : dialogPart;
+    {
+        if (dialogPart is IDecisionDialogPart decisionDialogPart)
+        {
+            var id = decisionDialogPart.GetNextPartId(context);
+            return ProcessDecisions(context.CurrentDialog.GetPartById(id), context);
+        }
+
+        return dialogPart;
+    }
 }

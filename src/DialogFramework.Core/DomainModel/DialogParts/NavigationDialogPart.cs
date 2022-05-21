@@ -5,7 +5,7 @@ public abstract record NavigationDialogPart : INavigationDialogPart
     protected NavigationDialogPart(string id)
         => Id = id;
 
-    public abstract IDialogPart GetNextPart(IDialogContext context);
+    public abstract string GetNextPartId(IDialogContext context);
     public string Id { get; }
     public DialogState State => DialogState.InProgress;
 }
