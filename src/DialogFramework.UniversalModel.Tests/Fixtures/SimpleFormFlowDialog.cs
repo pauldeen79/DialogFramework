@@ -8,7 +8,7 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
 {
     public static class SimpleFormFlowDialog
     {
-        public  static IDialog Create()
+        public static IDialog Create()
         {
             var getInformationGroupBuider = new DialogPartGroupBuilder().WithId("Get information").WithNumber(1).WithTitle("Get information");
             var completedGroupBuilder = new DialogPartGroupBuilder().WithId("Completed").WithNumber(2).WithTitle("Completed");
