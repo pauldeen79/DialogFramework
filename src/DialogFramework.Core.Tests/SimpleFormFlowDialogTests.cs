@@ -43,7 +43,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.Completed);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("Completed");
         context.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
@@ -124,7 +124,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.Completed);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("Completed");
         context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
@@ -172,7 +172,7 @@ public class SimpleFormFlowDialogTests
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
         var dialog2 = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")); // simulate getting the dialog again, in a new session
-        var context2 = new DialogContextFixture(context.Id, dialog2!, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
+        var context2 = new DialogContextFixture(context.Id, dialog2!.Metadata, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
         foreach (var answer in context.GetAllDialogPartResults()) // simulate filling the previously submitted answers again
         {
             context2.AddAnswer(answer);
@@ -190,7 +190,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPart.Id.Should().Be("Completed");
         result.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
@@ -234,7 +234,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.InProgress);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
@@ -278,7 +278,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.InProgress);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
@@ -305,7 +305,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.InProgress);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;
@@ -347,7 +347,7 @@ public class SimpleFormFlowDialogTests
 
         // Assert
         context.CurrentState.Should().Be(DialogState.InProgress);
-        context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)context.CurrentPart;

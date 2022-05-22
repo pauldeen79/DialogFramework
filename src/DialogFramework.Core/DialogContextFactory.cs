@@ -6,5 +6,5 @@ public class DialogContextFactory : IDialogContextFactory
         => true;
 
     public IDialogContext Create(IDialog dialog)
-        => new DialogContext(dialog);
+        => new DialogContext(dialog.Metadata);
 }

@@ -9,15 +9,19 @@ namespace DialogFramework.UniversalModel
 {
     public class DialogContextFactory : IDialogContextFactory
     {
-        public bool CanCreate(IDialog dialog)
-        {
-            return dialog is Dialog;
-        }
+        public bool CanCreate(IDialog dialog) => dialog is Dialog;
 
         public IDialogContext Create(IDialog dialog)
-        {
-            return new DialogContext(Guid.NewGuid().ToString(), dialog, new EmptyDialogPart(), null, DialogState.Initial, new ValueCollection<IDialogPartResult>(), null);
-        }
+            => new DialogContext
+            (
+                Guid.NewGuid().ToString(),
+                dialog.Metadata,
+                new EmptyDialogPart(),
+                null,
+                DialogState.Initial,
+                new ValueCollection<IDialogPartResult>(),
+                null
+            );
 
         private sealed class EmptyDialogPart : IDialogPart
         {

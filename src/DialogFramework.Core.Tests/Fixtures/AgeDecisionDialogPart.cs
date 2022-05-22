@@ -6,8 +6,8 @@ internal record AgeDecisionDialogPart : DecisionDialogPart
     {
     }
 
-    public override string GetNextPartId(IDialogContext context)
-        => context.GetDialogPartResultsByPart(context.CurrentDialog.Parts.Single(x => x.Id == "Age"))
+    public override string GetNextPartId(IDialogContext context, IDialog dialog)
+        => context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Age"))
                   .Single().DialogPartId == "<10"
             ? "TooYoung"
             : "SportsTypes";

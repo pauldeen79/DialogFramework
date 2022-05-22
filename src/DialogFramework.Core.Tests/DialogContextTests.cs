@@ -11,7 +11,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateDialog();
         var welcomePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(Id, dialog, welcomePart, DialogState.InProgress);
+        var context = new DialogContextFixture(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
 
         // Act
         var result = context.GetDialogPartResultsByPart(questionPart);
@@ -26,8 +26,8 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
+        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) }, dialog);
 
         // Act
         var result = context.GetDialogPartResultsByPart(questionPart);
@@ -42,16 +42,16 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
+        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) }, dialog);
         // Assert 1
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
         context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 2 - Call GetProvidedAnswerByPart second time, after changing the provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id) });
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id) }, dialog);
         // Assert 2
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
         context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
@@ -63,18 +63,18 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateDialog();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) });
+        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id) }, dialog);
         context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
         context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
-        context = context.ResetDialogPartResultByPart(questionPart);
+        context = context.ResetDialogPartResultByPart(questionPart, dialog);
         // Assert 1
         context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
-        context = context.ResetDialogPartResultByPart(questionPart);
+        context = context.ResetDialogPartResultByPart(questionPart, dialog);
         // Assert 2
         context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
     }

@@ -8,7 +8,7 @@ public class RequiredValidatorTests
         // Arrange
         var sut = new RequiredValidator();
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -27,7 +27,7 @@ public class RequiredValidatorTests
         // Arrange
         var sut = new RequiredValidator(false);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -46,7 +46,7 @@ public class RequiredValidatorTests
         // Arrange
         var sut = new RequiredValidator(true);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -66,7 +66,7 @@ public class RequiredValidatorTests
         // Arrange
         var sut = new RequiredValidator();
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();

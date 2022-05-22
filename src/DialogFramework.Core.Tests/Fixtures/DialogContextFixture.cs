@@ -2,13 +2,13 @@
 
 internal class DialogContextFixture : DialogContext
 {
-    public DialogContextFixture(IDialog currentDialog)
-        : base(currentDialog)
+    public DialogContextFixture(IDialogIdentifier currentDialogIdentifier)
+        : base(currentDialogIdentifier)
     {
     }
 
-    public DialogContextFixture(string id, IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
-        : base(id, currentDialog, currentPart, currentState)
+    public DialogContextFixture(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
+        : base(id, currentDialogIdentifier, currentPart, currentState)
     {
     }
 

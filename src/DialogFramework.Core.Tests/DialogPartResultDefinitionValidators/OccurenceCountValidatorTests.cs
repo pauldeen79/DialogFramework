@@ -8,7 +8,7 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -27,7 +27,7 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -47,7 +47,7 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1, 2);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -67,7 +67,7 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(2, 2);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        var context = new DialogContext(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();

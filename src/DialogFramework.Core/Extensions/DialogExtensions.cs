@@ -2,7 +2,9 @@
 
 internal static class DialogExtensions
 {
-    internal static IDialogPart GetFirstPart(this IDialog dialog, IDialogContext context)
+    internal static IDialogPart GetFirstPart(this IDialog dialog,
+                                             IDialogContext context,
+                                             IDialogRepository dialogRepository)
     {
         var firstPart = dialog.Parts.FirstOrDefault();
         if (firstPart == null)
@@ -10,12 +12,13 @@ internal static class DialogExtensions
             throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
         }
 
-        return firstPart.ProcessDecisions(context);
+        return firstPart.ProcessDecisions(context, dialogRepository);
     }
 
     internal static IDialogPart GetNextPart(this IDialog dialog,
                                             IDialogContext context,
                                             IDialogPart currentPart,
+                                            IDialogRepository dialogRepository,
                                             IEnumerable<IDialogPartResult> providedAnswers)
     {
         // first perform validation
@@ -32,10 +35,10 @@ internal static class DialogExtensions
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return dialog.CompletedPart.ProcessDecisions(context);
+            return dialog.CompletedPart.ProcessDecisions(context, dialogRepository);
         }
 
-        return nextPartWithIndex.Part.ProcessDecisions(context);
+        return nextPartWithIndex.Part.ProcessDecisions(context, dialogRepository);
     }
 
     internal static IDialogPart GetPartById(this IDialog dialog, string id)

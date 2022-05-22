@@ -29,15 +29,15 @@ namespace DialogFramework.UniversalModel.Builders
             }
         }
 
-        public DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder CurrentDialog
+        public DialogFramework.UniversalModel.DomainModel.Builders.DialogIdentifierBuilder CurrentDialogIdentifier
         {
             get
             {
-                return _currentDialogDelegate.Value;
+                return _currentDialogIdentifierDelegate.Value;
             }
             set
             {
-                _currentDialogDelegate = new (() => value);
+                _currentDialogIdentifierDelegate = new (() => value);
             }
         }
 
@@ -112,19 +112,19 @@ namespace DialogFramework.UniversalModel.Builders
         public DialogFramework.Abstractions.IDialogContext Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DialogContext(Id, CurrentDialog?.Build(), CurrentPart?.Build(), CurrentGroup?.Build(), CurrentState, new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers), Exception);
+            return new DialogFramework.UniversalModel.DialogContext(Id, CurrentDialogIdentifier?.Build(), CurrentPart?.Build(), CurrentGroup?.Build(), CurrentState, new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers), Exception);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
-        public DialogContextBuilder WithCurrentDialog(DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder currentDialog)
+        public DialogContextBuilder WithCurrentDialogIdentifier(DialogFramework.UniversalModel.DomainModel.Builders.DialogIdentifierBuilder currentDialogIdentifier)
         {
-            CurrentDialog = currentDialog;
+            CurrentDialogIdentifier = currentDialogIdentifier;
             return this;
         }
 
-        public DialogContextBuilder WithCurrentDialog(System.Func<DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder> currentDialogDelegate)
+        public DialogContextBuilder WithCurrentDialogIdentifier(System.Func<DialogFramework.UniversalModel.DomainModel.Builders.DialogIdentifierBuilder> currentDialogIdentifierDelegate)
         {
-            _currentDialogDelegate = new (currentDialogDelegate);
+            _currentDialogIdentifierDelegate = new (currentDialogIdentifierDelegate);
             return this;
         }
 
@@ -193,7 +193,7 @@ namespace DialogFramework.UniversalModel.Builders
             Answers = new System.Collections.Generic.List<DialogFramework.Abstractions.DomainModel.IDialogPartResult>();
             #pragma warning disable CS8603 // Possible null reference return.
             _idDelegate = new (() => string.Empty);
-            _currentDialogDelegate = new (() => default);
+            _currentDialogIdentifierDelegate = new (() => default);
             _currentPartDelegate = new (() => default);
             _currentGroupDelegate = new (() => default);
             _currentStateDelegate = new (() => default);
@@ -209,7 +209,7 @@ namespace DialogFramework.UniversalModel.Builders
             }
             Answers = new System.Collections.Generic.List<DialogFramework.Abstractions.DomainModel.IDialogPartResult>();
             _idDelegate = new (() => source.Id);
-            _currentDialogDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder(source.CurrentDialog));
+            _currentDialogIdentifierDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogIdentifierBuilder(source.CurrentDialogIdentifier));
             _currentPartDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogPartBuilder(source.CurrentPart));
             _currentGroupDelegate = new(() => source.CurrentGroup == null ? default : new DialogFramework.UniversalModel.DomainModel.Builders.DialogPartGroupBuilder(source.CurrentGroup));
             _currentStateDelegate = new (() => source.CurrentState);
@@ -219,7 +219,7 @@ namespace DialogFramework.UniversalModel.Builders
 
         private System.Lazy<string> _idDelegate;
 
-        private System.Lazy<DialogFramework.UniversalModel.DomainModel.Builders.DialogBuilder> _currentDialogDelegate;
+        private System.Lazy<DialogFramework.UniversalModel.DomainModel.Builders.DialogIdentifierBuilder> _currentDialogIdentifierDelegate;
 
         private System.Lazy<DialogFramework.UniversalModel.DomainModel.Builders.DialogPartBuilder> _currentPartDelegate;
 

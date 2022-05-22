@@ -12,7 +12,7 @@ public class DialogService : IDialogService
     }
 
     public bool CanStart(IDialog dialog)
-        => _contextFactory.Create(dialog).CanStart();
+        => _contextFactory.Create(dialog).CanStart(dialog);
 
     public IDialogContext Start(IDialog dialog)
     {
@@ -21,13 +21,13 @@ public class DialogService : IDialogService
             throw new InvalidOperationException("Could not create context");
         }
         var context = _contextFactory.Create(dialog);
-        if (!context.CanStart())
+        if (!context.CanStart(dialog))
         {
             throw new InvalidOperationException("Could not start dialog");
         }
         try
         {
-            var firstPart = dialog.GetFirstPart(context);
+            var firstPart = dialog.GetFirstPart(context, _dialogRepository);
 
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
@@ -45,7 +45,7 @@ public class DialogService : IDialogService
                 if (firstPart is INavigationDialogPart navigationDialogPart)
                 {
                     var id = navigationDialogPart.GetNextPartId(context);
-                    firstPart = dialog.GetPartById(id).ProcessDecisions(context);
+                    firstPart = dialog.GetPartById(id).ProcessDecisions(context, _dialogRepository);
                 }
                 else
                 {
@@ -57,7 +57,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
+            return context.Error(dialog.ErrorPart.ForException(ex), ex);
         }
     }
 
@@ -66,15 +66,18 @@ public class DialogService : IDialogService
 
     public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
+        IDialog? dialog = null;
         try
         {
+            dialog = GetDialog(context);
+
             if (!CanContinue(context))
             {
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            context = context.AddDialogPartResults(dialogPartResults);
-            var nextPart = context.CurrentDialog.GetNextPart(context, context.CurrentPart, dialogPartResults);
+            context = context.AddDialogPartResults(dialogPartResults, dialog);
+            var nextPart = dialog.GetNextPart(context, context.CurrentPart, _dialogRepository, dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {
@@ -92,7 +95,7 @@ public class DialogService : IDialogService
                 if (nextPart is INavigationDialogPart navigationDialogPart)
                 {
                     var id = navigationDialogPart.GetNextPartId(context);
-                    nextPart = context.CurrentDialog.GetPartById(id).ProcessDecisions(context);
+                    nextPart = dialog.GetPartById(id).ProcessDecisions(context, _dialogRepository);
                 }
                 else
                 {
@@ -104,34 +107,49 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
+            if (dialog != null)
+            {
+                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+            }
+            throw;
         }
     }
 
     public bool CanAbort(IDialogContext context)
         => context.CurrentState == DialogState.InProgress
-        && context.CurrentPart.Id != context.CurrentDialog.AbortedPart.Id;
+        && context.CurrentPart.Id != GetDialog(context).AbortedPart.Id;
 
     public IDialogContext Abort(IDialogContext context)
     {
+        IDialog? dialog = null;
         try
         {
+            dialog = _dialogRepository.GetDialog(context.CurrentDialogIdentifier);
+            if (dialog == null)
+            {
+                throw new InvalidOperationException($"Unknown dialog: Id [{context.CurrentDialogIdentifier.Id}], Version [{context.CurrentDialogIdentifier.Version}]");
+            }
+
             if (!CanAbort(context))
             {
                 throw new InvalidOperationException("Dialog cannot be aborted");
             }
 
-            return context.Abort(context.CurrentDialog.AbortedPart);
+            return context.Abort(dialog.AbortedPart);
         }
         catch (Exception ex)
         {
-            return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
+            if (dialog != null)
+            {
+                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+            }
+            throw;
         }
     }
 
     public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
         => (context.CurrentState == DialogState.InProgress || context.CurrentState == DialogState.Completed)
-        && context.CanNavigateTo(navigateToPart);
+        && context.CanNavigateTo(navigateToPart, GetDialog(context));
 
     public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
     {
@@ -149,18 +167,39 @@ public class DialogService : IDialogService
 
     public IDialogContext ResetCurrentState(IDialogContext context)
     {
+        IDialog? dialog = null;
         try
         {
+            dialog = _dialogRepository.GetDialog(context.CurrentDialogIdentifier);
+            if (dialog == null)
+            {
+                throw new InvalidOperationException($"Unknown dialog: Id [{context.CurrentDialogIdentifier.Id}], Version [{context.CurrentDialogIdentifier.Version}]");
+            }
+
             if (!CanResetCurrentState(context))
             {
                 throw new InvalidOperationException("Current state cannot be reset");
             }
 
-            return context.ResetDialogPartResultByPart(context.CurrentPart);
+            return context.ResetDialogPartResultByPart(context.CurrentPart, dialog);
         }
         catch (Exception ex)
         {
-            return context.Error(context.CurrentDialog.ErrorPart.ForException(ex), ex);
+            if (dialog != null)
+            {
+                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+            }
+            throw;
         }
+    }
+
+    private IDialog GetDialog(IDialogContext context)
+    {
+        var dialog = _dialogRepository.GetDialog(context.CurrentDialogIdentifier);
+        if (dialog == null)
+        {
+            throw new InvalidOperationException($"Unknown dialog: Id [{context.CurrentDialogIdentifier.Id}], Version [{context.CurrentDialogIdentifier.Version}]");
+        }
+        return dialog;
     }
 }

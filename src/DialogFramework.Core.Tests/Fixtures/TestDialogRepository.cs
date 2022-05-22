@@ -4,6 +4,7 @@ internal class TestDialogRepository : IDialogRepository
 {
     private static readonly IDialog[] _dialogs = new IDialog[]
     {
+        DialogFixture.CreateDialog(true),
         new TestFlowDialog(),
         new SimpleFormFlowDialog()
     };

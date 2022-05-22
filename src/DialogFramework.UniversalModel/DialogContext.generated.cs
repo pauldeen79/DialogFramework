@@ -22,7 +22,7 @@ namespace DialogFramework.UniversalModel
             get;
         }
 
-        public DialogFramework.Abstractions.DomainModel.IDialog CurrentDialog
+        public DialogFramework.Abstractions.DomainModel.IDialogIdentifier CurrentDialogIdentifier
         {
             get;
         }
@@ -52,13 +52,13 @@ namespace DialogFramework.UniversalModel
             get;
         }
 
-        public DialogContext(string id, DialogFramework.Abstractions.DomainModel.IDialog currentDialog, DialogFramework.Abstractions.DomainModel.IDialogPart currentPart, DialogFramework.Abstractions.DomainModel.IDialogPartGroup? currentGroup, DialogFramework.Abstractions.DomainModel.Domains.DialogState currentState, CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogPartResult> answers, System.Exception? exception)
+        public DialogContext(string id, DialogFramework.Abstractions.DomainModel.IDialogIdentifier currentDialogIdentifier, DialogFramework.Abstractions.DomainModel.IDialogPart currentPart, DialogFramework.Abstractions.DomainModel.IDialogPartGroup? currentGroup, DialogFramework.Abstractions.DomainModel.Domains.DialogState currentState, CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogPartResult> answers, System.Exception? exception)
         {
-            if (currentDialog == null) throw new System.ArgumentNullException("currentDialog");
+            if (currentDialogIdentifier == null) throw new System.ArgumentNullException("currentDialogIdentifier");
             if (currentPart == null) throw new System.ArgumentNullException("currentPart");
             if (answers == null) throw new System.ArgumentNullException("answers");
             this.Id = id;
-            this.CurrentDialog = currentDialog;
+            this.CurrentDialogIdentifier = currentDialogIdentifier;
             this.CurrentPart = currentPart;
             this.CurrentGroup = currentGroup;
             this.CurrentState = currentState;
