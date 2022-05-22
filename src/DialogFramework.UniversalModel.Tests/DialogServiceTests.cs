@@ -22,7 +22,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (
@@ -75,7 +75,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (
@@ -155,7 +155,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act step 1: Start a session, submit first question
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (
@@ -221,7 +221,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (
@@ -264,7 +264,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (
@@ -305,7 +305,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue(context); // Current part remains ContactInfo because of validation errors
 
@@ -331,7 +331,7 @@ namespace DialogFramework.UniversalModel.Tests
             var sut = new DialogService(factory, repository);
 
             // Act
-            var context = sut.Start(dialog);
+            var context = sut.Start(dialog.Metadata);
             context.CurrentPart.Id.Should().Be("ContactInfo");
             context = sut.Continue
             (

@@ -249,7 +249,7 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState));
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
-        var context = sut.Start(dialog); // start the dialog, this will get the welcome message
+        var context = sut.Start(dialog.Metadata); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
 
         // Act
@@ -310,7 +310,7 @@ public class DialogServiceTests
             return null;
         });
         var sut = new DialogService(factory, repositoryMock.Object);
-        var context = sut.Start(dialog1); // this will trigger the message on dialog 1
+        var context = sut.Start(dialog1.Metadata); // this will trigger the message on dialog 1
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the redirect to dialog 2
@@ -352,7 +352,7 @@ public class DialogServiceTests
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
         var sut = new DialogService(factory, repositoryMock.Object);
-        var context = sut.Start(dialog); // this will trigger the message
+        var context = sut.Start(dialog.Metadata); // this will trigger the message
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the navigation
@@ -455,7 +455,7 @@ public class DialogServiceTests
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
         var sut = new DialogService(factory, repositoryMock.Object);
-        var context = sut.Start(dialog); // this will trigger the message
+        var context = sut.Start(dialog.Metadata); // this will trigger the message
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // this will trigger the completion
@@ -506,11 +506,12 @@ public class DialogServiceTests
                                 Enumerable.Empty<IDialogPartGroup>());
         var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                              dialog => new DialogContextFixture(dialog.Metadata));
-        var repository = new TestDialogRepository();
-        var service = new DialogService(contextFactory, repository);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var service = new DialogService(contextFactory, repositoryMock.Object);
 
         // Act
-        var actual = service.CanStart(dialog);
+        var actual = service.CanStart(dialog.Metadata);
 
         // Assert
         actual.Should().Be(expectedResult);
@@ -531,11 +532,12 @@ public class DialogServiceTests
                                 Enumerable.Empty<IDialogPartGroup>());
         var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                              dialog => new DialogContextFixture("Id", dialog.Metadata, errorDialogPartMock.Object, DialogState.InProgress)); // dialog state is already in progress
-        var repository = new TestDialogRepository();
-        var service = new DialogService(contextFactory, repository);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var service = new DialogService(contextFactory, repositoryMock.Object);
 
         // Act
-        var actual = service.CanStart(dialog);
+        var actual = service.CanStart(dialog.Metadata);
 
         // Assert
         actual.Should().BeFalse();
@@ -550,7 +552,7 @@ public class DialogServiceTests
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
         var dialog = DialogFixture.CreateDialog();
-        var act = new Action(() => sut.Start(dialog));
+        var act = new Action(() => sut.Start(dialog.Metadata));
 
         // Act
         act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not create context");
@@ -571,7 +573,7 @@ public class DialogServiceTests
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialogMock.Object);
         var sut = new DialogService(factory, repositoryMock.Object);
         var dialog = dialogMock.Object;
-        var act = new Action(() => sut.Start(dialog));
+        var act = new Action(() => sut.Start(dialog.Metadata));
 
         // Act
         act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not start dialog");
@@ -628,7 +630,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory, repositoryMock.Object);
 
         // Act
-        var result = sut.Start(dialog1);
+        var result = sut.Start(dialog1.Metadata);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -667,7 +669,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory, repository);
 
         // Act
-        var result = sut.Start(dialog);
+        var result = sut.Start(dialog.Metadata);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
@@ -684,7 +686,7 @@ public class DialogServiceTests
                                                       _ => throw new InvalidOperationException("Kaboom"));
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
-        var start = new Action(() => sut.Start(dialog));
+        var start = new Action(() => sut.Start(dialog.Metadata));
 
         // Act
         start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
@@ -696,11 +698,12 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateDialog(false);
         var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var sut = new DialogService(factory, repositoryMock.Object);
 
         // Act
-        var result = sut.Start(dialog);
+        var result = sut.Start(dialog.Metadata);
 
         // Assert
         result.CurrentGroup.Should().BeNull();
@@ -720,7 +723,7 @@ public class DialogServiceTests
         var sut = new DialogService(factory, repository);
 
         // Act
-        var result = sut.Start(dialog);
+        var result = sut.Start(dialog.Metadata);
 
         // Assert
         result.CurrentGroup.Should().Be(dialog.Parts.OfType<IMessageDialogPart>().First().Group);
@@ -753,11 +756,12 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog.Metadata));
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var sut = new DialogService(factory, repositoryMock.Object);
 
         // Act
-        var result = sut.Start(dialog);
+        var result = sut.Start(dialog.Metadata);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
@@ -791,11 +795,12 @@ public class DialogServiceTests
         );
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog.Metadata));
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var sut = new DialogService(factory, repositoryMock.Object);
 
         // Act
-        var result = sut.Start(dialog);
+        var result = sut.Start(dialog.Metadata);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Aborted);
@@ -901,7 +906,7 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void NavigateTo_Throws_When_CanNavigateTo_Is_False()
+    public void NavigateTo_Returns_Error_When_CanNavigateTo_Is_False()
     {
         // Arrange
         var dialog = DialogFixture.CreateDialog();
@@ -911,10 +916,12 @@ public class DialogServiceTests
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
-        var navigateTo = new Action(() => sut.NavigateTo(context, questionPart));
+        
+        // Act
+        var result = sut.NavigateTo(context, questionPart);
 
-        // Act & Assert
-        navigateTo.Should().Throw<InvalidOperationException>();
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
     }
 
     [Fact]

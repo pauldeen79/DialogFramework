@@ -12,7 +12,7 @@ public class TestFlowTests
         var sut = new DialogService(factory, repository);
 
         // Act & Assert
-        var context = sut.Start(dialog!); // empty -> Welcome
+        var context = sut.Start(dialog!.Metadata); // empty -> Welcome
         context.CurrentPart.Id.Should().Be("Welcome");
         context = sut.Continue(context); // Welcome -> How old are you?
         context.CurrentPart.Id.Should().Be("Age");
