@@ -15,18 +15,8 @@ using System.Text;
 namespace DialogFramework.UniversalModel.DomainModel
 {
 #nullable enable
-    public partial record DialogMetadata : DialogFramework.Abstractions.DomainModel.IDialogMetadata
+    public partial record DialogIdentifier : DialogFramework.Abstractions.DomainModel.IDialogIdentifier
     {
-        public string FriendlyName
-        {
-            get;
-        }
-
-        public bool CanStart
-        {
-            get;
-        }
-
         public string Id
         {
             get;
@@ -37,10 +27,8 @@ namespace DialogFramework.UniversalModel.DomainModel
             get;
         }
 
-        public DialogMetadata(string friendlyName, bool canStart, string id, string version)
+        public DialogIdentifier(string id, string version)
         {
-            this.FriendlyName = friendlyName;
-            this.CanStart = canStart;
             this.Id = id;
             this.Version = version;
             System.ComponentModel.DataAnnotations.Validator.ValidateObject(this, new System.ComponentModel.DataAnnotations.ValidationContext(this, null, null), true);

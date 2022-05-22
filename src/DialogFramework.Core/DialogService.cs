@@ -32,7 +32,12 @@ public class DialogService : IDialogService
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
                 var metadata = redirectDialogPart.RedirectDialogMetadata;
-                return Start(_dialogRepository.GetDialog(metadata.Id, metadata.Version));
+                var redirectDialog = _dialogRepository.GetDialog(metadata);
+                if (redirectDialog == null)
+                {
+                    throw new InvalidOperationException($"Unknown dialog: Id [{metadata.Id}], Version [{metadata.Version}]");
+                }
+                return Start(redirectDialog);
             }
 
             while (true)
@@ -74,7 +79,12 @@ public class DialogService : IDialogService
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {
                 var metadata = redirectDialogPart.RedirectDialogMetadata;
-                return Start(_dialogRepository.GetDialog(metadata.Id, metadata.Version));
+                var redirectDialog = _dialogRepository.GetDialog(metadata);
+                if (redirectDialog == null)
+                {
+                    throw new InvalidOperationException($"Unknown dialog: Id [{metadata.Id}], Version [{metadata.Version}]");
+                }
+                return Start(redirectDialog);
             }
 
             while (true)

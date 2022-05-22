@@ -17,18 +17,6 @@ namespace DialogFramework.UniversalModel.DomainModel.Builders
 #nullable enable
     public partial class DialogMetadataBuilder
     {
-        public string Id
-        {
-            get
-            {
-                return _idDelegate.Value;
-            }
-            set
-            {
-                _idDelegate = new (() => value);
-            }
-        }
-
         public string FriendlyName
         {
             get
@@ -38,18 +26,6 @@ namespace DialogFramework.UniversalModel.DomainModel.Builders
             set
             {
                 _friendlyNameDelegate = new (() => value);
-            }
-        }
-
-        public string Version
-        {
-            get
-            {
-                return _versionDelegate.Value;
-            }
-            set
-            {
-                _versionDelegate = new (() => value);
             }
         }
 
@@ -65,10 +41,34 @@ namespace DialogFramework.UniversalModel.DomainModel.Builders
             }
         }
 
+        public string Id
+        {
+            get
+            {
+                return _idDelegate.Value;
+            }
+            set
+            {
+                _idDelegate = new (() => value);
+            }
+        }
+
+        public string Version
+        {
+            get
+            {
+                return _versionDelegate.Value;
+            }
+            set
+            {
+                _versionDelegate = new (() => value);
+            }
+        }
+
         public DialogFramework.Abstractions.DomainModel.IDialogMetadata Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogMetadata(Id, FriendlyName, Version, CanStart);
+            return new DialogFramework.UniversalModel.DomainModel.DialogMetadata(FriendlyName, CanStart, Id, Version);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -123,10 +123,10 @@ namespace DialogFramework.UniversalModel.DomainModel.Builders
         public DialogMetadataBuilder()
         {
             #pragma warning disable CS8603 // Possible null reference return.
-            _idDelegate = new (() => string.Empty);
             _friendlyNameDelegate = new (() => string.Empty);
-            _versionDelegate = new (() => string.Empty);
             _canStartDelegate = new (() => true);
+            _idDelegate = new (() => string.Empty);
+            _versionDelegate = new (() => string.Empty);
             #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -136,19 +136,19 @@ namespace DialogFramework.UniversalModel.DomainModel.Builders
             {
                 throw new System.ArgumentNullException("source");
             }
-            _idDelegate = new (() => source.Id);
             _friendlyNameDelegate = new (() => source.FriendlyName);
-            _versionDelegate = new (() => source.Version);
             _canStartDelegate = new (() => source.CanStart);
+            _idDelegate = new (() => source.Id);
+            _versionDelegate = new (() => source.Version);
         }
-
-        private System.Lazy<string> _idDelegate;
 
         private System.Lazy<string> _friendlyNameDelegate;
 
-        private System.Lazy<string> _versionDelegate;
-
         private System.Lazy<bool> _canStartDelegate;
+
+        private System.Lazy<string> _idDelegate;
+
+        private System.Lazy<string> _versionDelegate;
     }
 #nullable restore
 }

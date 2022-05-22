@@ -303,11 +303,11 @@ public class DialogServiceTests
                                                           ? new DialogContextFixture(dialog1)
                                                           : new DialogContextFixture(dialog2));
         var repositoryMock = new Mock<IDialogRepository>();
-        repositoryMock.Setup(x => x.GetDialog(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((id, version) =>
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns<IDialogIdentifier>(identifier =>
         {
-            if (id == dialog1.Metadata.Id && version == dialog1.Metadata.Version) return dialog1;
-            if (id == dialog2.Metadata.Id && version == dialog2.Metadata.Version) return dialog2;
-            throw new NotSupportedException($"Unsupported dialog: id [{id}], version [{version}]");
+            if (identifier.Id == dialog1.Metadata.Id && identifier.Version == dialog1.Metadata.Version) return dialog1;
+            if (identifier.Id == dialog2.Metadata.Id && identifier.Version == dialog2.Metadata.Version) return dialog2;
+            return null;
         });
         var sut = new DialogService(factory, repositoryMock.Object);
         var context = sut.Start(dialog1); // this will trigger the message on dialog 1
@@ -610,11 +610,11 @@ public class DialogServiceTests
                                                           ? new DialogContextFixture(dialog1)
                                                           : new DialogContextFixture(dialog2));
         var repositoryMock = new Mock<IDialogRepository>();
-        repositoryMock.Setup(x => x.GetDialog(It.IsAny<string>(), It.IsAny<string>())).Returns<string, string>((id, version) =>
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns<IDialogIdentifier>(identifier =>
         {
-            if (id == dialog1.Metadata.Id && version == dialog1.Metadata.Version) return dialog1;
-            if (id == dialog2.Metadata.Id && version == dialog2.Metadata.Version) return dialog2;
-            throw new NotSupportedException($"Unsupported dialog: id [{id}], version [{version}]");
+            if (identifier.Id == dialog1.Metadata.Id && identifier.Version == dialog1.Metadata.Version) return dialog1;
+            if (identifier.Id == dialog2.Metadata.Id && identifier.Version == dialog2.Metadata.Version) return dialog2;
+            return null;
         });
         var sut = new DialogService(factory, repositoryMock.Object);
 

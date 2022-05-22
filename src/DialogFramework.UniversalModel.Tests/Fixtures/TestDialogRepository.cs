@@ -11,21 +11,21 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
             yield return TestFlowDialog.Create().Metadata;
         }
 
-        public IDialog GetDialog(string id, string version)
+        public IDialog? GetDialog(IDialogIdentifier identifier)
         {
             var simpleFormFlowDialog = SimpleFormFlowDialog.Create();
-            if (simpleFormFlowDialog.Metadata.Id == id && simpleFormFlowDialog.Metadata.Version == version)
+            if (simpleFormFlowDialog.Metadata.Id == identifier.Id && simpleFormFlowDialog.Metadata.Version == identifier.Version)
             {
                 return simpleFormFlowDialog;
             }
 
             var testFlowDialog = TestFlowDialog.Create();
-            if (testFlowDialog.Metadata.Id == id && testFlowDialog.Metadata.Version == version)
+            if (testFlowDialog.Metadata.Id == identifier.Id && testFlowDialog.Metadata.Version == identifier.Version)
             {
                 return testFlowDialog;
             }
 
-            throw new NotSupportedException($"Could not create repository with id [{id}], version [{version}]");
+            return default;
         }
     }
 }

@@ -170,13 +170,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected static Type[] GetCoreModelTypes()
         => new[]
         {
-            typeof(IDialogContext),
+            typeof(IDialogContext)
         };
 
     protected static Type[] GetDomainModelModelTypes()
         => new[]
         {
             typeof(IDialog),
+            typeof(IDialogIdentifier),
             typeof(IDialogMetadata),
             typeof(IDialogPartGroup),
             typeof(IDialogPartResult),

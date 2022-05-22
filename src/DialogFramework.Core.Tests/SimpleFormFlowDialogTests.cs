@@ -6,13 +6,13 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
@@ -45,12 +45,12 @@ public class SimpleFormFlowDialogTests
         context.CurrentState.Should().Be(DialogState.Completed);
         context.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("Completed");
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
             new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
             new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
         });
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
         {
             new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
         });
@@ -60,13 +60,13 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
@@ -94,7 +94,7 @@ public class SimpleFormFlowDialogTests
                 new YesNoDialogPartResultValue(true)
             )
         ); // Newsletter -> Completed
-        context = sut.NavigateTo(context, dialog.Parts.Single(x => x.Id == "ContactInfo")); // navigate back: Completed -> ContactInfo
+        context = sut.NavigateTo(context, dialog!.Parts.Single(x => x.Id == "ContactInfo")); // navigate back: Completed -> ContactInfo
         context = sut.Continue
         (
             context,
@@ -141,13 +141,13 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_In_Different_Session()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act step 1: Start a session, submit first question
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
@@ -171,8 +171,8 @@ public class SimpleFormFlowDialogTests
         // *** Hey, the user is back again! Let's continue ***
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var dialog2 = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0"); // simulate getting the dialog again, in a new session
-        var context2 = new DialogContextFixture(context.Id, dialog2, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
+        var dialog2 = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")); // simulate getting the dialog again, in a new session
+        var context2 = new DialogContextFixture(context.Id, dialog2!, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
         foreach (var answer in context.GetAllDialogPartResults()) // simulate filling the previously submitted answers again
         {
             context2.AddAnswer(answer);
@@ -192,12 +192,12 @@ public class SimpleFormFlowDialogTests
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentDialog.Metadata.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPart.Id.Should().Be("Completed");
-        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
             new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
             new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
         });
-        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
         {
             new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
         });
@@ -207,13 +207,13 @@ public class SimpleFormFlowDialogTests
     public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
@@ -251,13 +251,13 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
@@ -293,13 +293,13 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue(context); // Current part remains ContactInfo because of validation errors
 
@@ -320,13 +320,13 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(nameof(SimpleFormFlowDialog), "1.0.0");
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository);
 
         // Act
-        var context = sut.Start(dialog);
+        var context = sut.Start(dialog!);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
