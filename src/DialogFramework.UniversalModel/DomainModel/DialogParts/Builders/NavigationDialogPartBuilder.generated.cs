@@ -113,7 +113,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             }
             _idDelegate = new (() => source.Id);
             _stateDelegate = new (() => source.State);
-            // skip: NavigateToId;
+            _navigateToIdDelegate = new (() => string.Empty);
         }
 
         private System.Lazy<string> _idDelegate;

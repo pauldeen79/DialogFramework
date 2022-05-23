@@ -154,7 +154,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 new ClassPropertyBuilder()
                     .WithName("NavigateToId")
                     .WithType(typeof(string))
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: NavigateToId") //HACK
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => string.Empty)") //HACK
             );
         }
     }
