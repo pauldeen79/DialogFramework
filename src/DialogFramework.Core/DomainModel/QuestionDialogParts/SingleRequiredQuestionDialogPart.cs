@@ -11,9 +11,9 @@ public record SingleRequiredQuestionDialogPart : QuestionDialogPart
     {
     }
 
-    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+    protected override void HandleValidate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        base.HandleValidate(context, dialogPartResults);
+        base.HandleValidate(context, dialog, dialogPartResults);
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
         if (answerCount == 0)
         {

@@ -15,7 +15,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -34,7 +34,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -53,7 +53,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().ContainSingle();
@@ -73,7 +73,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();

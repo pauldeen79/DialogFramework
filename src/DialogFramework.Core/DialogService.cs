@@ -225,7 +225,7 @@ public class DialogService : IDialogService
                                     IEnumerable<IDialogPartResult> providedAnswers)
     {
         // first perform validation
-        var error = currentPart.Validate(context, providedAnswers);
+        var error = currentPart.Validate(context, dialog, providedAnswers);
         if (error != null)
         {
             return error;

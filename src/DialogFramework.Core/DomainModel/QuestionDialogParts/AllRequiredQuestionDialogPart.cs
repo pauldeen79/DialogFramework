@@ -11,9 +11,9 @@ public record AllRequiredQuestionDialogPart : QuestionDialogPart
     {
     }
 
-    protected override void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+    protected override void HandleValidate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        base.HandleValidate(context, dialogPartResults);
+        base.HandleValidate(context, dialog, dialogPartResults);
         var submittedPartCount = dialogPartResults.Where(x => !string.IsNullOrEmpty(x.ResultId)).GroupBy(x => x.ResultId).Count();
         if (submittedPartCount != Results.Count)
         {

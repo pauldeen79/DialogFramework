@@ -9,17 +9,17 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
 {
     public partial record QuestionDialogPart
     {
-        public IDialogPart? Validate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+        public IDialogPart? Validate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
         {
             ValidationErrors.Clear();
-            HandleValidate(context, dialogPartResults);
+            HandleValidate(context, dialog, dialogPartResults);
 
             return ValidationErrors.Count > 0
                 ? this
                 : null;
         }
 
-        protected virtual void HandleValidate(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+        protected virtual void HandleValidate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
         {
             foreach (var dialogPartResult in dialogPartResults)
             {
@@ -50,7 +50,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             foreach (var dialogPartResultDefinition in Results)
             {
                 var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
-                ValidationErrors.AddRange(dialogPartResultDefinition.Validate(context, this, dialogPartResultsByPart)
+                ValidationErrors.AddRange(dialogPartResultDefinition.Validate(context, dialog, this, dialogPartResultsByPart)
                                                                     .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
             }
         }

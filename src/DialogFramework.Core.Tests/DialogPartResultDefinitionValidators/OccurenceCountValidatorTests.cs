@@ -15,7 +15,7 @@ public class OccurenceCountValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id) });
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -34,7 +34,7 @@ public class OccurenceCountValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -54,7 +54,7 @@ public class OccurenceCountValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -74,7 +74,7 @@ public class OccurenceCountValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
