@@ -19,7 +19,8 @@ public record SimpleFormFlowDialog : Dialog
                 {
                     new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text, new IDialogPartResultDefinitionValidator[] { new ValueTypeValidator(typeof(string)), new RequiredValidator(true) }),
                     new DialogPartResultDefinition("TelephoneNumber", "Telephone number", ResultValueType.Text, new IDialogPartResultDefinitionValidator[] { new ValueTypeValidator(typeof(string)), new RequiredValidator(true) })
-                }
+                },
+                Enumerable.Empty<IQuestionDialogPartValidator>()
             ),
             new QuestionDialogPart
             (
@@ -30,7 +31,8 @@ public record SimpleFormFlowDialog : Dialog
                 new IDialogPartResultDefinition[]
                 {
                     new DialogPartResultDefinition("SignUpForNewsletter", "Subscribe to newsletter (optional)", ResultValueType.YesNo, new[] { new ValueTypeValidator(typeof(bool)) })
-                }
+                },
+                Enumerable.Empty<IQuestionDialogPartValidator>()
             )
         },
         new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),

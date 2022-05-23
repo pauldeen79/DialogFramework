@@ -12,7 +12,7 @@ internal static class DialogFixture
         var answerGreat = new DialogPartResultDefinition("Great", "I feel great, thank you!", ResultValueType.None);
         var answerOkay = new DialogPartResultDefinition("Okay", "I feel kind of okay", ResultValueType.None);
         var answerTerrible = new DialogPartResultDefinition("Terrible", "I feel terrible, don't want to talk about it", ResultValueType.None);
-        var questionPart = new QuestionDialogPart("Question1", "How do you feel", "Please tell us how you feel", group1, new[] { answerGreat, answerOkay, answerTerrible });
+        var questionPart = new QuestionDialogPart("Question1", "How do you feel", "Please tell us how you feel", group1, new[] { answerGreat, answerOkay, answerTerrible }, Enumerable.Empty<IQuestionDialogPartValidator>());
         var messagePart = new MessageDialogPart("Message", "Message", "I'm sorry to hear that. Let us know if we can do something to help you.", group1);
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
         var decisionPart = new DecisionDialogPartFixture

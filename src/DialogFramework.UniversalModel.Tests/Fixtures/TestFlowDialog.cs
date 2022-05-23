@@ -1,5 +1,6 @@
 ﻿using DialogFramework.Abstractions.DomainModel;
 using DialogFramework.Abstractions.DomainModel.Domains;
+using DialogFramework.Core.DomainModel.QuestionDialogPartValidators;
 using DialogFramework.UniversalModel.DomainModel.Builders;
 using DialogFramework.UniversalModel.DomainModel.DialogParts.Builders;
 
@@ -54,12 +55,13 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                                 new DialogPartResultDefinitionBuilder()
                                     .WithId("50+")
                                     .WithTitle("Older than 50 years")
-                            ) //TODO: Add validators here. Single answer is required.
+                            )
+                            .AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator()))
                     ),
                     new DialogPartBuilder
                     (
                         new DecisionDialogPartBuilder()
-                            .WithId("AgeDecision") //TODO: Add decision rules here. <10 goes to ToYoung. other values go to SportTypes
+                            .WithId("AgeDecision") //TODO: Add decision rules here. <10 goes to TooYoung. other values go to SportTypes
                     ),
                     new DialogPartBuilder
                     (

@@ -6,13 +6,15 @@ public record QuestionDialogPart : IQuestionDialogPart
                               string heading,
                               string title,
                               IDialogPartGroup group,
-                              IEnumerable<IDialogPartResultDefinition> results)
+                              IEnumerable<IDialogPartResultDefinition> results,
+                              IEnumerable<IQuestionDialogPartValidator> validators)
     {
         Id = id;
         Heading = heading;
         Title = title;
         Group = group;
         Results = new ValueCollection<IDialogPartResultDefinition>(results);
+        Validators = new ValueCollection<IQuestionDialogPartValidator>(validators);
         ValidationErrors = new ValueCollection<IDialogValidationResult>();
     }
 
@@ -20,6 +22,7 @@ public record QuestionDialogPart : IQuestionDialogPart
     public string Heading { get; }
     public IDialogPartGroup Group { get; }
     public ValueCollection<IDialogPartResultDefinition> Results { get; }
+    public ValueCollection<IQuestionDialogPartValidator> Validators { get; }
     public string Id { get; }
     public ValueCollection<IDialogValidationResult> ValidationErrors { get; }
     public DialogState State => DialogState.InProgress;
@@ -27,6 +30,11 @@ public record QuestionDialogPart : IQuestionDialogPart
     {
         ValidationErrors.Clear();
         HandleValidate(context, dialog, dialogPartResults);
+
+        foreach (var validator in Validators)
+        {
+            ValidationErrors.AddRange(validator.Validate(context, dialog, dialogPartResults));
+        }
 
         return ValidationErrors.Count > 0
             ? this

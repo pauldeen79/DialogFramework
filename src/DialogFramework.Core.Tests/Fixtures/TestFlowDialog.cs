@@ -5,14 +5,14 @@ public record TestFlowDialog : Dialog
     private static readonly IDialogPartGroup WelcomeGroup = new DialogPartGroup("Welcome", "Welcome", 1);
     private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 2);
     private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 3);
-    private static readonly IDialogPart EmailPart = new SingleOptionalQuestionDialogPart("Email", "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) });
+    private static readonly IDialogPart EmailPart = new QuestionDialogPart("Email", "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) }, new IQuestionDialogPartValidator[] { new SingleOptionalQuestionDialogPartValidator() });
 
     public TestFlowDialog() : base(
         new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true),
         new IDialogPart[]
         {
             new MessageDialogPart("Welcome", "Welcome", "Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.", WelcomeGroup),
-            new SingleRequiredQuestionDialogPart
+            new QuestionDialogPart
             (
                 "Age",
                 "Age",
@@ -26,6 +26,10 @@ public record TestFlowDialog : Dialog
                     new DialogPartResultDefinition("30-39", "30 to 39 years old", ResultValueType.None),
                     new DialogPartResultDefinition("40-49", "40 to 49 years old", ResultValueType.None),
                     new DialogPartResultDefinition("50+", "Older than 50 years", ResultValueType.None),
+                },
+                new IQuestionDialogPartValidator[]
+                {
+                    new SingleRequiredQuestionDialogPartValidator()
                 }
             ),
             new AgeDecisionDialogPart("AgeDecision"),
@@ -47,7 +51,8 @@ public record TestFlowDialog : Dialog
                     new DialogPartResultDefinition("Baseball", "Baseball", ResultValueType.None),
                     new DialogPartResultDefinition("Hockey", "Hockey", ResultValueType.None),
                     new DialogPartResultDefinition("Other", "Other sports (please specify)", ResultValueType.Text),
-                }
+                },
+                Enumerable.Empty<IQuestionDialogPartValidator>()
             ),
             new SportsTypeDecisionDialogPart("SportsTypeDecision"),
             new MessageDialogPart("Healthy", "Healthy", "You're all good! Keep up the good work.", CompletedGroup),

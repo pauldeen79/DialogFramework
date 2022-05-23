@@ -35,6 +35,12 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             set;
         }
 
+        public System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder> Validators
+        {
+            get;
+            set;
+        }
+
         public System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DialogValidationResultBuilder> ValidationErrors
         {
             get;
@@ -117,10 +123,24 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             return AddValidationErrors(validationErrors.ToArray());
         }
 
+        public QuestionDialogPartBuilder AddValidators(params DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder[] validators)
+        {
+            if (validators != null)
+            {
+                Validators.AddRange(validators);
+            }
+            return this;
+        }
+
+        public QuestionDialogPartBuilder AddValidators(System.Collections.Generic.IEnumerable<DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder> validators)
+        {
+            return AddValidators(validators.ToArray());
+        }
+
         public DialogFramework.Abstractions.DomainModel.DialogParts.IQuestionDialogPart Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogParts.QuestionDialogPart(Title, Results.Select(x => x.Build()), ValidationErrors.Select(x => x.Build()), Group?.Build(), Heading, Id, State);
+            return new DialogFramework.UniversalModel.DomainModel.DialogParts.QuestionDialogPart(Title, Results.Select(x => x.Build()), Validators.Select(x => x.Build()), ValidationErrors.Select(x => x.Build()), Group?.Build(), Heading, Id, State);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -187,6 +207,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
         public QuestionDialogPartBuilder()
         {
             Results = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DialogPartResultDefinitionBuilder>();
+            Validators = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder>();
             ValidationErrors = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DialogValidationResultBuilder>();
             #pragma warning disable CS8603 // Possible null reference return.
             _titleDelegate = new (() => string.Empty);
@@ -204,9 +225,11 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
                 throw new System.ArgumentNullException("source");
             }
             Results = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DialogPartResultDefinitionBuilder>();
+            Validators = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder>();
             ValidationErrors = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DialogValidationResultBuilder>();
             _titleDelegate = new (() => source.Title);
             if (source.Results != null) Results.AddRange(source.Results.Select(x => new DialogFramework.UniversalModel.DomainModel.Builders.DialogPartResultDefinitionBuilder(x)));
+            if (source.Validators != null) Validators.AddRange(source.Validators.Select(x => new DialogFramework.UniversalModel.DomainModel.Builders.QuestionDialogPartValidatorBuilder(x)));
             if (source.ValidationErrors != null) ValidationErrors.AddRange(source.ValidationErrors.Select(x => new DialogFramework.UniversalModel.DomainModel.Builders.DialogValidationResultBuilder(x)));
             _groupDelegate = new(() => new DialogFramework.UniversalModel.DomainModel.Builders.DialogPartGroupBuilder(source.Group));
             _headingDelegate = new (() => source.Heading);

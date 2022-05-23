@@ -9,7 +9,7 @@ global using DialogFramework.Core.DomainModel.DialogPartResultDefinitionValidato
 global using DialogFramework.Core.DomainModel.DialogPartResultValues;
 global using DialogFramework.Core.DomainModel.DialogParts;
 global using DialogFramework.Core.DomainModel.NavigationDialogParts;
-global using DialogFramework.Core.DomainModel.QuestionDialogParts;
+global using DialogFramework.Core.DomainModel.QuestionDialogPartValidators;
 global using DialogFramework.Core.Extensions;
 global using DialogFramework.Core.Tests.Fixtures;
 global using FluentAssertions;

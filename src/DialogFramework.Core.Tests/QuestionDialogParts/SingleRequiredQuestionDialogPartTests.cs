@@ -7,17 +7,19 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new QuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, new IQuestionDialogPartValidator[] { new SingleRequiredQuestionDialogPartValidator() });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var dialogRepositoryMock = new Mock<IDialogRepository>();
+        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id) });
 
         // Assert
-        actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();
-        var currentPart = (SingleRequiredQuestionDialogPart)actual.CurrentPart;
+        actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
+        var currentPart = (IQuestionDialogPart)actual.CurrentPart;
         currentPart.ValidationErrors.Should().ContainSingle();
         currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Answer is required");
     }
@@ -27,10 +29,12 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new QuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, new IQuestionDialogPartValidator[] { new SingleRequiredQuestionDialogPartValidator() });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var dialogRepositoryMock = new Mock<IDialogRepository>();
+        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });
@@ -45,10 +49,12 @@ public class SingleRequiredQuestionDialogPartTests
     {
         // Arrange
         var group = new DialogPartGroup("Group", "Group", 1);
-        var sut = new SingleRequiredQuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) });
+        var sut = new QuestionDialogPart("Test", "Max 1 answer", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, new IQuestionDialogPartValidator[] { new SingleRequiredQuestionDialogPartValidator() });
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var dialogRepositoryMock = new Mock<IDialogRepository>();
+        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
 
         // Act
         var actual = service.Continue(context, new[]
@@ -58,8 +64,8 @@ public class SingleRequiredQuestionDialogPartTests
         });
 
         // Assert
-        actual.CurrentPart.Should().BeAssignableTo<SingleRequiredQuestionDialogPart>();
-        var currentPart = (SingleRequiredQuestionDialogPart)actual.CurrentPart;
+        actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
+        var currentPart = (IQuestionDialogPart)actual.CurrentPart;
         currentPart.ValidationErrors.Should().ContainSingle();
         currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("Only one answer is allowed");
     }

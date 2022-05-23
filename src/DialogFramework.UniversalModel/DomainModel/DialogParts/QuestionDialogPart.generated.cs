@@ -27,6 +27,11 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
+        public CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IQuestionDialogPartValidator> Validators
+        {
+            get;
+        }
+
         public CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogValidationResult> ValidationErrors
         {
             get;
@@ -52,13 +57,15 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
-        public QuestionDialogPart(string title, System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinition> results, System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogValidationResult> validationErrors, DialogFramework.Abstractions.DomainModel.IDialogPartGroup group, string heading, string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
+        public QuestionDialogPart(string title, System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinition> results, System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IQuestionDialogPartValidator> validators, System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogValidationResult> validationErrors, DialogFramework.Abstractions.DomainModel.IDialogPartGroup group, string heading, string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
         {
             if (results == null) throw new System.ArgumentNullException("results");
+            if (validators == null) throw new System.ArgumentNullException("validators");
             if (validationErrors == null) throw new System.ArgumentNullException("validationErrors");
             if (group == null) throw new System.ArgumentNullException("group");
             this.Title = title;
             this.Results = new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinition>(results);
+            this.Validators = new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IQuestionDialogPartValidator>(validators);
             this.ValidationErrors = new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDialogValidationResult>(validationErrors);
             this.Group = group;
             this.Heading = heading;
