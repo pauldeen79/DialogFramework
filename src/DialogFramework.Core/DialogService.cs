@@ -31,7 +31,7 @@ public class DialogService : IDialogService
         }
         try
         {
-            var firstPart = dialog.GetFirstPart(context, _dialogRepository);
+            var firstPart = GetFirstPart(dialog, context);
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
                 return Start(redirectDialogPart.RedirectDialogMetadata);
@@ -41,8 +41,7 @@ public class DialogService : IDialogService
             {
                 if (firstPart is INavigationDialogPart navigationDialogPart)
                 {
-                    firstPart = dialog.GetPartById(navigationDialogPart.GetNextPartId(context))
-                                      .ProcessDecisions(context, _dialogRepository);
+                    firstPart = ProcessDecisions(dialog.GetPartById(navigationDialogPart.GetNextPartId(context)), context);
                 }
                 else
                 {
@@ -73,7 +72,7 @@ public class DialogService : IDialogService
             }
 
             context = context.AddDialogPartResults(dialogPartResults, dialog);
-            var nextPart = dialog.GetNextPart(context, context.CurrentPart, _dialogRepository, dialogPartResults);
+            var nextPart = GetNextPart(dialog, context, context.CurrentPart, dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {
@@ -84,8 +83,7 @@ public class DialogService : IDialogService
             {
                 if (nextPart is INavigationDialogPart navigationDialogPart)
                 {
-                    nextPart = dialog.GetPartById(navigationDialogPart.GetNextPartId(context))
-                                     .ProcessDecisions(context, _dialogRepository);
+                    nextPart = ProcessDecisions(dialog.GetPartById(navigationDialogPart.GetNextPartId(context)), context);
                 }
                 else
                 {
@@ -196,5 +194,53 @@ public class DialogService : IDialogService
             throw new InvalidOperationException($"Unknown dialog: Id [{dialogIdentifier.Id}], Version [{dialogIdentifier.Version}]");
         }
         return dialog;
+    }
+
+    private IDialogPart GetFirstPart(IDialog dialog, IDialogContext context)
+    {
+        var firstPart = dialog.Parts.FirstOrDefault();
+        if (firstPart == null)
+        {
+            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
+        }
+
+        return ProcessDecisions(firstPart, context);
+    }
+
+    private IDialogPart ProcessDecisions(IDialogPart dialogPart, IDialogContext context)
+    {
+        if (dialogPart is IDecisionDialogPart decisionDialogPart)
+        {
+            var dialog = GetDialog(context.CurrentDialogIdentifier);
+            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog);
+            return ProcessDecisions(dialog.GetPartById(nextPartId), context);
+        }
+
+        return dialogPart;
+    }
+
+    private IDialogPart GetNextPart(IDialog dialog,
+                                    IDialogContext context,
+                                    IDialogPart currentPart,
+                                    IEnumerable<IDialogPartResult> providedAnswers)
+    {
+        // first perform validation
+        var error = currentPart.Validate(context, providedAnswers);
+        if (error != null)
+        {
+            return error;
+        }
+
+        // if validation succeeds, then get the next part
+        var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
+        var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart.Id);
+        var nextPartWithIndex = parts.Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
+        if (nextPartWithIndex == null)
+        {
+            // there is no next part, so get the completed part
+            return ProcessDecisions(dialog.CompletedPart, context);
+        }
+
+        return ProcessDecisions(nextPartWithIndex.Part, context);
     }
 }
