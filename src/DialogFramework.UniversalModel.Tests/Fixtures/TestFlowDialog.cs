@@ -74,7 +74,8 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     new DialogPartBuilder
                     (
                         new NavigationDialogPartBuilder()
-                            .WithId("TooYoungNavigation") //TODO: Add navigation to EmailPart here.
+                            .WithId("TooYoungNavigation")
+                            .WithNavigateToId("EmailPart")
                     ),
                     new DialogPartBuilder
                     (
@@ -111,7 +112,8 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     new DialogPartBuilder
                     (
                         new NavigationDialogPartBuilder()
-                            .WithId("HealthyNavigation") //TODO: Add navigation to EmailPart here.
+                            .WithId("HealthyNavigation")
+                            .WithNavigateToId("EmailPart")
                     ),
                     new DialogPartBuilder
                     (
@@ -124,7 +126,8 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     new DialogPartBuilder
                     (
                         new NavigationDialogPartBuilder()
-                            .WithId("UnhealthyNavigation") //TODO: Add navigation to EmailPart here.
+                            .WithId("UnhealthyNavigation")
+                            .WithNavigateToId("EmailPart")
                     ),
                     new DialogPartBuilder
                     (

@@ -146,6 +146,17 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_exceptionDelegate = new (() => default)") //HACK
             );
         }
+
+        if (classBuilder.Name == "NavigationDialogPart")
+        {
+            classBuilder.AddProperties
+            (
+                new ClassPropertyBuilder()
+                    .WithName("NavigateToId")
+                    .WithType(typeof(string))
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: NavigateToId") //HACK
+            );
+        }
     }
 
     private static string GetDefaultValueForDialogState(string classBuilderName)

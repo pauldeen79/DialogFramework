@@ -41,10 +41,22 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             }
         }
 
+        public string NavigateToId
+        {
+            get
+            {
+                return _navigateToIdDelegate.Value;
+            }
+            set
+            {
+                _navigateToIdDelegate = new (() => value);
+            }
+        }
+
         public DialogFramework.Abstractions.DomainModel.DialogParts.INavigationDialogPart Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogParts.NavigationDialogPart(Id, State);
+            return new DialogFramework.UniversalModel.DomainModel.DialogParts.NavigationDialogPart(Id, State, NavigateToId);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -57,6 +69,18 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
         public NavigationDialogPartBuilder WithId(string id)
         {
             Id = id;
+            return this;
+        }
+
+        public NavigationDialogPartBuilder WithNavigateToId(System.Func<string> navigateToIdDelegate)
+        {
+            _navigateToIdDelegate = new (navigateToIdDelegate);
+            return this;
+        }
+
+        public NavigationDialogPartBuilder WithNavigateToId(string navigateToId)
+        {
+            NavigateToId = navigateToId;
             return this;
         }
 
@@ -77,6 +101,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             #pragma warning disable CS8603 // Possible null reference return.
             _idDelegate = new (() => string.Empty);
             _stateDelegate = new (() => DialogFramework.Abstractions.DomainModel.Domains.DialogState.InProgress);
+            _navigateToIdDelegate = new (() => string.Empty);
             #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -88,11 +113,14 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             }
             _idDelegate = new (() => source.Id);
             _stateDelegate = new (() => source.State);
+            // skip: NavigateToId;
         }
 
         private System.Lazy<string> _idDelegate;
 
         private System.Lazy<DialogFramework.Abstractions.DomainModel.Domains.DialogState> _stateDelegate;
+
+        private System.Lazy<string> _navigateToIdDelegate;
     }
 #nullable restore
 }

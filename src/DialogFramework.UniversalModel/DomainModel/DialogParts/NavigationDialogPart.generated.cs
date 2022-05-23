@@ -27,10 +27,17 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
-        public NavigationDialogPart(string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
+        public string NavigateToId
         {
+            get;
+        }
+
+        public NavigationDialogPart(string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state, string navigateToId)
+        {
+            if (navigateToId == null) throw new System.ArgumentNullException("navigateToId");
             this.Id = id;
             this.State = state;
+            this.NavigateToId = navigateToId;
             System.ComponentModel.DataAnnotations.Validator.ValidateObject(this, new System.ComponentModel.DataAnnotations.ValidationContext(this, null, null), true);
         }
     }
