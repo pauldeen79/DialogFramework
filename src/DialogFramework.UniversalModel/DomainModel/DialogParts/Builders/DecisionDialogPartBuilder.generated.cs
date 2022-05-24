@@ -41,10 +41,30 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             }
         }
 
+        public System.Collections.Generic.List<DecisionBuilder> Decisions
+        {
+            get;
+            set;
+        }
+
+        public DecisionDialogPartBuilder AddDecisions(params DecisionBuilder[] decisions)
+        {
+            if (decisions != null)
+            {
+                Decisions.AddRange(decisions);
+            }
+            return this;
+        }
+
+        public DecisionDialogPartBuilder AddDecisions(System.Collections.Generic.IEnumerable<DecisionBuilder> decisions)
+        {
+            return AddDecisions(decisions.ToArray());
+        }
+
         public DialogFramework.Abstractions.DomainModel.DialogParts.IDecisionDialogPart Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart(Id, State);
+            return new DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart(Id, State, new CrossCutting.Common.ValueCollection<Decision>(Decisions.Select(x => x.Build())));
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -74,6 +94,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
 
         public DecisionDialogPartBuilder()
         {
+            Decisions = new System.Collections.Generic.List<DecisionBuilder>();
             #pragma warning disable CS8603 // Possible null reference return.
             _idDelegate = new (() => string.Empty);
             _stateDelegate = new (() => DialogFramework.Abstractions.DomainModel.Domains.DialogState.InProgress);
@@ -86,8 +107,10 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             {
                 throw new System.ArgumentNullException("source");
             }
+            Decisions = new System.Collections.Generic.List<DecisionBuilder>();
             _idDelegate = new (() => source.Id);
             _stateDelegate = new (() => source.State);
+            // skip: Decisions;
         }
 
         private System.Lazy<string> _idDelegate;

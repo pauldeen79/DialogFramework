@@ -1,8 +1,16 @@
-﻿using DialogFramework.Abstractions.DomainModel;
+﻿using DialogFramework.Abstractions;
+using DialogFramework.Abstractions.DomainModel;
 using DialogFramework.Abstractions.DomainModel.Domains;
+using DialogFramework.Core.DomainModel.DialogPartResultValues;
 using DialogFramework.Core.DomainModel.QuestionDialogPartValidators;
+using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.DomainModel.Builders;
 using DialogFramework.UniversalModel.DomainModel.DialogParts.Builders;
+using ExpressionFramework.Abstractions;
+using ExpressionFramework.Abstractions.DomainModel;
+using ExpressionFramework.Abstractions.DomainModel.Domains;
+using ExpressionFramework.Abstractions.DomainModel.Extensions;
+using ExpressionFramework.Core.DomainModel.Builders;
 
 namespace DialogFramework.UniversalModel.Tests.Fixtures
 {
@@ -61,7 +69,36 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     new DialogPartBuilder
                     (
                         new DecisionDialogPartBuilder()
-                            .WithId("AgeDecision") //TODO: Add decision rules here. <10 goes to TooYoung. other values go to SportTypes
+                            .WithId("AgeDecision")
+                            .AddDecisions
+                            (
+                                new DecisionBuilder()
+                                    .AddConditions
+                                    (
+                                        new ConditionBuilder()
+                                            .WithLeftExpression
+                                            (
+                                                new DelegateExpressionBuilder()
+                                                    .WithValueDelegate(new Func<object?, IExpression, IExpressionEvaluator, object?>((ctx, expression, evaluator) =>
+                                                    {
+                                                        var tuple = (Tuple<IDialogContext, IDialog>)ctx!;
+                                                        var context = tuple.Item1;
+                                                        var dialog = tuple.Item2;
+                                                        return context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Age")).Single().DialogPartId;
+                                                    }))
+                                            )
+                                            .WithOperator(Operator.Equal)
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue("<10"))
+                                    ).WithNextPartId("TooYoung"),
+                                new DecisionBuilder()
+                                    .AddConditions
+                                    (
+                                        new ConditionBuilder()
+                                            .WithLeftExpression(new ConstantExpressionBuilder().WithValue(true))
+                                            .WithOperator(Operator.Equal)
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                    ).WithNextPartId("SportsTypes")
+                            )
                     ),
                     new DialogPartBuilder
                     (
@@ -75,7 +112,7 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     (
                         new NavigationDialogPartBuilder()
                             .WithId("TooYoungNavigation")
-                            .WithNavigateToId("EmailPart")
+                            .WithNavigateToId("Email")
                     ),
                     new DialogPartBuilder
                     (
@@ -99,7 +136,36 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     new DialogPartBuilder
                     (
                         new DecisionDialogPartBuilder()
-                            .WithId("SportsTypeDecision") //TODO: Add decision rules here. any value goes to Healthy. no values goes to Unhealthy
+                            .WithId("SportsTypeDecision")
+                            .AddDecisions
+                            (
+                                new DecisionBuilder()
+                                    .AddConditions
+                                    (
+                                        new ConditionBuilder()
+                                            .WithLeftExpression
+                                            (
+                                                new DelegateExpressionBuilder()
+                                                    .WithValueDelegate(new Func<object?, IExpression, IExpressionEvaluator, object?>((ctx, expression, evaluator) =>
+                                                    {
+                                                        var tuple = (Tuple<IDialogContext, IDialog>)ctx!;
+                                                        var context = tuple.Item1;
+                                                        var dialog = tuple.Item2;
+                                                        return context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "SportsTypes")).Any(x => x.Value is not EmptyDialogPartResultValue);
+                                                    }))
+                                            )
+                                            .WithOperator(Operator.Equal)
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                    ).WithNextPartId("Healthy"),
+                                new DecisionBuilder()
+                                    .AddConditions
+                                    (
+                                        new ConditionBuilder()
+                                            .WithLeftExpression(new ConstantExpressionBuilder().WithValue(true))
+                                            .WithOperator(Operator.Equal)
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                    ).WithNextPartId("Unhealthy")
+                            )
                     ),
                     new DialogPartBuilder
                     (
@@ -113,7 +179,7 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     (
                         new NavigationDialogPartBuilder()
                             .WithId("HealthyNavigation")
-                            .WithNavigateToId("EmailPart")
+                            .WithNavigateToId("Email")
                     ),
                     new DialogPartBuilder
                     (
@@ -127,7 +193,7 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                     (
                         new NavigationDialogPartBuilder()
                             .WithId("UnhealthyNavigation")
-                            .WithNavigateToId("EmailPart")
+                            .WithNavigateToId("Email")
                     ),
                     new DialogPartBuilder
                     (

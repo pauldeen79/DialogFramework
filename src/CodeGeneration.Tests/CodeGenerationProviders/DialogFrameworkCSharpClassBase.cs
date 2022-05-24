@@ -125,11 +125,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             }
         }
 
-        //if (classBuilder.Name == "DialogPartResultDefinition")
-        //{
-        //    classBuilder.AddProperties(new ClassPropertyBuilder().WithName("Validators").WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<DialogPartResultDefinitionValidator>"));
-        //}
-
         if (classBuilder.Name == "DialogContext")
         {
             classBuilder.AddProperties
@@ -157,6 +152,19 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => string.Empty)") //HACK
             );
         }
+
+        if (classBuilder.Name == "DecisionDialogPart")
+        {
+            classBuilder.AddProperties
+            (
+                new ClassPropertyBuilder()
+                    .WithName("Decisions")
+                    .WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<Decision>")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ValueCollection<>).WithoutGenerics()}<DecisionBuilder>")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<Decision>(Decisions.Select(x => x.Build()))")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Decisions") //HACK
+            );
+        }
     }
 
     private static string GetDefaultValueForDialogState(string classBuilderName)
@@ -173,7 +181,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     private static string GetClassName(string typeName)
     {
         var name = typeName.GetClassName().Substring(1);
-        return typeName.Contains(".DialogParts") //typeName.EndsWith("DialogPart")
+        return typeName.Contains(".DialogParts")
             ? $"DialogFramework.UniversalModel.DomainModel.DialogParts.Builders.{name}"
             : $"DialogFramework.UniversalModel.DomainModel.Builders.{name}";
     }

@@ -27,10 +27,17 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
-        public DecisionDialogPart(string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
+        public CrossCutting.Common.ValueCollection<Decision> Decisions
         {
+            get;
+        }
+
+        public DecisionDialogPart(string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state, CrossCutting.Common.ValueCollection<Decision> decisions)
+        {
+            if (decisions == null) throw new System.ArgumentNullException("decisions");
             this.Id = id;
             this.State = state;
+            this.Decisions = decisions;
             System.ComponentModel.DataAnnotations.Validator.ValidateObject(this, new System.ComponentModel.DataAnnotations.ValidationContext(this, null, null), true);
         }
     }

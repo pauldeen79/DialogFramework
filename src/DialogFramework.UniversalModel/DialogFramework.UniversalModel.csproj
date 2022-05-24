@@ -14,6 +14,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Core" Version="0.2.16" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
   </ItemGroup>
 

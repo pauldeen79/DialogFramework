@@ -14,6 +14,11 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             ValidationErrors.Clear();
             HandleValidate(context, dialog, dialogPartResults);
 
+            foreach (var validator in Validators)
+            {
+                ValidationErrors.AddRange(validator.Validate(context, dialog, dialogPartResults));
+            }
+
             return ValidationErrors.Count > 0
                 ? this
                 : null;
