@@ -2,6 +2,7 @@
 using System.Linq;
 using DialogFramework.Abstractions;
 using DialogFramework.Abstractions.DomainModel;
+using DialogFramework.UniversalModel.ExpressionEvaluatorProviders;
 using ExpressionFramework.Abstractions;
 using ExpressionFramework.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,10 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
                 if (_evaluator == null)
                 {
                     var serviceCollection = new ServiceCollection();
-                    serviceCollection.AddExpressionFramework();
+                    serviceCollection
+                        .AddExpressionFramework()
+                        .AddSingleton<IExpressionEvaluatorProvider, GetDialogPartResultIdsByPartExpressionEvaluatorProvider>()
+                        .AddSingleton<IExpressionEvaluatorProvider, GetDialogPartResultValuesByPartExpressionEvaluatorProvider>();
                     var provider = serviceCollection.BuildServiceProvider();
                     _evaluator = provider.GetRequiredService<IConditionEvaluator>();
                 }

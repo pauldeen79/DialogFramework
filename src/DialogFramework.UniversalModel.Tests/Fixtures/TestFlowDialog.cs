@@ -6,11 +6,13 @@ using DialogFramework.Core.DomainModel.QuestionDialogPartValidators;
 using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.DomainModel.Builders;
 using DialogFramework.UniversalModel.DomainModel.DialogParts.Builders;
+using DialogFramework.UniversalModel.Expressions;
 using ExpressionFramework.Abstractions;
 using ExpressionFramework.Abstractions.DomainModel;
 using ExpressionFramework.Abstractions.DomainModel.Domains;
 using ExpressionFramework.Abstractions.DomainModel.Extensions;
 using ExpressionFramework.Core.DomainModel.Builders;
+using ExpressionFramework.Core.Functions;
 
 namespace DialogFramework.UniversalModel.Tests.Fixtures
 {
@@ -78,24 +80,24 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                                         new ConditionBuilder()
                                             .WithLeftExpression
                                             (
-                                                new DelegateExpressionBuilder()
-                                                    .WithValueDelegate(new Func<object?, IExpression, IExpressionEvaluator, object?>((ctx, expression, evaluator) =>
-                                                    {
-                                                        var tuple = (Tuple<IDialogContext, IDialog>)ctx!;
-                                                        var context = tuple.Item1;
-                                                        var dialog = tuple.Item2;
-                                                        return context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Age")).Single().DialogPartId;
-                                                    }))
+                                                new GetDialogPartResultIdsByPartExpressionBuilder()
+                                                    .WithDialogPartId("Age")
+                                                    .WithFunction(new ContainsFunctionBuilder().WithObjectToContain("<10"))
                                             )
                                             .WithOperator(Operator.Equal)
-                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue("<10"))
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
                                     ).WithNextPartId("TooYoung"),
                                 new DecisionBuilder()
                                     .AddConditions
                                     (
                                         new ConditionBuilder()
-                                            .WithLeftExpression(new ConstantExpressionBuilder().WithValue(true))
-                                            .WithOperator(Operator.Equal)
+                                            .WithLeftExpression
+                                            (
+                                                new GetDialogPartResultIdsByPartExpressionBuilder()
+                                                    .WithDialogPartId("Age")
+                                                    .WithFunction(new ContainsFunctionBuilder().WithObjectToContain("<10"))
+                                            )
+                                            .WithOperator(Operator.NotEqual)
                                             .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
                                     ).WithNextPartId("SportsTypes")
                             )
@@ -145,25 +147,25 @@ namespace DialogFramework.UniversalModel.Tests.Fixtures
                                         new ConditionBuilder()
                                             .WithLeftExpression
                                             (
-                                                new DelegateExpressionBuilder()
-                                                    .WithValueDelegate(new Func<object?, IExpression, IExpressionEvaluator, object?>((ctx, expression, evaluator) =>
-                                                    {
-                                                        var tuple = (Tuple<IDialogContext, IDialog>)ctx!;
-                                                        var context = tuple.Item1;
-                                                        var dialog = tuple.Item2;
-                                                        return context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "SportsTypes")).Any(x => x.Value is not EmptyDialogPartResultValue);
-                                                    }))
+                                                new GetDialogPartResultValuesByPartExpressionBuilder()
+                                                    .WithDialogPartId("SportsTypes")
+                                                    .WithFunction(new CountFunctionBuilder())
                                             )
-                                            .WithOperator(Operator.Equal)
-                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                            .WithOperator(Operator.Greater)
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(0))
                                     ).WithNextPartId("Healthy"),
                                 new DecisionBuilder()
                                     .AddConditions
                                     (
                                         new ConditionBuilder()
-                                            .WithLeftExpression(new ConstantExpressionBuilder().WithValue(true))
+                                            .WithLeftExpression
+                                            (
+                                                new GetDialogPartResultValuesByPartExpressionBuilder()
+                                                    .WithDialogPartId("SportsTypes")
+                                                    .WithFunction(new CountFunctionBuilder())
+                                            )
                                             .WithOperator(Operator.Equal)
-                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                            .WithRightExpression(new ConstantExpressionBuilder().WithValue(0))
                                     ).WithNextPartId("Unhealthy")
                             )
                     ),

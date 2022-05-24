@@ -6,6 +6,7 @@ using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.Tests.Fixtures;
 using FluentAssertions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using DialogService = DialogFramework.Core.DialogService;
 
 namespace DialogFramework.UniversalModel.Tests
@@ -178,7 +179,8 @@ namespace DialogFramework.UniversalModel.Tests
             {
                 TypeNameHandling = TypeNameHandling.Auto,
                 NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                Converters = new[] { new StringEnumConverter() }
             };
 
             // Serialize

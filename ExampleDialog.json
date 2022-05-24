@@ -1,0 +1,394 @@
+{
+  "Metadata": {
+    "$type": "DialogFramework.UniversalModel.DomainModel.DialogMetadata, DialogFramework.UniversalModel",
+    "FriendlyName": "Test flow dialog",
+    "CanStart": true,
+    "Id": "TestFlowDialog",
+    "Version": "1.0.0"
+  },
+  "Parts": [
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.MessageDialogPart, DialogFramework.UniversalModel",
+      "Message": "Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.",
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Welcome",
+        "Title": "Welcome",
+        "Number": 1
+      },
+      "Heading": "Welcome",
+      "Id": "Welcome",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.QuestionDialogPart, DialogFramework.UniversalModel",
+      "Title": "How old are you?",
+      "Results": [
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "<10",
+          "Title": "0 to 9 years old",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "10-19",
+          "Title": "10 to 19 years old",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "20-29",
+          "Title": "20 to 29 years old",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "30-39",
+          "Title": "30 to 39 years old",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "40-49",
+          "Title": "40 to 49 years old",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "50+",
+          "Title": "Older than 50 years",
+          "ValueType": "None",
+          "Validators": []
+        }
+      ],
+      "Validators": [
+        {
+          "$type": "DialogFramework.Core.DomainModel.QuestionDialogPartValidators.SingleRequiredQuestionDialogPartValidator, DialogFramework.Core"
+        }
+      ],
+      "ValidationErrors": [],
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Get information",
+        "Title": "Get information",
+        "Number": 2
+      },
+      "Heading": "Age",
+      "Id": "Age",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart, DialogFramework.UniversalModel",
+      "Id": "AgeDecision",
+      "State": "InProgress",
+      "Decisions": [
+        {
+          "Conditions": [
+            {
+              "$type": "ExpressionFramework.Core.DomainModel.Condition, ExpressionFramework.Core",
+              "LeftExpression": {
+                "$type": "DialogFramework.UniversalModel.Expressions.GetDialogPartResultIdsByPartExpression, DialogFramework.UniversalModel",
+                "Function": {
+                  "$type": "ExpressionFramework.Core.Functions.ContainsFunction, ExpressionFramework.Core",
+                  "ObjectToContain": "<10"
+                },
+                "DialogPartId": "Age"
+              },
+              "Operator": "Equal",
+              "RightExpression": {
+                "$type": "ExpressionFramework.Core.DomainModel.ConstantExpression, ExpressionFramework.Core",
+                "Value": true
+              },
+              "StartGroup": false,
+              "EndGroup": false,
+              "Combination": "And"
+            }
+          ],
+          "NextPartId": "TooYoung"
+        },
+        {
+          "Conditions": [
+            {
+              "$type": "ExpressionFramework.Core.DomainModel.Condition, ExpressionFramework.Core",
+              "LeftExpression": {
+                "$type": "DialogFramework.UniversalModel.Expressions.GetDialogPartResultIdsByPartExpression, DialogFramework.UniversalModel",
+                "Function": {
+                  "$type": "ExpressionFramework.Core.Functions.ContainsFunction, ExpressionFramework.Core",
+                  "ObjectToContain": "<10"
+                },
+                "DialogPartId": "Age"
+              },
+              "Operator": "NotEqual",
+              "RightExpression": {
+                "$type": "ExpressionFramework.Core.DomainModel.ConstantExpression, ExpressionFramework.Core",
+                "Value": true
+              },
+              "StartGroup": false,
+              "EndGroup": false,
+              "Combination": "And"
+            }
+          ],
+          "NextPartId": "SportsTypes"
+        }
+      ]
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.MessageDialogPart, DialogFramework.UniversalModel",
+      "Message": "Too bad, you are too young. We can't give advice on kids.",
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Completed",
+        "Title": "Completed",
+        "Number": 3
+      },
+      "Heading": "Completed",
+      "Id": "TooYoung",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.NavigationDialogPart, DialogFramework.UniversalModel",
+      "Id": "TooYoungNavigation",
+      "State": "InProgress",
+      "NavigateToId": "Email"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.QuestionDialogPart, DialogFramework.UniversalModel",
+      "Title": "What type of sports do you do?",
+      "Results": [
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Bicycle",
+          "Title": "Bicycle riding",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Soccer",
+          "Title": "Soccer",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Swimming",
+          "Title": "Swimming",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Aerobics",
+          "Title": "Aerobics",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Tennis",
+          "Title": "Tennis",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Baseball",
+          "Title": "Baseball",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Hockey",
+          "Title": "Hockey",
+          "ValueType": "None",
+          "Validators": []
+        },
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "Other",
+          "Title": "Other sports (please specify)",
+          "ValueType": "Text",
+          "Validators": []
+        }
+      ],
+      "Validators": [],
+      "ValidationErrors": [],
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Get information",
+        "Title": "Get information",
+        "Number": 2
+      },
+      "Heading": "Sports types",
+      "Id": "SportsTypes",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart, DialogFramework.UniversalModel",
+      "Id": "SportsTypeDecision",
+      "State": "InProgress",
+      "Decisions": [
+        {
+          "Conditions": [
+            {
+              "$type": "ExpressionFramework.Core.DomainModel.Condition, ExpressionFramework.Core",
+              "LeftExpression": {
+                "$type": "DialogFramework.UniversalModel.Expressions.GetDialogPartResultValuesByPartExpression, DialogFramework.UniversalModel",
+                "Function": {
+                  "$type": "ExpressionFramework.Core.Functions.CountFunction, ExpressionFramework.Core"
+                },
+                "DialogPartId": "SportsTypes"
+              },
+              "Operator": "Greater",
+              "RightExpression": {
+                "$type": "ExpressionFramework.Core.DomainModel.ConstantExpression, ExpressionFramework.Core",
+                "Value": 0
+              },
+              "StartGroup": false,
+              "EndGroup": false,
+              "Combination": "And"
+            }
+          ],
+          "NextPartId": "Healthy"
+        },
+        {
+          "Conditions": [
+            {
+              "$type": "ExpressionFramework.Core.DomainModel.Condition, ExpressionFramework.Core",
+              "LeftExpression": {
+                "$type": "DialogFramework.UniversalModel.Expressions.GetDialogPartResultValuesByPartExpression, DialogFramework.UniversalModel",
+                "Function": {
+                  "$type": "ExpressionFramework.Core.Functions.CountFunction, ExpressionFramework.Core"
+                },
+                "DialogPartId": "SportsTypes"
+              },
+              "Operator": "Equal",
+              "RightExpression": {
+                "$type": "ExpressionFramework.Core.DomainModel.ConstantExpression, ExpressionFramework.Core",
+                "Value": 0
+              },
+              "StartGroup": false,
+              "EndGroup": false,
+              "Combination": "And"
+            }
+          ],
+          "NextPartId": "Unhealthy"
+        }
+      ]
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.MessageDialogPart, DialogFramework.UniversalModel",
+      "Message": "You're all good! Keep up the good work.",
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Completed",
+        "Title": "Completed",
+        "Number": 3
+      },
+      "Heading": "Healthy",
+      "Id": "Healthy",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.NavigationDialogPart, DialogFramework.UniversalModel",
+      "Id": "HealthyNavigation",
+      "State": "InProgress",
+      "NavigateToId": "Email"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.MessageDialogPart, DialogFramework.UniversalModel",
+      "Message": "Our advice: It's time to do some sports, mate!",
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Completed",
+        "Title": "Completed",
+        "Number": 3
+      },
+      "Heading": "Unhealthy",
+      "Id": "Unhealthy",
+      "State": "InProgress"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.NavigationDialogPart, DialogFramework.UniversalModel",
+      "Id": "UnhealthyNavigation",
+      "State": "InProgress",
+      "NavigateToId": "Email"
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.QuestionDialogPart, DialogFramework.UniversalModel",
+      "Title": "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.",
+      "Results": [
+        {
+          "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartResultDefinition, DialogFramework.UniversalModel",
+          "Id": "EmailAddress",
+          "Title": "E-mail address",
+          "ValueType": "Text",
+          "Validators": []
+        }
+      ],
+      "Validators": [],
+      "ValidationErrors": [],
+      "Group": {
+        "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+        "Id": "Completed",
+        "Title": "Completed",
+        "Number": 3
+      },
+      "Heading": "E-mail address",
+      "Id": "Email",
+      "State": "InProgress"
+    }
+  ],
+  "ErrorPart": {
+    "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.ErrorDialogPart, DialogFramework.UniversalModel",
+    "ErrorMessage": "Something went wrong. Please try again, or contact us in case the problem persists.",
+    "Id": "Error",
+    "State": "ErrorOccured"
+  },
+  "AbortedPart": {
+    "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.AbortedDialogPart, DialogFramework.UniversalModel",
+    "Message": "The dialog is aborted. You can come back any time to start the application again.",
+    "Id": "Aborted",
+    "State": "Aborted"
+  },
+  "CompletedPart": {
+    "$type": "DialogFramework.UniversalModel.DomainModel.DialogParts.CompletedDialogPart, DialogFramework.UniversalModel",
+    "Message": "Thank you for using this application. Please come back soon!",
+    "Group": {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+      "Id": "Completed",
+      "Title": "Completed",
+      "Number": 3
+    },
+    "Heading": "Completed",
+    "Id": "Completed",
+    "State": "Completed"
+  },
+  "PartGroups": [
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+      "Id": "Welcome",
+      "Title": "Welcome",
+      "Number": 1
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+      "Id": "Get information",
+      "Title": "Get information",
+      "Number": 2
+    },
+    {
+      "$type": "DialogFramework.UniversalModel.DomainModel.DialogPartGroup, DialogFramework.UniversalModel",
+      "Id": "Completed",
+      "Title": "Completed",
+      "Number": 3
+    }
+  ]
+}
