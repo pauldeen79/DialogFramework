@@ -17,6 +17,12 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
 #nullable enable
     public partial class DecisionDialogPartBuilder
     {
+        public System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder> Decisions
+        {
+            get;
+            set;
+        }
+
         public string Id
         {
             get
@@ -41,13 +47,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             }
         }
 
-        public System.Collections.Generic.List<DecisionBuilder> Decisions
-        {
-            get;
-            set;
-        }
-
-        public DecisionDialogPartBuilder AddDecisions(params DecisionBuilder[] decisions)
+        public DecisionDialogPartBuilder AddDecisions(params DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder[] decisions)
         {
             if (decisions != null)
             {
@@ -56,7 +56,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             return this;
         }
 
-        public DecisionDialogPartBuilder AddDecisions(System.Collections.Generic.IEnumerable<DecisionBuilder> decisions)
+        public DecisionDialogPartBuilder AddDecisions(System.Collections.Generic.IEnumerable<DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder> decisions)
         {
             return AddDecisions(decisions.ToArray());
         }
@@ -64,7 +64,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
         public DialogFramework.Abstractions.DomainModel.DialogParts.IDecisionDialogPart Build()
         {
             #pragma warning disable CS8604 // Possible null reference argument.
-            return new DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart(Id, State, new CrossCutting.Common.ValueCollection<Decision>(Decisions.Select(x => x.Build())));
+            return new DialogFramework.UniversalModel.DomainModel.DialogParts.DecisionDialogPart(Decisions.Select(x => x.Build()), Id, State);
             #pragma warning restore CS8604 // Possible null reference argument.
         }
 
@@ -94,7 +94,7 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
 
         public DecisionDialogPartBuilder()
         {
-            Decisions = new System.Collections.Generic.List<DecisionBuilder>();
+            Decisions = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder>();
             #pragma warning disable CS8603 // Possible null reference return.
             _idDelegate = new (() => string.Empty);
             _stateDelegate = new (() => DialogFramework.Abstractions.DomainModel.Domains.DialogState.InProgress);
@@ -107,10 +107,10 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts.Builders
             {
                 throw new System.ArgumentNullException("source");
             }
-            Decisions = new System.Collections.Generic.List<DecisionBuilder>();
+            Decisions = new System.Collections.Generic.List<DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder>();
+            if (source.Decisions != null) Decisions.AddRange(source.Decisions.Select(x => new DialogFramework.UniversalModel.DomainModel.Builders.DecisionBuilder(x)));
             _idDelegate = new (() => source.Id);
             _stateDelegate = new (() => source.State);
-            // skip: Decisions;
         }
 
         private System.Lazy<string> _idDelegate;

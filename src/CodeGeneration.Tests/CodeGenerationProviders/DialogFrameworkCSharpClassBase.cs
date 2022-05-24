@@ -18,19 +18,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool AddNullChecks => true;
     protected override Type RecordCollectionType => typeof(ValueCollection<>);
 
-    protected IClass[] GetCodeStatementBuilderClasses(Type codeStatementType,
-                                                      Type codeStatementInterfaceType,
-                                                      Type codeStatementBuilderInterfaceType,
-                                                      string buildersNamespace)
-        => GetClassesFromSameNamespace(codeStatementType ?? throw new ArgumentNullException(nameof(codeStatementType)))
-            .Select
-            (
-                c => CreateBuilder(c, buildersNamespace)
-                    .AddInterfaces(codeStatementBuilderInterfaceType)
-                    .Chain(x => x.Methods.First(x => x.Name == "Build").WithType(codeStatementInterfaceType))
-                    .Build()
-            ).ToArray();
-
     protected override string FormatInstanceTypeName(ITypeBase instance, bool forCreate)
     {
         if (instance == null)
@@ -100,6 +87,17 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                         .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
                 );
             }
+            else if (typeName.Contains("Collection<ExpressionFramework."))
+            {
+                property.ConvertCollectionPropertyToBuilderOnBuilder
+                (
+                    false,
+                    typeof(ValueCollection<>).WithoutGenerics(),
+                    typeName
+                        .Replace("ExpressionFramework.Abstractions.DomainModel.I", "ExpressionFramework.Core.DomainModel.Builders.", StringComparison.InvariantCulture)
+                        .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
+                );
+            }
             else if (typeName.Contains("Collection<System.String"))
             {
                 property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<string>).FullName?.FixTypeName()}({{0}})");
@@ -152,19 +150,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => string.Empty)") //HACK
             );
         }
-
-        if (classBuilder.Name == "DecisionDialogPart")
-        {
-            classBuilder.AddProperties
-            (
-                new ClassPropertyBuilder()
-                    .WithName("Decisions")
-                    .WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<Decision>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ValueCollection<>).WithoutGenerics()}<DecisionBuilder>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<Decision>(Decisions.Select(x => x.Build()))")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Decisions") //HACK
-            );
-        }
     }
 
     private static string GetDefaultValueForDialogState(string classBuilderName)
@@ -195,6 +180,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected static Type[] GetDomainModelModelTypes()
         => new[]
         {
+            typeof(IDecision),
             typeof(IDialog),
             typeof(IDialogIdentifier),
             typeof(IDialogMetadata),

@@ -4,11 +4,15 @@ public class DialogService : IDialogService
 {
     private readonly IDialogContextFactory _contextFactory;
     private readonly IDialogRepository _dialogRepository;
+    private readonly IConditionEvaluator _conditionEvaluator;
 
-    public DialogService(IDialogContextFactory contextFactory, IDialogRepository dialogRepository)
+    public DialogService(IDialogContextFactory contextFactory,
+                         IDialogRepository dialogRepository,
+                         IConditionEvaluator conditionEvaluator)
     {
         _contextFactory = contextFactory;
         _dialogRepository = dialogRepository;
+        _conditionEvaluator = conditionEvaluator;
     }
 
     public bool CanStart(IDialogIdentifier dialogIdentifier)
@@ -212,7 +216,7 @@ public class DialogService : IDialogService
         if (dialogPart is IDecisionDialogPart decisionDialogPart)
         {
             var dialog = GetDialog(context.CurrentDialogIdentifier);
-            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog);
+            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog, _conditionEvaluator);
             return ProcessDecisions(dialog.GetPartById(nextPartId), context);
         }
 

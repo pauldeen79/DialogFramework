@@ -9,7 +9,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -63,7 +63,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -144,7 +144,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act step 1: Start a session, submit first question
         var context = sut.Start(dialog!.Metadata);
@@ -210,7 +210,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -254,7 +254,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -296,7 +296,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -323,7 +323,7 @@ public class SimpleFormFlowDialogTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var context = sut.Start(dialog!.Metadata);

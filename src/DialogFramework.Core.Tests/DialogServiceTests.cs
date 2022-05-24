@@ -15,7 +15,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, abortedPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Abort(context);
@@ -37,7 +38,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, dialog.CompletedPart, DialogState.Completed);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Abort(context);
@@ -59,7 +61,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, dialog.ErrorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Abort(context);
@@ -83,7 +86,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Abort(context);
@@ -108,7 +112,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanAbort(context);
@@ -126,7 +131,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, abortedPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanAbort(context);
@@ -153,7 +159,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Continue(context, Enumerable.Empty<IDialogPartResult>());
@@ -177,7 +184,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, currentPart.Results.Single(x => x.Id == "Great").Id) });
@@ -198,7 +206,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Continue(context, new[] { new DialogPartResult(currentPart.Id, "Unknown result") });
@@ -222,7 +231,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
         wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IDialogPartResultDefinition>());
 
@@ -248,7 +258,8 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState));
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
         var context = sut.Start(dialog.Metadata); // start the dialog, this will get the welcome message
         context = sut.Continue(context, Enumerable.Empty<IDialogPartResult>()); // skip the welcome message
 
@@ -309,7 +320,8 @@ public class DialogServiceTests
             if (identifier.Id == dialog2.Metadata.Id && identifier.Version == dialog2.Metadata.Version) return dialog2;
             return null;
         });
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
         var context = sut.Start(dialog1.Metadata); // this will trigger the message on dialog 1
 
         // Act
@@ -351,7 +363,8 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture(dialog.Metadata));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
         var context = sut.Start(dialog.Metadata); // this will trigger the message
 
         // Act
@@ -412,7 +425,8 @@ public class DialogServiceTests
             if (identifier.Id == "Dialog2") return dialog2;
             return null;
         });
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
         var context = new DialogContextFixture(Id, dialog1.Metadata, dialog1.Parts.First(), currentState);
 
         // Act
@@ -454,7 +468,8 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture(dialog.Metadata));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
         var context = sut.Start(dialog.Metadata); // this will trigger the message
 
         // Act
@@ -480,7 +495,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanContinue(context);
@@ -504,14 +520,15 @@ public class DialogServiceTests
                                 abortedDialogPartMock.Object,
                                 completedDialogPartMock.Object,
                                 Enumerable.Empty<IDialogPartGroup>());
-        var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
-                                                             dialog => new DialogContextFixture(dialog.Metadata));
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      dialog => new DialogContextFixture(dialog.Metadata));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(contextFactory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
-        var actual = service.CanStart(dialog.Metadata);
+        var actual = sut.CanStart(dialog.Metadata);
 
         // Assert
         actual.Should().Be(expectedResult);
@@ -530,14 +547,15 @@ public class DialogServiceTests
                                 abortedDialogPartMock.Object,
                                 completedDialogPartMock.Object,
                                 Enumerable.Empty<IDialogPartGroup>());
-        var contextFactory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
-                                                             dialog => new DialogContextFixture("Id", dialog.Metadata, errorDialogPartMock.Object, DialogState.InProgress)); // dialog state is already in progress
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      dialog => new DialogContextFixture("Id", dialog.Metadata, errorDialogPartMock.Object, DialogState.InProgress)); // dialog state is already in progress
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(contextFactory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
-        var actual = service.CanStart(dialog.Metadata);
+        var actual = sut.CanStart(dialog.Metadata);
 
         // Assert
         actual.Should().BeFalse();
@@ -550,7 +568,8 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(_ => false,
                                                       _ => throw new InvalidOperationException("Not intended to get to this point"));
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
         var dialog = DialogFixture.CreateDialog();
         var act = new Action(() => sut.Start(dialog.Metadata));
 
@@ -571,7 +590,8 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture("Id", dialogMock.Object.Metadata, dialogPartMock.Object, DialogState.Initial));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialogMock.Object);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
         var dialog = dialogMock.Object;
         var act = new Action(() => sut.Start(dialog.Metadata));
 
@@ -627,7 +647,8 @@ public class DialogServiceTests
             if (identifier.Id == dialog2.Metadata.Id && identifier.Version == dialog2.Metadata.Version) return dialog2;
             return null;
         });
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog1.Metadata);
@@ -666,7 +687,8 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => new DialogContextFixture(dialog.Metadata));
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog.Metadata);
@@ -685,7 +707,8 @@ public class DialogServiceTests
         var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
                                                       _ => throw new InvalidOperationException("Kaboom"));
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
         var start = new Action(() => sut.Start(dialog.Metadata));
 
         // Act
@@ -700,7 +723,8 @@ public class DialogServiceTests
         var factory = new DialogContextFactory();
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog.Metadata);
@@ -720,7 +744,8 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateDialog();
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog.Metadata);
@@ -740,7 +765,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => errorDialogPart.Id);
+        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _, _) => errorDialogPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -758,7 +783,8 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture(dialog.Metadata));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog.Metadata);
@@ -779,7 +805,7 @@ public class DialogServiceTests
         var errorDialogPart = new ErrorDialogPart("Error", "Something went horribly wrong!", null);
         var abortedPart = new AbortedDialogPart("Abort", "Dialog has been aborted");
         var completedPart = new CompletedDialogPart("Completed", "Completed", "Thank you for your input!", group2);
-        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _) => abortedPart.Id);
+        var decisionPart = new DecisionDialogPartFixture("Decision", (_, _, _) => abortedPart.Id);
         var dialog = new Dialog
         (
             new DialogMetadata(
@@ -797,7 +823,8 @@ public class DialogServiceTests
                                                       _ => new DialogContextFixture(dialog.Metadata));
         var repositoryMock = new Mock<IDialogRepository>();
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var sut = new DialogService(factory, repositoryMock.Object);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
 
         // Act
         var result = sut.Start(dialog.Metadata);
@@ -819,7 +846,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanNavigateTo(context, completedPart);
@@ -838,7 +866,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, errorPart, DialogState.ErrorOccured);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanNavigateTo(context, completedPart);
@@ -857,7 +886,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanNavigateTo(context, questionPart);
@@ -875,7 +905,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanNavigateTo(context, questionPart);
@@ -896,7 +927,8 @@ public class DialogServiceTests
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanNavigateTo(context, messagePart);
@@ -915,8 +947,9 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
-        
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
+
         // Act
         var result = sut.NavigateTo(context, questionPart);
 
@@ -936,7 +969,8 @@ public class DialogServiceTests
         context = context.Continue(questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.NavigateTo(context, messagePart);
@@ -961,7 +995,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, currentState);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -978,7 +1013,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, dialog.CompletedPart, DialogState.InProgress); // note that this actually invalid state, but we currently can't prevent it on the interface
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -996,7 +1032,8 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.CanResetCurrentState(context);
@@ -1016,7 +1053,8 @@ public class DialogServiceTests
         context.AddAnswer(new DialogPartResult("Other part", "Other value"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repository, conditionEvaluator);
 
         // Act
         var result = sut.ResetCurrentState(context);

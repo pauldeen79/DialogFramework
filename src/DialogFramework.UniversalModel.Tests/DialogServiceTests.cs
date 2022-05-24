@@ -4,7 +4,9 @@ using DialogFramework.Core.DomainModel.DialogPartResultValues;
 using DialogFramework.Core.Extensions;
 using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.Tests.Fixtures;
+using ExpressionFramework.Abstractions;
 using FluentAssertions;
+using Moq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using DialogService = DialogFramework.Core.DialogService;
@@ -20,7 +22,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);
@@ -73,7 +75,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);
@@ -153,7 +155,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act step 1: Start a session, submit first question
             var context = sut.Start(dialog.Metadata);
@@ -220,7 +222,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);
@@ -263,7 +265,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);
@@ -304,7 +306,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);
@@ -330,7 +332,7 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = SimpleFormFlowDialog.Create();
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
             // Act
             var context = sut.Start(dialog.Metadata);

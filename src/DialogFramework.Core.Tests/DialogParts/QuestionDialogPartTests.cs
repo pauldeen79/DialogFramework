@@ -10,7 +10,7 @@ public class QuestionDialogPartTests
         var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, Enumerable.Empty<IQuestionDialogPartValidator>());
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository(), new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) });
@@ -30,7 +30,7 @@ public class QuestionDialogPartTests
         var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, Enumerable.Empty<IQuestionDialogPartValidator>());
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository(), new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) });
@@ -50,7 +50,7 @@ public class QuestionDialogPartTests
         var sut = new QuestionDialogPart("Test", "Give me an answer!", "Title", group, new[] { new DialogPartResultDefinition("A", "First", ResultValueType.YesNo), new DialogPartResultDefinition("B", "Second", ResultValueType.YesNo) }, Enumerable.Empty<IQuestionDialogPartValidator>());
         var dialog = new Dialog(new DialogMetadata("Test", "Test dialog", "1.0.0", true), new[] { sut }, new ErrorDialogPart("Error", "Something went wrong", null), new Mock<IAbortedDialogPart>().Object, new CompletedDialogPart("Completed", "Completed", "Thank you", group), new[] { group });
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository());
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, new TestDialogRepository(), new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });

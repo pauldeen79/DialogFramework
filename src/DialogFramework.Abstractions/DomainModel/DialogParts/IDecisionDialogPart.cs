@@ -2,5 +2,6 @@
 
 public interface IDecisionDialogPart : IDialogPart
 {
-    string GetNextPartId(IDialogContext context, IDialog dialog);
+    ValueCollection<IDecision> Decisions { get; }
+    string GetNextPartId(IDialogContext context, IDialog dialog, IConditionEvaluator evaluator);
 }

@@ -9,7 +9,7 @@ public class TestFlowTests
         var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository);
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act & Assert
         var context = sut.Start(dialog!.Metadata); // empty -> Welcome

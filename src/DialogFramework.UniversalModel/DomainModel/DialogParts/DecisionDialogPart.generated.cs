@@ -17,6 +17,11 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
 #nullable enable
     public partial record DecisionDialogPart : DialogFramework.Abstractions.DomainModel.DialogParts.IDecisionDialogPart
     {
+        public CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDecision> Decisions
+        {
+            get;
+        }
+
         public string Id
         {
             get;
@@ -27,17 +32,12 @@ namespace DialogFramework.UniversalModel.DomainModel.DialogParts
             get;
         }
 
-        public CrossCutting.Common.ValueCollection<Decision> Decisions
-        {
-            get;
-        }
-
-        public DecisionDialogPart(string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state, CrossCutting.Common.ValueCollection<Decision> decisions)
+        public DecisionDialogPart(System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDecision> decisions, string id, DialogFramework.Abstractions.DomainModel.Domains.DialogState state)
         {
             if (decisions == null) throw new System.ArgumentNullException("decisions");
+            this.Decisions = new CrossCutting.Common.ValueCollection<DialogFramework.Abstractions.DomainModel.IDecision>(decisions);
             this.Id = id;
             this.State = state;
-            this.Decisions = decisions;
             System.ComponentModel.DataAnnotations.Validator.ValidateObject(this, new System.ComponentModel.DataAnnotations.ValidationContext(this, null, null), true);
         }
     }

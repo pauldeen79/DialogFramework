@@ -3,7 +3,9 @@ using DialogFramework.Core.DomainModel.DialogPartResultValues;
 using DialogFramework.Core.Extensions;
 using DialogFramework.UniversalModel.DomainModel;
 using DialogFramework.UniversalModel.Tests.Fixtures;
+using ExpressionFramework.Abstractions;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DialogFramework.UniversalModel.Tests
 {
@@ -16,7 +18,9 @@ namespace DialogFramework.UniversalModel.Tests
             var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"));
             var factory = new DialogContextFactory();
             var repository = new TestDialogRepository();
-            var sut = new DialogService(factory, repository);
+            using var collection = new ServiceCollection().AddDialogFramework().BuildServiceProvider();
+            var conditionEvaluator = collection.GetRequiredService<IConditionEvaluator>();
+            var sut = new DialogService(factory, repository, conditionEvaluator);
 
             // Act & Assert
             var context = sut.Start(dialog!.Metadata); // empty -> Welcome

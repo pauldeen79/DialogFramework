@@ -2,11 +2,11 @@
 
 internal record DecisionDialogPartFixture : DecisionDialogPart
 {
-    private readonly Func<IDialogContext, IDialog, string> _getNextPartIdDelegate;
+    private readonly Func<IDialogContext, IDialog, IConditionEvaluator, string> _getNextPartIdDelegate;
 
-    public DecisionDialogPartFixture(string id, Func<IDialogContext, IDialog, string> getNextPartIdDelegate)
-        : base(id) => _getNextPartIdDelegate = getNextPartIdDelegate;
+    public DecisionDialogPartFixture(string id, Func<IDialogContext, IDialog, IConditionEvaluator, string> getNextPartIdDelegate)
+        : base(id, Enumerable.Empty<IDecision>()) => _getNextPartIdDelegate = getNextPartIdDelegate;
 
-    public override string GetNextPartId(IDialogContext context, IDialog dialog)
-        => _getNextPartIdDelegate(context, dialog);
+    public override string GetNextPartId(IDialogContext context, IDialog dialog, IConditionEvaluator evaluator)
+        => _getNextPartIdDelegate(context, dialog, evaluator);
 }

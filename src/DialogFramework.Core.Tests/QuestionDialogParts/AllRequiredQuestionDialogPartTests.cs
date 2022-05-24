@@ -12,7 +12,7 @@ public class AllRequiredQuestionDialogPartTests
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
         var dialogRepositoryMock = new Mock<IDialogRepository>();
         dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id) });
@@ -34,7 +34,7 @@ public class AllRequiredQuestionDialogPartTests
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
         var dialogRepositoryMock = new Mock<IDialogRepository>();
         dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) });
@@ -56,7 +56,7 @@ public class AllRequiredQuestionDialogPartTests
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
         var dialogRepositoryMock = new Mock<IDialogRepository>();
         dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object);
+        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
 
         // Act
         var actual = service.Continue(context, new[]
