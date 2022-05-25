@@ -1,16 +1,14 @@
-﻿using DialogFramework.Abstractions.DomainModel;
-using DialogFramework.Abstractions.DomainModel.DialogParts;
+﻿namespace CodeGeneration.Tests.CodeGenerationProviders;
 
-namespace CodeGeneration.Tests.CodeGenerationProviders;
-
-public class InterfacesModels : CSharpExpressionDumperClassBase
+public class DialogPartModels : CSharpExpressionDumperClassBase
 {
     public override string Path => "CodeGeneration.Tests/CodeGenerationProviders";
-    public override string DefaultFileName => "DialogFrameworkCSharpClassBase.generated.cs";
+    public override string DefaultFileName => "DialogFrameworkCSharpClassBase.DialogPart.generated.cs";
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     protected override string Namespace => "CodeGeneration.Tests.CodeGenerationProviders";
     protected override string ClassName => "DialogFrameworkCSharpClassBase";
+    protected override string MethodName => "GetDialogPartModels";
 
     protected override string[] NamespacesToAbbreviate => new[]
     {
@@ -21,14 +19,6 @@ public class InterfacesModels : CSharpExpressionDumperClassBase
 
     protected override Type[] Models => new[]
     {
-        typeof(IDialog),
-        typeof(IDialogMetadata),
-        typeof(IDialogPartGroup),
-        typeof(IDialogPartResult),
-        typeof(IDialogPartResultDefinition),
-        typeof(IDialogPartResultValue),
-        typeof(IDialogValidationResult),
-
         typeof(IAbortedDialogPart),
         typeof(ICompletedDialogPart),
         typeof(IDecisionDialogPart),

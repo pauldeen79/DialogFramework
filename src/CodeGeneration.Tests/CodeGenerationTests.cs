@@ -1,6 +1,4 @@
-﻿using CodeGeneration.Tests.CodeGenerationProviders;
-
-namespace CodeGeneration.Tests;
+﻿namespace CodeGeneration.Tests;
 
 public class CodeGenerationTests
 {
@@ -11,13 +9,17 @@ public class CodeGenerationTests
         dryRun: true
     );
 
-    //// Bootstrap test that generates c# code for the model used in code generation :)
-    //[Fact]
-    //public void Can_Generate_Model_For_Abstractions()
-    //{
-    //    // Act & Assert
-    //    Verify(GenerateCode.For<InterfacesModels>(Settings));
-    //}
+    // Bootstrap test that generates c# code for the model used in code generation :)
+    [Fact]
+    public void Can_Generate_Model_For_DialogFramework()
+    {
+        // Act & Assert
+        var multipleContentBuilder = new MultipleContentBuilder(Settings.BasePath);
+        GenerateCode.For<CoreModels>(Settings, multipleContentBuilder);
+        GenerateCode.For<DialogPartModels>(Settings, multipleContentBuilder);
+        GenerateCode.For<DomainModelModels>(Settings, multipleContentBuilder);
+        Verify(multipleContentBuilder);
+    }
 
     [Fact]
     public void Can_Generate_All_Classes_For_DialogFramework()
@@ -36,18 +38,6 @@ public class CodeGenerationTests
         // Assert
         Verify(multipleContentBuilder);
     }
-
-    //private static void Verify(GenerateCode generatedCode)
-    //{
-    //    if (Settings.DryRun)
-    //    {
-    //        // Act
-    //        var actual = generatedCode.GenerationEnvironment.ToString();
-
-    //        // Assert
-    //        actual.NormalizeLineEndings().Should().NotBeNullOrEmpty().And.NotStartWith("Error:");
-    //    }
-    //}
 
     private static void Verify(MultipleContentBuilder multipleContentBuilder)
     {

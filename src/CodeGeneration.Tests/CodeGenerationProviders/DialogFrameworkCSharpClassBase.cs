@@ -1,15 +1,4 @@
-﻿using CrossCutting.Common;
-using DialogFramework.Abstractions;
-using DialogFramework.Abstractions.DomainModel;
-using DialogFramework.Abstractions.DomainModel.DialogParts;
-using DialogFramework.Abstractions.DomainModel.Domains;
-using ModelFramework.Common;
-using ModelFramework.Common.Extensions;
-using ModelFramework.Objects.Builders;
-using ModelFramework.Objects.Contracts;
-using ModelFramework.Objects.Extensions;
-
-namespace CodeGeneration.Tests.CodeGenerationProviders;
+﻿namespace CodeGeneration.Tests.CodeGenerationProviders;
 
 public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 {
@@ -177,37 +166,4 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             ? $"DialogFramework.Core.DomainModel.DialogParts.Builders.{name}"
             : $"DialogFramework.Core.DomainModel.Builders.{name}";
     }
-
-    protected static Type[] GetCoreModelTypes()
-        => new[]
-        {
-            typeof(IDialogContext)
-        };
-
-    protected static Type[] GetDomainModelModelTypes()
-        => new[]
-        {
-            typeof(IDecision),
-            typeof(IDialog),
-            typeof(IDialogIdentifier),
-            typeof(IDialogMetadata),
-            typeof(IDialogPartGroup),
-            typeof(IDialogPartResult),
-            typeof(IDialogPartResultDefinition),
-            typeof(IDialogPartResultValue),
-            typeof(IDialogValidationResult),
-        };
-
-    protected static Type[] GetDialogPartModelTypes()
-        => new[]
-        {
-            typeof(IAbortedDialogPart),
-            typeof(ICompletedDialogPart),
-            typeof(IDecisionDialogPart),
-            typeof(IErrorDialogPart),
-            typeof(IMessageDialogPart),
-            typeof(INavigationDialogPart),
-            typeof(IQuestionDialogPart),
-            typeof(IRedirectDialogPart),
-        };
 }

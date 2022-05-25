@@ -9,5 +9,5 @@ public class DialogPartRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(GetDialogPartModelTypes(), "DialogFramework.Core.DomainModel.DialogParts");
+        => GetImmutableClasses(GetDialogPartModels(), "DialogFramework.Core.DomainModel.DialogParts");
 }

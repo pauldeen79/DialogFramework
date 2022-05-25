@@ -9,7 +9,7 @@ public class DomainModelBuilders : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableBuilderClasses(GetDomainModelModelTypes(),
+        => GetImmutableBuilderClasses(GetDomainModelModels(),
                                       "DialogFramework.Core.DomainModel",
                                       "DialogFramework.Core.DomainModel.Builders");
 }

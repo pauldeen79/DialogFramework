@@ -9,5 +9,5 @@ public class DomainModelRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(GetDomainModelModelTypes(), "DialogFramework.Core.DomainModel");
+        => GetImmutableClasses(GetDomainModelModels(), "DialogFramework.Core.DomainModel");
 }

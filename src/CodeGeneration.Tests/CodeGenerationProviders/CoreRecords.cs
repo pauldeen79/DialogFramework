@@ -9,5 +9,5 @@ public class CoreRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(GetCoreModelTypes(), "DialogFramework.Core");
+        => GetImmutableClasses(GetCoreModels(), "DialogFramework.Core");
 }
