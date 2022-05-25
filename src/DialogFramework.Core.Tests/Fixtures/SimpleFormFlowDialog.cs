@@ -4,13 +4,30 @@ public static class SimpleFormFlowDialog
 {
     public static IDialog Create()
     {
-        var getInformationGroupBuider = new DialogPartGroupBuilder().WithId("Get information").WithNumber(1).WithTitle("Get information");
-        var completedGroupBuilder = new DialogPartGroupBuilder().WithId("Completed").WithNumber(2).WithTitle("Completed");
+        var getInformationGroupBuider = new DialogPartGroupBuilder()
+            .WithId("Get information")
+            .WithNumber(1)
+            .WithTitle("Get information");
+        var completedGroupBuilder = new DialogPartGroupBuilder()
+            .WithId("Completed")
+            .WithNumber(2)
+            .WithTitle("Completed");
         return new DialogBuilder()
-            .WithMetadata(new DialogMetadataBuilder().WithId("SimpleFormFlowDialog").WithFriendlyName("Simple form flow dialog").WithVersion("1.0.0"))
-            .WithAbortedPart(new AbortedDialogPartBuilder().WithId("Aborted").WithMessage("The dialog is aborted. You can come back any time to start the application again."))
-            .WithErrorPart(new ErrorDialogPartBuilder().WithId("Error").WithErrorMessage("Something went wrong. Please try again, or contact us in case the problem persists."))
-            .WithCompletedPart(new CompletedDialogPartBuilder().WithId("Completed").WithHeading("Completed").WithMessage("Thank you for using this application. Please come back soon!").WithGroup(completedGroupBuilder))
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithId("SimpleFormFlowDialog")
+                .WithFriendlyName("Simple form flow dialog")
+                .WithVersion("1.0.0"))
+            .WithAbortedPart(new AbortedDialogPartBuilder()
+                .WithId("Aborted")
+                .WithMessage("The dialog is aborted. You can come back any time to start the application again."))
+            .WithErrorPart(new ErrorDialogPartBuilder()
+                .WithId("Error")
+                .WithErrorMessage("Something went wrong. Please try again, or contact us in case the problem persists."))
+            .WithCompletedPart(new CompletedDialogPartBuilder()
+                .WithId("Completed")
+                .WithHeading("Completed")
+                .WithMessage("Thank you for using this application. Please come back soon!")
+                .WithGroup(completedGroupBuilder))
             .AddParts
             (
                 new DialogPartBuilder

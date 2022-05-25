@@ -6,120 +6,36 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act
-        var context = sut.Start(dialog!.Metadata);
+        var context = sut.Start(dialog.Metadata);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new TextDialogPartResultValue("email@address.com")
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue("911")
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
         ); // ContactInfo -> Newsletter
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new YesNoDialogPartResultValue(false)
-            )
-        ); // Newsletter -> Completed
-
-        // Assert
-        context.CurrentState.Should().Be(DialogState.Completed);
-        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
-        context.CurrentPart.Id.Should().Be("Completed");
-        context.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
-        {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
-        });
-        context.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
-        {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
-        });
-    }
-
-    [Fact]
-    public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
-    {
-        // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
-
-        // Act
-        var context = sut.Start(dialog!.Metadata);
-        context.CurrentPart.Id.Should().Be("ContactInfo");
-        context = sut.Continue
-        (
-            context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new TextDialogPartResultValue("wrong@address.com")
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue("911")
-            )
-        ); // ContactInfo -> Newsletter
-        context = sut.Continue
-        (
-            context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new YesNoDialogPartResultValue(true)
-            )
-        ); // Newsletter -> Completed
-        context = sut.NavigateTo(context, dialog!.Parts.Single(x => x.Id == "ContactInfo")); // navigate back: Completed -> ContactInfo
-        context = sut.Continue
-        (
-            context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new TextDialogPartResultValue("email@address.com")
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue("911")
-            )
-        ); // ContactInfo -> Newsletter
-        context = sut.Continue
-        (
-            context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new YesNoDialogPartResultValue(false)
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
         ); // Newsletter -> Completed
 
         // Assert
@@ -128,12 +44,111 @@ public class SimpleFormFlowDialogTests
         context.CurrentPart.Id.Should().Be("Completed");
         context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
         });
         context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
         {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            new DialogPartResultBuilder()
+                .WithDialogPartId("Newsletter")
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
+        });
+    }
+
+    [Fact]
+    public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
+    {
+        // Arrange
+        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var factory = new DialogContextFactory();
+        var repository = new TestDialogRepository();
+        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+
+        // Act
+        var context = sut.Start(dialog.Metadata);
+        context.CurrentPart.Id.Should().Be("ContactInfo");
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("wrong@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
+        ); // ContactInfo -> Newsletter
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+                .Build()
+        ); // Newsletter -> Completed
+        context = sut.NavigateTo(context, dialog.Parts.Single(x => x.Id == "ContactInfo")); // navigate back: Completed -> ContactInfo
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
+        ); // ContactInfo -> Newsletter
+        context = sut.Continue
+        (
+            context,
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
+        ); // Newsletter -> Completed
+
+        // Assert
+        context.CurrentState.Should().Be(DialogState.Completed);
+        context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        context.CurrentPart.Id.Should().Be("Completed");
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
+        });
+        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        {
+            new DialogPartResultBuilder()
+                .WithDialogPartId("Newsletter")
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
         });
     }
 
@@ -141,67 +156,68 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_In_Different_Session()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
+        var dialog = SimpleFormFlowDialog.Create();
         var factory = new DialogContextFactory();
         var repository = new TestDialogRepository();
         var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
 
         // Act step 1: Start a session, submit first question
-        var context = sut.Start(dialog!.Metadata);
+        var context = sut.Start(dialog.Metadata);
         context.CurrentPart.Id.Should().Be("ContactInfo");
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new TextDialogPartResultValue("email@address.com")
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue("911")
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
         ); // ContactInfo -> Newsletter
 
-        var settings = new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented,
-            Converters = new[] { new StringEnumConverter() }
-        };
-
         // Serialize
-        var json = JsonConvert.SerializeObject(context, settings);
+        var json = JsonSerializerFixture.Serialize(context);
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var context2 = JsonConvert.DeserializeObject<DialogContext>(json, settings);
+        var context2 = JsonSerializerFixture.Deserialize<DialogContext>(json);
         var result = sut.Continue
         (
             context2,
-            new DialogPartResult
-            (
-                context2.CurrentPart.Id,
-                "SignUpForNewsletter",
-                new YesNoDialogPartResultValue(false)
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context2.CurrentPart.Id)
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
         ); // Newsletter -> Completed
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPart.Id.Should().Be("Completed");
-        result.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
         {
-            new DialogPartResult("ContactInfo", "EmailAddress", new TextDialogPartResultValue("email@address.com")),
-            new DialogPartResult("ContactInfo", "TelephoneNumber", new TextDialogPartResultValue("911"))
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId("ContactInfo")
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
         });
-        result.GetDialogPartResultsByPart(dialog!.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
         {
-            new DialogPartResult("Newsletter", "SignUpForNewsletter", new YesNoDialogPartResultValue(false))
+            new DialogPartResultBuilder()
+                .WithDialogPartId("Newsletter")
+                .WithResultId("SignUpForNewsletter")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                .Build()
         });
     }
 
@@ -220,18 +236,16 @@ public class SimpleFormFlowDialogTests
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new NumberDialogPartResultValue(911)
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new YesNoDialogPartResultValue(true)
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new NumberDialogPartResultValueBuilder().WithValue(911))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+                .Build()
         ); // Current part remains ContactInfo because of validation errors
 
         // Assert
@@ -264,18 +278,16 @@ public class SimpleFormFlowDialogTests
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new TextDialogPartResultValue(string.Empty)
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue(null)
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue(string.Empty))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue((object?)null))
+                .Build()
         ); // Current part remains ContactInfo because of validation errors
 
         // Assert
@@ -333,18 +345,16 @@ public class SimpleFormFlowDialogTests
         context = sut.Continue
         (
             context,
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "EmailAddress",
-                new NumberDialogPartResultValue(1)
-            ),
-            new DialogPartResult
-            (
-                context.CurrentPart.Id,
-                "TelephoneNumber",
-                new TextDialogPartResultValue("911")
-            )
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("EmailAddress")
+                .WithValue(new NumberDialogPartResultValueBuilder().WithValue(1))
+                .Build(),
+            new DialogPartResultBuilder()
+                .WithDialogPartId(context.CurrentPart.Id)
+                .WithResultId("TelephoneNumber")
+                .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+                .Build()
         ); // Current part remains ContactInfo because of validation errors
 
         // Assert

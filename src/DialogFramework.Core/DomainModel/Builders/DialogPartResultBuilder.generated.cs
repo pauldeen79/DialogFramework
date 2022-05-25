@@ -101,7 +101,7 @@ namespace DialogFramework.Core.DomainModel.Builders
             #pragma warning disable CS8603 // Possible null reference return.
             _dialogPartIdDelegate = new (() => string.Empty);
             _resultIdDelegate = new (() => string.Empty);
-            _valueDelegate = new (() => default);
+            _valueDelegate = new (() => new DialogFramework.Core.DomainModel.DialogPartResultValues.Builders.EmptyDialogPartResultValueBuilder());
             #pragma warning restore CS8603 // Possible null reference return.
         }
 

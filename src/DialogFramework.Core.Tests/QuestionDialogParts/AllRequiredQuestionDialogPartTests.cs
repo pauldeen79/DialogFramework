@@ -12,9 +12,12 @@ public class AllRequiredQuestionDialogPartTests
         var dialogRepositoryMock = new Mock<IDialogRepository>();
         dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
         var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(sut.Id)
+            .Build();
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithValue(new DialogPartResultValueBuilder()).Build() });
+        var actual = service.Continue(context, new[] { result });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
@@ -33,9 +36,14 @@ public class AllRequiredQuestionDialogPartTests
         var dialogRepositoryMock = new Mock<IDialogRepository>();
         dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
         var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(sut.Id)
+            .WithResultId("A")
+            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .Build();
 
         // Act
-        var actual = service.Continue(context, new[] { new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new DialogPartResultValueBuilder().WithResultValueType(ResultValueType.YesNo).WithValue(true)).Build() });
+        var actual = service.Continue(context, new[] { result });
 
         // Assert
         actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
@@ -58,8 +66,8 @@ public class AllRequiredQuestionDialogPartTests
         // Act
         var actual = service.Continue(context, new[]
         {
-            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new DialogPartResultValueBuilder().WithResultValueType(ResultValueType.YesNo).WithValue(true)).Build(),
-            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("B").WithValue(new DialogPartResultValueBuilder().WithResultValueType(ResultValueType.YesNo).WithValue(true)).Build()
+            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
+            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("B").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
         });
 
         // Assert

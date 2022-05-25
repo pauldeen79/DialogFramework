@@ -7,13 +7,12 @@ public class SerializationTests
     {
         // Arrange
         var dialogToSerialize = SimpleFormFlowDialog.Create();
-        var settings = CreateJsonSerializerSetetings();
 
         // Serialize
-        var json = JsonConvert.SerializeObject(dialogToSerialize, settings);
+        var json = JsonSerializerFixture.Serialize(dialogToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonConvert.DeserializeObject<Dialog>(json, settings);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -24,13 +23,12 @@ public class SerializationTests
     {
         // Arrange
         var dialogToSerialize = TestFlowDialog.Create();
-        var settings = CreateJsonSerializerSetetings();
 
         // Serialize
-        var json = JsonConvert.SerializeObject(dialogToSerialize, settings);
+        var json = JsonSerializerFixture.Serialize(dialogToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonConvert.DeserializeObject<Dialog>(json, settings);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -41,24 +39,14 @@ public class SerializationTests
     {
         // Arrange
         var dialogContextToSerialize = new DialogContextFactory().Create(SimpleFormFlowDialog.Create());
-        var settings = CreateJsonSerializerSetetings();
 
         // Serialize
-        var json = JsonConvert.SerializeObject(dialogContextToSerialize, settings);
+        var json = JsonSerializerFixture.Serialize(dialogContextToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonConvert.DeserializeObject<DialogContext>(json, settings);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContext>(json);
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);
     }
-
-    private static JsonSerializerSettings CreateJsonSerializerSetetings()
-        => new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto,
-            NullValueHandling = NullValueHandling.Ignore,
-            Formatting = Formatting.Indented,
-            Converters = new[] { new StringEnumConverter() }
-        };
 }

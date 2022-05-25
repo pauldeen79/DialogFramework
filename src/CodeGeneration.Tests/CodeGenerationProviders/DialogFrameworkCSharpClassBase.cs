@@ -117,6 +117,11 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             {
                 property.WithConstructorNullCheck(false);
             }
+
+            if (property.TypeName == typeof(IDialogPartResultValue).FullName)
+            {
+                property.SetDefaultValueForBuilderClassConstructor(new Literal("new DialogFramework.Core.DomainModel.DialogPartResultValues.Builders.EmptyDialogPartResultValueBuilder()"));
+            }
         }
 
         if (classBuilder.Name == "DialogContext")
