@@ -2,12 +2,12 @@
 
 public class DialogPartRecords : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.UniversalModel/DomainModel/DialogParts";
+    public override string Path => "DialogFramework.Core/DomainModel/DialogParts";
 
     public override string DefaultFileName => "Entities.generated.cs";
 
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(GetDialogPartModelTypes(), "DialogFramework.UniversalModel.DomainModel.DialogParts");
+        => GetImmutableClasses(GetDialogPartModelTypes(), "DialogFramework.Core.DomainModel.DialogParts");
 }

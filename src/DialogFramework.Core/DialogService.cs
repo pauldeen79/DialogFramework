@@ -95,7 +95,7 @@ public class DialogService : IDialogService
                 }
             }
 
-            return context.Continue(nextPart, nextPart.State);
+            return context.Continue(nextPart, nextPart.GetState());
         }
         catch (Exception ex)
         {

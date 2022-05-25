@@ -8,7 +8,7 @@ public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidat
         var definedResultCount = (dialog.GetPartById(context.CurrentPart.Id) as IQuestionDialogPart)?.Results?.Count ?? 0;
         if (submittedPartCount != definedResultCount)
         {
-            yield return new DialogValidationResult($"All {definedResultCount} answers are required");
+            yield return new DialogValidationResult($"All {definedResultCount} answers are required", new ValueCollection<string>());
         }
     }
 }

@@ -1,121 +1,174 @@
 ﻿namespace DialogFramework.Core.Tests.Fixtures;
 
-public record TestFlowDialog : Dialog
+public static class TestFlowDialog
 {
-    private static readonly IDialogPartGroup WelcomeGroup = new DialogPartGroup("Welcome", "Welcome", 1);
-    private static readonly IDialogPartGroup GetInformationGroup = new DialogPartGroup("Get information", "Get information", 2);
-    private static readonly IDialogPartGroup CompletedGroup = new DialogPartGroup("Completed", "Completed", 3);
-    private static readonly IDialogPart EmailPart = new QuestionDialogPart("Email", "E-mail address", "Thank you for using this application. You can leave your e-mail address in case you have comments or questions.", CompletedGroup, new[] { new DialogPartResultDefinition("EmailAddress", "E-mail address", ResultValueType.Text) }, new IQuestionDialogPartValidator[] { new SingleOptionalQuestionDialogPartValidator() });
-
-    public TestFlowDialog() : base(
-        new DialogMetadata(nameof(TestFlowDialog), "Test flow dialog", "1.0.0", true),
-        new IDialogPart[]
-        {
-            new MessageDialogPart("Welcome", "Welcome", "Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.", WelcomeGroup),
-            new QuestionDialogPart
-            (
-                "Age",
-                "Age",
-                "How old are you?",
-                GetInformationGroup,
-                new IDialogPartResultDefinition[]
-                {
-                    new DialogPartResultDefinition("<10", "0 to 9 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("10-19", "10 to 19 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("20-29", "20 to 29 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("30-39", "30 to 39 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("40-49", "40 to 49 years old", ResultValueType.None),
-                    new DialogPartResultDefinition("50+", "Older than 50 years", ResultValueType.None),
-                },
-                new IQuestionDialogPartValidator[]
-                {
-                    new SingleRequiredQuestionDialogPartValidator()
-                }
-            ),
-            new AgeDecisionDialogPart("AgeDecision"),
-            new MessageDialogPart("TooYoung", "Completed", "Too bad, you are too young. We can't give advice on kids.", CompletedGroup),
-            new StaticNavigationDialogPart("TooYoungNavigation", EmailPart.Id),
-            new QuestionDialogPart
-            (
-                "SportsTypes",
-                "Sports types",
-                "What type of sports do you do?",
-                GetInformationGroup,
-                new IDialogPartResultDefinition[]
-                {
-                    new DialogPartResultDefinition("Bicycle", "Bicycle riding", ResultValueType.None),
-                    new DialogPartResultDefinition("Soccer", "Socced", ResultValueType.None),
-                    new DialogPartResultDefinition("Swimming", "Swimming", ResultValueType.None),
-                    new DialogPartResultDefinition("Aerobics", "Aerobics", ResultValueType.None),
-                    new DialogPartResultDefinition("Tennis", "Tennis", ResultValueType.None),
-                    new DialogPartResultDefinition("Baseball", "Baseball", ResultValueType.None),
-                    new DialogPartResultDefinition("Hockey", "Hockey", ResultValueType.None),
-                    new DialogPartResultDefinition("Other", "Other sports (please specify)", ResultValueType.Text),
-                },
-                Enumerable.Empty<IQuestionDialogPartValidator>()
-            ),
-            new SportsTypeDecisionDialogPart("SportsTypeDecision"),
-            new MessageDialogPart("Healthy", "Healthy", "You're all good! Keep up the good work.", CompletedGroup),
-            new StaticNavigationDialogPart("HealthyNavigation", EmailPart.Id),
-            new MessageDialogPart("Unhealthy", "Unhealthy", "Our advice: It's time to do some sports, mate!", CompletedGroup),
-            new StaticNavigationDialogPart("UnhealthyNavigation", EmailPart.Id),
-            EmailPart
-        },
-        new ErrorDialogPart("Error", "Something went wrong. Please try again, or contact us in case the problem persists.", null),
-        new AbortedDialogPart("Aborted", "The dialog is aborted. You can come back any time to start the application again."),
-        new CompletedDialogPart("Completed", "Completed", "Thank you for using this application. Please come back soon!", CompletedGroup),
-        new[] { WelcomeGroup, GetInformationGroup, CompletedGroup }
-        )
+    public static IDialog Create()
     {
+        var welcomeGroupBuilder = new DialogPartGroupBuilder().WithId("Welcome").WithNumber(1).WithTitle("Welcome");
+        var getInformationGroupBuider = new DialogPartGroupBuilder().WithId("Get information").WithNumber(2).WithTitle("Get information");
+        var completedGroupBuilder = new DialogPartGroupBuilder().WithId("Completed").WithNumber(3).WithTitle("Completed");
+        return new DialogBuilder()
+            .WithMetadata(new DialogMetadataBuilder().WithId("TestFlowDialog").WithFriendlyName("Test flow dialog").WithVersion("1.0.0"))
+            .WithAbortedPart(new AbortedDialogPartBuilder().WithId("Aborted").WithMessage("The dialog is aborted. You can come back any time to start the application again."))
+            .WithErrorPart(new ErrorDialogPartBuilder().WithId("Error").WithErrorMessage("Something went wrong. Please try again, or contact us in case the problem persists."))
+            .WithCompletedPart(new CompletedDialogPartBuilder().WithId("Completed").WithHeading("Completed").WithMessage("Thank you for using this application. Please come back soon!").WithGroup(completedGroupBuilder))
+            .AddParts
+            (
+                new DialogPartBuilder
+                (
+                    new MessageDialogPartBuilder()
+                        .WithId("Welcome")
+                        .WithHeading("Welcome")
+                        .WithGroup(welcomeGroupBuilder)
+                        .WithMessage("Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.")
+                ),
+                new DialogPartBuilder
+                (
+                    new QuestionDialogPartBuilder()
+                        .WithId("Age")
+                        .WithHeading("Age")
+                        .WithGroup(getInformationGroupBuider)
+                        .WithTitle("How old are you?")
+                        .AddResults
+                        (
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("<10")
+                                .WithTitle("0 to 9 years old"),
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("10-19")
+                                .WithTitle("10 to 19 years old"),
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("20-29")
+                                .WithTitle("20 to 29 years old"),
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("30-39")
+                                .WithTitle("30 to 39 years old"),
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("40-49")
+                                .WithTitle("40 to 49 years old"),
+                            new DialogPartResultDefinitionBuilder()
+                                .WithId("50+")
+                                .WithTitle("Older than 50 years")
+                        )
+                        .AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator()))
+                ),
+                new DialogPartBuilder
+                (
+                    new DecisionDialogPartBuilder()
+                        .WithId("AgeDecision")
+                        .AddDecisions
+                        (
+                            new DecisionBuilder()
+                                .AddConditions
+                                (
+                                    new ConditionBuilder()
+                                        .WithLeftExpression
+                                        (
+                                            new GetDialogPartResultIdsByPartExpressionBuilder()
+                                                .WithDialogPartId("Age")
+                                                .WithFunction(new ContainsFunctionBuilder().WithObjectToContain("<10"))
+                                        )
+                                        .WithOperator(Operator.Equal)
+                                        .WithRightExpression(new ConstantExpressionBuilder().WithValue(true))
+                                ).WithNextPartId("TooYoung")
+                        ).WithDefaultNextPartId("SportsTypes")
+                ),
+                new DialogPartBuilder
+                (
+                    new MessageDialogPartBuilder()
+                        .WithId("TooYoung")
+                        .WithHeading("Completed")
+                        .WithGroup(completedGroupBuilder)
+                        .WithMessage("Too bad, you are too young. We can't give advice on kids.")
+                ),
+                new DialogPartBuilder
+                (
+                    new NavigationDialogPartBuilder()
+                        .WithId("TooYoungNavigation")
+                        .WithNavigateToId("Email")
+                ),
+                new DialogPartBuilder
+                (
+                    new QuestionDialogPartBuilder()
+                        .WithId("SportsTypes")
+                        .WithHeading("Sports types")
+                        .WithGroup(getInformationGroupBuider)
+                        .WithTitle("What type of sports do you do?")
+                        .AddResults
+                        (
+                            new DialogPartResultDefinitionBuilder().WithId("Bicycle").WithTitle("Bicycle riding"),
+                            new DialogPartResultDefinitionBuilder().WithId("Soccer").WithTitle("Soccer"),
+                            new DialogPartResultDefinitionBuilder().WithId("Swimming").WithTitle("Swimming"),
+                            new DialogPartResultDefinitionBuilder().WithId("Aerobics").WithTitle("Aerobics"),
+                            new DialogPartResultDefinitionBuilder().WithId("Tennis").WithTitle("Tennis"),
+                            new DialogPartResultDefinitionBuilder().WithId("Baseball").WithTitle("Baseball"),
+                            new DialogPartResultDefinitionBuilder().WithId("Hockey").WithTitle("Hockey"),
+                            new DialogPartResultDefinitionBuilder().WithId("Other").WithTitle("Other sports (please specify)").WithValueType(ResultValueType.Text)
+                        )
+                ),
+                new DialogPartBuilder
+                (
+                    new DecisionDialogPartBuilder()
+                        .WithId("SportsTypeDecision")
+                        .AddDecisions
+                        (
+                            new DecisionBuilder()
+                                .AddConditions
+                                (
+                                    new ConditionBuilder()
+                                        .WithLeftExpression
+                                        (
+                                            new GetDialogPartResultValuesByPartExpressionBuilder()
+                                                .WithDialogPartId("SportsTypes")
+                                                .WithFunction(new CountFunctionBuilder())
+                                        )
+                                        .WithOperator(Operator.Greater)
+                                        .WithRightExpression(new ConstantExpressionBuilder().WithValue(0))
+                                ).WithNextPartId("Healthy")
+                        ).WithDefaultNextPartId("Unhealthy")
+                ),
+                new DialogPartBuilder
+                (
+                    new MessageDialogPartBuilder()
+                        .WithId("Healthy")
+                        .WithHeading("Healthy")
+                        .WithGroup(completedGroupBuilder)
+                        .WithMessage("You're all good! Keep up the good work.")
+                ),
+                new DialogPartBuilder
+                (
+                    new NavigationDialogPartBuilder()
+                        .WithId("HealthyNavigation")
+                        .WithNavigateToId("Email")
+                ),
+                new DialogPartBuilder
+                (
+                    new MessageDialogPartBuilder()
+                        .WithId("Unhealthy")
+                        .WithHeading("Unhealthy")
+                        .WithGroup(completedGroupBuilder)
+                        .WithMessage("Our advice: It's time to do some sports, mate!")
+                ),
+                new DialogPartBuilder
+                (
+                    new NavigationDialogPartBuilder()
+                        .WithId("UnhealthyNavigation")
+                        .WithNavigateToId("Email")
+                ),
+                new DialogPartBuilder
+                (
+                    new QuestionDialogPartBuilder()
+                        .WithId("Email")
+                        .WithHeading("E-mail address")
+                        .WithGroup(completedGroupBuilder)
+                        .WithTitle("Thank you for using this application. You can leave your e-mail address in case you have comments or questions.")
+                        .AddResults
+                        (
+                            new DialogPartResultDefinitionBuilder().WithId("EmailAddress").WithTitle("E-mail address").WithValueType(ResultValueType.Text)
+                        )
+                )
+            )
+            .AddPartGroups(welcomeGroupBuilder, getInformationGroupBuider, completedGroupBuilder)
+            .Build();
     }
 }
-
-/*
-Test flow
-
-1. Welcome! (Message)
-   Welcome to the health advisor application
-
-2. How old are you? (Question, single answer)
-   A. 0-10 years old
-   B. 10-20 years old
-   C. 20-30 years old
-   D. 30-40 yeard old
-   E. 40-50 years old
-   F. older than 50 years
-
-3. Decision: A -> 4. TooYoung
-             B -> 5. SportsType
-			 
-4. TooYoung (Message)
-   Too bad! This application is not built for your age. You are too young.
-   
-Redirect/forward to mail
- 
-5. SportsType
-   What type of sports do you do? (Question, multiple answers)
-   A. Bicycle
-   B. Soccer
-   C. Swimming
-   D. Aerobics
-   E. Other: ... (free text)
-
-6. Decision: none     -> 7. Unhealthy
-             not none -> 8. Healthy
-
-7. Unhealthy (Message)
-   Our advice is to do some sports.
-
-Redirect/forward to mail
-
-8. Healthy (Message)
-   You're all good!
-
-Redirect/forward to mail
-
-9. Mail (Question, single answer)
-   If you want to, you could provide your e-mail address so we can contact you.
-   A. e-mail adress (text, validate for e-mail address)
-
-10. Thank you!
-*/

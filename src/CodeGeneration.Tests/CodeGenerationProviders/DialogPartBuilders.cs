@@ -2,7 +2,7 @@
 
 public class DialogPartBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.UniversalModel/DomainModel/DialogParts/Builders";
+    public override string Path => "DialogFramework.Core/DomainModel/DialogParts/Builders";
 
     public override string DefaultFileName => "Builders.generated.cs";
 
@@ -10,6 +10,6 @@ public class DialogPartBuilders : DialogFrameworkCSharpClassBase
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(GetDialogPartModelTypes(),
-                                      "DialogFramework.UniversalModel.DomainModel.DialogParts",
-                                      "DialogFramework.UniversalModel.DomainModel.DialogParts.Builders");
+                                      "DialogFramework.Core.DomainModel.DialogParts",
+                                      "DialogFramework.Core.DomainModel.DialogParts.Builders");
 }

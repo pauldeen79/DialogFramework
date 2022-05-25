@@ -7,11 +7,11 @@ public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartVali
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
         if (answerCount == 0)
         {
-            yield return new DialogValidationResult("Answer is required");
+            yield return new DialogValidationResult("Answer is required", new ValueCollection<string>());
         }
         else if (answerCount > 1)
         {
-            yield return new DialogValidationResult("Only one answer is allowed");
+            yield return new DialogValidationResult("Only one answer is allowed", new ValueCollection<string>());
         }
     }
 }

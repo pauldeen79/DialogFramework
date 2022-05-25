@@ -2,11 +2,12 @@
 
 internal class TestDialogRepository : IDialogRepository
 {
-    private static readonly IDialog[] _dialogs = new IDialog[]
+    private static readonly IDialog[] _dialogs = new[]
     {
-        DialogFixture.CreateDialog(true),
-        new TestFlowDialog(),
-        new SimpleFormFlowDialog()
+        DialogFixture.CreateBuilder().Build(),
+        DialogFixture.CreateHowDoYouFeelBuilder(true).Build(),
+        TestFlowDialog.Create(),
+        SimpleFormFlowDialog.Create()
     };
 
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()

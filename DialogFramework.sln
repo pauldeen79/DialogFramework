@@ -25,10 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Tests", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.Tests", "src\CodeGeneration.Tests\CodeGeneration.Tests.csproj", "{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.UniversalModel", "src\DialogFramework.UniversalModel\DialogFramework.UniversalModel.csproj", "{545D9CB5-E639-41CF-A8A4-D87EA848C5F4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.UniversalModel.Tests", "src\DialogFramework.UniversalModel.Tests\DialogFramework.UniversalModel.Tests.csproj", "{67346C42-1B9F-4DD9-9658-5C4D96E3307A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,14 +55,6 @@ Global
 		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Release|Any CPU.Build.0 = Release|Any CPU
-		{545D9CB5-E639-41CF-A8A4-D87EA848C5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{545D9CB5-E639-41CF-A8A4-D87EA848C5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{545D9CB5-E639-41CF-A8A4-D87EA848C5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{545D9CB5-E639-41CF-A8A4-D87EA848C5F4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{67346C42-1B9F-4DD9-9658-5C4D96E3307A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{67346C42-1B9F-4DD9-9658-5C4D96E3307A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{67346C42-1B9F-4DD9-9658-5C4D96E3307A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{67346C42-1B9F-4DD9-9658-5C4D96E3307A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

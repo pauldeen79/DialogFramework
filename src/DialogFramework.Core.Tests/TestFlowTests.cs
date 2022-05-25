@@ -18,7 +18,7 @@ public class TestFlowTests
         context.CurrentPart.Id.Should().Be("Age");
         context = sut.Continue(context); // How old are you -> empty answer -> validation error
         context.CurrentPart.Id.Should().Be("Age");
-        context = sut.Continue(context, new DialogPartResult(context.CurrentPart.Id, "10-19")); // How old are you -> 10-19 -> decision -> sports types
+        context = sut.Continue(context, new DialogPartResult(context.CurrentPart.Id, "10-19", new EmptyDialogPartResultValue())); // How old are you -> 10-19 -> decision -> sports types
         context.CurrentPart.Id.Should().Be("SportsTypes");
         context = sut.Continue(context); // Sports types -> empty answer -> unhealthy
         context.CurrentPart.Id.Should().Be("Unhealthy");

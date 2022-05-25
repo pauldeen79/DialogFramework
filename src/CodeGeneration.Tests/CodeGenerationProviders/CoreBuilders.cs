@@ -2,7 +2,7 @@
 
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.UniversalModel/Builders";
+    public override string Path => "DialogFramework.Core/Builders";
 
     public override string DefaultFileName => "Builders.generated.cs";
 
@@ -10,6 +10,6 @@ public class CoreBuilders : DialogFrameworkCSharpClassBase
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(GetCoreModelTypes(),
-                                      "DialogFramework.UniversalModel",
-                                      "DialogFramework.UniversalModel.Builders");
+                                      "DialogFramework.Core",
+                                      "DialogFramework.Core.Builders");
 }

@@ -166,17 +166,19 @@ public class SimpleFormFlowDialogTests
             )
         ); // ContactInfo -> Newsletter
 
-        // *** Now, just imagine at this point that the results are saved, and the user comes back at a later moment ***
-        // ...
-        // *** Hey, the user is back again! Let's continue ***
+        var settings = new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            NullValueHandling = NullValueHandling.Ignore,
+            Formatting = Formatting.Indented,
+            Converters = new[] { new StringEnumConverter() }
+        };
+
+        // Serialize
+        var json = JsonConvert.SerializeObject(context, settings);
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var dialog2 = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")); // simulate getting the dialog again, in a new session
-        var context2 = new DialogContextFixture(context.Id, dialog2!.Metadata, context.CurrentPart, context.CurrentState); // simulate creating a new context using data from an external context store
-        foreach (var answer in context.GetAllDialogPartResults()) // simulate filling the previously submitted answers again
-        {
-            context2.AddAnswer(answer);
-        }
+        var context2 = JsonConvert.DeserializeObject<DialogContext>(json, settings);
         var result = sut.Continue
         (
             context2,

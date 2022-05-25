@@ -1,31 +1,7 @@
 ﻿namespace DialogFramework.Core.DomainModel.DialogParts;
 
-public record QuestionDialogPart : IQuestionDialogPart
+public partial record QuestionDialogPart
 {
-    public QuestionDialogPart(string id,
-                              string heading,
-                              string title,
-                              IDialogPartGroup group,
-                              IEnumerable<IDialogPartResultDefinition> results,
-                              IEnumerable<IQuestionDialogPartValidator> validators)
-    {
-        Id = id;
-        Heading = heading;
-        Title = title;
-        Group = group;
-        Results = new ValueCollection<IDialogPartResultDefinition>(results);
-        Validators = new ValueCollection<IQuestionDialogPartValidator>(validators);
-        ValidationErrors = new ValueCollection<IDialogValidationResult>();
-    }
-
-    public string Title { get; }
-    public string Heading { get; }
-    public IDialogPartGroup Group { get; }
-    public ValueCollection<IDialogPartResultDefinition> Results { get; }
-    public ValueCollection<IQuestionDialogPartValidator> Validators { get; }
-    public string Id { get; }
-    public ValueCollection<IDialogValidationResult> ValidationErrors { get; }
-    public DialogState State => DialogState.InProgress;
     public IDialogPart? Validate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
     {
         ValidationErrors.Clear();
@@ -47,7 +23,7 @@ public record QuestionDialogPart : IQuestionDialogPart
         {
             if (dialogPartResult.DialogPartId != Id)
             {
-                ValidationErrors.Add(new DialogValidationResult("Provided answer from wrong question"));
+                ValidationErrors.Add(new DialogValidationResult("Provided answer from wrong question", new ValueCollection<string>()));
                 continue;
             }
             if (string.IsNullOrEmpty(dialogPartResult.ResultId))
@@ -57,14 +33,14 @@ public record QuestionDialogPart : IQuestionDialogPart
             var dialogPartResultDefinition = Results.SingleOrDefault(x => x.Id == dialogPartResult.ResultId);
             if (dialogPartResultDefinition == null)
             {
-                ValidationErrors.Add(new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]"));
+                ValidationErrors.Add(new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]", new ValueCollection<string>()));
             }
             else
             {
                 var resultValueType = dialogPartResultDefinition.ValueType;
                 if (dialogPartResult.Value.ResultValueType != resultValueType)
                 {
-                    ValidationErrors.Add(new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered"));
+                    ValidationErrors.Add(new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered", new ValueCollection<string>()));
                 }
             }
         }

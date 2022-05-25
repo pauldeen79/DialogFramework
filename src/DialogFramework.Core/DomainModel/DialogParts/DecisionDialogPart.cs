@@ -1,15 +1,11 @@
 ﻿namespace DialogFramework.Core.DomainModel.DialogParts;
 
-public abstract record DecisionDialogPart : IDecisionDialogPart
+public partial record DecisionDialogPart
 {
-    protected DecisionDialogPart(string id, IEnumerable<IDecision> decisions)
+    public string GetNextPartId(IDialogContext context, IDialog dialog, IConditionEvaluator evaluator)
     {
-        Id = id;
-        Decisions = new ValueCollection<IDecision>(decisions);
+        var ctx = new Tuple<IDialogContext, IDialog>(context, dialog);
+        return Decisions.FirstOrDefault(x => evaluator.Evaluate(ctx, x.Conditions))?.NextPartId
+            ?? DefaultNextPartId.WhenNullOrEmpty(() => throw new NotSupportedException("There is no decision for this path"));
     }
-
-    public abstract string GetNextPartId(IDialogContext context, IDialog dialog, IConditionEvaluator evaluator);
-    public string Id { get; }
-    public DialogState State => DialogState.InProgress;
-    public ValueCollection<IDecision> Decisions { get; }
 }

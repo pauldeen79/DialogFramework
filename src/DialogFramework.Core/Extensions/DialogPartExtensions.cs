@@ -9,4 +9,12 @@ internal static class DialogPartExtensions
         => part is IQuestionDialogPart questionDialogPart
             ? questionDialogPart.Validate(context, dialog, providedAnswers)
             : null;
+
+    internal static DialogState GetState(this IDialogPart part)
+    {
+        if (part is IAbortedDialogPart) return DialogState.Aborted;
+        if (part is ICompletedDialogPart) return DialogState.Completed;
+        if (part is IErrorDialogPart) return DialogState.ErrorOccured;
+        return DialogState.InProgress;
+    }
 }
