@@ -9,18 +9,6 @@ public class CodeGenerationTests
         dryRun: true
     );
 
-    // Bootstrap test that generates c# code for the model used in code generation :)
-    [Fact]
-    public void Can_Generate_Model_For_DialogFramework()
-    {
-        // Act & Assert
-        var multipleContentBuilder = new MultipleContentBuilder(Settings.BasePath);
-        GenerateCode.For<CoreModels>(Settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartModels>(Settings, multipleContentBuilder);
-        GenerateCode.For<DomainModelModels>(Settings, multipleContentBuilder);
-        Verify(multipleContentBuilder);
-    }
-
     [Fact]
     public void Can_Generate_All_Classes_For_DialogFramework()
     {

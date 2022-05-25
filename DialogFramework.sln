@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Abstractions", "src\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj", "{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8} = {DBCEA97F-BE1E-4152-8BD5-910CA28466F8}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Core", "src\DialogFramework.Core\DialogFramework.Core.csproj", "{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}"
 EndProject
@@ -23,7 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework", "src\Dial
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Tests", "src\DialogFramework.Tests\DialogFramework.Tests.csproj", "{272DABF5-0303-4FDC-A8AC-68806E23C04B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration.Tests", "src\CodeGeneration.Tests\CodeGeneration.Tests.csproj", "{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Abstractions.Tests", "src\DialogFramework.Abstractions.Tests\DialogFramework.Abstractions.Tests.csproj", "{AFF43AC4-FC3C-4242-A9C6-6E658228BFA0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration", "src\CodeGeneration\CodeGeneration.csproj", "{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,10 +56,14 @@ Global
 		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB1A9198-8E51-4D12-83E6-1DFC7FFFDF43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFF43AC4-FC3C-4242-A9C6-6E658228BFA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFF43AC4-FC3C-4242-A9C6-6E658228BFA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFF43AC4-FC3C-4242-A9C6-6E658228BFA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFF43AC4-FC3C-4242-A9C6-6E658228BFA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

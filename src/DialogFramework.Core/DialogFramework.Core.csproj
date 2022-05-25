@@ -22,4 +22,9 @@
     <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Builders\" />
+    <Folder Include="DomainModel\DialogParts\Builders\" />
+  </ItemGroup>
+
 </Project>
