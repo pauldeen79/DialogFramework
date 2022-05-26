@@ -9,10 +9,10 @@ public class DialogPartBuilderTests
         var input = new QuestionDialogPartBuilder().WithId("Test").WithGroup(new DialogPartGroupBuilder()).Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IQuestionDialogPart>();
     }
 
     [Fact]
@@ -22,10 +22,10 @@ public class DialogPartBuilderTests
         var input = new AbortedDialogPartBuilder().WithId("Test").Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IAbortedDialogPart>();
     }
 
     [Fact]
@@ -35,10 +35,10 @@ public class DialogPartBuilderTests
         var input = new ErrorDialogPartBuilder().WithId("Test").Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IErrorDialogPart>();
     }
 
     [Fact]
@@ -48,10 +48,10 @@ public class DialogPartBuilderTests
         var input = new CompletedDialogPartBuilder().WithId("Test").WithGroup(new DialogPartGroupBuilder()).Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<ICompletedDialogPart>();
     }
 
     [Fact]
@@ -61,10 +61,10 @@ public class DialogPartBuilderTests
         var input = new MessageDialogPartBuilder().WithId("Test").WithGroup(new DialogPartGroupBuilder()).Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IMessageDialogPart>();
     }
 
     [Fact]
@@ -74,10 +74,10 @@ public class DialogPartBuilderTests
         var input = new DecisionDialogPartBuilder().WithId("Test").WithDefaultNextPartId("Test").Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IDecisionDialogPart>();
     }
 
     [Fact]
@@ -87,10 +87,10 @@ public class DialogPartBuilderTests
         var input = new NavigationDialogPartBuilder().WithId("Test").WithNavigateToId("Test").Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<INavigationDialogPart>();
     }
 
     [Fact]
@@ -100,9 +100,20 @@ public class DialogPartBuilderTests
         var input = new RedirectDialogPartBuilder().WithId("Test").WithRedirectDialogMetadata(new DialogMetadataBuilder()).Build();
 
         // Act
-        var sut = new DialogPartBuilder(input);
+        var sut = new DialogPartBuilder(input).Build();
 
         // Assert
-        sut.Should().BeOfType<DialogPartBuilder>();
+        sut.Should().BeAssignableTo<IRedirectDialogPart>();
+    }
+
+    [Fact]
+    public void Unknown_DialogPart_Type_Throws_On_Construction()
+    {
+        // Arrange
+        var unknownDialogType = new Mock<IDialogPart>().Object;
+        var constructingUnknownType = new Action(() => _ = new DialogPartBuilder(unknownDialogType));
+
+        // Act & Assert
+        constructingUnknownType.Should().Throw<ArgumentException>().WithMessage("Dialogpart type [Castle.Proxies.IDialogPartProxy] is not supported");
     }
 }
