@@ -1,5 +1,6 @@
 ﻿namespace CodeGeneration.CodeGenerationProviders;
 
+[ExcludeFromCodeCoverage]
 public class DialogPartRecords : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Core/DomainModel/DialogParts";

@@ -1,5 +1,6 @@
 ﻿namespace CodeGeneration.CodeGenerationProviders;
 
+[ExcludeFromCodeCoverage]
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Core/Builders";

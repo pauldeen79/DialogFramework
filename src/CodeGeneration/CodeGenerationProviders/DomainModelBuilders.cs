@@ -1,5 +1,6 @@
 ﻿namespace CodeGeneration.CodeGenerationProviders;
 
+[ExcludeFromCodeCoverage]
 public class DomainModelBuilders : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Core/DomainModel/Builders";

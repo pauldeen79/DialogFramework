@@ -1,5 +1,6 @@
 ﻿namespace CodeGeneration.CodeGenerationProviders;
 
+[ExcludeFromCodeCoverage]
 public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 {
     protected override bool CreateCodeGenerationHeader => true;
