@@ -216,7 +216,11 @@ public class DialogService : IDialogService
         if (dialogPart is IDecisionDialogPart decisionDialogPart)
         {
             var dialog = GetDialog(context.CurrentDialogIdentifier);
-            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog, _conditionEvaluator);
+            if (decisionDialogPart is IConditionEvaluatorContainer evaluatorContainer)
+            {
+                evaluatorContainer.ConditionEvaluator = _conditionEvaluator;
+            }
+            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog);
             return ProcessDecisions(dialog.GetPartById(nextPartId), context);
         }
 
