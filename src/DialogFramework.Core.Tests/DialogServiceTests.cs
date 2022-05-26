@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Core.Tests;
+﻿using DialogFramework.Core.Extensions;
+
+namespace DialogFramework.Core.Tests;
 
 public class DialogServiceTests
 {
@@ -84,6 +86,39 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.Aborted);
         result.CurrentPart.Should().Be(abortedPart);
         result.CurrentGroup.Should().BeNull();
+    }
+
+    [Fact]
+    public void Abort_Throws_When_Dialog_Could_Not_Be_Found()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var abort = new Action(() => sut.Abort(factory.Create(dialog)));
+
+        // Act
+        abort.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
+    }
+
+    [Fact]
+    public void Abort_Throws_When_Dialog_Retrieval_Throws()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var abort = new Action(() => sut.Abort(factory.Create(dialog)));
+
+        // Act
+        abort.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
     [Theory]
@@ -485,6 +520,39 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentGroup.Should().Be(completedPart.Group.Build());
         result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
+    }
+
+    [Fact]
+    public void Continue_Throws_When_Dialog_Could_Not_Be_Found()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var continuation = new Action(() => sut.Continue(factory.Create(dialog)));
+
+        // Act
+        continuation.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
+    }
+
+    [Fact]
+    public void Continue_Throws_When_Dialog_Retrieval_Throws()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var continuation = new Action(() => sut.Continue(factory.Create(dialog)));
+
+        // Act
+        continuation.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
     [Theory]
@@ -994,6 +1062,39 @@ public class DialogServiceTests
         result.CurrentPart.Id.Should().Be(messagePart.Id);
     }
 
+    [Fact]
+    public void NavigateTo_Throws_When_Dialog_Could_Not_Be_Found()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First()));
+
+        // Act
+        navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
+    }
+
+    [Fact]
+    public void NavigateTo_Throws_When_Dialog_Retrieval_Throws()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First()));
+
+        // Act
+        navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+    }
+
     [Theory]
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.Completed)]
@@ -1082,6 +1183,39 @@ public class DialogServiceTests
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
         result.CurrentPart.Id.Should().Be(dialog.ErrorPart.Id);
+    }
+
+    [Fact]
+    public void ResetCurrentState_Throws_When_Dialog_Could_Not_Be_Found()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialog)));
+
+        // Act
+        resetCurrentState.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
+    }
+
+    [Fact]
+    public void ResetCurrentState_Throws_When_Dialog_Retrieval_Throws()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialog)));
+
+        // Act
+        resetCurrentState.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
     private static DialogService CreateSut()
