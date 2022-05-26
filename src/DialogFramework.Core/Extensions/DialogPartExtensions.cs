@@ -17,4 +17,9 @@ internal static class DialogPartExtensions
         if (part is IErrorDialogPart) return DialogState.ErrorOccured;
         return DialogState.InProgress;
     }
+
+    internal static IDialogPartGroup? GetGroup(this IDialogPart part)
+        => part is IGroupedDialogPart groupedDialogPart
+            ? groupedDialogPart.Group
+            : null;
 }
