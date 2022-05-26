@@ -1,10 +1,19 @@
 ﻿namespace DialogFramework.Core.DomainModel.DialogParts;
 
-public abstract record DecisionDialogPart : IDecisionDialogPart
+public partial record DecisionDialogPart : IConditionEvaluatorContainer
 {
-    protected DecisionDialogPart(string id) => Id = id;
+    public IConditionEvaluator ConditionEvaluator { get; set; } = new DummyConditionEvaluator();
 
-    public abstract IDialogPart GetNextPart(IDialogContext context);
-    public string Id { get; }
-    public DialogState State => DialogState.InProgress;
+    public string GetNextPartId(IDialogContext context, IDialog dialog)
+    {
+        var ctx = new Tuple<IDialogContext, IDialog>(context, dialog);
+        return Decisions.FirstOrDefault(x => ConditionEvaluator.Evaluate(ctx, x.Conditions))?.NextPartId
+            ?? DefaultNextPartId.WhenNullOrEmpty(() => throw new NotSupportedException("There is no decision for this path"));
+    }
+
+    private sealed class DummyConditionEvaluator : IConditionEvaluator
+    {
+        public bool Evaluate(object? context, IEnumerable<ICondition> conditions)
+            => throw new NotSupportedException("ConditionEvaluator property was not set, this is probably a bug in the DialogService");
+    }
 }

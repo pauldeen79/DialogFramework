@@ -2,9 +2,22 @@
 
 public class DialogContextFactory : IDialogContextFactory
 {
-    public virtual bool CanCreate(IDialog dialog)
-        => true;
+    public bool CanCreate(IDialog dialog) => dialog is Dialog;
 
     public IDialogContext Create(IDialog dialog)
-        => new DialogContext(dialog);
+        => new DialogContext
+        (
+            Guid.NewGuid().ToString(),
+            dialog.Metadata,
+            new EmptyDialogPart(),
+            null,
+            DialogState.Initial,
+            new ValueCollection<IDialogPartResult>(),
+            null
+        );
+
+    private sealed class EmptyDialogPart : IDialogPart
+    {
+        public string Id => "Empty";
+    }
 }

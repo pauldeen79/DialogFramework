@@ -8,14 +8,15 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var context = new DialogContextFixture(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id) });
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, new EmptyDialogPartResultDefinition().Id, new EmptyDialogPartResultValue()) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -27,14 +28,15 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var context = new DialogContextFixture(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -47,14 +49,15 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(1, 2);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var context = new DialogContextFixture(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -67,14 +70,15 @@ public class OccurenceCountValidatorTests
         // Arrange
         var sut = new OccurenceCountValidator(2, 2);
         var dialogMock = new Mock<IDialog>();
-        var context = new DialogContext(dialogMock.Object);
+        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var context = new DialogContextFixture(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns("PartResultId");
 
         // Act
-        var actual = sut.Validate(context, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();

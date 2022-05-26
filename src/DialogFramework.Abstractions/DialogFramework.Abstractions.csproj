@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="pauldeen79.CrossCutting.Common" Version="2.7.6" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Abstractions" Version="0.2.19" />
   </ItemGroup>
 
 </Project>

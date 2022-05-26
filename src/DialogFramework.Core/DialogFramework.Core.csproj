@@ -15,7 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="pauldeen79.ExpressionFramework.Core" Version="0.2.19" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Builders\" />
+    <Folder Include="DomainModel\DialogParts\Builders\" />
   </ItemGroup>
 
 </Project>

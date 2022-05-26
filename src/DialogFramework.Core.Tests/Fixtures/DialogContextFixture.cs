@@ -1,16 +1,21 @@
 ﻿namespace DialogFramework.Core.Tests.Fixtures;
 
-internal class DialogContextFixture : DialogContext
+internal record DialogContextFixture : DialogContext
 {
-    public DialogContextFixture(IDialog currentDialog)
-        : base(currentDialog)
+    public DialogContextFixture(IDialogIdentifier currentDialogIdentifier)
+        : base(Guid.NewGuid().ToString(), currentDialogIdentifier, new EmptyDialogPart(), null, DialogState.Initial, new ValueCollection<IDialogPartResult>(), null)
     {
     }
 
-    public DialogContextFixture(string id, IDialog currentDialog, IDialogPart currentPart, DialogState currentState)
-        : base(id, currentDialog, currentPart, currentState)
+    public DialogContextFixture(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
+        : base(id, currentDialogIdentifier, currentPart, null, currentState, new ValueCollection<IDialogPartResult>(), null)
     {
     }
 
-    public void AddAnswer(IDialogPartResult result) => Answers.Add(result);
+    public void AddAnswer(IDialogPartResult result) => ((ValueCollection<IDialogPartResult>)Answers).Add(result);
+
+    private sealed class EmptyDialogPart : IDialogPart
+    {
+        public string Id => "Empty";
+    }
 }

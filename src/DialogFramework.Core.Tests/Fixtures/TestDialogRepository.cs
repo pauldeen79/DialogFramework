@@ -2,15 +2,15 @@
 
 internal class TestDialogRepository : IDialogRepository
 {
-    private static readonly IDialog[] _dialogs = new IDialog[]
+    private static readonly IDialog[] _dialogs = new[]
     {
-        new TestFlowDialog(),
-        new SimpleFormFlowDialog()
+        DialogFixture.CreateBuilder().Build(),
+        DialogFixture.CreateHowDoYouFeelBuilder().Build(),
     };
 
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
         => _dialogs.Select(x => x.Metadata);
 
-    public IDialog GetDialog(string id, string version)
-        => _dialogs.Single(x => x.Metadata.Id == id && x.Metadata.Version == version);
+    public IDialog? GetDialog(IDialogIdentifier identifier)
+        => _dialogs.SingleOrDefault(x => x.Metadata.Id == identifier.Id && x.Metadata.Version == identifier.Version);
 }

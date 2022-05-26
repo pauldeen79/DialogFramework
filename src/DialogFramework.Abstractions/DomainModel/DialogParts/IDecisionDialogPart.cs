@@ -2,5 +2,5 @@
 
 public interface IDecisionDialogPart : IDialogPart
 {
-    IDialogPart GetNextPart(IDialogContext context);
+    string GetNextPartId(IDialogContext context, IDialog dialog);
 }

@@ -1,0 +1,17 @@
+{
+  "Id": "64928bae-6393-48c9-a47d-1be9c4f36095",
+  "CurrentDialogIdentifier": {
+    "$type": "DialogFramework.UniversalModel.DomainModel.DialogMetadata, DialogFramework.UniversalModel",
+    "FriendlyName": "Simple form flow dialog",
+    "CanStart": true,
+    "Id": "SimpleFormFlowDialog",
+    "Version": "1.0.0"
+  },
+  "CurrentPart": {
+    "$type": "DialogFramework.UniversalModel.DialogContextFactory+EmptyDialogPart, DialogFramework.UniversalModel",
+    "Id": "Empty",
+    "State": "Initial"
+  },
+  "CurrentState": "Initial",
+  "Answers": []
+}

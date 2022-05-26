@@ -1,82 +1,36 @@
 ﻿namespace DialogFramework.Core;
 
-public class DialogContext : IDialogContext
+public partial record DialogContext
 {
-    public DialogContext(IDialog currentDialog)
-        : this(Guid.NewGuid().ToString(), currentDialog, new EmptyDialogPart(), DialogState.Initial)
-    {
-    }
-
-    protected DialogContext(string id,
-                            IDialog currentDialog,
-                            IDialogPart currentPart,
-                            DialogState currentState)
-    {
-        Answers = new List<IDialogPartResult>();
-        Id = id;
-        CurrentDialog = currentDialog;
-        CurrentPart = currentPart;
-        CurrentState = currentState;
-        CurrentGroup = currentPart is IGroupedDialogPart groupedDialogPart
-            ? groupedDialogPart.Group
-            : null;
-    }
-
-    protected DialogContext(string id,
-                            IDialog currentDialog,
-                            IDialogPart currentPart,
-                            DialogState currentState,
-                            Exception? exception,
-                            IEnumerable<IDialogPartResult> answers)
-        : this(id, currentDialog, currentPart, currentState)
-    {
-        Exception = exception;
-        Answers.AddRange(answers);
-    }
-
-    public string Id { get; }
-    public IDialog CurrentDialog { get; }
-    public IDialogPart CurrentPart { get; }
-    public IDialogPartGroup? CurrentGroup { get; }
-    public DialogState CurrentState { get; }
-    protected List<IDialogPartResult> Answers { get; }
-    public Exception? Exception { get; }
-
     public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
-        => new DialogContext(Id, CurrentDialog, abortDialogPart, DialogState.Aborted);
+        => new DialogContext(Id, CurrentDialogIdentifier, abortDialogPart, abortDialogPart.GetGroup(), DialogState.Aborted, Answers, null);
 
-    public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults)
-        => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, null, CurrentDialog.ReplaceAnswers(Answers, dialogPartResults));
+    public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog)
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Answers, dialogPartResults)), null);
 
     public IDialogContext Continue(IDialogPart nextPart, DialogState state)
-        => new DialogContext(Id, CurrentDialog, nextPart, state, null, Answers);
+        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, new ValueCollection<IDialogPartResult>(Answers), null);
 
     public IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
-        => new DialogContext(Id, CurrentDialog, errorDialogPart, DialogState.ErrorOccured, ex, Answers);
+        => new DialogContext(Id, CurrentDialogIdentifier, errorDialogPart, errorDialogPart.GetGroup(), DialogState.ErrorOccured, Answers, ex);
 
-    public bool CanStart()
-       => CurrentState == DialogState.Initial && CurrentDialog.Metadata.CanStart;
+    public bool CanStart(IDialog dialog)
+       => CurrentState == DialogState.Initial && dialog.Metadata.CanStart;
 
     public IDialogContext Start(IDialogPart firstPart)
-        => new DialogContext(Id, CurrentDialog, firstPart, firstPart.State);
+        => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), new ValueCollection<IDialogPartResult>(), null);
 
-    public bool CanNavigateTo(IDialogPart navigateToPart)
-        => CurrentDialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
+    public bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog)
+        => dialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
 
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
-        => new DialogContext(Id, CurrentDialog, navigateToPart, navigateToPart.State, null, Answers);
+        => new DialogContext(Id, CurrentDialogIdentifier, navigateToPart, navigateToPart.GetGroup(), navigateToPart.GetState(), Answers, null);
 
     public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
-        => Answers.FindAll(x => x.DialogPartId == dialogPart.Id);
+        => Answers.Where(x => x.DialogPartId == dialogPart.Id);
 
-    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Answers.AsReadOnly();
+    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Answers;
 
-    public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart)
-        => new DialogContext(Id, CurrentDialog, CurrentPart, CurrentState, Exception, CurrentDialog.ResetDialogPartResultByPart(Answers, CurrentPart));
-
-    private sealed class EmptyDialogPart : IDialogPart
-    {
-        public string Id => "Empty";
-        public DialogState State => DialogState.Initial;
-    }
+    public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog)
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ValueCollection<IDialogPartResult>(dialog.ResetDialogPartResultByPart(Answers, CurrentPart)), Exception);
 }
