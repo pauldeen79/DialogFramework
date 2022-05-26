@@ -42,65 +42,10 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     protected override void FixImmutableBuilderProperties(ClassBuilder classBuilder)
     {
-        if (classBuilder == null)
-        {
-            // Not possible, but needs to be added because TTTF.Runtime doesn't support nullable reference types
-            return;
-        }
-
         foreach (var property in classBuilder.Properties)
         {
-            var typeName = property.TypeName.FixTypeName();
-            if (typeName.StartsWithAny(StringComparison.InvariantCulture, "DialogFramework.Abstractions.DomainModel.I",
-                                                                          "DialogFramework.Abstractions.DomainModel.DialogParts.I"))
-            {
-                property.ConvertSinglePropertyToBuilderOnBuilder
-                (
-                    typeName
-                        .Replace("Abstractions.DomainModel.I", "Core.DomainModel.Builders.", StringComparison.InvariantCulture)
-                        .Replace("Abstractions.DomainModel.DialogParts.I", "Core.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
-                        + "Builder",
-                    property.IsNullable
-                        ? $"_{property.Name.ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
-                        : $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))" //HACK
-                );
-            }
-            else if (typeName.Contains("Collection<DialogFramework."))
-            {
-                property.ConvertCollectionPropertyToBuilderOnBuilder
-                (
-                    false,
-                    typeof(ValueCollection<>).WithoutGenerics(),
-                    typeName
-                        .Replace("Abstractions.DomainModel.I", "Core.DomainModel.Builders.", StringComparison.InvariantCulture)
-                        .Replace("Abstractions.DomainModel.DialogParts.I", "Core.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
-                        .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
-                );
-            }
-            else if (typeName.Contains("Collection<ExpressionFramework."))
-            {
-                property.ConvertCollectionPropertyToBuilderOnBuilder
-                (
-                    false,
-                    typeof(ValueCollection<>).WithoutGenerics(),
-                    typeName
-                        .Replace("ExpressionFramework.Abstractions.DomainModel.I", "ExpressionFramework.Core.DomainModel.Builders.", StringComparison.InvariantCulture)
-                        .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
-                );
-            }
-            else if (typeName.Contains("Collection<System.String"))
-            {
-                property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<string>).FullName?.FixTypeName()}({{0}})");
-            }
-            else if (typeName.IsBooleanTypeName() || typeName.IsNullableBooleanTypeName())
-            {
-                property.SetDefaultArgumentValueForWithMethod(true);
-                if (property.Name == "CanStart")
-                {
-                    property.SetDefaultValueForBuilderClassConstructor(new Literal("true"));
-                }
-            }
-            
+            FixTypeName(property);
+
             if (property.TypeName.GetClassName() == "ResultValueType"
                 || property.TypeName.GetClassName() == "DialogState"
                 || property.TypeName == typeof(string).FullName)
@@ -114,6 +59,65 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             }
         }
 
+        AddProperties(classBuilder);
+    }
+
+    private static void FixTypeName(ClassPropertyBuilder property)
+    {
+        var typeName = property.TypeName.FixTypeName();
+        if (typeName.StartsWithAny(StringComparison.InvariantCulture, "DialogFramework.Abstractions.DomainModel.I",
+                                                                      "DialogFramework.Abstractions.DomainModel.DialogParts.I"))
+        {
+            property.ConvertSinglePropertyToBuilderOnBuilder
+            (
+                typeName
+                    .Replace("Abstractions.DomainModel.I", "Core.DomainModel.Builders.", StringComparison.InvariantCulture)
+                    .Replace("Abstractions.DomainModel.DialogParts.I", "Core.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
+                    + "Builder",
+                property.IsNullable
+                    ? $"_{property.Name.ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
+                    : $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))" //HACK
+            );
+        }
+        else if (typeName.Contains("Collection<DialogFramework."))
+        {
+            property.ConvertCollectionPropertyToBuilderOnBuilder
+            (
+                false,
+                typeof(ValueCollection<>).WithoutGenerics(),
+                typeName
+                    .Replace("Abstractions.DomainModel.I", "Core.DomainModel.Builders.", StringComparison.InvariantCulture)
+                    .Replace("Abstractions.DomainModel.DialogParts.I", "Core.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
+                    .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
+            );
+        }
+        else if (typeName.Contains("Collection<ExpressionFramework."))
+        {
+            property.ConvertCollectionPropertyToBuilderOnBuilder
+            (
+                false,
+                typeof(ValueCollection<>).WithoutGenerics(),
+                typeName
+                    .Replace("ExpressionFramework.Abstractions.DomainModel.I", "ExpressionFramework.Core.DomainModel.Builders.", StringComparison.InvariantCulture)
+                    .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
+            );
+        }
+        else if (typeName.Contains("Collection<System.String"))
+        {
+            property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<string>).FullName?.FixTypeName()}({{0}})");
+        }
+        else if (typeName.IsBooleanTypeName() || typeName.IsNullableBooleanTypeName())
+        {
+            property.SetDefaultArgumentValueForWithMethod(true);
+            if (property.Name == "CanStart")
+            {
+                property.SetDefaultValueForBuilderClassConstructor(new Literal("true"));
+            }
+        }
+    }
+
+    private static void AddProperties(ClassBuilder classBuilder)
+    {
         if (classBuilder.Name == "DialogContext")
         {
             classBuilder.AddProperties
