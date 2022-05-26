@@ -2,6 +2,6 @@
 
 public interface IDecision
 {
-    ValueCollection<ICondition> Conditions { get; }
+    IReadOnlyCollection<ICondition> Conditions { get; }
     string NextPartId { get; }
 }

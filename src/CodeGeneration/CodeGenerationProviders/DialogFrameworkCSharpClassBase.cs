@@ -6,7 +6,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool EnableNullableContext => true;
     protected override bool AddNullChecks => true;
     protected override string FileNameSuffix => ".template.generated";
-    protected override Type RecordCollectionType => typeof(ValueCollection<>);
+    protected override Type RecordCollectionType => typeof(IReadOnlyCollection<>);
 
     protected override string FormatInstanceTypeName(ITypeBase instance, bool forCreate)
     {
@@ -120,7 +120,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             (
                 new ClassPropertyBuilder()
                     .WithName("Answers")
-                    .WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
+                    .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers)")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Answers"), //HACK
                 new ClassPropertyBuilder()
@@ -148,7 +148,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             (
                 new ClassPropertyBuilder()
                     .WithName("Decisions")
-                    .WithTypeName($"{typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>")
+                    .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Core.DomainModel.Builders.DecisionBuilder>")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>(Decisions.Select(x => x.Build()))")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Decisions"), //HACK

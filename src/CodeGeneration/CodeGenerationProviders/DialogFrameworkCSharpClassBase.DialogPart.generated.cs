@@ -171,15 +171,15 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Results")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinition, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinition, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Validators")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IQuestionDialogPartValidator, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IQuestionDialogPartValidator, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"ValidationErrors")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogValidationResult, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogValidationResult, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Group")

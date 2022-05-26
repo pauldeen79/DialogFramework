@@ -3,8 +3,8 @@
 public interface IQuestionDialogPart : IGroupedDialogPart
 {
     string Title { get; }
-    ValueCollection<IDialogPartResultDefinition> Results { get; }
-    ValueCollection<IQuestionDialogPartValidator> Validators { get; }
+    IReadOnlyCollection<IDialogPartResultDefinition> Results { get; }
+    IReadOnlyCollection<IQuestionDialogPartValidator> Validators { get; }
     IDialogPart? Validate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults);
-    ValueCollection<IDialogValidationResult> ValidationErrors { get; }
+    IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
 }

@@ -12,7 +12,7 @@ internal record DialogContextFixture : DialogContext
     {
     }
 
-    public void AddAnswer(IDialogPartResult result) => Answers.Add(result);
+    public void AddAnswer(IDialogPartResult result) => ((ValueCollection<IDialogPartResult>)Answers).Add(result);
 
     private sealed class EmptyDialogPart : IDialogPart
     {

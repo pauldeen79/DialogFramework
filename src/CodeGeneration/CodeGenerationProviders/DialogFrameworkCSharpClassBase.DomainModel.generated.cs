@@ -29,7 +29,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Conditions")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[ExpressionFramework.Abstractions.DomainModel.ICondition, ExpressionFramework.Abstractions, Version=0.2.19.0, Culture=neutral, PublicKeyToken=null]]"),
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[ExpressionFramework.Abstractions.DomainModel.ICondition, ExpressionFramework.Abstractions, Version=0.2.19.0, Culture=neutral, PublicKeyToken=null]]"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"NextPartId")
@@ -45,7 +45,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Parts")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPart, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPart, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"ErrorPart")
@@ -61,7 +61,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"PartGroups")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartGroup, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartGroup, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -187,7 +187,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Validators")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinitionValidator, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartResultDefinitionValidator, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -231,7 +231,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"DialogPartResultIds")
-                            .WithTypeName(@"CrossCutting.Common.ValueCollection`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"))
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[System.String, System.Private.CoreLib, Version=6.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]"))
                     .WithName(@"IDialogValidationResult"),
             }.Select(x => x.Build()).ToArray();
         }

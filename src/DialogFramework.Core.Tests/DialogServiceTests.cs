@@ -199,7 +199,7 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
         var questionDialogPart = (IQuestionDialogPart)result.CurrentPart;
         questionDialogPart.ValidationErrors.Should().ContainSingle();
-        questionDialogPart.ValidationErrors[0].ErrorMessage.Should().Be("Unknown Result Id: [Unknown result]");
+        questionDialogPart.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [Unknown result]");
     }
 
     [Fact]
@@ -227,7 +227,7 @@ public class DialogServiceTests
         result.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
         var questionDialogPart = (QuestionDialogPart)result.CurrentPart;
         questionDialogPart.ValidationErrors.Should().ContainSingle();
-        questionDialogPart.ValidationErrors[0].ErrorMessage.Should().Be("Provided answer from wrong question");
+        questionDialogPart.ValidationErrors.Single().ErrorMessage.Should().Be("Provided answer from wrong question");
     }
 
     [Fact]
