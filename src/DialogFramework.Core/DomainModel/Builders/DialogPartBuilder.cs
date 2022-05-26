@@ -4,6 +4,7 @@ public class DialogPartBuilder
 {
     private readonly QuestionDialogPartBuilder? _questionDialogPartBuilder;
     private readonly AbortedDialogPartBuilder? _abortedDialogPartBuilder;
+    private readonly ErrorDialogPartBuilder? _errorDialogPartBuilder;
     private readonly CompletedDialogPartBuilder? _completedDialogPartBuilder;
     private readonly MessageDialogPartBuilder? _messageDialogPartBuilder;
     private readonly DecisionDialogPartBuilder? _decisionDialogPartBuilder;
@@ -19,6 +20,10 @@ public class DialogPartBuilder
         else if (dialogPart is IAbortedDialogPart abortedDialogPart)
         {
             _abortedDialogPartBuilder = new AbortedDialogPartBuilder(abortedDialogPart);
+        }
+        else if (dialogPart is IErrorDialogPart errorDialogPart)
+        {
+            _errorDialogPartBuilder = new ErrorDialogPartBuilder(errorDialogPart);
         }
         else if (dialogPart is ICompletedDialogPart completedDialogPart)
         {
@@ -40,12 +45,15 @@ public class DialogPartBuilder
         {
             _redirectDialogPartBuilder = new RedirectDialogPartBuilder(redirectDialogPart);
         }
-
-        throw new ArgumentException($"Dialogpart type [{dialogPart.GetType().FullName}] is not supported");
+        else
+        {
+            throw new ArgumentException($"Dialogpart type [{dialogPart.GetType().FullName}] is not supported");
+        }
     }
 
     public DialogPartBuilder(QuestionDialogPartBuilder questionDialogPartBuilder) => _questionDialogPartBuilder = questionDialogPartBuilder;
     public DialogPartBuilder(AbortedDialogPartBuilder abortedDialogPartBuilder) => _abortedDialogPartBuilder = abortedDialogPartBuilder;
+    public DialogPartBuilder(ErrorDialogPartBuilder errorDialogPartBuilder) => _errorDialogPartBuilder = errorDialogPartBuilder;
     public DialogPartBuilder(CompletedDialogPartBuilder completedDialogPartBuilder) => _completedDialogPartBuilder = completedDialogPartBuilder;
     public DialogPartBuilder(MessageDialogPartBuilder messageDialogPartBuilder) => _messageDialogPartBuilder = messageDialogPartBuilder;
     public DialogPartBuilder(DecisionDialogPartBuilder decisionDialogPartBuilder) => _decisionDialogPartBuilder = decisionDialogPartBuilder;
@@ -56,12 +64,12 @@ public class DialogPartBuilder
     {
         if (_questionDialogPartBuilder != null) return _questionDialogPartBuilder.Build();
         else if (_abortedDialogPartBuilder != null) return _abortedDialogPartBuilder.Build();
+        else if (_errorDialogPartBuilder != null) return _errorDialogPartBuilder.Build();
         else if (_completedDialogPartBuilder != null) return _completedDialogPartBuilder.Build();
         else if (_messageDialogPartBuilder != null) return _messageDialogPartBuilder.Build();
         else if (_decisionDialogPartBuilder != null) return _decisionDialogPartBuilder.Build();
         else if (_navigationDialogPartBuilder != null) return _navigationDialogPartBuilder.Build();
         else if (_redirectDialogPartBuilder != null) return _redirectDialogPartBuilder.Build();
-
-        throw new NotSupportedException("No valid type was found to build");
+        else throw new NotSupportedException("No valid type was found to build");
     }
 }

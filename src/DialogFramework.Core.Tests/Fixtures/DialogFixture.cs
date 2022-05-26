@@ -4,7 +4,7 @@ internal static class DialogFixture
 {
     internal static DialogBuilder CreateBuilder()
         => new DialogBuilder()
-            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("CreateBuilder"))
+            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .AddParts(new DialogPartBuilder(QuestionDialogPartFixture.CreateBuilder()), new DialogPartBuilder(new MessageDialogPartBuilder().WithId("Message").WithHeading("Message").WithMessage("This is a message").WithGroup(DialogPartGroupFixture.CreateBuilder())))
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .WithAbortedPart(new AbortedDialogPartBuilder().WithId("Abort").WithMessage("Aborted"))

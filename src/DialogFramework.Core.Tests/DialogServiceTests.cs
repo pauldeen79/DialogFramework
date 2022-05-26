@@ -720,6 +720,39 @@ public class DialogServiceTests
     }
 
     [Fact]
+    public void Start_Throws_When_Dialog_Could_Not_Be_Found()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var start = new Action(() => sut.Start(dialog.Metadata));
+
+        // Act
+        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
+    }
+
+    [Fact]
+    public void Start_Throws_When_Dialog_Retrieval_Throws()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var factory = new DialogContextFactoryFixture(d => d.Metadata.Id == dialog.Metadata.Id,
+                                                      _ => new DialogContextFixture(dialog.Metadata));
+        var repositoryMock = new Mock<IDialogRepository>();
+        repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
+        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator);
+        var start = new Action(() => sut.Start(dialog.Metadata));
+
+        // Act
+        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+    }
+
+    [Fact]
     public void Start_Returns_ErrorDialogPart_When_First_DialogPart_Could_Not_Be_Determined()
     {
         // Arrange
@@ -1013,7 +1046,7 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void ResetCurrentState_Resets_Answers_From_Current_Question()
+    public void ResetCurrentState_Resets_Answers_From_Current_Question_When_All_Is_Good()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
@@ -1030,6 +1063,25 @@ public class DialogServiceTests
         var dialogPartResults = result.GetAllDialogPartResults();
         dialogPartResults.Should().ContainSingle();
         dialogPartResults.Single().DialogPartId.Should().Be("Other part");
+    }
+
+    [Fact]
+    public void ResetCurrentState_Returns_ErrorDialogPart_When_CanResetCurrentState_Is_False()
+    {
+        // Arrange
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.Aborted);
+        var sut = CreateSut();
+
+        // Act
+        var result = sut.ResetCurrentState(context);
+
+        // Assert
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentGroup.Should().BeNull();
+        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentPart.Id.Should().Be(dialog.ErrorPart.Id);
     }
 
     private static DialogService CreateSut()
