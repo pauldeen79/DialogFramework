@@ -6,10 +6,12 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act
         var context = sut.Start(dialog.Metadata);
@@ -69,10 +71,12 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act
         var context = sut.Start(dialog.Metadata);
@@ -156,10 +160,12 @@ public class SimpleFormFlowDialogTests
     public void Can_Complete_SimpleFormFlow_In_Different_Session()
     {
         // Arrange
-        var dialog = SimpleFormFlowDialog.Create();
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act step 1: Start a session, submit first question
         var context = sut.Start(dialog.Metadata);
@@ -225,10 +231,12 @@ public class SimpleFormFlowDialogTests
     public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -267,10 +275,12 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act
         var context = sut.Start(dialog!.Metadata);
@@ -307,10 +317,12 @@ public class SimpleFormFlowDialogTests
     public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act
         var context = sut.Start(dialog!.Metadata);

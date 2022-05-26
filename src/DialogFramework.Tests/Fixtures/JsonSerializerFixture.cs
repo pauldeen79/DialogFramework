@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Core.Tests.Fixtures;
+﻿namespace DialogFramework.Tests.Fixtures;
 
 internal static class JsonSerializerFixture
 {

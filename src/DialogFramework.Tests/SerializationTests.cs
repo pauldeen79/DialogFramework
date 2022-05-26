@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Core.Tests;
+﻿namespace DialogFramework.Tests;
 
 public class SerializationTests
 {

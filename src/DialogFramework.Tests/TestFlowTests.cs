@@ -6,10 +6,12 @@ public class TestFlowTests
     public void Can_Complete_TestFlow_Dialog_With_Unhealthy_Advice()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
-        var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .BuildServiceProvider();
+        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
+        var sut = provider.GetRequiredService<IDialogService>();
 
         // Act & Assert
         var context = sut.Start(dialog.Metadata); // empty -> Welcome
