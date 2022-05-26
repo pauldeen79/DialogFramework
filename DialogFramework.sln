@@ -8,9 +8,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Abstraction
 		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8} = {DBCEA97F-BE1E-4152-8BD5-910CA28466F8}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Core", "src\DialogFramework.Core\DialogFramework.Core.csproj", "{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain", "src\DialogFramework.Domain\DialogFramework.Domain.csproj", "{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Core.Tests", "src\DialogFramework.Core.Tests\DialogFramework.Core.Tests.csproj", "{1CECF992-6EF9-43CB-9792-3F310A67BCD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.Tests", "src\DialogFramework.Domain.Tests\DialogFramework.Domain.Tests.csproj", "{1CECF992-6EF9-43CB-9792-3F310A67BCD0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0B20E9B-055B-4D2A-B04A-3156ECB19017}"
 	ProjectSection(SolutionItems) = preProject

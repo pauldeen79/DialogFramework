@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class DomainModelBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Core/DomainModel/Builders";
+    public override string Path => "DialogFramework.Domain/DomainModel/Builders";
 
     public override string DefaultFileName => "Builders.template.generated.cs";
 
@@ -11,6 +11,6 @@ public class DomainModelBuilders : DialogFrameworkCSharpClassBase
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(GetDomainModelModels(),
-                                      "DialogFramework.Core.DomainModel",
-                                      "DialogFramework.Core.DomainModel.Builders");
+                                      "DialogFramework.Domain.DomainModel",
+                                      "DialogFramework.Domain.DomainModel.Builders");
 }
