@@ -9,21 +9,17 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var dialogRepositoryMock = new Mock<IDialogRepository>();
-        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .Build();
+        var results = new[] { result };
 
         // Act
-        var actual = service.Continue(context, new[] { result });
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
-        actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
-        var currentPart = (IQuestionDialogPart)actual.CurrentPart;
-        currentPart.ValidationErrors.Should().ContainSingle();
-        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("All 2 answers are required");
+        actual.Should().ContainSingle();
+        actual.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]
@@ -33,23 +29,19 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var dialogRepositoryMock = new Mock<IDialogRepository>();
-        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .WithResultId("A")
             .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
             .Build();
+        var results = new[] { result };
 
         // Act
-        var actual = service.Continue(context, new[] { result });
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
-        actual.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
-        var currentPart = (IQuestionDialogPart)actual.CurrentPart;
-        currentPart.ValidationErrors.Should().ContainSingle();
-        currentPart.ValidationErrors.Single().ErrorMessage.Should().Be("All 2 answers are required");
+        actual.Should().ContainSingle();
+        actual.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]
@@ -59,19 +51,16 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var dialogRepositoryMock = new Mock<IDialogRepository>();
-        dialogRepositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Returns(dialog);
-        var service = new DialogService(new Mock<IDialogContextFactory>().Object, dialogRepositoryMock.Object, new Mock<IConditionEvaluator>().Object);
-
-        // Act
-        var actual = service.Continue(context, new[]
+        var results = new[]
         {
             new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
             new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("B").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
-        });
+        };
+
+        // Act
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
-        actual.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
-        actual.CurrentState.Should().Be(DialogState.InProgress);
+        actual.Should().BeEmpty();
     }
 }

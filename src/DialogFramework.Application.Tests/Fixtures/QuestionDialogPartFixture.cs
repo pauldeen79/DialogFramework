@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.Fixtures;
+﻿namespace DialogFramework.Application.Tests.Fixtures;
 
 internal static class QuestionDialogPartFixture
 {
@@ -19,11 +19,4 @@ internal static class QuestionDialogPartFixture
                     .WithTitle("Second")
                     .WithValueType(ResultValueType.YesNo)
             );
-
-    internal static IQuestionDialogPart Validate(IDialogPart instance,
-                                                 IDialogContext context,
-                                                 IDialog dialog,
-                                                 IEnumerable<IDialogPartResult> providedAnswers)
-        => instance.Validate(context, dialog, providedAnswers) as IQuestionDialogPart
-            ?? new QuestionDialogPartBuilder().WithGroup(new DialogPartGroupBuilder()).Build();
 }

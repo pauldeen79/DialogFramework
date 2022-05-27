@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.Extensions;
 
-internal static class DialogExtensions
+public static class DialogExtensions
 {
-    internal static IDialogPart GetPartById(this IDialog dialog, string id)
+    public static IDialogPart GetPartById(this IDialog dialog, string id)
     {
         if (id == dialog.AbortedPart.Id) return dialog.AbortedPart;
         if (id == dialog.CompletedPart.Id) return dialog.CompletedPart;

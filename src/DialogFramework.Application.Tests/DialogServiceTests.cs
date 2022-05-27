@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests;
+﻿namespace DialogFramework.Application.Tests;
 
 public class DialogServiceTests
 {

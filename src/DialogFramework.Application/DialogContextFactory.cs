@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain;
+﻿namespace DialogFramework.Application;
 
 public class DialogContextFactory : IDialogContextFactory
 {

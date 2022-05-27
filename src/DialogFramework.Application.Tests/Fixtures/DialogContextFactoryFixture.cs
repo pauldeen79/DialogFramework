@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.Fixtures;
+﻿namespace DialogFramework.Application.Tests.Fixtures;
 
 internal class DialogContextFactoryFixture : IDialogContextFactory
 {
