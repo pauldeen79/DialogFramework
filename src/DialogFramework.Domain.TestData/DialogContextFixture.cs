@@ -1,6 +1,6 @@
-﻿namespace DialogFramework.Domain.Tests.Fixtures;
+﻿namespace DialogFramework.Domain.TestData;
 
-internal record DialogContextFixture : DialogContext
+public record DialogContextFixture : DialogContext
 {
     public DialogContextFixture(IDialogIdentifier currentDialogIdentifier)
         : base(Guid.NewGuid().ToString(), currentDialogIdentifier, new EmptyDialogPart(), null, DialogState.Initial, new ValueCollection<IDialogPartResult>(), null)

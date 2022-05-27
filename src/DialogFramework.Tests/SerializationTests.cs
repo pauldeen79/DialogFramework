@@ -12,7 +12,7 @@ public class SerializationTests
         var json = JsonSerializerFixture.Serialize(dialogToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json)!;
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -28,7 +28,7 @@ public class SerializationTests
         var json = JsonSerializerFixture.Serialize(dialogToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json)!;
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -44,7 +44,7 @@ public class SerializationTests
         var json = JsonSerializerFixture.Serialize(dialogContextToSerialize);
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContext>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContext>(json)!;
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);

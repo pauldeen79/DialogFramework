@@ -1,8 +1,8 @@
-﻿namespace DialogFramework.Domain.Tests.Fixtures;
+﻿namespace DialogFramework.Domain.TestData;
 
-internal static class DialogFixture
+public static class DialogFixture
 {
-    internal static DialogBuilder CreateBuilder()
+    public static DialogBuilder CreateBuilder()
         => new DialogBuilder()
             .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .AddParts(new DialogPartBuilder(QuestionDialogPartFixture.CreateBuilder()), new DialogPartBuilder(new MessageDialogPartBuilder().WithId("Message").WithHeading("Message").WithMessage("This is a message").WithGroup(DialogPartGroupFixture.CreateBuilder())))
@@ -11,7 +11,7 @@ internal static class DialogFixture
             .WithCompletedPart(new CompletedDialogPartBuilder().WithId("Completed").WithMessage("Thank you").WithGroup(DialogPartGroupFixture.CreateBuilder()))
             .WithErrorPart(new ErrorDialogPartBuilder().WithId("Error").WithErrorMessage("Something went wrong"));
 
-    internal static DialogBuilder CreateHowDoYouFeelBuilder(bool addParts = true)
+    public static DialogBuilder CreateHowDoYouFeelBuilder(bool addParts = true)
     {
         var group1 = new DialogPartGroupBuilder().WithId("Part1").WithTitle("Give information").WithNumber(1);
         var group2 = new DialogPartGroupBuilder().WithId("Part2").WithTitle("Completed").WithNumber(2);

@@ -1,11 +1,13 @@
-﻿namespace DialogFramework.Application.Tests.Fixtures;
+﻿namespace DialogFramework.Domain.TestData;
 
-internal class TestDialogRepository : IDialogRepository
+public class TestDialogRepository : IDialogRepository
 {
     private static readonly IDialog[] _dialogs = new[]
     {
         DialogFixture.CreateBuilder().Build(),
         DialogFixture.CreateHowDoYouFeelBuilder().Build(),
+        TestFlowDialog.Create(),
+        SimpleFormFlowDialog.Create(),
     };
 
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()

@@ -1,6 +1,6 @@
-﻿namespace DialogFramework.Application.Tests.Fixtures;
+﻿namespace DialogFramework.Domain.TestData;
 
-internal class DialogContextFactoryFixture : IDialogContextFactory
+public class DialogContextFactoryFixture : IDialogContextFactory
 {
     private readonly Func<IDialog, IDialogContext> _createDelegate;
     private readonly Func<IDialog, bool> _canCreateDelegate;

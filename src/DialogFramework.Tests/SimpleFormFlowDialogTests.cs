@@ -189,7 +189,7 @@ public class SimpleFormFlowDialogTests
         var json = JsonSerializerFixture.Serialize(context);
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var context2 = JsonSerializerFixture.Deserialize<DialogContext>(json);
+        var context2 = JsonSerializerFixture.Deserialize<DialogContext>(json)!;
         var result = sut.Continue
         (
             context2,

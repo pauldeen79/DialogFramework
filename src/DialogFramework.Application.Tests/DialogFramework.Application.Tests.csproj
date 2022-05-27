@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DialogFramework.Application\DialogFramework.Application.csproj" />
+    <ProjectReference Include="..\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj" />
   </ItemGroup>
 
 </Project>

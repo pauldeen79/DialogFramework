@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Tests.Fixtures;
+﻿namespace DialogFramework.Domain.TestData;
 
 public static class SimpleFormFlowDialog
 {
