@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Extensions;
+﻿namespace DialogFramework.Application.Extensions;
 
 public static class DialogServiceExtensions
 {

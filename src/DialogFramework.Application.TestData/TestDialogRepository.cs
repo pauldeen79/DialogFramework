@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.TestData;
+﻿namespace DialogFramework.Application.TestData;
 
 public class TestDialogRepository : IDialogRepository
 {

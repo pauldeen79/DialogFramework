@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Abstractions;
+﻿namespace DialogFramework.Application;
 
 public interface IDialogRepository
 {
