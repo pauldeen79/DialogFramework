@@ -67,6 +67,9 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"Start")
                             .AddParameters(
                                 new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"),
+                                new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
                                     .WithName(@"firstPart"))
                             .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
@@ -76,53 +79,17 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"AddDialogPartResults")
                             .AddParameters(
                                 new ParameterBuilder()
-                                    .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
-                                    .WithName(@"dialogPartResults"),
-                                new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
-                                    .WithName(@"dialog"))
+                                    .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
+                                    .WithName(@"dialogPartResults"))
                             .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)
-                            .WithName(@"Continue")
+                            .WithName(@"CanContinue")
                             .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
-                                    .WithName(@"nextPart"),
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState")
-                                    .WithName(@"state"))
-                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"Abort")
-                            .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogParts.IAbortedDialogPart")
-                                    .WithName(@"abortDialogPart"))
-                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"Error")
-                            .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogParts.IErrorDialogPart")
-                                    .WithName(@"errorDialogPart"),
-                                new ParameterBuilder()
-                                    .WithTypeName(@"System.Exception")
-                                    .WithName(@"ex"))
-                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"CanNavigateTo")
-                            .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
-                                    .WithName(@"navigateToPart"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
                                     .WithName(@"dialog"))
@@ -130,8 +97,63 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)
+                            .WithName(@"Continue")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
+                                    .WithName(@"nextPart"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CanAbort")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"))
+                            .WithTypeName(@"System.Boolean"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"Abort")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"Error")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"System.Exception")
+                                    .WithIsNullable(true)
+                                    .WithName(@"exception"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CanNavigateTo")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
+                                    .WithName(@"navigateToPart"))
+                            .WithTypeName(@"System.Boolean"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
                             .WithName(@"NavigateTo")
                             .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
                                     .WithName(@"navigateToPart"))
@@ -139,29 +161,30 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)
-                            .WithName(@"GetDialogPartResultsByPart")
+                            .WithName(@"CanResetCurrentState")
                             .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
-                                    .WithName(@"dialogPart"))
-                            .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResult>"),
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"GetAllDialogPartResults")
-                            .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResult>"),
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"ResetDialogPartResultByPart")
-                            .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialogPart")
-                                    .WithName(@"dialogPart"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
                                     .WithName(@"dialog"))
-                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"))
+                            .WithTypeName(@"System.Boolean"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"ResetCurrentState")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
+                                    .WithName(@"dialog"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"GetDialogPartResultsByPartIdentifier")
+                            .AddParameters(
+                                new ParameterBuilder()
+                                    .WithTypeName(@"System.String")
+                                    .WithName(@"dialogPartIdentifier"))
+                            .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogPartResult>"))
                     .WithName(@"IDialogContext"),
             }.Select(x => x.Build()).ToArray();
         }

@@ -5,7 +5,7 @@ public class DialogContextTests
     private static string Id => Guid.NewGuid().ToString();
 
     [Fact]
-    public void GetProvidedAnswerByPart_Returns_Empty_Result_When_No_Provided_Answers_Found_In_Current_Context()
+    public void GetDialogPartResultsByPartIdentifier_Returns_Empty_Result_When_No_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
@@ -14,30 +14,30 @@ public class DialogContextTests
         var context = new DialogContextFixture(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
 
         // Act
-        var result = context.GetDialogPartResultsByPart(questionPart);
+        var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
 
         // Assert
         result.Should().BeEmpty();
     }
 
     [Fact]
-    public void GetProvidedAnswerByPart_Returns_Correct_Result_When_Provided_Answers_Found_In_Current_Context()
+    public void GetDialogPartResultsByPartIdentifier_Returns_Correct_Result_When_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, dialog);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
 
         // Act
-        var result = context.GetDialogPartResultsByPart(questionPart);
+        var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
 
         // Assert
         result.Should().NotBeNull();
     }
 
     [Fact]
-    public void ProvideAnswers_Overwrites_Answers_When_Already_Filled_In()
+    public void AddDialogPartResults_Overwrites_Answers_When_Already_Filled_In()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
@@ -45,37 +45,37 @@ public class DialogContextTests
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, dialog);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
         // Assert 1
-        context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 2 - Call GetProvidedAnswerByPart second time, after changing the provided answer
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) }, dialog);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) });
         // Assert 2
-        context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
     }
 
     [Fact]
-    public void ResetProvidedAnswerByPart_Removes_ProvidedAnswer_Correctly()
+    public void ResetCurrentState_Removes_ProvidedAnswer_Correctly()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, dialog);
-        context.GetDialogPartResultsByPart(questionPart).Should().ContainSingle();
-        context.GetDialogPartResultsByPart(questionPart).Single().ResultId.Should().Be(questionPart.Results.First().Id);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
-        context = context.ResetDialogPartResultByPart(questionPart, dialog);
+        context = context.ResetCurrentState(dialog);
         // Assert 1
-        context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
-        context = context.ResetDialogPartResultByPart(questionPart, dialog);
+        context = context.ResetCurrentState(dialog);
         // Assert 2
-        context.GetDialogPartResultsByPart(questionPart).Should().BeEmpty();
+        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
     }
 }

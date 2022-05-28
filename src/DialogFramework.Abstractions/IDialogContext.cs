@@ -8,15 +8,23 @@ public interface IDialogContext
     IDialogPartGroup? CurrentGroup { get; }
     DialogState CurrentState { get; }
     IReadOnlyCollection<IDialogPartResult> Results { get; }
+
     bool CanStart(IDialog dialog);
-    IDialogContext Start(IDialogPart firstPart);
-    IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog);
-    IDialogContext Continue(IDialogPart nextPart, DialogState state);
-    IDialogContext Abort(IAbortedDialogPart abortDialogPart);
-    IDialogContext Error(IErrorDialogPart errorDialogPart);
-    bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog);
-    IDialogContext NavigateTo(IDialogPart navigateToPart);
-    IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart);
-    IEnumerable<IDialogPartResult> GetAllDialogPartResults();
-    IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog);
+    IDialogContext Start(IDialog dialog, IDialogPart firstPart);
+
+    IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults);
+
+    bool CanContinue(IDialog dialog);
+    IDialogContext Continue(IDialog dialog, IDialogPart nextPart);
+
+    bool CanAbort(IDialog dialog);
+    IDialogContext Abort(IDialog dialog);
+
+    IDialogContext Error(IDialog dialog, Exception? exception);
+
+    bool CanNavigateTo(IDialog dialog, IDialogPart navigateToPart);
+    IDialogContext NavigateTo(IDialog dialog, IDialogPart navigateToPart);
+
+    bool CanResetCurrentState(IDialog dialog);
+    IDialogContext ResetCurrentState(IDialog dialog);
 }

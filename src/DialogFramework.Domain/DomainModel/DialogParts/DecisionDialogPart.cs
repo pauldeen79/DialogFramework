@@ -5,11 +5,8 @@ public partial record DecisionDialogPart : IConditionEvaluatorContainer
     public IConditionEvaluator ConditionEvaluator { get; set; } = new DummyConditionEvaluator();
 
     public string GetNextPartId(IDialogContext context, IDialog dialog)
-    {
-        var ctx = new Tuple<IDialogContext, IDialog>(context, dialog);
-        return Decisions.FirstOrDefault(x => ConditionEvaluator.Evaluate(ctx, x.Conditions))?.NextPartId
-            ?? DefaultNextPartId.WhenNullOrEmpty(() => throw new NotSupportedException("There is no decision for this path"));
-    }
+        => Decisions.FirstOrDefault(x => ConditionEvaluator.Evaluate(context, x.Conditions))?.NextPartId
+        ?? DefaultNextPartId.WhenNullOrEmpty(() => throw new NotSupportedException("There is no decision for this path"));
 
     public DialogState GetState() => DialogState.InProgress;
 

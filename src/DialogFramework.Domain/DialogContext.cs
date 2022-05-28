@@ -2,35 +2,43 @@
 
 public partial record DialogContext
 {
-    public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, abortDialogPart, abortDialogPart.GetGroup(), DialogState.Aborted, Results);
+    public bool CanAbort(IDialog dialog)
+        => CurrentState == DialogState.InProgress
+        && CurrentPart.Id != dialog.AbortedPart.Id;
 
-    public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog)
+    public IDialogContext Abort(IDialog dialog)
+        => new DialogContext(Id, CurrentDialogIdentifier, dialog.AbortedPart, dialog.AbortedPart.GetGroup(), DialogState.Aborted, Results);
+
+    public IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
         => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ReplaceAnswers(Results, dialogPartResults));
 
-    public IDialogContext Continue(IDialogPart nextPart, DialogState state)
-        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, Results);
+    public bool CanContinue(IDialog dialog)
+        => CurrentState == DialogState.InProgress;
 
-    public IDialogContext Error(IErrorDialogPart errorDialogPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, errorDialogPart, errorDialogPart.GetGroup(), DialogState.ErrorOccured, Results);
+    public IDialogContext Continue(IDialog dialog, IDialogPart nextPart)
+        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), nextPart.GetState(), Results);
+
+    public IDialogContext Error(IDialog dialog, Exception? exception)
+        => new DialogContext(Id, CurrentDialogIdentifier, dialog.ErrorPart, dialog.ErrorPart.GetGroup(), DialogState.ErrorOccured, Results);
 
     public bool CanStart(IDialog dialog)
-       => CurrentState == DialogState.Initial && dialog.Metadata.CanStart;
+        => CurrentState == DialogState.Initial
+        && dialog.Metadata.CanStart;
 
-    public IDialogContext Start(IDialogPart firstPart)
+    public IDialogContext Start(IDialog dialog, IDialogPart firstPart)
         => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), Enumerable.Empty<IDialogPartResult>());
 
-    public bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog)
-        => dialog.CanNavigateTo(CurrentPart, navigateToPart, Results);
+    public bool CanNavigateTo(IDialog dialog, IDialogPart navigateToPart)
+        => (CurrentState == DialogState.InProgress || CurrentState == DialogState.Completed)
+        && dialog.CanNavigateTo(CurrentPart, navigateToPart, Results);
 
-    public IDialogContext NavigateTo(IDialogPart navigateToPart)
+    public IDialogContext NavigateTo(IDialog dialog, IDialogPart navigateToPart)
         => new DialogContext(Id, CurrentDialogIdentifier, navigateToPart, navigateToPart.GetGroup(), navigateToPart.GetState(), Results);
 
-    public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
-        => Results.Where(x => x.DialogPartId == dialogPart.Id);
+    public bool CanResetCurrentState(IDialog dialog)
+        => CurrentState == DialogState.InProgress
+        && CurrentPart is IQuestionDialogPart;
 
-    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Results;
-
-    public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog)
+    public IDialogContext ResetCurrentState(IDialog dialog)
         => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ResetDialogPartResultByPart(Results, CurrentPart));
 }

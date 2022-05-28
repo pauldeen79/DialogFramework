@@ -59,3 +59,4 @@ The solution consists of the following projects:
 # TODOs
 
 - Change CurrentPart on IDialogContext to CurrentPartId, as string? (gives some problems to getting validation errors and exception, so need to refeactor some things first)
+- Change builders to interface (and use extension methods), and get rid of DialogPartBuilder which violates open/closed principe

@@ -6,16 +6,14 @@ public class GetDialogPartResultValuesByPartExpressionEvaluatorProvider : IExpre
     {
         if (expression is GetDialogPartResultValuesByPartExpression partValuesByPart)
         {
-            var tuple = item as Tuple<IDialogContext, IDialog>;
-            if (tuple == null)
+            var context = item as IDialogContext;
+            if (context == null)
             {
                 result = null;
             }
             else
             {
-                var context = tuple.Item1;
-                var dialog = tuple.Item2;
-                result = context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == partValuesByPart.DialogPartId))
+                result = context.GetDialogPartResultsByPartIdentifier(partValuesByPart.DialogPartId)
                     .Where(x => x.Value.Value != null)
                     .Select(x => x.Value.Value);
             }

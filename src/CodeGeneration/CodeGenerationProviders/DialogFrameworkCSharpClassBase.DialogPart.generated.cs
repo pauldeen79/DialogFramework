@@ -111,23 +111,9 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithTypeName(@"System.String"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
-                            .WithName(@"Exception")
-                            .WithTypeName(@"System.Exception")
-                            .WithIsNullable(true),
-                        new ClassPropertyBuilder()
-                            .WithHasSetter(false)
                             .WithName(@"Id")
                             .WithTypeName(@"System.String"))
                     .AddMethods(
-                        new ClassMethodBuilder()
-                            .WithVirtual(true)
-                            .WithAbstract(true)
-                            .WithName(@"ForException")
-                            .AddParameters(
-                                new ParameterBuilder()
-                                    .WithTypeName(@"System.Exception")
-                                    .WithName(@"ex"))
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogParts.IErrorDialogPart"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)

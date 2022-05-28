@@ -53,16 +53,16 @@ public class DialogService : IDialogService
                 }
             }
 
-            return context.Start(firstPart);
+            return context.Start(dialog, firstPart);
         }
         catch (Exception ex)
         {
-            return context.Error(dialog.ErrorPart.ForException(ex));
+            return context.Error(dialog, ex);
         }
     }
 
     public bool CanContinue(IDialogContext context)
-        => context.CurrentState == DialogState.InProgress;
+        => context.CanContinue(GetDialog(context));
 
     public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
@@ -75,7 +75,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            context = context.AddDialogPartResults(dialogPartResults, dialog);
+            context = context.AddDialogPartResults(dialog, dialogPartResults);
             var nextPart = GetNextPart(dialog, context, dialog.GetPartById(context.CurrentPart.Id), dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
@@ -95,21 +95,20 @@ public class DialogService : IDialogService
                 }
             }
 
-            return context.Continue(nextPart, nextPart.GetState());
+            return context.Continue(dialog, nextPart);
         }
         catch (Exception ex)
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex));
+                return context.Error(dialog, ex);
             }
             throw;
         }
     }
 
     public bool CanAbort(IDialogContext context)
-        => context.CurrentState == DialogState.InProgress
-        && context.CurrentPart.Id != GetDialog(context).AbortedPart.Id;
+        => context.CanAbort(GetDialog(context));
 
     public IDialogContext Abort(IDialogContext context)
     {
@@ -122,21 +121,20 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Dialog cannot be aborted");
             }
 
-            return context.Abort(dialog.AbortedPart);
+            return context.Abort(dialog);
         }
         catch (Exception ex)
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex));
+                return context.Error(dialog, ex);
             }
             throw;
         }
     }
 
     public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
-        => (context.CurrentState == DialogState.InProgress || context.CurrentState == DialogState.Completed)
-        && context.CanNavigateTo(navigateToPart, GetDialog(context));
+        => context.CanNavigateTo(GetDialog(context), navigateToPart);
 
     public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
     {
@@ -149,21 +147,20 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Cannot navigate to requested dialog part");
             }
 
-            return context.NavigateTo(navigateToPart);
+            return context.NavigateTo(dialog, navigateToPart);
         }
         catch (Exception ex)
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex));
+                return context.Error(dialog, ex);
             }
             throw;
         }
     }
 
     public bool CanResetCurrentState(IDialogContext context)
-        => context.CurrentState == DialogState.InProgress
-        && context.CurrentPart is IQuestionDialogPart;
+        => context.CanResetCurrentState(GetDialog(context));
 
     public IDialogContext ResetCurrentState(IDialogContext context)
     {
@@ -176,13 +173,13 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Current state cannot be reset");
             }
 
-            return context.ResetDialogPartResultByPart(context.CurrentPart, dialog);
+            return context.ResetCurrentState(dialog);
         }
         catch (Exception ex)
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex));
+                return context.Error(dialog, ex);
             }
             throw;
         }

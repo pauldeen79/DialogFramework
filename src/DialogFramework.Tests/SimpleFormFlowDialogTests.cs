@@ -46,7 +46,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentState.Should().Be(DialogState.Completed);
         context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("Completed");
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPartIdentifier("ContactInfo").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("ContactInfo")
@@ -59,7 +59,7 @@ public class SimpleFormFlowDialogTests
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
         });
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPartIdentifier("Newsletter").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("Newsletter")
@@ -135,7 +135,7 @@ public class SimpleFormFlowDialogTests
         context.CurrentState.Should().Be(DialogState.Completed);
         context.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         context.CurrentPart.Id.Should().Be("Completed");
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPartIdentifier("ContactInfo").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("ContactInfo")
@@ -148,7 +148,7 @@ public class SimpleFormFlowDialogTests
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
         });
-        context.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        context.GetDialogPartResultsByPartIdentifier("Newsletter").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("Newsletter")
@@ -206,7 +206,7 @@ public class SimpleFormFlowDialogTests
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPart.Id.Should().Be("Completed");
-        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "ContactInfo")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier("ContactInfo").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("ContactInfo")
@@ -219,7 +219,7 @@ public class SimpleFormFlowDialogTests
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
         });
-        result.GetDialogPartResultsByPart(dialog.Parts.Single(x => x.Id == "Newsletter")).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier("Newsletter").Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId("Newsletter")

@@ -22,9 +22,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
-        errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
+        //var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        //errorDialogPart.Exception.Should().NotBeNull();
+        //errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
     }
 
     [Fact]
@@ -42,9 +42,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
-        errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
+        //var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        //errorDialogPart.Exception.Should().NotBeNull();
+        //errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
     }
 
     [Fact]
@@ -62,9 +62,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
-        errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
+        //var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        //errorDialogPart.Exception.Should().NotBeNull();
+        //errorDialogPart.Exception!.Message.Should().Be("Dialog cannot be aborted");
     }
 
     [Fact]
@@ -181,9 +181,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
-        errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
+        //var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        //errorDialogPart.Exception.Should().NotBeNull();
+        //errorDialogPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
     }
 
     [Fact]
@@ -459,9 +459,9 @@ public class DialogServiceTests
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var currentDialogErrorPart = (IErrorDialogPart)result.CurrentPart;
-        currentDialogErrorPart.Exception.Should().NotBeNull();
-        currentDialogErrorPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
+        //var currentDialogErrorPart = (IErrorDialogPart)result.CurrentPart;
+        //currentDialogErrorPart.Exception.Should().NotBeNull();
+        //currentDialogErrorPart.Exception!.Message.Should().Be($"Can only continue when the dialog is in progress. Current state is {currentState}");
     }
 
     [Fact]
@@ -674,7 +674,7 @@ public class DialogServiceTests
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", null, "Error");
+        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", "Error");
         var abortedPart = new AbortedDialogPart("Dialog has been aborted", "Abort");
         var completedPart = new CompletedDialogPart("Thank you for your input!", group2, "Completed", "Completed");
         var welcomePart = new MessageDialogPart("Welcome! I would like to answer a question", group1, "Welcome", "Welcome");
@@ -735,7 +735,7 @@ public class DialogServiceTests
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", null, "Error");
+        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", "Error");
         var abortedPart = new AbortedDialogPart("Dialog has been aborted", "Abort");
         var completedPart = new CompletedDialogPart("Thank you for your input!", group2, "Completed", "Completed");
         var welcomePart = new MessageDialogPart("Welcome! I would like to answer a question", group1, "Welcome", "Welcome");
@@ -835,9 +835,9 @@ public class DialogServiceTests
         // Assert
         result.CurrentGroup.Should().BeNull();
         result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
-        errorDialogPart.Exception.Should().NotBeNull();
-        errorDialogPart.Exception!.Message.Should().Be("Could not determine next part. Dialog does not have any parts.");
+        //var errorDialogPart = (IErrorDialogPart)result.CurrentPart;
+        //errorDialogPart.Exception.Should().NotBeNull();
+        //errorDialogPart.Exception!.Message.Should().Be("Could not determine next part. Dialog does not have any parts.");
     }
 
     [Fact]
@@ -861,7 +861,7 @@ public class DialogServiceTests
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", null, "Error");
+        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", "Error");
         var abortedPart = new AbortedDialogPart("Dialog has been aborted", "Abort");
         var completedPart = new CompletedDialogPart("Thank you for your input!", group2, "Completed", "Completed");
         var decisionPart = new DecisionDialogPartBuilder().WithId("Decision").WithDefaultNextPartId(errorDialogPart.Id).Build();
@@ -901,7 +901,7 @@ public class DialogServiceTests
         // Arrange
         var group1 = new DialogPartGroup("Part1", "Give information", 1);
         var group2 = new DialogPartGroup("Part2", "Completed", 2);
-        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", null, "Error");
+        var errorDialogPart = new ErrorDialogPart("Something went horribly wrong!", "Error");
         var abortedPart = new AbortedDialogPart("Dialog has been aborted", "Abort");
         var completedPart = new CompletedDialogPart("Thank you for your input!", group2, "Completed", "Completed");
         var decisionPart = new DecisionDialogPartBuilder().WithId("Decision").WithDefaultNextPartId(abortedPart.Id).Build();
@@ -1010,8 +1010,8 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) }, dialog);
-        context = context.Continue(questionPart, DialogState.InProgress);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) });
+        context = context.Continue(dialog, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -1046,8 +1046,8 @@ public class DialogServiceTests
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
-        context = context.AddDialogPartResults(new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) }, dialog);
-        context = context.Continue(questionPart, DialogState.InProgress);
+        context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) });
+        context = context.Continue(dialog, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -1162,7 +1162,7 @@ public class DialogServiceTests
         var result = sut.ResetCurrentState(context);
 
         // Assert
-        var dialogPartResults = result.GetAllDialogPartResults();
+        var dialogPartResults = result.Results;
         dialogPartResults.Should().ContainSingle();
         dialogPartResults.Single().DialogPartId.Should().Be("Other part");
     }
