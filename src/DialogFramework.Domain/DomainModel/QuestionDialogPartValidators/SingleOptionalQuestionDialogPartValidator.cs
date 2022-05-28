@@ -2,7 +2,9 @@
 
 public class SingleOptionalQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
+    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+                                                         IDialog dialog,
+                                                         IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));
         if (answerCount > 1)

@@ -49,7 +49,9 @@ public partial record QuestionDialogPart
 
         foreach (var dialogPartResultDefinition in Results)
         {
-            var dialogPartResultsByPart = dialogPartResults.Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id).ToArray();
+            var dialogPartResultsByPart = dialogPartResults
+                .Where(x => x.DialogPartId == Id && x.ResultId == dialogPartResultDefinition.Id)
+                .ToArray();
             errors.AddRange(dialogPartResultDefinition.Validate(context, dialog, this, dialogPartResultsByPart)
                                                       .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
         }

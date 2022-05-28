@@ -9,9 +9,7 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
     }
 
     public RequiredValidator(bool checkForSingleOccurence)
-    {
-        _checkForSingleOccurence = checkForSingleOccurence;
-    }
+        => _checkForSingleOccurence = checkForSingleOccurence;
 
     public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
                                                          IDialog dialog,
