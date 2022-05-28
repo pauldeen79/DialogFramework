@@ -57,7 +57,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            return context.Error(dialog.ErrorPart.ForException(ex), ex);
+            return context.Error(dialog.ErrorPart.ForException(ex));
         }
     }
 
@@ -101,7 +101,7 @@ public class DialogService : IDialogService
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+                return context.Error(dialog.ErrorPart.ForException(ex));
             }
             throw;
         }
@@ -128,7 +128,7 @@ public class DialogService : IDialogService
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+                return context.Error(dialog.ErrorPart.ForException(ex));
             }
             throw;
         }
@@ -155,7 +155,7 @@ public class DialogService : IDialogService
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+                return context.Error(dialog.ErrorPart.ForException(ex));
             }
             throw;
         }
@@ -182,7 +182,7 @@ public class DialogService : IDialogService
         {
             if (dialog != null)
             {
-                return context.Error(dialog.ErrorPart.ForException(ex), ex);
+                return context.Error(dialog.ErrorPart.ForException(ex));
             }
             throw;
         }

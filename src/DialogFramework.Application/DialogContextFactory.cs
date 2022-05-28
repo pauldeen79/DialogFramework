@@ -12,8 +12,7 @@ public class DialogContextFactory : IDialogContextFactory
             new EmptyDialogPart(),
             null,
             DialogState.Initial,
-            new ReadOnlyValueCollection<IDialogPartResult>(),
-            null
+            Enumerable.Empty<IDialogPartResult>()
         );
 
     private sealed class EmptyDialogPart : IDialogPart

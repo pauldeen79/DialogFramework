@@ -46,7 +46,11 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"CurrentState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"),
+                        new ClassPropertyBuilder()
+                            .WithHasSetter(false)
+                            .WithName(@"Results")
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.DomainModel.IDialogPartResult, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)

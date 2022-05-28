@@ -119,23 +119,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     private static void AddProperties(ClassBuilder classBuilder)
     {
-        if (classBuilder.Name == "DialogContext")
-        {
-            classBuilder.AddProperties
-            (
-                new ClassPropertyBuilder()
-                    .WithName("Answers")
-                    .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers)")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "Answers = new List<IDialogPartResult>((source as DialogContext)?.Answers ?? Enumerable.Empty<IDialogPartResult>())"), //HACK
-                new ClassPropertyBuilder()
-                    .WithName("Exception")
-                    .WithType(typeof(Exception))
-                    .WithIsNullable()
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_exceptionDelegate = new (() => default)") //HACK
-            );
-        }
-
         if (classBuilder.Name == "NavigationDialogPart")
         {
             classBuilder.AddProperties

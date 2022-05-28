@@ -3,34 +3,34 @@
 public partial record DialogContext
 {
     public IDialogContext Abort(IAbortedDialogPart abortDialogPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, abortDialogPart, abortDialogPart.GetGroup(), DialogState.Aborted, Answers, null);
+        => new DialogContext(Id, CurrentDialogIdentifier, abortDialogPart, abortDialogPart.GetGroup(), DialogState.Aborted, Results);
 
     public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog)
-        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ReadOnlyValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Answers, dialogPartResults)), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ReplaceAnswers(Results, dialogPartResults));
 
     public IDialogContext Continue(IDialogPart nextPart, DialogState state)
-        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, new ReadOnlyValueCollection<IDialogPartResult>(Answers), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, Results);
 
-    public IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
-        => new DialogContext(Id, CurrentDialogIdentifier, errorDialogPart, errorDialogPart.GetGroup(), DialogState.ErrorOccured, Answers, ex);
+    public IDialogContext Error(IErrorDialogPart errorDialogPart)
+        => new DialogContext(Id, CurrentDialogIdentifier, errorDialogPart, errorDialogPart.GetGroup(), DialogState.ErrorOccured, Results);
 
     public bool CanStart(IDialog dialog)
        => CurrentState == DialogState.Initial && dialog.Metadata.CanStart;
 
     public IDialogContext Start(IDialogPart firstPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), new ReadOnlyValueCollection<IDialogPartResult>(), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), Enumerable.Empty<IDialogPartResult>());
 
     public bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog)
-        => dialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
+        => dialog.CanNavigateTo(CurrentPart, navigateToPart, Results);
 
     public IDialogContext NavigateTo(IDialogPart navigateToPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, navigateToPart, navigateToPart.GetGroup(), navigateToPart.GetState(), Answers, null);
+        => new DialogContext(Id, CurrentDialogIdentifier, navigateToPart, navigateToPart.GetGroup(), navigateToPart.GetState(), Results);
 
     public IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart)
-        => Answers.Where(x => x.DialogPartId == dialogPart.Id);
+        => Results.Where(x => x.DialogPartId == dialogPart.Id);
 
-    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Answers;
+    public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Results;
 
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog)
-        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ReadOnlyValueCollection<IDialogPartResult>(dialog.ResetDialogPartResultByPart(Answers, CurrentPart)), Exception);
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ResetDialogPartResultByPart(Results, CurrentPart));
 }
