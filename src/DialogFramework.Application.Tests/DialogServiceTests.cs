@@ -245,7 +245,7 @@ public class DialogServiceTests
         var context = new DialogContextFixture(Id, dialog.Metadata, currentPart, currentState);
         var sut = CreateSut();
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
-        wrongQuestionMock.SetupGet(x => x.Results).Returns(new ValueCollection<IDialogPartResultDefinition>());
+        wrongQuestionMock.SetupGet(x => x.Results).Returns(new ReadOnlyValueCollection<IDialogPartResultDefinition>());
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(wrongQuestionMock.Object.Id)
             .WithResultId("Unknown answer")
@@ -1151,8 +1151,11 @@ public class DialogServiceTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context.AddAnswer(new DialogPartResult(questionPart.Id, "Terrible", new EmptyDialogPartResultValue()));
-        context.AddAnswer(new DialogPartResult("Other part", "Other value", new EmptyDialogPartResultValue()));
+        context = new DialogContextFixture(context, new[]
+        {
+            new DialogPartResult(questionPart.Id, "Terrible", new EmptyDialogPartResultValue()),
+            new DialogPartResult("Other part", "Other value", new EmptyDialogPartResultValue())
+        });
         var sut = CreateSut();
 
         // Act

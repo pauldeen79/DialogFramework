@@ -76,7 +76,7 @@ public class DialogService : IDialogService
             }
 
             context = context.AddDialogPartResults(dialogPartResults, dialog);
-            var nextPart = GetNextPart(dialog, context, context.CurrentPart, dialogPartResults);
+            var nextPart = GetNextPart(dialog, context, dialog.GetPartById(context.CurrentPart.Id), dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {

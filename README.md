@@ -55,3 +55,8 @@ The solution consists of the following projects:
 - CodeGeneration: Interfaces and code generation for domain entity models and builders
 - DialogFramework.Domain: Domain entity models and builders
 - DialogFramework.Application: Commands and command handlers for executing commands [TODO: Refactor Service into commands]
+
+# TODOs
+
+- Add Answers to IDialogContext, as IReadOnlyCollection of course
+- Change CurrentPart on IDialogContext to CurrentPartId, as string

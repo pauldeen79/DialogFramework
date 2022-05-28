@@ -12,7 +12,7 @@ public class DialogContextFactory : IDialogContextFactory
             new EmptyDialogPart(),
             null,
             DialogState.Initial,
-            new ValueCollection<IDialogPartResult>(),
+            new ReadOnlyValueCollection<IDialogPartResult>(),
             null
         );
 

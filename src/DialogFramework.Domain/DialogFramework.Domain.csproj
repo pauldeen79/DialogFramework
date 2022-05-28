@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="pauldeen79.ExpressionFramework.Core" Version="0.2.19" />
   </ItemGroup>
 
