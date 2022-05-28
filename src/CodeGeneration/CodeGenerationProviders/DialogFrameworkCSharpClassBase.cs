@@ -85,7 +85,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             property.ConvertCollectionPropertyToBuilderOnBuilder
             (
                 false,
-                typeof(ValueCollection<>).WithoutGenerics(),
+                typeof(ReadOnlyValueCollection<>).WithoutGenerics(),
                 typeName
                     .Replace("Abstractions.DomainModel.I", "Domain.DomainModel.Builders.", StringComparison.InvariantCulture)
                     .Replace("Abstractions.DomainModel.DialogParts.I", "Domain.DomainModel.DialogParts.Builders.", StringComparison.InvariantCulture)
@@ -97,7 +97,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             property.ConvertCollectionPropertyToBuilderOnBuilder
             (
                 false,
-                typeof(ValueCollection<>).WithoutGenerics(),
+                typeof(ReadOnlyValueCollection<>).WithoutGenerics(),
                 typeName
                     .Replace("ExpressionFramework.Abstractions.DomainModel.I", "ExpressionFramework.Core.DomainModel.Builders.", StringComparison.InvariantCulture)
                     .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
@@ -105,7 +105,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         }
         else if (typeName.Contains("Collection<System.String"))
         {
-            property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<string>).FullName?.FixTypeName()}({{0}})");
+            property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<string>).FullName?.FixTypeName()}({{0}})");
         }
         else if (typeName.IsBooleanTypeName() || typeName.IsNullableBooleanTypeName())
         {
@@ -126,8 +126,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 new ClassPropertyBuilder()
                     .WithName("Answers")
                     .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers)")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Answers"), //HACK
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDialogPartResult>(Answers)")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "Answers = new List<IDialogPartResult>((source as DialogContext)?.Answers ?? Enumerable.Empty<IDialogPartResult>())"), //HACK
                 new ClassPropertyBuilder()
                     .WithName("Exception")
                     .WithType(typeof(Exception))
@@ -154,8 +154,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 new ClassPropertyBuilder()
                     .WithName("Decisions")
                     .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.DomainModel.Builders.DecisionBuilder>")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>(Decisions.Select(x => x.Build()))")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.DomainModel.Builders.DecisionBuilder>")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.DomainModel.IDecision>(Decisions.Select(x => x.Build()))")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Decisions"), //HACK
                 new ClassPropertyBuilder()
                     .WithName("DefaultNextPartId")

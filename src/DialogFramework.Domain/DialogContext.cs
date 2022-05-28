@@ -6,10 +6,10 @@ public partial record DialogContext
         => new DialogContext(Id, CurrentDialogIdentifier, abortDialogPart, abortDialogPart.GetGroup(), DialogState.Aborted, Answers, null);
 
     public IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog)
-        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Answers, dialogPartResults)), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ReadOnlyValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Answers, dialogPartResults)), null);
 
     public IDialogContext Continue(IDialogPart nextPart, DialogState state)
-        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, new ValueCollection<IDialogPartResult>(Answers), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, nextPart, nextPart.GetGroup(), state, new ReadOnlyValueCollection<IDialogPartResult>(Answers), null);
 
     public IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex)
         => new DialogContext(Id, CurrentDialogIdentifier, errorDialogPart, errorDialogPart.GetGroup(), DialogState.ErrorOccured, Answers, ex);
@@ -18,7 +18,7 @@ public partial record DialogContext
        => CurrentState == DialogState.Initial && dialog.Metadata.CanStart;
 
     public IDialogContext Start(IDialogPart firstPart)
-        => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), new ValueCollection<IDialogPartResult>(), null);
+        => new DialogContext(Id, CurrentDialogIdentifier, firstPart, firstPart.GetGroup(), firstPart.GetState(), new ReadOnlyValueCollection<IDialogPartResult>(), null);
 
     public bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog)
         => dialog.CanNavigateTo(CurrentPart, navigateToPart, Answers);
@@ -32,5 +32,5 @@ public partial record DialogContext
     public IEnumerable<IDialogPartResult> GetAllDialogPartResults() => Answers;
 
     public IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog)
-        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ValueCollection<IDialogPartResult>(dialog.ResetDialogPartResultByPart(Answers, CurrentPart)), Exception);
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, new ReadOnlyValueCollection<IDialogPartResult>(dialog.ResetDialogPartResultByPart(Answers, CurrentPart)), Exception);
 }

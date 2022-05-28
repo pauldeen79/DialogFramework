@@ -22,11 +22,11 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
         if (!dialogPartResults.Any()
             || dialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ReadOnlyValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
         }
         else if (_checkForSingleOccurence && dialogPartResults.Count() > 1)
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ReadOnlyValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
         }
     }
 }

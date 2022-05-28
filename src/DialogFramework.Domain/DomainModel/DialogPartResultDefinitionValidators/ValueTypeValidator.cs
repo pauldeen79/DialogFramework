@@ -13,7 +13,7 @@ public class ValueTypeValidator : IDialogPartResultDefinitionValidator
     {
         if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ValueCollection<string>(new[] { dialogPartResultDefinition.Id  }));
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ReadOnlyValueCollection<string>(new[] { dialogPartResultDefinition.Id  }));
         }
     }
 }

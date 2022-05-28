@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Core.Tests;
+﻿using DialogFramework.Domain.Builders;
+
+namespace DialogFramework.Core.Tests;
 
 public class SimpleFormFlowDialogTests
 {
@@ -186,10 +188,10 @@ public class SimpleFormFlowDialogTests
         ); // ContactInfo -> Newsletter
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(context);
+        var json = JsonSerializerFixture.Serialize(new DialogContextBuilder(context));
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var context2 = JsonSerializerFixture.Deserialize<DialogContext>(json)!;
+        var context2 = JsonSerializerFixture.Deserialize<DialogContextBuilder>(json)!.Build();
         var result = sut.Continue
         (
             context2,
