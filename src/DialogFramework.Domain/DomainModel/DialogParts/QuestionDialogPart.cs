@@ -18,6 +18,8 @@ public partial record QuestionDialogPart
             : null;
     }
 
+    public DialogState GetState() => DialogState.InProgress;
+
     protected virtual void HandleValidate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults, ValueCollection<IDialogValidationResult> errors)
     {
         foreach (var dialogPartResult in dialogPartResults)

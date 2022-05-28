@@ -19,5 +19,6 @@ public class DialogContextFactory : IDialogContextFactory
     private sealed class EmptyDialogPart : IDialogPart
     {
         public string Id => "Empty";
+        public DialogState GetState() => DialogState.Initial;
     }
 }

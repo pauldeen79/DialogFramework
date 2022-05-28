@@ -11,6 +11,8 @@ public partial record DecisionDialogPart : IConditionEvaluatorContainer
             ?? DefaultNextPartId.WhenNullOrEmpty(() => throw new NotSupportedException("There is no decision for this path"));
     }
 
+    public DialogState GetState() => DialogState.InProgress;
+
     private sealed class DummyConditionEvaluator : IConditionEvaluator
     {
         public bool Evaluate(object? context, IEnumerable<ICondition> conditions)
