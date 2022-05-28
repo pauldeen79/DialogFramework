@@ -51,12 +51,14 @@ See unit tests for more examples.
 # Project structure
 
 The solution consists of the following projects:
-- DialogFramework.Abstractions [TODO: Remove, merge into CodeGeneration]
-- CodeGeneration: Interfaces and code generation for domain entity models and builders
+- DialogFramework.Abstractions: Interfaces used in code generation
+- CodeGeneration: Code generation for domain entity models and builders
 - DialogFramework.Domain: Domain entity models and builders
-- DialogFramework.Application: Commands and command handlers for executing commands [TODO: Refactor Service into commands]
+- DialogFramework.Application: Application logic
 
 # TODOs
 
 - Change CurrentPart on IDialogContext to CurrentPartId, as string? (gives some problems to getting validation errors and exception, so need to refeactor some things first)
-- Change builders to interface (and use extension methods), and get rid of DialogPartBuilder which violates open/closed principe
+- Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
+- Refactor Service into separate commands. Maybe extract some logic like the ProcessDecisions method, which is used in multiple commands.
+- Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implelmentations in signatures instead.
