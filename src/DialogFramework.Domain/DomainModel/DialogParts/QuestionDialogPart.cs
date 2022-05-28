@@ -2,14 +2,17 @@
 
 public partial record QuestionDialogPart
 {
-    public IDialogPart? Validate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
+    public IDialogPart? Validate(IDialogContext context,
+                                 IDialog dialog,
+                                 IConditionEvaluator conditionEvaluator,
+                                 IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var errors = new List<IDialogValidationResult>();
         HandleValidate(context, dialog, dialogPartResults, errors);
 
         foreach (var validator in Validators)
         {
-            errors.AddRange(validator.Validate(context, dialog, dialogPartResults));
+            errors.AddRange(validator.Validate(context, dialog, conditionEvaluator, dialogPartResults));
         }
 
         return errors.Count > 0
@@ -19,7 +22,10 @@ public partial record QuestionDialogPart
 
     public DialogState GetState() => DialogState.InProgress;
 
-    protected virtual void HandleValidate(IDialogContext context, IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults, List<IDialogValidationResult> errors)
+    protected virtual void HandleValidate(IDialogContext context,
+                                          IDialog dialog,
+                                          IEnumerable<IDialogPartResult> dialogPartResults,
+                                          List<IDialogValidationResult> errors)
     {
         foreach (var dialogPartResult in dialogPartResults)
         {

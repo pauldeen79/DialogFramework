@@ -35,22 +35,10 @@ public class DialogService : IDialogService
         }
         try
         {
-            var firstPart = GetFirstPart(dialog, context);
+            var firstPart = dialog.GetFirstPart(context, _conditionEvaluator);
             if (firstPart is IRedirectDialogPart redirectDialogPart)
             {
                 return Start(redirectDialogPart.RedirectDialogMetadata);
-            }
-
-            while (true)
-            {
-                if (firstPart is INavigationDialogPart navigationDialogPart)
-                {
-                    firstPart = ProcessDecisions(dialog.GetPartById(navigationDialogPart.GetNextPartId(context)), context);
-                }
-                else
-                {
-                    break;
-                }
             }
 
             return context.Start(dialog, firstPart);
@@ -76,23 +64,17 @@ public class DialogService : IDialogService
             }
 
             context = context.AddDialogPartResults(dialog, dialogPartResults);
-            var nextPart = GetNextPart(dialog, context, dialog.GetPartById(context.CurrentPart.Id), dialogPartResults);
+            var nextPart = dialog.GetNextPart
+            (
+                context,
+                dialog.GetPartById(context, context.CurrentPart.Id, _conditionEvaluator),
+                _conditionEvaluator,
+                dialogPartResults
+            );
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {
                 return Start(redirectDialogPart.RedirectDialogMetadata);
-            }
-
-            while (true)
-            {
-                if (nextPart is INavigationDialogPart navigationDialogPart)
-                {
-                    nextPart = ProcessDecisions(dialog.GetPartById(navigationDialogPart.GetNextPartId(context)), context);
-                }
-                else
-                {
-                    break;
-                }
             }
 
             return context.Continue(dialog, nextPart);
@@ -195,57 +177,5 @@ public class DialogService : IDialogService
             throw new InvalidOperationException($"Unknown dialog: Id [{dialogIdentifier.Id}], Version [{dialogIdentifier.Version}]");
         }
         return dialog;
-    }
-
-    private IDialogPart GetFirstPart(IDialog dialog, IDialogContext context)
-    {
-        var firstPart = dialog.Parts.FirstOrDefault();
-        if (firstPart == null)
-        {
-            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
-        }
-
-        return ProcessDecisions(firstPart, context);
-    }
-
-    private IDialogPart ProcessDecisions(IDialogPart dialogPart, IDialogContext context)
-    {
-        if (dialogPart is IDecisionDialogPart decisionDialogPart)
-        {
-            var dialog = GetDialog(context.CurrentDialogIdentifier);
-            if (decisionDialogPart is IConditionEvaluatorContainer evaluatorContainer)
-            {
-                evaluatorContainer.ConditionEvaluator = _conditionEvaluator;
-            }
-            var nextPartId = decisionDialogPart.GetNextPartId(context, dialog);
-            return ProcessDecisions(dialog.GetPartById(nextPartId), context);
-        }
-
-        return dialogPart;
-    }
-
-    private IDialogPart GetNextPart(IDialog dialog,
-                                    IDialogContext context,
-                                    IDialogPart currentPart,
-                                    IEnumerable<IDialogPartResult> providedAnswers)
-    {
-        // first perform validation
-        var error = currentPart.Validate(context, dialog, providedAnswers);
-        if (error != null)
-        {
-            return error;
-        }
-
-        // if validation succeeds, then get the next part
-        var parts = dialog.Parts.Select((part, index) => new { Index = index, Part = part }).ToArray();
-        var currentPartWithIndex = parts.SingleOrDefault(p => p.Part.Id == currentPart.Id);
-        var nextPartWithIndex = parts.Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index).OrderBy(p => p.Index).FirstOrDefault();
-        if (nextPartWithIndex == null)
-        {
-            // there is no next part, so get the completed part
-            return ProcessDecisions(dialog.CompletedPart, context);
-        }
-
-        return ProcessDecisions(nextPartWithIndex.Part, context);
     }
 }

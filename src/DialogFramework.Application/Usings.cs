@@ -1,13 +1,9 @@
-﻿global using CrossCutting.Common;
-global using CrossCutting.Common.Extensions;
-global using DialogFramework.Abstractions;
+﻿global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
 global using DialogFramework.Domain;
-global using DialogFramework.Domain.Abstractions;
 global using DialogFramework.Domain.DomainModel;
 global using DialogFramework.Domain.DomainModel.DialogPartResultDefinitions;
 global using DialogFramework.Domain.DomainModel.DialogPartResultValues;
-global using DialogFramework.Domain.Extensions;
 global using ExpressionFramework.Abstractions;

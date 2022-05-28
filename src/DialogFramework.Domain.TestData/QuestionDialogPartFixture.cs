@@ -23,7 +23,8 @@ public static class QuestionDialogPartFixture
     public static IQuestionDialogPart Validate(IDialogPart instance,
                                                IDialogContext context,
                                                IDialog dialog,
+                                               IConditionEvaluator conditionEvaluator,
                                                IEnumerable<IDialogPartResult> providedAnswers)
-        => instance.Validate(context, dialog, providedAnswers) as IQuestionDialogPart
+        => instance.Validate(context, dialog, conditionEvaluator, providedAnswers) as IQuestionDialogPart
             ?? new QuestionDialogPartBuilder().WithGroup(new DialogPartGroupBuilder()).Build();
 }

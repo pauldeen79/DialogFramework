@@ -9,6 +9,7 @@ public class SingleOptionalQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleOptionalQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .WithValue(new DialogPartResultValueBuilder())
@@ -16,7 +17,7 @@ public class SingleOptionalQuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
 
         // Assert
         actual.Should().BeEmpty();
@@ -29,6 +30,7 @@ public class SingleOptionalQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleOptionalQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .WithResultId("A")
@@ -37,7 +39,7 @@ public class SingleOptionalQuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
 
         // Assert
         actual.Should().BeEmpty();
@@ -50,6 +52,7 @@ public class SingleOptionalQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleOptionalQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var results = new[]
         {
             new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
@@ -57,7 +60,7 @@ public class SingleOptionalQuestionDialogPartTests
         };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
