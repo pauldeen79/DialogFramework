@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace DialogFramework.Domain.DomainModel.Builders;
+﻿namespace DialogFramework.Domain.DomainModel.Builders;
 
 public class DialogPartBuilder
 {
@@ -13,20 +11,6 @@ public class DialogPartBuilder
     public NavigationDialogPartBuilder? NavigationDialogPartBuilder { get; set; }
     public RedirectDialogPartBuilder? RedirectDialogPartBuilder { get; set; }
     public bool IsEmptyDialogPart { get; set; }
-
-    //[JsonConstructor]
-    //public DialogPartBuilder(object sourceBuilder)
-    //{
-    //    if (sourceBuilder is QuestionDialogPartBuilder questionDialogPart) QuestionDialogPartBuilder = questionDialogPart;
-    //    else if (sourceBuilder is AbortedDialogPartBuilder abortedDialogPart) AbortedDialogPartBuilder = abortedDialogPart;
-    //    else if (sourceBuilder is ErrorDialogPartBuilder errorDialogPart) ErrorDialogPartBuilder = errorDialogPart;
-    //    else if (sourceBuilder is CompletedDialogPartBuilder completedDialogPart) CompletedDialogPartBuilder = completedDialogPart;
-    //    else if (sourceBuilder is MessageDialogPartBuilder messageDialogPart) MessageDialogPartBuilder = messageDialogPart;
-    //    else if (sourceBuilder is DecisionDialogPartBuilder decisionDialogPart) DecisionDialogPartBuilder = decisionDialogPart;
-    //    else if (sourceBuilder is NavigationDialogPartBuilder navigationDialogPart) NavigationDialogPartBuilder = navigationDialogPart;
-    //    else if (sourceBuilder is RedirectDialogPartBuilder redirectDialogPart) RedirectDialogPartBuilder = redirectDialogPart;
-    //    else throw new ArgumentException($"Dialogpart builder type [{sourceBuilder?.GetType()?.FullName}] is not supported");
-    //}
 
     public DialogPartBuilder()
     {
