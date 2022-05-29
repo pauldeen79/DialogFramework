@@ -58,8 +58,6 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Change CurrentPart on IDialogContext to CurrentPartId, as string/identifier?
-  (gives some problems to getting validation errors and exception, so need to refactor some things first, update code in ModelFramework)
 - Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
 - Refactor Service into separate commands, maybe use ICommand interface (but it's nowhere in the System namespace?)
 - Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).

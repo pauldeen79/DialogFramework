@@ -10,6 +10,7 @@ global using DialogFramework.Domain.DomainModel.Builders;
 global using DialogFramework.Domain.DomainModel.DialogPartResultValues;
 global using DialogFramework.Domain.DomainModel.DialogParts;
 global using DialogFramework.Domain.DomainModel.DialogParts.Builders;
+global using DialogFramework.Domain.Extensions;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Abstractions;
 global using FluentAssertions;

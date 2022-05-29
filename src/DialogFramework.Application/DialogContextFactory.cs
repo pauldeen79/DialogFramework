@@ -9,15 +9,10 @@ public class DialogContextFactory : IDialogContextFactory
         (
             Guid.NewGuid().ToString(),
             dialog.Metadata,
-            new EmptyDialogPart(),
+            "Empty",
             null,
             DialogState.Initial,
-            Enumerable.Empty<IDialogPartResult>()
+            Enumerable.Empty<IDialogPartResult>(),
+            Enumerable.Empty<IDialogValidationResult>()
         );
-
-    private sealed class EmptyDialogPart : IDialogPart
-    {
-        public string Id => "Empty";
-        public DialogState GetState() => DialogState.Initial;
-    }
 }

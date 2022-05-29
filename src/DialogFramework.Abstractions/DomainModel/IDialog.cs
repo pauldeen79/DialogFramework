@@ -12,20 +12,18 @@ public interface IDialog
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                   IEnumerable<IDialogPartResult> newPartResults);
 
-    IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingPartResults,
-                                                               IDialogPart part);
-    bool CanNavigateTo(IDialogPart currentPart,
-                       IDialogPart navigateToPart,
+    bool CanResetPartResultsByPartId(string partId);
+
+    IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+                                                            string partId);
+    bool CanNavigateTo(string currentPartId,
+                       string navigateToPartId,
                        IEnumerable<IDialogPartResult> existingPartResults);
 
     IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
-
     IDialogPart GetNextPart(IDialogContext context,
-                            IDialogPart currentPart,
                             IConditionEvaluator conditionEvaluator,
                             IEnumerable<IDialogPartResult> providedResults);
 
-    IDialogPart GetPartById(IDialogContext context,
-                            string id,
-                            IConditionEvaluator conditionEvaluator);
+    IDialogPart GetPartById(string id);
 }

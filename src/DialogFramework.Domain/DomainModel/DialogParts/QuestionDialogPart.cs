@@ -4,7 +4,6 @@ public partial record QuestionDialogPart
 {
     public IDialogPart? Validate(IDialogContext context,
                                  IDialog dialog,
-                                 IConditionEvaluator conditionEvaluator,
                                  IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var errors = new List<IDialogValidationResult>();
@@ -12,7 +11,7 @@ public partial record QuestionDialogPart
 
         foreach (var validator in Validators)
         {
-            errors.AddRange(validator.Validate(context, dialog, conditionEvaluator, dialogPartResults));
+            errors.AddRange(validator.Validate(context, dialog, dialogPartResults));
         }
 
         return errors.Count > 0

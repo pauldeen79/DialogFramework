@@ -9,11 +9,10 @@ public class QuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var results = new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -27,11 +26,10 @@ public class QuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var results = new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -45,11 +43,10 @@ public class QuestionDialogPartTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var sut = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var results = new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, conditionEvaluator, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
         actual.Should().BeEmpty();

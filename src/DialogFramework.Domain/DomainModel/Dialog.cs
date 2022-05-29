@@ -16,21 +16,23 @@ public partial record Dialog
             .Concat(newPartResults);
     }
 
-    public IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingPartResults,
-                                                                      IDialogPart part)
+    public bool CanResetPartResultsByPartId(string partId) => GetPartById(partId) is IQuestionDialogPart;
+
+    public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+                                                                   string partId)
     {
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return existingPartResults.Where(x => x.DialogPartId != part.Id);
+        return existingPartResults.Where(x => x.DialogPartId != partId);
     }
 
-    public bool CanNavigateTo(IDialogPart currentPart,
-                              IDialogPart navigateToPart,
+    public bool CanNavigateTo(string currentPartId,
+                              string navigateToPartId,
                               IEnumerable<IDialogPartResult> existingPartResults)
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        return currentPart.Id == navigateToPart.Id || existingPartResults.Any(x => x.DialogPartId == navigateToPart.Id);
+        return currentPartId == navigateToPartId || existingPartResults.Any(x => x.DialogPartId == navigateToPartId);
     }
 
     public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
@@ -45,12 +47,12 @@ public partial record Dialog
     }
 
     public IDialogPart GetNextPart(IDialogContext context,
-                                   IDialogPart currentPart,
                                    IConditionEvaluator conditionEvaluator,
                                    IEnumerable<IDialogPartResult> providedResults)
     {
         // first perform validation
-        var error = currentPart.Validate(context, this, conditionEvaluator, providedResults);
+        var currentPart = GetPartById(context.CurrentPartId);
+        var error = currentPart.Validate(context, this, providedResults);
         if (error != null)
         {
             return error;
@@ -75,9 +77,7 @@ public partial record Dialog
         return ProcessDecisions(nextPartWithIndex.Part, context, conditionEvaluator);
     }
 
-    public IDialogPart GetPartById(IDialogContext context,
-                                   string id,
-                                   IConditionEvaluator conditionEvaluator)
+    public IDialogPart GetPartById(string id)
     {
         if (id == AbortedPart.Id) return AbortedPart;
         if (id == CompletedPart.Id) return CompletedPart;
@@ -103,11 +103,11 @@ public partial record Dialog
             if (dialogPart is IDecisionDialogPart decisionDialogPart)
             {
                 var nextPartId = decisionDialogPart.GetNextPartId(context, this, conditionEvaluator);
-                dialogPart = GetPartById(context, nextPartId, conditionEvaluator);
+                dialogPart = GetPartById(nextPartId);
             }
             else if (dialogPart is INavigationDialogPart navigationDialogPart)
             {
-                dialogPart = GetPartById(context, navigationDialogPart.GetNextPartId(context), conditionEvaluator);
+                dialogPart = GetPartById(navigationDialogPart.GetNextPartId(context));
             }
             else
             {

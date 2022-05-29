@@ -4,7 +4,6 @@ public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartVali
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
                                                          IDialog dialog,
-                                                         IConditionEvaluator conditionEvaluator,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId));

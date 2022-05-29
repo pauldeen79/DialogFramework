@@ -27,8 +27,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -51,8 +50,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -75,8 +73,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -101,8 +98,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Aborted);
-        result.CurrentPart.Should().Be(abortedPart);
-        result.CurrentGroup.Should().BeNull();
+        result.CurrentPartId.Should().Be(abortedPart.Id);
+        result.CurrentGroupId.Should().BeNull();
     }
 
     [Fact]
@@ -198,8 +195,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -228,8 +224,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPart.Id.Should().Be("Completed");
-        result.CurrentGroup.Should().Be(dialog.CompletedPart.Group);
+        result.CurrentPartId.Should().Be("Completed");
+        result.CurrentGroupId.Should().Be(dialog.CompletedPart.Group.Id);
     }
 
     [Fact]
@@ -251,11 +247,9 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroup.Should().Be(currentPart.Group);
-        result.CurrentPart.Should().BeAssignableTo<IQuestionDialogPart>();
-        var questionDialogPart = (IQuestionDialogPart)result.CurrentPart;
-        questionDialogPart.ValidationErrors.Should().ContainSingle();
-        questionDialogPart.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [Unknown result]");
+        result.CurrentGroupId.Should().Be(currentPart.GetGroupId());
+        result.ValidationErrors.Should().ContainSingle();
+        result.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [Unknown result]");
     }
 
     [Fact]
@@ -279,11 +273,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroup.Should().Be(currentPart.Group);
-        result.CurrentPart.Should().BeAssignableTo<QuestionDialogPart>();
-        var questionDialogPart = (QuestionDialogPart)result.CurrentPart;
-        questionDialogPart.ValidationErrors.Should().ContainSingle();
-        questionDialogPart.ValidationErrors.Single().ErrorMessage.Should().Be("Provided answer from wrong question");
+        result.ValidationErrors.Should().ContainSingle();
+        result.ValidationErrors.Single().ErrorMessage.Should().Be("Provided answer from wrong question");
     }
 
     [Fact]
@@ -310,8 +301,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPart.Id.Should().Be("Completed");
-        result.CurrentGroup.Should().Be(dialog.CompletedPart.Group);
+        result.CurrentPartId.Should().Be("Completed");
+        result.CurrentGroupId.Should().Be(dialog.CompletedPart.Group.Id);
     }
 
     [Fact]
@@ -392,8 +383,8 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentDialogIdentifier.Id.Should().Be(dialog2.Metadata.Id);
-        result.CurrentGroup.Should().Be(welcomePart.Group.Build());
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
+        result.CurrentGroupId.Should().Be(welcomePart.Group.Build().Id);
+        result.CurrentPartId.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -461,8 +452,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroup.Should().Be(navigatedPart.Group.Build());
-        result.CurrentPart.Id.Should().Be(navigatedPart.Id);
+        result.CurrentGroupId.Should().Be(navigatedPart.Group.Build().Id);
+        result.CurrentPartId.Should().Be(navigatedPart.Id);
     }
 
     [Theory]
@@ -480,8 +471,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -543,8 +533,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentGroup.Should().Be(completedPart.Group.Build());
-        result.CurrentPart.Should().BeAssignableTo<ICompletedDialogPart>();
+        result.CurrentGroupId.Should().Be(completedPart.Group.Build().Id);
     }
 
     [Fact]
@@ -752,8 +741,8 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
         result.CurrentDialogIdentifier.Id.Should().Be(dialog2.Metadata.Id);
-        result.CurrentGroup.Should().Be(welcomePart.Group);
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
+        result.CurrentGroupId.Should().Be(welcomePart.Group.Id);
+        result.CurrentPartId.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -792,8 +781,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroup.Should().Be(welcomePart.Group);
-        result.CurrentPart.Id.Should().Be(welcomePart.Id);
+        result.CurrentGroupId.Should().Be(welcomePart.Group.Id);
+        result.CurrentPartId.Should().Be(welcomePart.Id);
     }
 
     [Fact]
@@ -860,8 +849,7 @@ public class DialogServiceTests
         var result = sut.Start(dialog.Metadata);
 
         // Assert
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
+        result.CurrentGroupId.Should().BeNull();
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
@@ -882,8 +870,8 @@ public class DialogServiceTests
         var result = sut.Start(dialog.Metadata);
 
         // Assert
-        result.CurrentGroup.Should().Be(dialog.Parts.OfType<IGroupedDialogPart>().First().Group);
-        result.CurrentPart.Id.Should().Be(dialog.Parts.First().Id);
+        result.CurrentGroupId.Should().Be(dialog.Parts.OfType<IGroupedDialogPart>().First().Group.Id);
+        result.CurrentPartId.Should().Be(dialog.Parts.First().Id);
     }
 
     [Fact]
@@ -921,9 +909,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        result.CurrentPart.Id.Should().Be(errorDialogPart.Id);
+        result.CurrentGroupId.Should().BeNull();
+        result.CurrentPartId.Should().Be(errorDialogPart.Id);
     }
 
     [Fact]
@@ -961,9 +948,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Aborted);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IAbortedDialogPart>();
-        result.CurrentPart.Id.Should().Be(abortedPart.Id);
+        result.CurrentGroupId.Should().BeNull();
+        result.CurrentPartId.Should().Be(abortedPart.Id);
     }
 
     [Fact]
@@ -977,7 +963,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(context, completedPart);
+        var result = sut.CanNavigateTo(context, completedPart.Id);
 
         // Assert
         result.Should().BeFalse();
@@ -994,7 +980,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(context, completedPart);
+        var result = sut.CanNavigateTo(context, completedPart.Id);
 
         // Assert
         result.Should().BeFalse();
@@ -1011,7 +997,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(context, questionPart);
+        var result = sut.CanNavigateTo(context, questionPart.Id);
 
         // Assert
         result.Should().BeFalse();
@@ -1027,7 +1013,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(context, questionPart);
+        var result = sut.CanNavigateTo(context, questionPart.Id);
 
         // Assert
         result.Should().BeTrue();
@@ -1042,11 +1028,11 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) });
-        context = context.Continue(dialog, questionPart);
+        context = context.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>());
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(context, messagePart);
+        var result = sut.CanNavigateTo(context, messagePart.Id);
 
         // Assert
         result.Should().BeTrue();
@@ -1063,7 +1049,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.NavigateTo(context, questionPart);
+        var result = sut.NavigateTo(context, questionPart.Id);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
@@ -1078,17 +1064,16 @@ public class DialogServiceTests
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(messagePart.Id, string.Empty, new EmptyDialogPartResultValue()) });
-        context = context.Continue(dialog, questionPart);
+        context = context.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>());
         var sut = CreateSut();
 
         // Act
-        var result = sut.NavigateTo(context, messagePart);
+        var result = sut.NavigateTo(context, messagePart.Id);
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroup.Should().Be(messagePart.Group);
-        result.CurrentPart.Should().BeAssignableTo<IMessageDialogPart>();
-        result.CurrentPart.Id.Should().Be(messagePart.Id);
+        result.CurrentGroupId.Should().Be(messagePart.Group.Id);
+        result.CurrentPartId.Should().Be(messagePart.Id);
     }
 
     [Fact]
@@ -1101,7 +1086,7 @@ public class DialogServiceTests
         var repositoryMock = new Mock<IDialogRepository>();
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
-        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First()));
+        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First().Id));
 
         // Act
         navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog: Id [DialogFixture], Version [1.0.0]");
@@ -1118,7 +1103,7 @@ public class DialogServiceTests
         repositoryMock.Setup(x => x.GetDialog(It.IsAny<IDialogIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
-        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First()));
+        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialog), dialog.Parts.First().Id));
 
         // Act
         navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
@@ -1212,9 +1197,8 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroup.Should().BeNull();
-        result.CurrentPart.Should().BeAssignableTo<IErrorDialogPart>();
-        result.CurrentPart.Id.Should().Be(dialog.ErrorPart.Id);
+        result.CurrentGroupId.Should().BeNull();
+        result.CurrentPartId.Should().Be(dialog.ErrorPart.Id);
     }
 
     [Fact]

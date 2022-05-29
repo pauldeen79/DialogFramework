@@ -92,7 +92,10 @@ namespace CodeGeneration.CodeGenerationProviders
                                     .WithName(@"context"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.DomainModel.IDialog")
-                                    .WithName(@"dialog"))
+                                    .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"ExpressionFramework.Abstractions.IConditionEvaluator")
+                                    .WithName(@"conditionEvaluator"))
                             .WithTypeName(@"System.String"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)

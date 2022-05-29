@@ -44,7 +44,7 @@ public class DialogService : IDialogService
                 return Start(redirectDialogPart.RedirectDialogMetadata);
             }
 
-            return context.Start(dialog, firstPart);
+            return context.Start(dialog, firstPart.Id);
         }
         catch (Exception ex)
         {
@@ -71,7 +71,6 @@ public class DialogService : IDialogService
             var nextPart = dialog.GetNextPart
             (
                 context,
-                dialog.GetPartById(context, context.CurrentPart.Id, _conditionEvaluator),
                 _conditionEvaluator,
                 dialogPartResults
             );
@@ -81,7 +80,7 @@ public class DialogService : IDialogService
                 return Start(redirectDialogPart.RedirectDialogMetadata);
             }
 
-            return context.Continue(dialog, nextPart);
+            return context.Continue(dialog, nextPart.Id, nextPart.GetValidationResults());
         }
         catch (Exception ex)
         {
@@ -121,21 +120,21 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanNavigateTo(IDialogContext context, IDialogPart navigateToPart)
-        => context.CanNavigateTo(GetDialog(context), navigateToPart);
+    public bool CanNavigateTo(IDialogContext context, string navigateToPartId)
+        => context.CanNavigateTo(GetDialog(context), navigateToPartId);
 
-    public IDialogContext NavigateTo(IDialogContext context, IDialogPart navigateToPart)
+    public IDialogContext NavigateTo(IDialogContext context, string navigateToPartId)
     {
         IDialog? dialog = null;
         try
         {
             dialog = GetDialog(context);
-            if (!CanNavigateTo(context, navigateToPart))
+            if (!CanNavigateTo(context, navigateToPartId))
             {
                 throw new InvalidOperationException("Cannot navigate to requested dialog part");
             }
 
-            return context.NavigateTo(dialog, navigateToPart);
+            return context.NavigateTo(dialog, navigateToPartId);
         }
         catch (Exception ex)
         {
