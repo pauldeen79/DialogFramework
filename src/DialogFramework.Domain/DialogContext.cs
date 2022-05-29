@@ -9,8 +9,8 @@ public partial record DialogContext
     public IDialogContext Abort(IDialog dialog)
         => new DialogContext(Id, CurrentDialogIdentifier, dialog.AbortedPart, dialog.AbortedPart.GetGroup(), DialogState.Aborted, Results);
 
-    public IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
-        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ReplaceAnswers(Results, dialogPartResults));
+    public IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults)
+        => new DialogContext(Id, CurrentDialogIdentifier, CurrentPart, CurrentPart.GetGroup(), CurrentState, dialog.ReplaceAnswers(Results, partResults));
 
     public bool CanContinue(IDialog dialog)
         => CurrentState == DialogState.InProgress;

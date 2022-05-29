@@ -5,14 +5,17 @@ public class DialogService : IDialogService
     private readonly IDialogContextFactory _contextFactory;
     private readonly IDialogRepository _dialogRepository;
     private readonly IConditionEvaluator _conditionEvaluator;
+    private readonly ILogger _logger;
 
     public DialogService(IDialogContextFactory contextFactory,
                          IDialogRepository dialogRepository,
-                         IConditionEvaluator conditionEvaluator)
+                         IConditionEvaluator conditionEvaluator,
+                         ILogger logger)
     {
         _contextFactory = contextFactory;
         _dialogRepository = dialogRepository;
         _conditionEvaluator = conditionEvaluator;
+        _logger = logger;
     }
 
     public bool CanStart(IDialogIdentifier dialogIdentifier)
@@ -45,6 +48,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(Start)} failed, check the exception");
             return context.Error(dialog, ex);
         }
     }
@@ -81,6 +85,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(Continue)} failed, check the exception");
             if (dialog != null)
             {
                 return context.Error(dialog, ex);
@@ -107,6 +112,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(Abort)} failed, check the exception");
             if (dialog != null)
             {
                 return context.Error(dialog, ex);
@@ -133,6 +139,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(NavigateTo)} failed, check the exception");
             if (dialog != null)
             {
                 return context.Error(dialog, ex);
@@ -159,6 +166,7 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, $"{nameof(ResetCurrentState)} failed, check the exception");
             if (dialog != null)
             {
                 return context.Error(dialog, ex);

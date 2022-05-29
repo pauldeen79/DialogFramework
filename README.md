@@ -58,7 +58,10 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Change CurrentPart on IDialogContext to CurrentPartId, as string? (gives some problems to getting validation errors and exception, so need to refeactor some things first)
+- Change CurrentPart on IDialogContext to CurrentPartId, as string/identifier?
+  (gives some problems to getting validation errors and exception, so need to refactor some things first, update code in ModelFramework)
 - Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
-- Refactor Service into separate commands. Maybe extract some logic like the ProcessDecisions method, which is used in multiple commands.
-- Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implelmentations in signatures instead.
+- Refactor Service into separate commands, maybe use ICommand interface (but it's nowhere in the System namespace?)
+- Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
+- Move unit tests from Service (Application) to Domain, and get rid of custom fixtures
+- Replace string id with DialogPartIdentifier, DialogPartGroupIdentifier, DialogPartResultIdentifier and DialogContextIdentifier

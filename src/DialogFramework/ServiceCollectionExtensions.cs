@@ -8,6 +8,6 @@ public static class ServiceCollectionExtensions
             x => x.AddSingleton<IExpressionEvaluatorProvider, GetDialogPartResultIdsByPartExpressionEvaluatorProvider>()
                   .AddSingleton<IExpressionEvaluatorProvider, GetDialogPartResultValuesByPartExpressionEvaluatorProvider>()
         )
-        .AddTransient<IDialogContextFactory, DialogContextFactory>()
-        .AddTransient<IDialogService, DialogService>();
+        .AddScoped<IDialogContextFactory, DialogContextFactory>()
+        .AddScoped<IDialogService, DialogService>();
 }

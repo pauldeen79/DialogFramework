@@ -6,9 +6,11 @@ public class TestFlowTests
     public void Can_Complete_TestFlow_Dialog_With_Unhealthy_Advice()
     {
         // Arrange
+        var loggerMock = new Mock<ILogger>();
         using var provider = new ServiceCollection()
             .AddDialogFramework()
             .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .AddSingleton(loggerMock.Object)
             .BuildServiceProvider();
         var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
         var sut = provider.GetRequiredService<IDialogService>();

@@ -9,21 +9,21 @@ public interface IDialog
     ICompletedDialogPart CompletedPart { get; }
     IReadOnlyCollection<IDialogPartGroup> PartGroups { get; }
 
-    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingDialogPartResults,
-                                                  IEnumerable<IDialogPartResult> newDialogPartResults);
+    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
+                                                  IEnumerable<IDialogPartResult> newPartResults);
 
-    IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingDialogPartResults,
-                                                               IDialogPart currentPart);
+    IEnumerable<IDialogPartResult> ResetDialogPartResultByPart(IEnumerable<IDialogPartResult> existingPartResults,
+                                                               IDialogPart part);
     bool CanNavigateTo(IDialogPart currentPart,
                        IDialogPart navigateToPart,
-                       IEnumerable<IDialogPartResult> existingDialogPartResults);
+                       IEnumerable<IDialogPartResult> existingPartResults);
 
     IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
 
     IDialogPart GetNextPart(IDialogContext context,
                             IDialogPart currentPart,
                             IConditionEvaluator conditionEvaluator,
-                            IEnumerable<IDialogPartResult> providedAnswers);
+                            IEnumerable<IDialogPartResult> providedResults);
 
     IDialogPart GetPartById(IDialogContext context,
                             string id,

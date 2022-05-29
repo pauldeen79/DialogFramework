@@ -12,7 +12,7 @@ public interface IDialogContext
     bool CanStart(IDialog dialog);
     IDialogContext Start(IDialog dialog, IDialogPart firstPart);
 
-    IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults);
+    IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
 
     bool CanContinue(IDialog dialog);
     IDialogContext Continue(IDialog dialog, IDialogPart nextPart);

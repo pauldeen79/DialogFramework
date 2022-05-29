@@ -7,3 +7,4 @@ global using DialogFramework.Domain.DomainModel;
 global using DialogFramework.Domain.DomainModel.DialogPartResultDefinitions;
 global using DialogFramework.Domain.DomainModel.DialogPartResultValues;
 global using ExpressionFramework.Abstractions;
+global using Microsoft.Extensions.Logging;
