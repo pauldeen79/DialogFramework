@@ -2,6 +2,7 @@
 global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Abstractions.DomainModel.DialogParts;
 global using DialogFramework.Abstractions.DomainModel.Domains;
+global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.DomainModel.Builders;
 global using DialogFramework.Domain.DomainModel.DialogPartResultDefinitionValidators;
 global using DialogFramework.Domain.DomainModel.DialogParts.Builders;

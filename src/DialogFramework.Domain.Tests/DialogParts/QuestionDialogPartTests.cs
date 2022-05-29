@@ -8,7 +8,7 @@ public class QuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) };
 
         // Act
@@ -25,7 +25,7 @@ public class QuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) };
 
         // Act
@@ -42,7 +42,7 @@ public class QuestionDialogPartTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var sut = dialog.Parts.OfType<IQuestionDialogPart>().First();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) };
 
         // Act

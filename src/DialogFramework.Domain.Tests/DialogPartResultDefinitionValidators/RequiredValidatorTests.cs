@@ -9,7 +9,7 @@ public class RequiredValidatorTests
         var sut = new RequiredValidator();
         var dialogMock = new Mock<IDialog>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = new DialogContextFixture(dialogMock.Object.Metadata);
+        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -29,7 +29,7 @@ public class RequiredValidatorTests
         var sut = new RequiredValidator(false);
         var dialogMock = new Mock<IDialog>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = new DialogContextFixture(dialogMock.Object.Metadata);
+        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -49,7 +49,7 @@ public class RequiredValidatorTests
         var sut = new RequiredValidator(true);
         var dialogMock = new Mock<IDialog>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = new DialogContextFixture(dialogMock.Object.Metadata);
+        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -70,7 +70,7 @@ public class RequiredValidatorTests
         var sut = new RequiredValidator();
         var dialogMock = new Mock<IDialog>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = new DialogContextFixture(dialogMock.Object.Metadata);
+        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns("PartId");
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();

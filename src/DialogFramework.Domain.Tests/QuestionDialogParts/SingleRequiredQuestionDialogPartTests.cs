@@ -8,7 +8,7 @@ public class SingleRequiredQuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .WithValue(new DialogPartResultValueBuilder())
@@ -29,7 +29,7 @@ public class SingleRequiredQuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(sut.Id)
             .WithResultId("A")
@@ -50,7 +50,7 @@ public class SingleRequiredQuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator())).Build();
         var dialog = DialogFixture.CreateBuilder().Build();
-        var context = new DialogContextFixture("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[]
         {
             new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),

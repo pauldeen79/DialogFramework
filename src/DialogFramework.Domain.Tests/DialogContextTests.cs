@@ -11,7 +11,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var welcomePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = new DialogContextFixture(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
+        var context = DialogContextFixture.Create(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
 
         // Act
         var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
@@ -26,7 +26,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
 
         // Act
@@ -42,7 +42,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
         context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
@@ -63,7 +63,7 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        IDialogContext context = new DialogContextFixture(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         context = context.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) });
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);

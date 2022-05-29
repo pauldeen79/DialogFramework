@@ -1,24 +1,35 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
-public record DialogContextFixture : DialogContext
+public static class DialogContextFixture
 {
-    public DialogContextFixture(IDialogIdentifier currentDialogIdentifier)
-        : base(Guid.NewGuid().ToString(), currentDialogIdentifier, "Empty", null, DialogState.Initial, Enumerable.Empty<IDialogPartResult>(), Enumerable.Empty<IDialogValidationResult>())
-    {
-    }
+    public static IDialogContext Create(IDialogIdentifier currentDialogIdentifier)
+        => new DialogContextBuilder()
+            .WithId(Guid.NewGuid().ToString())
+            .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentState(DialogState.InProgress)
+            .WithCurrentPartId("Empty")
+            .Build();
 
-    public DialogContextFixture(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
-        : base(id, currentDialogIdentifier, currentPart.Id, null, currentState, Enumerable.Empty<IDialogPartResult>(), Enumerable.Empty<IDialogValidationResult>())
-    {
-    }
+    public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
+        => new DialogContextBuilder()
+            .WithId(id)
+            .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentState(currentState)
+            .WithCurrentPartId(currentPart.Id)
+            .Build();
 
-    public DialogContextFixture(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
-        : base(id, currentDialogIdentifier, currentPart.Id, currentGroup?.Id, currentState, results, Enumerable.Empty<IDialogValidationResult>())
-    {
-    }
+    public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
+        => new DialogContextBuilder()
+            .WithId(id)
+            .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentPartId(currentPart.Id)
+            .WithCurrentGroupId(currentGroup?.Id)
+            .WithCurrentState(currentState)
+            .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
+            .Build();
 
-    public DialogContextFixture(IDialogContext source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
-        : base(source.Id, source.CurrentDialogIdentifier, source.CurrentPartId, source.CurrentGroupId, source.CurrentState, source.Results.Concat(additionalAnswers), Enumerable.Empty<IDialogValidationResult>())
-    {
-    }
+    public static IDialogContext Create(IDialogContext source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
+        => new DialogContextBuilder(source)
+            .AddResults(additionalAnswers.Select(x => new DialogPartResultBuilder(x)))
+            .Build();
 }
