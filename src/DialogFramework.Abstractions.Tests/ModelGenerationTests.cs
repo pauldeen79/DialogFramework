@@ -15,7 +15,6 @@ public class ModelGenerationTests
         var multipleContentBuilder = new MultipleContentBuilder(Settings.BasePath);
         GenerateCode.For<CoreModels>(Settings, multipleContentBuilder);
         GenerateCode.For<DialogPartModels>(Settings, multipleContentBuilder);
-        GenerateCode.For<DomainModelModels>(Settings, multipleContentBuilder);
         Verify(multipleContentBuilder);
     }
 

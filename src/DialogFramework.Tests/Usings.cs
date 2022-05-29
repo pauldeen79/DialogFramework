@@ -1,11 +1,10 @@
-﻿global using DialogFramework.Abstractions.DomainModel;
+﻿global using DialogFramework.Abstractions;
 global using DialogFramework.Application;
 global using DialogFramework.Application.Extensions;
 global using DialogFramework.Application.TestData;
+global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
-global using DialogFramework.Domain.DomainModel;
-global using DialogFramework.Domain.DomainModel.Builders;
-global using DialogFramework.Domain.DomainModel.DialogPartResultValues.Builders;
+global using DialogFramework.Domain.DialogPartResultValues.Builders;
 global using DialogFramework.Domain.Extensions;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Abstractions;

@@ -6,7 +6,7 @@ public static class DialogContextFixture
         => new DialogContextBuilder()
             .WithId(Guid.NewGuid().ToString())
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
-            .WithCurrentState(DialogState.InProgress)
+            .WithCurrentState(DialogState.Initial)
             .WithCurrentPartId("Empty")
             .Build();
 
