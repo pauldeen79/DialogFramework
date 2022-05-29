@@ -46,7 +46,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"CurrentState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"),
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Results")
@@ -110,7 +110,7 @@ namespace CodeGeneration.CodeGenerationProviders
                                     .WithTypeName(@"System.String")
                                     .WithName(@"nextPartId"),
                                 new ParameterBuilder()
-                                    .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection<DialogFramework.Abstractions.DomainModel.IDialogValidationResult>")
+                                    .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.DomainModel.IDialogValidationResult>")
                                     .WithName(@"validationResults"))
                             .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
                         new ClassMethodBuilder()

@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Abstractions.DomainModel.Domains;
+﻿namespace DialogFramework.Abstractions.DomainModel;
 
 public enum DialogState
 {

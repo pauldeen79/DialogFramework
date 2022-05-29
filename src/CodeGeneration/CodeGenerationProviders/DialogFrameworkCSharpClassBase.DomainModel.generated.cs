@@ -228,7 +228,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"ValueType")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.ResultValueType"),
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.ResultValueType"),
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Validators")
@@ -264,7 +264,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"ResultValueType")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.ResultValueType"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.ResultValueType"))
                     .WithName(@"IDialogPartResultValue"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel")

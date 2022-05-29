@@ -41,7 +41,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IAbortedDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -70,7 +70,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"ICompletedDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -101,7 +101,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IDecisionDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -121,7 +121,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IErrorDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -150,7 +150,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IMessageDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -175,7 +175,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"INavigationDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -231,7 +231,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IQuestionDialogPart"),
                 new ClassBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DomainModel.DialogParts")
@@ -251,7 +251,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.Domains.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DomainModel.DialogState"))
                     .WithName(@"IRedirectDialogPart"),
             }.Select(x => x.Build()).ToArray();
         }

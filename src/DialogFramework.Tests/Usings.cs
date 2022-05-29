@@ -1,4 +1,4 @@
-﻿global using DialogFramework.Abstractions.DomainModel.Domains;
+﻿global using DialogFramework.Abstractions.DomainModel;
 global using DialogFramework.Application;
 global using DialogFramework.Application.Extensions;
 global using DialogFramework.Application.TestData;
