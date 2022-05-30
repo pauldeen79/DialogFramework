@@ -33,7 +33,7 @@ public partial record QuestionDialogPart
                 errors.Add(new DialogValidationResult("Provided answer from wrong question", new ReadOnlyValueCollection<IDialogPartResultIdentifier>()));
                 continue;
             }
-            if (string.IsNullOrEmpty(dialogPartResult.ResultId.Value)) // TODO: Think of a way how to check for empty result id
+            if (string.IsNullOrEmpty(dialogPartResult.ResultId.Value))
             {
                 continue;
             }

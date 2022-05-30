@@ -6,7 +6,7 @@ public class SingleOptionalQuestionDialogPartValidator : IQuestionDialogPartVali
                                                          IDialog dialog,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId.Value)); //TODO: Find a way to check for empty result id
+        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId.Value));
         if (answerCount > 1)
         {
             yield return new DialogValidationResult("Only one answer is allowed", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
