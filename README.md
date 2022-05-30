@@ -62,4 +62,3 @@ The solution consists of the following projects:
 - Refactor Service into separate commands, maybe use ICommand interface (but it's nowhere in the System namespace?)
 - Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Move/copy unit tests from Service (Application) to Domain
-- Replace string id with DialogPartIdentifier, DialogPartGroupIdentifier, DialogPartResultIdentifier and DialogContextIdentifier
