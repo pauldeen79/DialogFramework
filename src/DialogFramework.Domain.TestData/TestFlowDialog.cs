@@ -3,35 +3,11 @@
 public static class TestFlowDialog
 {
     public static IDialog Create()
-    {
-        var welcomeGroupBuilder = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Welcome"))
-            .WithNumber(1)
-            .WithTitle("Welcome");
-        var getInformationGroupBuider = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Get information"))
-            .WithNumber(2)
-            .WithTitle("Get information");
-        var completedGroupBuilder = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Completed"))
-            .WithNumber(3)
-            .WithTitle("Completed");
-        return new DialogBuilder()
+        => DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithId("TestFlowDialog")
                 .WithFriendlyName("Test flow dialog")
                 .WithVersion("1.0.0"))
-            .WithAbortedPart(new AbortedDialogPartBuilder()
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Aborted"))
-                .WithMessage("The dialog is aborted. You can come back any time to start the application again."))
-            .WithErrorPart(new ErrorDialogPartBuilder()
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Error"))
-                .WithErrorMessage("Something went wrong. Please try again, or contact us in case the problem persists."))
-            .WithCompletedPart(new CompletedDialogPartBuilder()
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Completed"))
-                .WithHeading("Completed")
-                .WithMessage("Thank you for using this application. Please come back soon!")
-                .WithGroup(completedGroupBuilder))
             .AddParts
             (
                 new DialogPartBuilder
@@ -39,7 +15,7 @@ public static class TestFlowDialog
                     new MessageDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
                         .WithHeading("Welcome")
-                        .WithGroup(welcomeGroupBuilder)
+                        .WithGroup(DialogPartGroupFixture.CreateWelcomeGroupBuilder())
                         .WithMessage("Welcome to the health advisor application. By answering questions, we can give you an advice how to improve your health. You can continue to start analyzing your health.")
                 ),
                 new DialogPartBuilder
@@ -47,7 +23,7 @@ public static class TestFlowDialog
                     new QuestionDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("Age"))
                         .WithHeading("Age")
-                        .WithGroup(getInformationGroupBuider)
+                        .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                         .WithTitle("How old are you?")
                         .AddResults
                         (
@@ -98,7 +74,7 @@ public static class TestFlowDialog
                     new MessageDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("TooYoung"))
                         .WithHeading("Completed")
-                        .WithGroup(completedGroupBuilder)
+                        .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder())
                         .WithMessage("Too bad, you are too young. We can't give advice on kids.")
                 ),
                 new DialogPartBuilder
@@ -112,7 +88,7 @@ public static class TestFlowDialog
                     new QuestionDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("SportsTypes"))
                         .WithHeading("Sports types")
-                        .WithGroup(getInformationGroupBuider)
+                        .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                         .WithTitle("What type of sports do you do?")
                         .AddResults
                         (
@@ -152,7 +128,7 @@ public static class TestFlowDialog
                     new MessageDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("Healthy"))
                         .WithHeading("Healthy")
-                        .WithGroup(completedGroupBuilder)
+                        .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder())
                         .WithMessage("You're all good! Keep up the good work.")
                 ),
                 new DialogPartBuilder
@@ -166,7 +142,7 @@ public static class TestFlowDialog
                     new MessageDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("Unhealthy"))
                         .WithHeading("Unhealthy")
-                        .WithGroup(completedGroupBuilder)
+                        .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder())
                         .WithMessage("Our advice: It's time to do some sports, mate!")
                 ),
                 new DialogPartBuilder
@@ -180,7 +156,7 @@ public static class TestFlowDialog
                     new QuestionDialogPartBuilder()
                         .WithId(new DialogPartIdentifierBuilder().WithValue("Email"))
                         .WithHeading("E-mail address")
-                        .WithGroup(completedGroupBuilder)
+                        .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder())
                         .WithTitle("Thank you for using this application. You can leave your e-mail address in case you have comments or questions.")
                         .AddResults
                         (
@@ -191,7 +167,6 @@ public static class TestFlowDialog
                         )
                 )
             )
-            .AddPartGroups(welcomeGroupBuilder, getInformationGroupBuider, completedGroupBuilder)
+            .AddPartGroups(DialogPartGroupFixture.CreateWelcomeGroupBuilder(), DialogPartGroupFixture.CreateGetInformationGroupBuider(), DialogPartGroupFixture.CreateCompletedGroupBuilder())
             .Build();
-    }
 }
