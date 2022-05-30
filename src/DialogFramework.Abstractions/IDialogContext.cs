@@ -21,7 +21,7 @@ public interface IDialogContext
     bool CanAbort(IDialog dialog);
     IDialogContext Abort(IDialog dialog);
 
-    IDialogContext Error(IDialog dialog, Exception? exception);
+    IDialogContext Error(IDialog dialog, string? errorMessage);
 
     bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
     IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);

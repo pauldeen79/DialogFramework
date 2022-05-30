@@ -307,7 +307,7 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void Continue_Uses_Result_From_RedirectPart()
+    public void Continue_Does_Not_Work_On_RedirectPart()
     {
         // Arrange
         var dialog2 = DialogFixture.CreateBuilder();
@@ -334,15 +334,14 @@ public class DialogServiceTests
         var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
         var context = sut.Start(dialog1.Metadata.Build()); // this will trigger the message on dialog 1
 
+
         // Act
         var result = sut.Continue(context); // this will trigger the redirect to dialog 2
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialog2.Metadata.Id);
-        result.CurrentGroupId.Should().NotBeNull();
-        result.CurrentGroupId!.Value.Should().Be("Group");
-        result.CurrentPartId.Value.Should().Be("Message");
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.CurrentPartId.Value.Should().Be("Error");
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[] { "Continue failed, check the exception" });
     }
 
     [Fact]
@@ -639,7 +638,7 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void Start_Uses_Result_From_RedirectPart()
+    public void Start_Can_Return_RedirectPart()
     {
         // Arrange
         var group1 = new DialogPartGroupBuilder()
@@ -695,10 +694,10 @@ public class DialogServiceTests
         var result = sut.Start(dialog1.Metadata);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialog2.Metadata.Id);
-        result.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id);
-        result.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id);
+        result.CurrentState.Should().Be(DialogState.Completed);
+        result.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialog1.Metadata.Id);
+        result.CurrentGroupId.Should().BeNull();
+        result.CurrentPartId.Value.Should().Be("Redirect");
     }
 
     [Fact]

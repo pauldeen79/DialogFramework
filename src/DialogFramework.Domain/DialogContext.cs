@@ -33,7 +33,9 @@ public partial record DialogContext
     public bool CanContinue(IDialog dialog)
         => CurrentState == DialogState.InProgress;
 
-    public IDialogContext Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults)
+    public IDialogContext Continue(IDialog dialog,
+                                   IDialogPartIdentifier nextPartId,
+                                   IEnumerable<IDialogValidationResult> validationResults)
         => new DialogContext
         (
             Id,
@@ -45,7 +47,7 @@ public partial record DialogContext
             validationResults
         );
 
-    public IDialogContext Error(IDialog dialog, Exception? exception)
+    public IDialogContext Error(IDialog dialog, string? errorMessage)
         => new DialogContext
         (
             Id,
@@ -54,7 +56,9 @@ public partial record DialogContext
             dialog.ErrorPart.GetGroupId(),
             DialogState.ErrorOccured,
             Results,
-            Enumerable.Empty<IDialogValidationResult>()
+            string.IsNullOrEmpty(errorMessage)
+                ? Array.Empty<IDialogValidationResult>()
+                : new[] { new DialogValidationResultBuilder().WithErrorMessage(errorMessage!).Build() }
         );
 
     public bool CanStart(IDialog dialog)

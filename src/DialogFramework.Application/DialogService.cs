@@ -39,17 +39,13 @@ public class DialogService : IDialogService
         try
         {
             var firstPart = dialog.GetFirstPart(context, _conditionEvaluator);
-            if (firstPart is IRedirectDialogPart redirectDialogPart)
-            {
-                return Start(redirectDialogPart.RedirectDialogMetadata);
-            }
-
             return context.Start(dialog, firstPart.Id);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(Start)} failed, check the exception");
-            return context.Error(dialog, ex);
+            var msg = $"{nameof(Start)} failed, check the exception";
+            _logger.LogError(ex, msg);
+            return context.Error(dialog, msg);
         }
     }
 
@@ -69,20 +65,15 @@ public class DialogService : IDialogService
 
             context = context.AddDialogPartResults(dialog, dialogPartResults);
             var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
-
-            if (nextPart is IRedirectDialogPart redirectDialogPart)
-            {
-                return Start(redirectDialogPart.RedirectDialogMetadata);
-            }
-
             return context.Continue(dialog, nextPart.Id, nextPart.GetValidationResults());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(Continue)} failed, check the exception");
+            var msg = $"{nameof(Continue)} failed, check the exception";
+            _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, ex);
+                return context.Error(dialog, msg);
             }
             throw;
         }
@@ -106,10 +97,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(Abort)} failed, check the exception");
+            var msg = $"{nameof(Abort)} failed, check the exception";
+            _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, ex);
+                return context.Error(dialog, msg);
             }
             throw;
         }
@@ -133,10 +125,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(NavigateTo)} failed, check the exception");
+            var msg = $"{nameof(NavigateTo)} failed, check the exception";
+            _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, ex);
+                return context.Error(dialog, msg);
             }
             throw;
         }
@@ -160,10 +153,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"{nameof(ResetCurrentState)} failed, check the exception");
+            var msg = $"{nameof(ResetCurrentState)} failed, check the exception";
+            _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, ex);
+                return context.Error(dialog, msg);
             }
             throw;
         }

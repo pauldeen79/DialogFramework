@@ -2,5 +2,5 @@
 
 public partial record RedirectDialogPart
 {
-    public DialogState GetState() => DialogState.InProgress;
+    public DialogState GetState() => DialogState.Completed;
 }
