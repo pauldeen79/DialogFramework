@@ -12,12 +12,12 @@ public interface IDialog
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                   IEnumerable<IDialogPartResult> newPartResults);
 
-    bool CanResetPartResultsByPartId(string partId);
+    bool CanResetPartResultsByPartId(IDialogPartIdentifier partId);
 
     IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                            string partId);
-    bool CanNavigateTo(string currentPartId,
-                       string navigateToPartId,
+                                                            IDialogPartIdentifier partId);
+    bool CanNavigateTo(IDialogPartIdentifier currentPartId,
+                       IDialogPartIdentifier navigateToPartId,
                        IEnumerable<IDialogPartResult> existingPartResults);
 
     IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
@@ -25,5 +25,5 @@ public interface IDialog
                             IConditionEvaluator conditionEvaluator,
                             IEnumerable<IDialogPartResult> providedResults);
 
-    IDialogPart GetPartById(string id);
+    IDialogPart GetPartById(IDialogPartIdentifier id);
 }

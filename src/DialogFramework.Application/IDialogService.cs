@@ -8,8 +8,8 @@ public interface IDialogService
     IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
     bool CanAbort(IDialogContext context);
     IDialogContext Abort(IDialogContext context);
-    bool CanNavigateTo(IDialogContext context, string navigateToPartId);
-    IDialogContext NavigateTo(IDialogContext context, string navigateToPartId);
+    bool CanNavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId);
+    IDialogContext NavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId);
     bool CanResetCurrentState(IDialogContext context);
     IDialogContext ResetCurrentState(IDialogContext context);
 }

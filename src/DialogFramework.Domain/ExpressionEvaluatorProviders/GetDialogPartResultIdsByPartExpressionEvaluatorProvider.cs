@@ -13,7 +13,7 @@ public class GetDialogPartResultIdsByPartExpressionEvaluatorProvider : IExpressi
             }
             else
             {
-                result = context.GetDialogPartResultsByPartIdentifier(partIdsByPart.DialogPartId).Select(x => x.ResultId);
+                result = context.GetDialogPartResultsByPartIdentifier(partIdsByPart.DialogPartId).Select(x => x.ResultId.Value);
             }
             return true;
         }

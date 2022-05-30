@@ -4,7 +4,7 @@ public partial record DialogContext
 {
     public bool CanAbort(IDialog dialog)
         => CurrentState == DialogState.InProgress
-        && CurrentPartId != dialog.AbortedPart.Id;
+        && !Equals(CurrentPartId, dialog.AbortedPart.Id);
 
     public IDialogContext Abort(IDialog dialog)
         => new DialogContext
@@ -33,7 +33,7 @@ public partial record DialogContext
     public bool CanContinue(IDialog dialog)
         => CurrentState == DialogState.InProgress;
 
-    public IDialogContext Continue(IDialog dialog, string nextPartId, IEnumerable<IDialogValidationResult> validationResults)
+    public IDialogContext Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults)
         => new DialogContext
         (
             Id,
@@ -61,7 +61,7 @@ public partial record DialogContext
         => CurrentState == DialogState.Initial
         && dialog.Metadata.CanStart;
 
-    public IDialogContext Start(IDialog dialog, string firstPartId)
+    public IDialogContext Start(IDialog dialog, IDialogPartIdentifier firstPartId)
         => new DialogContext
         (
             Id,
@@ -73,11 +73,11 @@ public partial record DialogContext
             Enumerable.Empty<IDialogValidationResult>()
         );
 
-    public bool CanNavigateTo(IDialog dialog, string navigateToPartId)
+    public bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
         => (CurrentState == DialogState.InProgress || CurrentState == DialogState.Completed)
         && dialog.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
 
-    public IDialogContext NavigateTo(IDialog dialog, string navigateToPartId)
+    public IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
         => new DialogContext
         (
             Id,

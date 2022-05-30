@@ -7,13 +7,13 @@ public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidat
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var submittedPartCount = dialogPartResults
-            .Where(x => !string.IsNullOrEmpty(x.ResultId))
+            .Where(x => x.ResultId != null) // TODO: Find a way to check for empty result id
             .GroupBy(x => x.ResultId)
             .Count();
         var definedResultCount = (dialog.GetPartById(context.CurrentPartId) as IQuestionDialogPart)?.Results?.Count ?? 0;
         if (submittedPartCount != definedResultCount)
         {
-            yield return new DialogValidationResult($"All {definedResultCount} answers are required", new ReadOnlyValueCollection<string>());
+            yield return new DialogValidationResult($"All {definedResultCount} answers are required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
         }
     }
 }

@@ -30,7 +30,7 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
             var messageSuffix = _minimumOccurenceCount == 1 && _maximumOccurenceCount == 1
                 ? "is required"
                 : $"should be supplied {timesName} times";
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] {messageSuffix}", new ReadOnlyValueCollection<string>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] {messageSuffix}", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
         }
     }
 }

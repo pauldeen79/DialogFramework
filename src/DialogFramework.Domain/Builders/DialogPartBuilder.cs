@@ -55,7 +55,7 @@ public class DialogPartBuilder
 
     private sealed class EmptyDialogPart : IDialogPart
     {
-        public string Id => "Empty";
+        public IDialogPartIdentifier Id => new DialogPartIdentifier("Empty");
         public DialogState GetState() => DialogState.Initial;
     }
 }

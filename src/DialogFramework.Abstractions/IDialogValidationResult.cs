@@ -3,5 +3,5 @@
 public interface IDialogValidationResult
 {
     string ErrorMessage { get; }
-    IReadOnlyCollection<string> DialogPartResultIds { get; }
+    IReadOnlyCollection<IDialogPartResultIdentifier> DialogPartResultIds { get; }
 }

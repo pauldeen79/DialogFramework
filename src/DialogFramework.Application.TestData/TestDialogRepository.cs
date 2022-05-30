@@ -14,5 +14,5 @@ public class TestDialogRepository : IDialogRepository
         => _dialogs.Select(x => x.Metadata);
 
     public IDialog? GetDialog(IDialogIdentifier identifier)
-        => _dialogs.SingleOrDefault(x => x.Metadata.Id == identifier.Id && x.Metadata.Version == identifier.Version);
+        => _dialogs.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id) && Equals(x.Metadata.Version, identifier.Version));
 }

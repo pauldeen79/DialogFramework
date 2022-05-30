@@ -7,9 +7,9 @@ public class DialogContextFactory : IDialogContextFactory
     public IDialogContext Create(IDialog dialog)
         => new DialogContext
         (
-            Guid.NewGuid().ToString(),
+            new DialogContextIdentifier(Guid.NewGuid().ToString()),
             dialog.Metadata,
-            "Empty",
+            new DialogPartIdentifier("Empty"),
             null,
             DialogState.Initial,
             Enumerable.Empty<IDialogPartResult>(),

@@ -12,27 +12,27 @@ public partial record Dialog
             .Select(x => x.Key)
             .ToArray();
         return existingPartResults
-            .Where(x => !dialogPartIds.Contains(x.DialogPartId))
+            .Where(x => !dialogPartIds.Any(y => Equals(y, x.DialogPartId)))
             .Concat(newPartResults);
     }
 
-    public bool CanResetPartResultsByPartId(string partId) => GetPartById(partId) is IQuestionDialogPart;
+    public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId) => GetPartById(partId) is IQuestionDialogPart;
 
     public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                                   string partId)
+                                                                   IDialogPartIdentifier partId)
     {
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return existingPartResults.Where(x => x.DialogPartId != partId);
+        return existingPartResults.Where(x => !Equals(x.DialogPartId, partId));
     }
 
-    public bool CanNavigateTo(string currentPartId,
-                              string navigateToPartId,
+    public bool CanNavigateTo(IDialogPartIdentifier currentPartId,
+                              IDialogPartIdentifier navigateToPartId,
                               IEnumerable<IDialogPartResult> existingPartResults)
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        return currentPartId == navigateToPartId || existingPartResults.Any(x => x.DialogPartId == navigateToPartId);
+        return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
     }
 
     public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
@@ -63,7 +63,7 @@ public partial record Dialog
             .Select((part, index) => new { Index = index, Part = part })
             .ToArray();
         var currentPartWithIndex = parts
-            .SingleOrDefault(p => p.Part.Id == currentPart.Id);
+            .SingleOrDefault(p => Equals(p.Part.Id, currentPart.Id));
         var nextPartWithIndex = parts
             .Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index)
             .OrderBy(p => p.Index)
@@ -77,12 +77,12 @@ public partial record Dialog
         return ProcessDecisions(nextPartWithIndex.Part, context, conditionEvaluator);
     }
 
-    public IDialogPart GetPartById(string id)
+    public IDialogPart GetPartById(IDialogPartIdentifier id)
     {
-        if (id == AbortedPart.Id) return AbortedPart;
-        if (id == CompletedPart.Id) return CompletedPart;
-        if (id == ErrorPart.Id) return ErrorPart;
-        var parts = Parts.Where(x => x.Id == id).ToArray();
+        if (Equals(id, AbortedPart.Id)) return AbortedPart;
+        if (Equals(id, CompletedPart.Id)) return CompletedPart;
+        if (Equals(id, ErrorPart.Id)) return ErrorPart;
+        var parts = Parts.Where(x => Equals(x.Id, id)).ToArray();
         if (parts.Length == 1)
         {
             return parts[0];

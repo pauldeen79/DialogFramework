@@ -2,7 +2,7 @@
 
 public interface IDialogPartGroup
 {
-    string Id { get; }
+    IDialogPartGroupIdentifier Id { get; }
     string Title { get; }
     int Number { get; }
 }

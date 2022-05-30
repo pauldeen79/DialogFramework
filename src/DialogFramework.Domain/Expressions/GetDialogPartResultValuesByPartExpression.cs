@@ -2,14 +2,14 @@
 
 public class GetDialogPartResultValuesByPartExpression : IExpression
 {
-    public GetDialogPartResultValuesByPartExpression(IExpressionFunction? function, string dialogPartId)
+    public GetDialogPartResultValuesByPartExpression(IExpressionFunction? function, IDialogPartIdentifier dialogPartId)
     {
         Function = function;
         DialogPartId = dialogPartId;
     }
 
     public IExpressionFunction? Function { get; }
-    public string DialogPartId { get; }
+    public IDialogPartIdentifier DialogPartId { get; }
 
     public IExpressionBuilder ToBuilder()
         => new GetDialogPartResultValuesByPartExpressionBuilder(this);

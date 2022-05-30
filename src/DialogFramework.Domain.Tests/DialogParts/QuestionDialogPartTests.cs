@@ -9,14 +9,19 @@ public class QuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var results = new[] { new DialogPartResult(sut.Id, "C", new YesNoDialogPartResultValue(true)) };
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("C"))
+            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .Build();
+        var results = new[] { result };
 
         // Act
         var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("Unknown Result Id: [C]");
+        actual.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = C }]");
     }
 
     [Fact]
@@ -26,14 +31,19 @@ public class QuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var results = new[] { new DialogPartResult(sut.Id, "A", new EmptyDialogPartResultValue()) };
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
+            .WithValue(new EmptyDialogPartResultValueBuilder())
+            .Build();
+        var results = new[] { result };
 
         // Act
         var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("Result for [Test.A] should be of type [YesNo], but type [None] was answered");
+        actual.Single().ErrorMessage.Should().Be("Result for [DialogPartIdentifier { Value = Test }.DialogPartResultIdentifier { Value = A }] should be of type [YesNo], but type [None] was answered");
     }
 
     [Fact]
@@ -43,7 +53,12 @@ public class QuestionDialogPartTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var sut = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
-        var results = new[] { new DialogPartResult(sut.Id, "A", new YesNoDialogPartResultValue(true)) };
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
+            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .Build();
+        var results = new[] { result };
 
         // Act
         var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;

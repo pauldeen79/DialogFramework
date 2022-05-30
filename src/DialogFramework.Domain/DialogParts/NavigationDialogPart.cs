@@ -2,7 +2,7 @@
 
 public partial record NavigationDialogPart
 {
-    public string GetNextPartId(IDialogContext context) => NavigateToId;
+    public IDialogPartIdentifier GetNextPartId(IDialogContext context) => NavigateToId;
 
     public DialogState GetState() => DialogState.InProgress;
 }

@@ -120,10 +120,10 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanNavigateTo(IDialogContext context, string navigateToPartId)
+    public bool CanNavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId)
         => context.CanNavigateTo(GetDialog(context), navigateToPartId);
 
-    public IDialogContext NavigateTo(IDialogContext context, string navigateToPartId)
+    public IDialogContext NavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId)
     {
         IDialog? dialog = null;
         try

@@ -4,26 +4,26 @@ public static class DialogContextFixture
 {
     public static IDialogContext Create(IDialogIdentifier currentDialogIdentifier)
         => new DialogContextBuilder()
-            .WithId(Guid.NewGuid().ToString())
+            .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
             .WithCurrentState(DialogState.Initial)
-            .WithCurrentPartId("Empty")
+            .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
     public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
         => new DialogContextBuilder()
-            .WithId(id)
+            .WithId(new DialogContextIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
             .WithCurrentState(currentState)
-            .WithCurrentPartId(currentPart.Id)
+            .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
 
     public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
         => new DialogContextBuilder()
-            .WithId(id)
+            .WithId(new DialogContextIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
-            .WithCurrentPartId(currentPart.Id)
-            .WithCurrentGroupId(currentGroup?.Id)
+            .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
+            .WithCurrentGroupId(currentGroup == null ? new DialogPartGroupIdentifierBuilder() : new DialogPartGroupIdentifierBuilder(currentGroup.Id))
             .WithCurrentState(currentState)
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
             .Build();

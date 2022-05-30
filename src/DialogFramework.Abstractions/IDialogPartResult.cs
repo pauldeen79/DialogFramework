@@ -2,7 +2,7 @@
 
 public interface IDialogPartResult
 {
-    string DialogPartId { get; }
-    string ResultId { get; }
+    IDialogPartIdentifier DialogPartId { get; }
+    IDialogPartResultIdentifier ResultId { get; }
     IDialogPartResultValue Value { get; }
 }

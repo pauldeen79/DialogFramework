@@ -15,7 +15,7 @@ public static class DialogPartExtensions
             ? groupedDialogPart.Group
             : null;
 
-    public static string? GetGroupId(this IDialogPart part)
+    public static IDialogPartGroupIdentifier? GetGroupId(this IDialogPart part)
         => part.GetGroup()?.Id;
 
     public static IEnumerable<IDialogValidationResult> GetValidationResults(this IDialogPart part)

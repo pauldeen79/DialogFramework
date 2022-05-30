@@ -4,7 +4,7 @@ public static class DialogPartGroupFixture
 {
     public static DialogPartGroupBuilder CreateBuilder()
         => new DialogPartGroupBuilder()
-            .WithId("Group")
+            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Group"))
             .WithTitle("Group")
             .WithNumber(1);
 }

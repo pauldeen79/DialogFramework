@@ -2,6 +2,6 @@
 
 public interface IDialogPart
 {
-    string Id { get; }
+    IDialogPartIdentifier Id { get; }
     DialogState GetState();
 }

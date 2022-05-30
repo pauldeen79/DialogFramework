@@ -35,7 +35,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -64,7 +64,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -80,7 +80,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -96,7 +96,7 @@ namespace CodeGeneration.CodeGenerationProviders
                                 new ParameterBuilder()
                                     .WithTypeName(@"ExpressionFramework.Abstractions.IConditionEvaluator")
                                     .WithName(@"conditionEvaluator"))
-                            .WithTypeName(@"System.String"),
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)
@@ -115,7 +115,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -144,7 +144,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -160,7 +160,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -170,7 +170,7 @@ namespace CodeGeneration.CodeGenerationProviders
                                 new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.IDialogContext")
                                     .WithName(@"context"))
-                            .WithTypeName(@"System.String"),
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)
                             .WithAbstract(true)
@@ -210,7 +210,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -245,7 +245,7 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"Id")
-                            .WithTypeName(@"System.String"))
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)

@@ -2,7 +2,7 @@
 
 public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
 {
-    public string Id => string.Empty;
+    public IDialogPartResultIdentifier Id => new DialogPartResultIdentifier(string.Empty);
     public string Title => string.Empty;
     public ResultValueType ValueType => ResultValueType.None;
 

@@ -10,7 +10,8 @@ public class AllRequiredQuestionDialogPartTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
-            .WithDialogPartId(sut.Id)
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
         var results = new[] { result };
 
@@ -30,8 +31,8 @@ public class AllRequiredQuestionDialogPartTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
-            .WithDialogPartId(sut.Id)
-            .WithResultId("A")
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
             .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
             .Build();
         var results = new[] { result };
@@ -53,8 +54,8 @@ public class AllRequiredQuestionDialogPartTests
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[]
         {
-            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("A").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
-            new DialogPartResultBuilder().WithDialogPartId(sut.Id).WithResultId("B").WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
+            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
+            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("B")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
         };
 
         // Act

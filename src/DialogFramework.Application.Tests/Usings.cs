@@ -6,7 +6,7 @@ global using DialogFramework.Application.TestData;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.DialogPartResultValues;
-global using DialogFramework.Domain.DialogParts;
+global using DialogFramework.Domain.DialogPartResultValues.Builders;
 global using DialogFramework.Domain.DialogParts.Builders;
 global using DialogFramework.Domain.Extensions;
 global using DialogFramework.Domain.TestData;

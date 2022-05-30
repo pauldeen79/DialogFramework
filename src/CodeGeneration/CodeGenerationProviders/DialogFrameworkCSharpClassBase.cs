@@ -118,8 +118,10 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             (
                 new ClassPropertyBuilder()
                     .WithName("NavigateToId")
-                    .WithType(typeof(string))
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => string.Empty)") //HACK
+                    .WithTypeName("DialogFramework.Abstractions.IDialogPartIdentifier")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"NavigateToId.Build()")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => new DialogPartIdentifierBuilder())") //HACK
             );
         }
 
@@ -132,11 +134,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.IDecision>")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DecisionBuilder>")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Abstractions.IDecision>(Decisions.Select(x => x.Build()))")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "// skip: Decisions"), //HACK
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "Decisions.AddRange(source.GetDecisionBuilders())"), //HACK
                 new ClassPropertyBuilder()
                     .WithName("DefaultNextPartId")
-                    .WithType(typeof(string))
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_defaultNextPartIdDelegate = new (() => string.Empty)") //HACK
+                    .WithTypeName("DialogFramework.Abstractions.IDialogPartIdentifier")
+                    .WithIsNullable()
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"DefaultNextPartId?.Build()")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_defaultNextPartIdDelegate = new (() => source.GetDefaultNextPartIdBuilder())") //HACK
             );
         }
     }
