@@ -247,7 +247,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
+        result.CurrentGroupId.Should().BeEquivalentTo(currentPart.Group.Id);
         result.ValidationErrors.Should().ContainSingle();
         result.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]");
     }
