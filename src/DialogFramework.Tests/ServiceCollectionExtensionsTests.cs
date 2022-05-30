@@ -11,6 +11,7 @@ public class ServiceCollectionExtensionsTests
         // Act
         var action = new Action(() => _ = collection.AddDialogFramework()
             .AddSingleton(new Mock<IDialogRepository>().Object)
+            .AddSingleton(new Mock<ILogger>().Object)
             .BuildServiceProvider(new ServiceProviderOptions { ValidateOnBuild = true, ValidateScopes = true }));
 
         // Assert

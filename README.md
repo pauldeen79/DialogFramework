@@ -9,36 +9,56 @@ Besides the Continue method, you also have Abort method on the DialogService to 
 Each method on the DialogService has a second method to check whether the method can be called in the current state. These methods begin with 'Can', for example CanStart and CanContinue.
 
 # Example
-Here is some example C# code, which starts and finishes a one-step dialog:
+Here is some example C# code, which starts and finishes a two-step dialog:
 
 ```C#
-var dialog = new SimpleFormFlowDialog();
-var factory = new DialogContextFactory();
-var service = new DialogService(factory);
+using var provider = new ServiceCollection()
+    .AddDialogFramework()
+    .AddSingleton<IDialogRepository, TestDialogRepository>()
+    .AddSingleton<ILogger, TestLogger>()
+    .BuildServiceProvider();
+var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
+var sut = provider.GetRequiredService<IDialogService>();
 
-var context = service.Start(dialog);
-context = service.Continue
+var context = sut.Start(dialog.Metadata);
+context = sut.Continue
 (
     context,
-    new DialogPartResult
-    (
-        context.CurrentPart.Id,
-        "EmailAddress",
-        new TextDialogPartResultValue("email@address.com")
-    ),
-    new DialogPartResult
-    (
-        context.CurrentPart.Id,
-        "TelephoneNumber",
-        new TextDialogPartResultValue("911")
-    ),
-    new DialogPartResult
-    (
-        context.CurrentPart.Id,
-        "SignUpForNewsletter",
-        new YesNoDialogPartResultValue(false)
-    )
-);
+    new DialogPartResultBuilder()
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+        .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
+        .Build(),
+    new DialogPartResultBuilder()
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+        .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
+        .Build()
+); // ContactInfo -> Newsletter
+context = sut.Continue
+(
+    context,
+    new DialogPartResultBuilder()
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
+        .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+        .Build()
+); // Newsletter -> Completed
 ```
 
 See unit tests for more examples.
+
+# Project structure
+
+The solution consists of the following projects:
+- DialogFramework.Abstractions: Interfaces used in code generation
+- CodeGeneration: Code generation for domain entity models and builders
+- DialogFramework.Domain: Domain entity models and builders
+- DialogFramework.Application: Application logic
+
+# TODOs
+
+- Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
+- Refactor Service into separate request handlers, and implement Mediatr.
+- Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
+- Move/copy unit tests from Service (Application) to Domain

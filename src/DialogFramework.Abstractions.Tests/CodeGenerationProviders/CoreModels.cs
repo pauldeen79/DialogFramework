@@ -19,6 +19,19 @@ public class CoreModels : CSharpExpressionDumperClassBase
 
     protected override Type[] Models => new[]
     {
+        typeof(IDecision),
+        typeof(IDialog),
         typeof(IDialogContext),
+        typeof(IDialogContextIdentifier),
+        typeof(IDialogIdentifier),
+        typeof(IDialogMetadata),
+        typeof(IDialogPartGroup),
+        typeof(IDialogPartGroupIdentifier),
+        typeof(IDialogPartIdentifier),
+        typeof(IDialogPartResult),
+        typeof(IDialogPartResultDefinition),
+        typeof(IDialogPartResultIdentifier),
+        typeof(IDialogPartResultValue),
+        typeof(IDialogValidationResult),
     };
 }

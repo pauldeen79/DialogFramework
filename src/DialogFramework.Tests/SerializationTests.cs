@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Tests;
+﻿using DialogFramework.Domain.Builders;
+
+namespace DialogFramework.Tests;
 
 public class SerializationTests
 {
@@ -9,10 +11,10 @@ public class SerializationTests
         var dialogToSerialize = SimpleFormFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(dialogToSerialize);
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -25,10 +27,10 @@ public class SerializationTests
         var dialogToSerialize = TestFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(dialogToSerialize);
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<Dialog>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -41,10 +43,10 @@ public class SerializationTests
         var dialogContextToSerialize = new DialogContextFactory().Create(SimpleFormFlowDialog.Create());
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(dialogContextToSerialize);
+        var json = JsonSerializerFixture.Serialize(new DialogContextBuilder(dialogContextToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContext>(json);
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContextBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);

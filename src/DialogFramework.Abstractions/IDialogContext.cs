@@ -2,20 +2,30 @@
 
 public interface IDialogContext
 {
-    string Id { get; }
+    IDialogContextIdentifier Id { get; }
     IDialogIdentifier CurrentDialogIdentifier { get; }
-    IDialogPart CurrentPart { get; }
-    IDialogPartGroup? CurrentGroup { get; }
+    IDialogPartIdentifier CurrentPartId { get; }
+    IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
+    IReadOnlyCollection<IDialogPartResult> Results { get; }
+    IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
+
     bool CanStart(IDialog dialog);
-    IDialogContext Start(IDialogPart firstPart);
-    IDialogContext AddDialogPartResults(IEnumerable<IDialogPartResult> dialogPartResults, IDialog dialog);
-    IDialogContext Continue(IDialogPart nextPart, DialogState state);
-    IDialogContext Abort(IAbortedDialogPart abortDialogPart);
-    IDialogContext Error(IErrorDialogPart errorDialogPart, Exception ex);
-    bool CanNavigateTo(IDialogPart navigateToPart, IDialog dialog);
-    IDialogContext NavigateTo(IDialogPart navigateToPart);
-    IEnumerable<IDialogPartResult> GetDialogPartResultsByPart(IDialogPart dialogPart);
-    IEnumerable<IDialogPartResult> GetAllDialogPartResults();
-    IDialogContext ResetDialogPartResultByPart(IDialogPart dialogPart, IDialog dialog);
+    IDialogContext Start(IDialog dialog, IDialogPartIdentifier firstPartId);
+
+    IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
+
+    bool CanContinue(IDialog dialog);
+    IDialogContext Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults);
+
+    bool CanAbort(IDialog dialog);
+    IDialogContext Abort(IDialog dialog);
+
+    IDialogContext Error(IDialog dialog, string? errorMessage);
+
+    bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+    IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+
+    bool CanResetCurrentState(IDialog dialog);
+    IDialogContext ResetCurrentState(IDialog dialog);
 }
