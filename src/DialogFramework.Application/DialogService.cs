@@ -68,12 +68,7 @@ public class DialogService : IDialogService
             }
 
             context = context.AddDialogPartResults(dialog, dialogPartResults);
-            var nextPart = dialog.GetNextPart
-            (
-                context,
-                _conditionEvaluator,
-                dialogPartResults
-            );
+            var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
 
             if (nextPart is IRedirectDialogPart redirectDialogPart)
             {

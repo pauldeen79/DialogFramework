@@ -15,23 +15,23 @@ Here is some example C# code, which starts and finishes a two-step dialog:
 using var provider = new ServiceCollection()
     .AddDialogFramework()
     .AddSingleton<IDialogRepository, TestDialogRepository>()
+    .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
 var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
 var sut = provider.GetRequiredService<IDialogService>();
 
 var context = sut.Start(dialog.Metadata);
-context.CurrentPart.Id.Should().Be("ContactInfo");
 context = sut.Continue
 (
     context,
     new DialogPartResultBuilder()
-        .WithDialogPartId(context.CurrentPart.Id)
-        .WithResultId("EmailAddress")
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
         .Build(),
     new DialogPartResultBuilder()
-        .WithDialogPartId(context.CurrentPart.Id)
-        .WithResultId("TelephoneNumber")
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
         .Build()
 ); // ContactInfo -> Newsletter
@@ -39,8 +39,8 @@ context = sut.Continue
 (
     context,
     new DialogPartResultBuilder()
-        .WithDialogPartId(context.CurrentPart.Id)
-        .WithResultId("SignUpForNewsletter")
+        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
         .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
         .Build()
 ); // Newsletter -> Completed
@@ -59,6 +59,6 @@ The solution consists of the following projects:
 # TODOs
 
 - Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
-- Refactor Service into separate commands, maybe use ICommand interface (but it's nowhere in the System namespace?)
+- Refactor Service into separate request handlers, and implement Mediatr.
 - Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Move/copy unit tests from Service (Application) to Domain

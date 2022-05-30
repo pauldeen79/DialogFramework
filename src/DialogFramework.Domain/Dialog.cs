@@ -43,7 +43,7 @@ public partial record Dialog
             throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
         }
 
-        return ProcessDecisions(firstPart, context, conditionEvaluator);
+        return GetDynamicResult(firstPart, context, conditionEvaluator);
     }
 
     public IDialogPart GetNextPart(IDialogContext context,
@@ -71,10 +71,10 @@ public partial record Dialog
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return ProcessDecisions(CompletedPart, context, conditionEvaluator);
+            return GetDynamicResult(CompletedPart, context, conditionEvaluator);
         }
 
-        return ProcessDecisions(nextPartWithIndex.Part, context, conditionEvaluator);
+        return GetDynamicResult(nextPartWithIndex.Part, context, conditionEvaluator);
     }
 
     public IDialogPart GetPartById(IDialogPartIdentifier id)
@@ -94,7 +94,7 @@ public partial record Dialog
         throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
     }
 
-    private IDialogPart ProcessDecisions(IDialogPart dialogPart,
+    private IDialogPart GetDynamicResult(IDialogPart dialogPart,
                                          IDialogContext context,
                                          IConditionEvaluator conditionEvaluator)
     {
