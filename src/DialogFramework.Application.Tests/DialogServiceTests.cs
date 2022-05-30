@@ -348,39 +348,20 @@ public class DialogServiceTests
     public void Continue_Uses_Result_From_NavigationPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder()
-            .WithErrorMessage("Something went horribly wrong!")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder()
-            .WithMessage("Dialog has been aborted")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder()
-            .WithMessage("Thank you for your input!")
-            .WithGroup(group2)
-            .WithHeading("Thank you")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Completed"));
         var welcomePart = new MessageDialogPartBuilder()
             .WithMessage("Welcome! I would like to answer a question")
-            .WithGroup(group1)
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
             .WithHeading("Welcome")
             .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"));
         var navigatedPart = new MessageDialogPartBuilder()
             .WithMessage("This shows that navigation works")
-            .WithGroup(group2)
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
             .WithHeading("Navigated")
             .WithId(new DialogPartIdentifierBuilder().WithValue("Navigated"));
         var navigationPart = new NavigationDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Navigate"))
             .WithNavigateToId(navigatedPart.Id);
-        var dialog = new DialogBuilder()
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
@@ -391,10 +372,7 @@ public class DialogServiceTests
                 new DialogPartBuilder(navigationPart),
                 new DialogPartBuilder(navigatedPart)
             )
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -442,40 +420,18 @@ public class DialogServiceTests
     public void Continue_Returns_CompletedDialogPart_When_There_Is_No_Next_DialogPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder()
-            .WithErrorMessage("Something went horribly wrong!")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder()
-            .WithMessage("Dialog has been aborted")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder()
-            .WithMessage("Thank you for your input!")
-            .WithGroup(group2)
-            .WithHeading("Thank you")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Completed"));
         var welcomePart = new MessageDialogPartBuilder()
             .WithMessage("Welcome! I would like to answer a question")
-            .WithGroup(group1)
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
             .WithHeading("Welcome")
             .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"));
-        var dialog = new DialogBuilder()
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(welcomePart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1, group2)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -490,7 +446,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentGroupId.Should().BeEquivalentTo(completedPart.Group.Build().Id);
+        result.CurrentPartId.Value.Should().Be("Completed");
     }
 
     [Fact]
@@ -553,11 +509,8 @@ public class DialogServiceTests
     public void CanStart_Returns_Correct_Value_Based_On_Dialog_CanStart(bool dialogCanStart, bool expectedResult)
     {
         // Arrange
-        var dialog = new DialogBuilder()
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder().WithFriendlyName("Name").WithCanStart(dialogCanStart).WithId("Id").WithVersion("1.0.0"))
-            .WithErrorPart(new ErrorDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()))
-            .WithAbortedPart(new AbortedDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()))
-            .WithCompletedPart(new CompletedDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder())))
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       dialog => DialogContextFixture.Create(dialog.Metadata));
@@ -577,11 +530,8 @@ public class DialogServiceTests
     public void CanStart_Returns_False_When_CurrentState_Is_InProgress()
     {
         // Arrange
-        var dialog = new DialogBuilder()
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder().WithFriendlyName("Name").WithCanStart(true).WithId("Id").WithVersion("1.0.0"))
-            .WithErrorPart(new ErrorDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()))
-            .WithAbortedPart(new AbortedDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()))
-            .WithCompletedPart(new CompletedDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder())))
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       dialog => DialogContextFixture.Create("Id", dialog.Metadata, dialog.ErrorPart, DialogState.InProgress)); // dialog state is already in progress
@@ -641,40 +591,27 @@ public class DialogServiceTests
     public void Start_Can_Return_RedirectPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder().WithErrorMessage("Something went horribly wrong!").WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder().WithMessage("Dialog has been aborted").WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder().WithMessage("Thank you for your input!").WithGroup(group2).WithId(new DialogPartIdentifierBuilder().WithValue("Completed")).WithHeading("Completed");
-        var welcomePart = new MessageDialogPartBuilder().WithMessage("Welcome! I would like to answer a question").WithGroup(group1).WithId(new DialogPartIdentifierBuilder().WithValue("Welcome")).WithHeading("Welcome");
-        var dialog2 = new DialogBuilder()
+        var welcomePart = new MessageDialogPartBuilder()
+            .WithMessage("Welcome! I would like to answer a question")
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+            .WithHeading("Welcome");
+        var dialog2 = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Dialog 2")
                 .WithId("Dialog2")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(welcomePart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1, group2).Build();
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
         var redirectPart = new RedirectDialogPartBuilder()
             .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialog2.Metadata))
             .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect"));
-        var dialog1 = new DialogBuilder()
+        var dialog1 = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Dialog 1")
                 .WithId("Dialog1")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(redirectPart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog1.Metadata.Id) || Equals(d.Metadata.Id, dialog2.Metadata.Id),
                                                       dialog => Equals(dialog.Metadata.Id, dialog1.Metadata.Id)
@@ -704,28 +641,18 @@ public class DialogServiceTests
     public void Start_Uses_Result_From_NavigationPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder().WithErrorMessage("Something went horribly wrong!").WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder().WithMessage("Dialog has been aborted").WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder().WithMessage("Thank you for your input!").WithGroup(group2).WithId(new DialogPartIdentifierBuilder().WithValue("Completed")).WithHeading("Completed");
-        var welcomePart = new MessageDialogPartBuilder().WithMessage("Welcome! I would like to answer a question").WithGroup(group1).WithId(new DialogPartIdentifierBuilder().WithValue("Welcome")).WithHeading("Welcome");
+        var welcomePart = new MessageDialogPartBuilder()
+            .WithMessage("Welcome! I would like to answer a question")
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+            .WithHeading("Welcome");
         var navigationPart = new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Navigate")).WithNavigateToId(welcomePart.Id);
-        var dialog = new DialogBuilder()
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(navigationPart), new DialogPartBuilder(welcomePart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -836,28 +763,17 @@ public class DialogServiceTests
     public void Start_Returns_ErrorDialogPart_When_DecisionPart_Returns_ErrorDialogPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder().WithErrorMessage("Something went horribly wrong!").WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder().WithMessage("Dialog has been aborted").WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder().WithMessage("Thank you for your input!").WithGroup(group2).WithId(new DialogPartIdentifierBuilder().WithValue("Completed")).WithHeading("Completed");
-        var decisionPart = new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Decision")).WithDefaultNextPartId(errorDialogPart.Id).Build();
-        var dialog = new DialogBuilder()
+        var decisionPart = new DecisionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
+            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Error"))
+            .Build();
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(decisionPart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1, group2)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -872,35 +788,24 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Should().BeEquivalentTo(errorDialogPart.Id);
+        result.CurrentPartId.Value.Should().Be("Error");
     }
 
     [Fact]
     public void Start_Returns_AbortDialogPart_When_DecisionPart_Returns_AbortDialogPart()
     {
         // Arrange
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder().WithErrorMessage("Something went horribly wrong!").WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder().WithMessage("Dialog has been aborted").WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder().WithMessage("Thank you for your input!").WithGroup(group2).WithId(new DialogPartIdentifierBuilder().WithValue("Completed")).WithHeading("Completed");
-        var decisionPart = new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Decision")).WithDefaultNextPartId(abortedPart.Id).Build();
-        var dialog = new DialogBuilder()
+        var decisionPart = new DecisionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
+            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Abort"))
+            .Build();
+        var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(decisionPart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1, group2)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -915,7 +820,7 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.Aborted);
         result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Should().BeEquivalentTo(abortedPart.Id);
+        result.CurrentPartId.Value.Should().Be("Abort");
     }
 
     [Fact]
@@ -1224,54 +1129,29 @@ public class DialogServiceTests
 
     private DialogService CreateSutForTwoDialogsWithRedirect(out IDialog dialog1)
     {
-        var group1 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1"))
-            .WithTitle("Give information")
-            .WithNumber(1);
-        var group2 = new DialogPartGroupBuilder()
-            .WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2"))
-            .WithTitle("Completed")
-            .WithNumber(2);
-        var errorDialogPart = new ErrorDialogPartBuilder()
-            .WithErrorMessage("Something went horribly wrong!")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var abortedPart = new AbortedDialogPartBuilder()
-            .WithMessage("Dialog has been aborted")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"));
-        var completedPart = new CompletedDialogPartBuilder()
-            .WithMessage("Thank you for your input!")
-            .WithGroup(group2)
-            .WithHeading("Thank you")
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Completed"));
         var welcomePart = new MessageDialogPartBuilder()
             .WithMessage("Welcome! I would like to answer a question")
-            .WithGroup(group1)
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
             .WithHeading("Welcome")
             .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"));
-        var dialog2 = new DialogBuilder()
+        var dialog2 = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Dialog 2")
                 .WithId("Dialog2")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(welcomePart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1, group2)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var redirectPart = new RedirectDialogPartBuilder()
             .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialog2.Metadata))
             .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect"));
-        dialog1 = new DialogBuilder()
+        dialog1 = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Dialog 1")
                 .WithId("Dialog1")
                 .WithVersion("1.0.0"))
             .AddParts(new DialogPartBuilder(welcomePart), new DialogPartBuilder(redirectPart))
-            .WithErrorPart(errorDialogPart)
-            .WithAbortedPart(abortedPart)
-            .WithCompletedPart(completedPart)
-            .AddPartGroups(group1)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var id1 = dialog1.Metadata.Id;
         var metadata1 = dialog1.Metadata;

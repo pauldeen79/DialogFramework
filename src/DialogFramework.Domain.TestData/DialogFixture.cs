@@ -55,7 +55,7 @@ public static class DialogFixture
     public static DialogBuilder CreateBuilderBase()
         => new DialogBuilder()
             .WithAbortedPart(new AbortedDialogPartBuilder()
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Aborted"))
+                .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"))
                 .WithMessage("The dialog is aborted. You can come back any time to start the application again."))
             .WithErrorPart(new ErrorDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder().WithValue("Error"))
