@@ -7,7 +7,7 @@ public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidat
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var submittedPartCount = dialogPartResults
-            .Where(x => x.ResultId != null) // TODO: Find a way to check for empty result id
+            .Where(x => !string.IsNullOrEmpty(x.ResultId.Value)) // TODO: Find a way to check for empty result id
             .GroupBy(x => x.ResultId)
             .Count();
         var definedResultCount = (dialog.GetPartById(context.CurrentPartId) as IQuestionDialogPart)?.Results?.Count ?? 0;
