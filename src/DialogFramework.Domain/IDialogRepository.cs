@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Application;
+﻿namespace DialogFramework.Domain;
 
 public interface IDialogRepository
 {
