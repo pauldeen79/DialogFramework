@@ -22,7 +22,7 @@ public interface IDialogContext
     bool CanAbort(IDialog dialog);
     IDialogContext Abort(IDialog dialog);
 
-    IDialogContext Error(IDialog dialog, IEnumerable<string> errorMessages);
+    IDialogContext Error(IDialog dialog, IEnumerable<IError> errors);
 
     bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
     IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);

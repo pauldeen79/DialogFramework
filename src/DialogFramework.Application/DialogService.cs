@@ -43,9 +43,9 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(Start)} failed, check the exception";
+            var msg = $"{nameof(Start)} failed";
             _logger.LogError(ex, msg);
-            return context.Error(dialog, msg);
+            return context.Error(dialog, new Error(msg));
         }
     }
 
@@ -69,11 +69,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(Continue)} failed, check the exception";
+            var msg = $"{nameof(Continue)} failed";
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, msg);
+                return context.Error(dialog, new Error(msg));
             }
             throw;
         }
@@ -97,11 +97,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(Abort)} failed, check the exception";
+            var msg = $"{nameof(Abort)} failed";
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, msg);
+                return context.Error(dialog, new Error(msg));
             }
             throw;
         }
@@ -125,11 +125,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(NavigateTo)} failed, check the exception";
+            var msg = $"{nameof(NavigateTo)} failed";
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, msg);
+                return context.Error(dialog, new Error(msg));
             }
             throw;
         }
@@ -153,11 +153,11 @@ public class DialogService : IDialogService
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(ResetCurrentState)} failed, check the exception";
+            var msg = $"{nameof(ResetCurrentState)} failed";
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, msg);
+                return context.Error(dialog, new Error(msg));
             }
             throw;
         }

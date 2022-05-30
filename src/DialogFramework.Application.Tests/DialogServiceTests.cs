@@ -31,7 +31,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed" && @type.Name == "FormattedLogValues"),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
@@ -54,7 +54,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed" && @type.Name == "FormattedLogValues"),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
@@ -77,7 +77,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed" && @type.Name == "FormattedLogValues"),
             It.IsAny<Exception>(),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
@@ -199,7 +199,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed" && @type.Name == "FormattedLogValues"),
             It.Is<InvalidOperationException>(ex => ex.Message == $"Can only continue when the dialog is in progress. Current state is {currentState}"),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
@@ -247,7 +247,7 @@ public class DialogServiceTests
 
         // Assert
         result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroupId.Should().BeEquivalentTo(currentPart.Group.Id);
+        result.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
         result.ValidationErrors.Should().ContainSingle();
         result.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]");
     }
@@ -341,7 +341,7 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentPartId.Value.Should().Be("Error");
-        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Continue failed, check the exception" });
+        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Continue failed" });
     }
 
     [Fact]
@@ -432,7 +432,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed" && @type.Name == "FormattedLogValues"),
             It.Is<InvalidOperationException>(ex => ex.Message == $"Can only continue when the dialog is in progress. Current state is {currentState}"),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
@@ -811,7 +811,7 @@ public class DialogServiceTests
         _loggerMock.Verify(logger => logger.Log(
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Start failed, check the exception" && @type.Name == "FormattedLogValues"),
+            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Start failed" && @type.Name == "FormattedLogValues"),
             It.Is<InvalidOperationException>(ex => ex.Message == "Could not determine next part. Dialog does not have any parts."),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
