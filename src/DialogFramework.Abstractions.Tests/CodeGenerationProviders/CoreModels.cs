@@ -33,5 +33,6 @@ public class CoreModels : CSharpExpressionDumperClassBase
         typeof(IDialogPartResultIdentifier),
         typeof(IDialogPartResultValue),
         typeof(IDialogValidationResult),
+        typeof(IError),
     };
 }

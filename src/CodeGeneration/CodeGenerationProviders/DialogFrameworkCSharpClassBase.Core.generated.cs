@@ -179,7 +179,11 @@ namespace CodeGeneration.CodeGenerationProviders
                         new ClassPropertyBuilder()
                             .WithHasSetter(false)
                             .WithName(@"ValidationErrors")
-                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.IDialogValidationResult, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.IDialogValidationResult, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"),
+                        new ClassPropertyBuilder()
+                            .WithHasSetter(false)
+                            .WithName(@"Errors")
+                            .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.IError, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
                     .AddMethods(
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -265,9 +269,9 @@ namespace CodeGeneration.CodeGenerationProviders
                                     .WithTypeName(@"DialogFramework.Abstractions.IDialog")
                                     .WithName(@"dialog"),
                                 new ParameterBuilder()
-                                    .WithTypeName(@"System.Exception")
+                                    .WithTypeName(@"System.String")
                                     .WithIsNullable(true)
-                                    .WithName(@"exception"))
+                                    .WithName(@"errorMessage"))
                             .WithTypeName(@"DialogFramework.Abstractions.IDialogContext"),
                         new ClassMethodBuilder()
                             .WithVirtual(true)
@@ -482,6 +486,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"DialogPartResultIds")
                             .WithTypeName(@"System.Collections.Generic.IReadOnlyCollection`1[[DialogFramework.Abstractions.IDialogPartResultIdentifier, DialogFramework.Abstractions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]"))
                     .WithName(@"IDialogValidationResult"),
+                new ClassBuilder()
+                    .WithNamespace(@"DialogFramework.Abstractions")
+                    .AddProperties(
+                        new ClassPropertyBuilder()
+                            .WithHasSetter(false)
+                            .WithName(@"Message")
+                            .WithTypeName(@"System.String"))
+                    .WithName(@"IError"),
             }.Select(x => x.Build()).ToArray();
         }
     }

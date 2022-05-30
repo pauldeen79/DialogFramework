@@ -9,6 +9,7 @@ public interface IDialogContext
     DialogState CurrentState { get; }
     IReadOnlyCollection<IDialogPartResult> Results { get; }
     IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
+    IReadOnlyCollection<IError> Errors { get; }
 
     bool CanStart(IDialog dialog);
     IDialogContext Start(IDialog dialog, IDialogPartIdentifier firstPartId);
@@ -21,7 +22,7 @@ public interface IDialogContext
     bool CanAbort(IDialog dialog);
     IDialogContext Abort(IDialog dialog);
 
-    IDialogContext Error(IDialog dialog, string? errorMessage);
+    IDialogContext Error(IDialog dialog, IEnumerable<string> errorMessages);
 
     bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
     IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);

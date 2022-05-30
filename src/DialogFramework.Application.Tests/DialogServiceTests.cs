@@ -341,7 +341,7 @@ public class DialogServiceTests
         // Assert
         result.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.CurrentPartId.Value.Should().Be("Error");
-        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[] { "Continue failed, check the exception" });
+        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Continue failed, check the exception" });
     }
 
     [Fact]

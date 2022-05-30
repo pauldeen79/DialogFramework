@@ -42,7 +42,7 @@ public partial record DialogContext
             .AddValidationErrors(validationResults.Select(x => new DialogValidationResultBuilder(x)))
             .Build();
 
-    public IDialogContext Error(IDialog dialog, string? errorMessage)
+    public IDialogContext Error(IDialog dialog, IEnumerable<string> errorMessages)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder(Id))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(CurrentDialogIdentifier))
@@ -50,13 +50,7 @@ public partial record DialogContext
             .WithCurrentGroupId(dialog.ErrorPart.GetGroupIdBuilder())
             .WithCurrentState(DialogState.ErrorOccured)
             .AddResults(Results.Select(x => new DialogPartResultBuilder(x)))
-            .AddValidationErrors
-            (
-                (string.IsNullOrEmpty(errorMessage)
-                    ? Array.Empty<IDialogValidationResult>()
-                    : new[] { new DialogValidationResultBuilder().WithErrorMessage(errorMessage!).Build() })
-                .Select(x => new DialogValidationResultBuilder(x))
-            )
+            .AddErrors(errorMessages.Select(x => new ErrorBuilder().WithMessage(x)))
             .Build();
 
     public bool CanStart(IDialog dialog)
