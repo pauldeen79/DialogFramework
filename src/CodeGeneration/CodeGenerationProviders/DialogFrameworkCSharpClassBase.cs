@@ -75,14 +75,17 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         }
         else if (typeName.Contains("Collection<DialogFramework."))
         {
+            var isDialogPart = typeName.Contains("DialogFramework.Abstractions.IDialogPart>");
             property.ConvertCollectionPropertyToBuilderOnBuilder
             (
                 false,
                 typeof(ReadOnlyValueCollection<>).WithoutGenerics(),
-                typeName
-                    .Replace("Abstractions.I", "Domain.Builders.", StringComparison.InvariantCulture)
-                    .Replace("Abstractions.DialogParts.I", "Domain.DialogParts.Builders.", StringComparison.InvariantCulture)
-                    .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
+                isDialogPart
+                    ? typeName.ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
+                    : typeName.Replace("Abstractions.I", "Domain.Builders.", StringComparison.InvariantCulture).ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture),
+                isDialogPart
+                    ? "{4}{0}.AddRange(source.{0}.Select(x => x.CreateBuilder()))"
+                    : null
             );
         }
         else if (typeName.Contains("Collection<ExpressionFramework."))

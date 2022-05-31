@@ -21,6 +21,8 @@ public partial record QuestionDialogPart
 
     public DialogState GetState() => DialogState.InProgress;
 
+    public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
+
     protected virtual void HandleValidate(IDialogContext context,
                                           IDialog dialog,
                                           IEnumerable<IDialogPartResult> dialogPartResults,

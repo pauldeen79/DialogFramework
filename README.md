@@ -58,7 +58,6 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Change builders to interface (and use extension methods on builders?), and get rid of DialogPartBuilder which violates open/closed principe
 - Refactor Service into separate request handlers, and implement Mediatr.
 - Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Move/copy unit tests from Service (Application) to Domain

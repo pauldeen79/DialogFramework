@@ -7,4 +7,5 @@ public partial record DecisionDialogPart
         ?? DefaultNextPartId ?? throw new NotSupportedException("There is no decision for this path");
 
     public DialogState GetState() => DialogState.InProgress;
+    public IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
 }
