@@ -123,7 +123,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .WithName("NavigateToId")
                     .WithTypeName("DialogFramework.Abstractions.IDialogPartIdentifier")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder")
-                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"NavigateToId.Build()")
+                    .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"NavigateToId?.Build()")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => new DialogPartIdentifierBuilder())") //HACK
             );
         }
