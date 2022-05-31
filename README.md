@@ -58,6 +58,6 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Refactor Service into separate request handlers, and implement Mediatr.
-- Move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Move/copy unit tests from Service (Application) to Domain
+- Refactor Service into separate request handlers, and implement Mediatr.
+- Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
