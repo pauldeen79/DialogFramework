@@ -317,7 +317,7 @@ public class DialogServiceTests
             .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect"));
         var dialog1 = DialogFixture.CreateBuilder();
         dialog1.Parts.Clear();
-        dialog1.Parts.Add(new DialogPartBuilder(redirectPart));
+        dialog1.Parts.Add(redirectPart);
         dialog1.Metadata.Id = "Dialog1";
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog1.Metadata.Id) || Equals(d.Metadata.Id, dialog2.Metadata.Id),
                                                       d => Equals(d.Metadata.Id, dialog1.Metadata.Id)
@@ -333,7 +333,6 @@ public class DialogServiceTests
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
         var context = sut.Start(dialog1.Metadata.Build()); // this will trigger the message on dialog 1
-
 
         // Act
         var result = sut.Continue(context); // this will trigger the redirect to dialog 2
@@ -368,9 +367,9 @@ public class DialogServiceTests
                 .WithVersion("1.0.0"))
             .AddParts
             (
-                new DialogPartBuilder(welcomePart),
-                new DialogPartBuilder(navigationPart),
-                new DialogPartBuilder(navigatedPart)
+                welcomePart,
+                navigationPart,
+                navigatedPart
             )
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
@@ -430,7 +429,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(welcomePart))
+            .AddParts(welcomePart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
@@ -601,7 +600,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Dialog 2")
                 .WithId("Dialog2")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(welcomePart))
+            .AddParts(welcomePart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
         var redirectPart = new RedirectDialogPartBuilder()
             .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialog2.Metadata))
@@ -611,7 +610,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Dialog 1")
                 .WithId("Dialog1")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(redirectPart))
+            .AddParts(redirectPart)
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog1.Metadata.Id) || Equals(d.Metadata.Id, dialog2.Metadata.Id),
                                                       dialog => Equals(dialog.Metadata.Id, dialog1.Metadata.Id)
@@ -652,7 +651,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(navigationPart), new DialogPartBuilder(welcomePart))
+            .AddParts(navigationPart, welcomePart)
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       _ => DialogContextFixture.Create(dialog.Metadata));
@@ -765,14 +764,13 @@ public class DialogServiceTests
         // Arrange
         var decisionPart = new DecisionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
-            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Error"))
-            .Build();
+            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Error"));
         var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(decisionPart))
+            .AddParts(decisionPart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
@@ -797,14 +795,13 @@ public class DialogServiceTests
         // Arrange
         var decisionPart = new DecisionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
-            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Abort"))
-            .Build();
+            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Abort"));
         var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithFriendlyName("Test dialog")
                 .WithId("Test")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(decisionPart))
+            .AddParts(decisionPart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
@@ -1139,7 +1136,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Dialog 2")
                 .WithId("Dialog2")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(welcomePart))
+            .AddParts(welcomePart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var redirectPart = new RedirectDialogPartBuilder()
@@ -1150,7 +1147,7 @@ public class DialogServiceTests
                 .WithFriendlyName("Dialog 1")
                 .WithId("Dialog1")
                 .WithVersion("1.0.0"))
-            .AddParts(new DialogPartBuilder(welcomePart), new DialogPartBuilder(redirectPart))
+            .AddParts(welcomePart, redirectPart)
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
             .Build();
         var id1 = dialog1.Metadata.Id;

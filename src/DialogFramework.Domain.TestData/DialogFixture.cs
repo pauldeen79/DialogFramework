@@ -7,13 +7,13 @@ public static class DialogFixture
             .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .AddParts
             (
-                new DialogPartBuilder(QuestionDialogPartFixture.CreateBuilder()),
-                new DialogPartBuilder(new MessageDialogPartBuilder()
+                QuestionDialogPartFixture.CreateBuilder(),
+                new MessageDialogPartBuilder()
                     .WithId(new DialogPartIdentifierBuilder()
                     .WithValue("Message"))
                     .WithHeading("Message")
                     .WithMessage("This is a message")
-                    .WithGroup(DialogPartGroupFixture.CreateBuilder()))
+                    .WithGroup(DialogPartGroupFixture.CreateBuilder())
             )
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder());
 
@@ -39,12 +39,12 @@ public static class DialogFixture
                     .WithNextPartId(messagePart.Id)
             ).WithDefaultNextPartId(CreateBuilderBase().CompletedPart.Id);
 
-        var parts = new DialogPartBuilder[]
+        var parts = new IDialogPartBuilder[]
         {
-            new DialogPartBuilder(welcomePart),
-            new DialogPartBuilder(questionPart),
-            new DialogPartBuilder(decisionPart),
-            new DialogPartBuilder(messagePart)
+            welcomePart,
+            questionPart,
+            decisionPart,
+            messagePart
         }.Where(_ => addParts);
         return CreateBuilderBase()
             .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("HowDoYouFeel"))
