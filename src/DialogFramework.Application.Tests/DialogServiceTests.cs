@@ -496,7 +496,7 @@ public class DialogServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanContinue(context);
+        var result = sut.CanContinue(context, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         result.Should().Be(expectedResult);
@@ -510,6 +510,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder().WithFriendlyName("Name").WithCanStart(dialogCanStart).WithId("Id").WithVersion("1.0.0"))
+            .AddParts(new MessageDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder())))
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       dialog => DialogContextFixture.Create(dialog.Metadata));
@@ -531,6 +532,7 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder().WithFriendlyName("Name").WithCanStart(true).WithId("Id").WithVersion("1.0.0"))
+            .AddParts(new MessageDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder())))
             .Build();
         var factory = new DialogContextFactoryFixture(d => Equals(d.Metadata.Id, dialog.Metadata.Id),
                                                       dialog => DialogContextFixture.Create("Id", dialog.Metadata, dialog.ErrorPart, DialogState.InProgress)); // dialog state is already in progress

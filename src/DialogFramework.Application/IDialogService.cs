@@ -4,7 +4,7 @@ public interface IDialogService
 {
     bool CanStart(IDialogIdentifier dialogIdentifier);
     IDialogContext Start(IDialogIdentifier dialogIdentifier);
-    bool CanContinue(IDialogContext context);
+    bool CanContinue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
     IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults);
     bool CanAbort(IDialogContext context);
     IDialogContext Abort(IDialogContext context);
