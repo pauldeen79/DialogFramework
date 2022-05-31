@@ -32,10 +32,6 @@ public class DialogService : IDialogService
             throw new InvalidOperationException("Could not create context");
         }
         var context = _contextFactory.Create(dialog);
-        if (!context.CanStart(dialog))
-        {
-            throw new InvalidOperationException("Could not start dialog");
-        }
         try
         {
             var firstPart = dialog.GetFirstPart(context, _conditionEvaluator);
@@ -58,14 +54,8 @@ public class DialogService : IDialogService
         try
         {
             dialog = GetDialog(context);
-            if (!CanContinue(context))
-            {
-                throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
-            }
-
-            context = context.Chain(x => x.AddDialogPartResults(dialog, dialogPartResults));
             var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
-            return context.Chain(x => x.Continue(dialog, nextPart.Id, nextPart.GetValidationResults()));
+            return context.Chain(x => x.Continue(dialog, dialogPartResults, nextPart.Id, nextPart.GetValidationResults()));
         }
         catch (Exception ex)
         {
@@ -88,11 +78,6 @@ public class DialogService : IDialogService
         try
         {
             dialog = GetDialog(context);
-            if (!CanAbort(context))
-            {
-                throw new InvalidOperationException("Dialog cannot be aborted");
-            }
-
             return context.Chain(x => x.Abort(dialog));
         }
         catch (Exception ex)
@@ -116,11 +101,6 @@ public class DialogService : IDialogService
         try
         {
             dialog = GetDialog(context);
-            if (!CanNavigateTo(context, navigateToPartId))
-            {
-                throw new InvalidOperationException("Cannot navigate to requested dialog part");
-            }
-
             return context.Chain(x => x.NavigateTo(dialog, navigateToPartId));
         }
         catch (Exception ex)
@@ -144,11 +124,6 @@ public class DialogService : IDialogService
         try
         {
             dialog = GetDialog(context);
-            if (!CanResetCurrentState(context))
-            {
-                throw new InvalidOperationException("Current state cannot be reset");
-            }
-
             return context.Chain(x => x.ResetCurrentState(dialog));
         }
         catch (Exception ex)

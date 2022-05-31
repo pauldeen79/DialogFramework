@@ -14,10 +14,8 @@ public interface IDialogContext
     bool CanStart(IDialog dialog);
     void Start(IDialog dialog, IDialogPartIdentifier firstPartId);
 
-    void AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
-
     bool CanContinue(IDialog dialog);
-    void Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults);
+    void Continue(IDialog dialog, IEnumerable<IDialogPartResult> partResults, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults);
 
     bool CanAbort(IDialog dialog);
     void Abort(IDialog dialog);

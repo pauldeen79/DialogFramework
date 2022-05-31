@@ -29,7 +29,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, dialog.CompletedPart.Id, Enumerable.Empty<IDialogValidationResult>()));
 
         // Act
         var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
@@ -47,13 +47,13 @@ public class DialogContextTests
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
         // Assert 1
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 2 - Call GetProvidedAnswerByPart second time, after changing the provided answer
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) }));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
         // Assert 2
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
@@ -66,7 +66,7 @@ public class DialogContextTests
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 

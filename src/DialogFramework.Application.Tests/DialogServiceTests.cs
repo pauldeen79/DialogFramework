@@ -200,7 +200,7 @@ public class DialogServiceTests
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
             It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed" && @type.Name == "FormattedLogValues"),
-            It.Is<InvalidOperationException>(ex => ex.Message == $"Can only continue when the dialog is in progress. Current state is {currentState}"),
+            It.Is<InvalidOperationException>(ex => ex.Message == "Can only continue when the dialog is in progress"),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
     }
@@ -410,7 +410,7 @@ public class DialogServiceTests
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
             It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed" && @type.Name == "FormattedLogValues"),
-            It.Is<InvalidOperationException>(ex => ex.Message == $"Can only continue when the dialog is in progress. Current state is {currentState}"),
+            It.Is<InvalidOperationException>(ex => ex.Message == "Can only continue when the dialog is in progress"),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
     }
@@ -563,16 +563,20 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void Start_Throws_When_CanStart_Is_False()
+    public void Start_Returns_Error_When_CanStart_Is_False()
     {
         // Arrange
         var dialogMetadataMock = new Mock<IDialogMetadata>();
         dialogMetadataMock.SetupGet(x => x.CanStart).Returns(false);
         dialogMetadataMock.SetupGet(x => x.Id).Returns("Empty");
-        var dialogMock = new Mock<IDialog>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
+        var errorPartMock = new Mock<IErrorDialogPart>();
+        errorPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
+        var dialogMock = new Mock<IDialog>();
+        dialogMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
+        dialogMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
+        dialogMock.Setup(x => x.GetFirstPart(It.IsAny<IDialogContext>(), It.IsAny<IConditionEvaluator>())).Returns(dialogPartMock.Object);
         var factory = new DialogContextFactoryFixture(_ => true,
                                                       _ => DialogContextFixture.Create("Id", dialogMock.Object.Metadata, dialogPartMock.Object, DialogState.Initial));
         var repositoryMock = new Mock<IDialogRepository>();
@@ -580,10 +584,13 @@ public class DialogServiceTests
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
         var dialog = dialogMock.Object;
-        var act = new Action(() => sut.Start(dialog.Metadata));
 
         // Act
-        act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not start dialog");
+        var result = sut.Start(dialog.Metadata);
+
+        // Act
+        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Start failed" });
     }
 
     [Fact]
@@ -899,8 +906,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { partResult }));
-        context = context.Chain(x => x.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act
@@ -939,8 +945,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { partResult }));
-        context = context.Chain(x => x.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act
