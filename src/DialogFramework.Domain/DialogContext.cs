@@ -6,111 +6,70 @@ public partial record DialogContext
         => CurrentState == DialogState.InProgress
         && !Equals(CurrentPartId, dialog.AbortedPart.Id);
 
-    public IDialogContext Abort(IDialog dialog)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            dialog.AbortedPart.Id,
-            dialog.AbortedPart.GetGroupId(),
-            DialogState.Aborted,
-            Results,
-            Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
-        );
+    public void Abort(IDialog dialog)
+    {
+        CurrentPartId = dialog.AbortedPart.Id;
+        CurrentGroupId = dialog.AbortedPart.GetGroupId();
+        CurrentState = DialogState.Aborted;
+    }
 
-    public IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            CurrentPartId,
-            CurrentGroupId,
-            CurrentState,
-            dialog.ReplaceAnswers(Results, partResults),
-            Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
-        );
+    public void AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults)
+    {
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Results, partResults));
+    }
 
     public bool CanContinue(IDialog dialog)
         => CurrentState == DialogState.InProgress;
 
-    public IDialogContext Continue(IDialog dialog,
-                                   IDialogPartIdentifier nextPartId,
-                                   IEnumerable<IDialogValidationResult> validationResults)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            nextPartId,
-            dialog.GetPartById(nextPartId).GetGroupId(),
-            dialog.GetPartById(nextPartId).GetState(),
-            Results,
-            validationResults,
-            Enumerable.Empty<IError>()
-        );
+    public void Continue(IDialog dialog,
+                         IDialogPartIdentifier nextPartId,
+                         IEnumerable<IDialogValidationResult> validationResults)
+    {
+        var nextPart = dialog.GetPartById(nextPartId);
+        CurrentPartId = nextPartId;
+        CurrentGroupId = nextPart.GetGroupId();
+        CurrentState = nextPart.GetState();
+        ValidationErrors = new ValueCollection<IDialogValidationResult>(validationResults);
+    }
 
-    public IDialogContext Error(IDialog dialog, IEnumerable<IError> errors)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            dialog.ErrorPart.Id,
-            dialog.ErrorPart.GetGroupId(),
-            DialogState.ErrorOccured,
-            Results,
-            ValidationErrors,
-            errors
-        );
+    public void Error(IDialog dialog, IEnumerable<IError> errors)
+    {
+        CurrentPartId = dialog.ErrorPart.Id;
+        CurrentGroupId = dialog.ErrorPart.GetGroupId();
+        CurrentState = DialogState.ErrorOccured;
+        Errors = new ReadOnlyValueCollection<IError>(errors);
+    }
 
     public bool CanStart(IDialog dialog)
         => CurrentState == DialogState.Initial
         && dialog.Metadata.CanStart;
 
-    public IDialogContext Start(IDialog dialog, IDialogPartIdentifier firstPartId)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            firstPartId,
-            dialog.GetPartById(firstPartId).GetGroupId(),
-            dialog.GetPartById(firstPartId).GetState(),
-            Enumerable.Empty<IDialogPartResult>(),
-            Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
-        );
+    public void Start(IDialog dialog, IDialogPartIdentifier firstPartId)
+    {
+        var firstPart = dialog.GetPartById(firstPartId);
+        CurrentPartId = firstPartId;
+        CurrentGroupId = firstPart.GetGroupId();
+        CurrentState = firstPart.GetState();
+    }
 
     public bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
         => (CurrentState == DialogState.InProgress || CurrentState == DialogState.Completed)
         && dialog.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
 
-    public IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            navigateToPartId,
-            dialog.GetPartById(navigateToPartId).GetGroupId(),
-            dialog.GetPartById(navigateToPartId).GetState(),
-            Results,
-            Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
-        );
+    public void NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
+    {
+        var navigateToPart = dialog.GetPartById(navigateToPartId);
+        CurrentPartId = navigateToPartId;
+        CurrentGroupId = navigateToPart.GetGroupId();
+        CurrentState = navigateToPart.GetState();
+    }
 
     public bool CanResetCurrentState(IDialog dialog)
         => CurrentState == DialogState.InProgress
         && dialog.CanResetPartResultsByPartId(CurrentPartId);
 
-    public IDialogContext ResetCurrentState(IDialog dialog)
-        => new DialogContext
-        (
-            Id,
-            CurrentDialogIdentifier,
-            CurrentPartId,
-            CurrentGroupId,
-            CurrentState,
-            dialog.ResetPartResultsByPartId(Results, CurrentPartId),
-            Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
-        );
+    public void ResetCurrentState(IDialog dialog)
+    {
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(dialog.ResetPartResultsByPartId(Results, CurrentPartId));
+    }
 }

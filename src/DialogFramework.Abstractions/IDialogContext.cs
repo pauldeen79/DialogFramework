@@ -12,21 +12,21 @@ public interface IDialogContext
     IReadOnlyCollection<IError> Errors { get; }
 
     bool CanStart(IDialog dialog);
-    IDialogContext Start(IDialog dialog, IDialogPartIdentifier firstPartId);
+    void Start(IDialog dialog, IDialogPartIdentifier firstPartId);
 
-    IDialogContext AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
+    void AddDialogPartResults(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
 
     bool CanContinue(IDialog dialog);
-    IDialogContext Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults);
+    void Continue(IDialog dialog, IDialogPartIdentifier nextPartId, IEnumerable<IDialogValidationResult> validationResults);
 
     bool CanAbort(IDialog dialog);
-    IDialogContext Abort(IDialog dialog);
+    void Abort(IDialog dialog);
 
-    IDialogContext Error(IDialog dialog, IEnumerable<IError> errors);
+    void Error(IDialog dialog, IEnumerable<IError> errors);
 
     bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
-    IDialogContext NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+    void NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
 
     bool CanResetCurrentState(IDialog dialog);
-    IDialogContext ResetCurrentState(IDialog dialog);
+    void ResetCurrentState(IDialog dialog);
 }

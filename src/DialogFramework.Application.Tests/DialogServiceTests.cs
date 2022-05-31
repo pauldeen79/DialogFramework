@@ -899,8 +899,8 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.AddDialogPartResults(dialog, new[] { partResult });
-        context = context.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>());
+        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { partResult }));
+        context = context.Chain(x => x.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act
@@ -939,8 +939,8 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.AddDialogPartResults(dialog, new[] { partResult });
-        context = context.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>());
+        context = context.Chain(x => x.AddDialogPartResults(dialog, new[] { partResult }));
+        context = context.Chain(x => x.Continue(dialog, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act

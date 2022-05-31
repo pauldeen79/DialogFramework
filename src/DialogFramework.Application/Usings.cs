@@ -1,4 +1,5 @@
-﻿global using DialogFramework.Abstractions;
+﻿global using CrossCutting.Common.Extensions;
+global using DialogFramework.Abstractions;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.DialogPartResultDefinitions;

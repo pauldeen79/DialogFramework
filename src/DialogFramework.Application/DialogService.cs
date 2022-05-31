@@ -39,13 +39,13 @@ public class DialogService : IDialogService
         try
         {
             var firstPart = dialog.GetFirstPart(context, _conditionEvaluator);
-            return context.Start(dialog, firstPart.Id);
+            return context.Chain(x => x.Start(dialog, firstPart.Id));
         }
         catch (Exception ex)
         {
             var msg = $"{nameof(Start)} failed";
             _logger.LogError(ex, msg);
-            return context.Error(dialog, new Error(msg));
+            return context.Chain(x => x.Error(dialog, new Error(msg)));
         }
     }
 
@@ -63,9 +63,9 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException($"Can only continue when the dialog is in progress. Current state is {context.CurrentState}");
             }
 
-            context = context.AddDialogPartResults(dialog, dialogPartResults);
+            context = context.Chain(x => x.AddDialogPartResults(dialog, dialogPartResults));
             var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
-            return context.Continue(dialog, nextPart.Id, nextPart.GetValidationResults());
+            return context.Chain(x => x.Continue(dialog, nextPart.Id, nextPart.GetValidationResults()));
         }
         catch (Exception ex)
         {
@@ -73,7 +73,7 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, new Error(msg));
+                return context.Chain(x => x.Error(dialog, new Error(msg)));
             }
             throw;
         }
@@ -93,7 +93,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Dialog cannot be aborted");
             }
 
-            return context.Abort(dialog);
+            return context.Chain(x => x.Abort(dialog));
         }
         catch (Exception ex)
         {
@@ -101,7 +101,7 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, new Error(msg));
+                return context.Chain(x => x.Error(dialog, new Error(msg)));
             }
             throw;
         }
@@ -121,7 +121,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Cannot navigate to requested dialog part");
             }
 
-            return context.NavigateTo(dialog, navigateToPartId);
+            return context.Chain(x => x.NavigateTo(dialog, navigateToPartId));
         }
         catch (Exception ex)
         {
@@ -129,7 +129,7 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, new Error(msg));
+                return context.Chain(x => x.Error(dialog, new Error(msg)));
             }
             throw;
         }
@@ -149,7 +149,7 @@ public class DialogService : IDialogService
                 throw new InvalidOperationException("Current state cannot be reset");
             }
 
-            return context.ResetCurrentState(dialog);
+            return context.Chain(x => x.ResetCurrentState(dialog));
         }
         catch (Exception ex)
         {
@@ -157,7 +157,7 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialog != null)
             {
-                return context.Error(dialog, new Error(msg));
+                return context.Chain(x => x.Error(dialog, new Error(msg)));
             }
             throw;
         }
