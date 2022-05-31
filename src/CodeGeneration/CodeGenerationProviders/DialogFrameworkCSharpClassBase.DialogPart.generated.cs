@@ -23,7 +23,7 @@ namespace CodeGeneration.CodeGenerationProviders
         {
             return new[]
             {
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.IDialogPart")
@@ -41,9 +41,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IAbortedDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.DialogParts.IGroupedDialogPart",
@@ -70,9 +75,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"ICompletedDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.IDialogPart")
@@ -101,9 +111,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IDecisionDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.IDialogPart")
@@ -121,9 +136,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IErrorDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.DialogParts.IGroupedDialogPart",
@@ -150,9 +170,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IMessageDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.IDialogPart")
@@ -175,9 +200,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"INavigationDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.DialogParts.IGroupedDialogPart",
@@ -231,9 +261,14 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IQuestionDialogPart"),
-                new ClassBuilder()
+                new InterfaceBuilder()
                     .WithNamespace(@"DialogFramework.Abstractions.DialogParts")
                     .AddInterfaces(
                         @"DialogFramework.Abstractions.IDialogPart")
@@ -251,7 +286,12 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithVirtual(true)
                             .WithAbstract(true)
                             .WithName(@"GetState")
-                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"))
+                            .WithTypeName(@"DialogFramework.Abstractions.DialogState"),
+                        new ClassMethodBuilder()
+                            .WithVirtual(true)
+                            .WithAbstract(true)
+                            .WithName(@"CreateBuilder")
+                            .WithTypeName(@"DialogFramework.Abstractions.IDialogPartBuilder"))
                     .WithName(@"IRedirectDialogPart"),
             }.Select(x => x.Build()).ToArray();
         }
