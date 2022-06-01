@@ -113,5 +113,6 @@ public partial record DialogContext
             throw new InvalidOperationException("Current state cannot be reset");
         }
         Results = new ReadOnlyValueCollection<IDialogPartResult>(dialog.ResetPartResultsByPartId(Results, CurrentPartId));
+        ValidationErrors = new ReadOnlyValueCollection<IDialogValidationResult>();
     }
 }

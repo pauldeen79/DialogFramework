@@ -160,7 +160,7 @@ public class DialogContextTests
     }
 
     [Fact]
-    public void ResetCurrentState_Updates_State_Correctly_When_CanResetCurrentState_Is_True()
+    public void ResetCurrentState_Updates_Results_Correctly_When_CanResetCurrentState_Is_True()
     {
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
@@ -180,5 +180,11 @@ public class DialogContextTests
         context.ResetCurrentState(dialog);
         // Assert 2
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void ResetCurrentState_Clears_ValidationErrors_When_CanResetCurrentState_Is_True()
+    {
+        throw new NotImplementedException();
     }
 }

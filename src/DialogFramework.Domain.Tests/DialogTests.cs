@@ -51,13 +51,36 @@ public class DialogTests
     [Fact]
     public void ResetPartResultsByPartId_Throws_When_CanResetPartResultsByPartId_Is_False()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var act = new Action(() => sut.ResetPartResultsByPartId(Enumerable.Empty<IDialogPartResult>(), sut.CompletedPart.Id));
+
+        // Assert
+        act.Should().ThrowExactly<InvalidOperationException>();
     }
 
     [Fact]
     public void ResetPartResultsByPartId_Returns_Correct_Result_When_CanResetPartResultsByPartId_Is_True()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+        var otherResult = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Other"))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+        var results = new[]
+        {
+            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id)).WithResultId(new DialogPartResultIdentifierBuilder()).Build(),
+            otherResult
+        };
+
+        // Act
+        var actual = sut.ResetPartResultsByPartId(results, sut.Parts.First().Id);
+
+        // Assert
+        actual.Should().BeEquivalentTo(new[] { otherResult });
     }
 
     [Fact]
