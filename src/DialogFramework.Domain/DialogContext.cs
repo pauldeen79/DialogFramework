@@ -25,10 +25,6 @@ public partial record DialogContext
             return false;
         }
 
-        //TODO: Validate that part results are results of the current part.
-
-        //TODO: Validate that next part id is either the current part, before the current part, error/aborted part or the next part. can't continue to parts after the one next to the current part.
-
         return true;
     }
 
