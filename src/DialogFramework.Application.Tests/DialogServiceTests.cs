@@ -902,13 +902,13 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
-        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act
@@ -941,13 +941,13 @@ public class DialogServiceTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
-        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, messagePart, DialogState.InProgress);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, questionPart.Id, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
         var sut = CreateSut();
 
         // Act

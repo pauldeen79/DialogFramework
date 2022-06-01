@@ -23,7 +23,7 @@ public class DialogService : IDialogService
         var dialog = GetDialog(dialogIdentifier);
         var context = _contextFactory.Create(dialog);
         
-        return context.CanStart(dialog, dialog.GetFirstPart(context, _conditionEvaluator).Id);
+        return context.CanStart(dialog);
     }
 
     public IDialogContext Start(IDialogIdentifier dialogIdentifier)
@@ -36,7 +36,7 @@ public class DialogService : IDialogService
         var context = _contextFactory.Create(dialog);
         try
         {
-            return context.Chain(x => x.Start(dialog, dialog.GetFirstPart(context, _conditionEvaluator).Id));
+            return context.Chain(x => x.Start(dialog, _conditionEvaluator));
         }
         catch (Exception ex)
         {
@@ -49,7 +49,7 @@ public class DialogService : IDialogService
     public bool CanContinue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var dialog = GetDialog(context);
-        return context.CanContinue(dialog, dialogPartResults, dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults).Id);
+        return context.CanContinue(dialog, dialogPartResults);
     }
 
     public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
@@ -59,7 +59,7 @@ public class DialogService : IDialogService
         {
             dialog = GetDialog(context);
             var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
-            return context.Chain(x => x.Continue(dialog, dialogPartResults, nextPart.Id, nextPart.GetValidationResults()));
+            return context.Chain(x => x.Continue(dialog, dialogPartResults, _conditionEvaluator, nextPart.GetValidationResults()));
         }
         catch (Exception ex)
         {

@@ -17,9 +17,7 @@ public partial record DialogContext
         CurrentState = DialogState.Aborted;
     }
 
-    public bool CanContinue(IDialog dialog,
-                            IEnumerable<IDialogPartResult> partResults,
-                            IDialogPartIdentifier nextPartId)
+    public bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> partResults)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -36,15 +34,15 @@ public partial record DialogContext
 
     public void Continue(IDialog dialog,
                          IEnumerable<IDialogPartResult> partResults,
-                         IDialogPartIdentifier nextPartId,
+                         IConditionEvaluator conditionEvaluator,
                          IEnumerable<IDialogValidationResult> validationResults)
     {
-        if (!CanContinue(dialog, partResults, nextPartId))
+        if (!CanContinue(dialog, partResults))
         {
             throw new InvalidOperationException("Can only continue when the dialog is in progress");
         }
-        var nextPart = dialog.GetPartById(nextPartId);
-        CurrentPartId = nextPartId;
+        var nextPart = dialog.GetNextPart(this, conditionEvaluator, partResults);
+        CurrentPartId = nextPart.Id;
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
         Results = new ReadOnlyValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Results, partResults));
@@ -59,7 +57,7 @@ public partial record DialogContext
         Errors = new ReadOnlyValueCollection<IError>(errors);
     }
 
-    public bool CanStart(IDialog dialog, IDialogPartIdentifier firstPartId)
+    public bool CanStart(IDialog dialog)
     {
         if (CurrentState != DialogState.Initial)
         {
@@ -71,19 +69,17 @@ public partial record DialogContext
             return false;
         }
 
-        //TODO: Check that the first part id is the first part of the dialog. Or maybe get the first part ourselves, and remove it from the Start and Canstart signature?
-
         return true;
     }
 
-    public void Start(IDialog dialog, IDialogPartIdentifier firstPartId)
+    public void Start(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
-        if (!CanStart(dialog, firstPartId))
+        if (!CanStart(dialog))
         {
             throw new InvalidOperationException("Could not start dialog");
         }
-        var firstPart = dialog.GetPartById(firstPartId);
-        CurrentPartId = firstPartId;
+        var firstPart = dialog.GetFirstPart(this, conditionEvaluator);
+        CurrentPartId = firstPart.Id;
         CurrentGroupId = firstPart.GetGroupId();
         CurrentState = firstPart.GetState();
     }

@@ -1,6 +1,4 @@
-﻿using CrossCutting.Common.Extensions;
-
-namespace DialogFramework.Domain.Tests;
+﻿namespace DialogFramework.Domain.Tests;
 
 public class DialogContextTests
 {
@@ -28,8 +26,9 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, dialog.CompletedPart.Id, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
 
         // Act
         var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
@@ -44,16 +43,17 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
 
         // Act 1 - Call GetProvidedAnswerByPart first time, after initial provided answer
-        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
         // Assert 1
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 2 - Call GetProvidedAnswerByPart second time, after changing the provided answer
-        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.Last().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
         // Assert 2
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.Last().Id);
@@ -65,8 +65,9 @@ public class DialogContextTests
         // Arrange
         var dialog = DialogFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, context.CurrentPartId, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 

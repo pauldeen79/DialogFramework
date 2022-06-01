@@ -21,6 +21,7 @@ public interface IDialog
                        IEnumerable<IDialogPartResult> existingPartResults);
 
     IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
+
     IDialogPart GetNextPart(IDialogContext context,
                             IConditionEvaluator conditionEvaluator,
                             IEnumerable<IDialogPartResult> providedResults);
