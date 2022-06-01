@@ -11,11 +11,13 @@ public interface IDialogContext
     IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
     IReadOnlyCollection<IError> Errors { get; }
 
-    bool CanStart(IDialog dialog);
+    bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator);
     void Start(IDialog dialog, IConditionEvaluator conditionEvaluator);
 
     bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
-    void Continue(IDialog dialog, IEnumerable<IDialogPartResult> partResults, IConditionEvaluator conditionEvaluator, IEnumerable<IDialogValidationResult> validationResults);
+    void Continue(IDialog dialog,
+                  IEnumerable<IDialogPartResult> partResults,
+                  IConditionEvaluator conditionEvaluator);
 
     bool CanAbort(IDialog dialog);
     void Abort(IDialog dialog);

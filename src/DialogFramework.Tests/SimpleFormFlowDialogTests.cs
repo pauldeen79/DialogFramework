@@ -100,15 +100,6 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
         ); // ContactInfo -> Newsletter
-        context = sut.Continue
-        (
-            context,
-            new DialogPartResultBuilder()
-                .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
-                .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
-                .Build()
-        ); // Newsletter -> Completed
         context = sut.NavigateTo(context, new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()); // navigate back: Completed -> ContactInfo
         context = sut.Continue
         (

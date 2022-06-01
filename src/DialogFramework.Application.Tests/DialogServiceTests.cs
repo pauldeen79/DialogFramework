@@ -575,6 +575,7 @@ public class DialogServiceTests
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
         var errorPartMock = new Mock<IErrorDialogPart>();
         errorPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
+        errorPartMock.Setup(x => x.GetState()).Returns(DialogState.ErrorOccured);
         var dialogMock = new Mock<IDialog>();
         dialogMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
         dialogMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
@@ -747,7 +748,7 @@ public class DialogServiceTests
             It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
             It.Is<EventId>(eventId => eventId.Id == 0),
             It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Start failed" && @type.Name == "FormattedLogValues"),
-            It.Is<InvalidOperationException>(ex => ex.Message == "Could not determine next part. Dialog does not have any parts."),
+            It.Is<InvalidOperationException>(ex => ex.Message == "Could not start dialog"),
             It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
         Times.Once);
     }
@@ -900,7 +901,7 @@ public class DialogServiceTests
     public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Before_Current_Part()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, messagePart, DialogState.InProgress);
@@ -908,7 +909,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object));
         var sut = CreateSut();
 
         // Act
@@ -939,7 +940,7 @@ public class DialogServiceTests
     public void NavigateTo_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, messagePart, DialogState.InProgress);
@@ -947,7 +948,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object, Enumerable.Empty<IDialogValidationResult>()));
+        context = context.Chain(x => x.Continue(dialog, new[] { partResult }, conditionEvaluatorMock.Object));
         var sut = CreateSut();
 
         // Act

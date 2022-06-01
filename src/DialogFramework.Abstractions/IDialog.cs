@@ -20,6 +20,8 @@ public interface IDialog
                        IDialogPartIdentifier navigateToPartId,
                        IEnumerable<IDialogPartResult> existingPartResults);
 
+    bool CanStart(IDialogContext context, IConditionEvaluator conditionEvaluator);
+
     IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
 
     IDialogPart GetNextPart(IDialogContext context,

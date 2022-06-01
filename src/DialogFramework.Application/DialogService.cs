@@ -23,7 +23,7 @@ public class DialogService : IDialogService
         var dialog = GetDialog(dialogIdentifier);
         var context = _contextFactory.Create(dialog);
         
-        return context.CanStart(dialog);
+        return context.CanStart(dialog, _conditionEvaluator);
     }
 
     public IDialogContext Start(IDialogIdentifier dialogIdentifier)
@@ -58,8 +58,7 @@ public class DialogService : IDialogService
         try
         {
             dialog = GetDialog(context);
-            var nextPart = dialog.GetNextPart(context, _conditionEvaluator, dialogPartResults);
-            return context.Chain(x => x.Continue(dialog, dialogPartResults, _conditionEvaluator, nextPart.GetValidationResults()));
+            return context.Chain(x => x.Continue(dialog, dialogPartResults, _conditionEvaluator));
         }
         catch (Exception ex)
         {

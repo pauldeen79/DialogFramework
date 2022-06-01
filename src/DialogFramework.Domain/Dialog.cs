@@ -3,7 +3,7 @@
 public partial record Dialog
 {
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                          IEnumerable<IDialogPartResult> newPartResults)
+                                                         IEnumerable<IDialogPartResult> newPartResults)
     {
         // Decision: By default, only the results from the requested part are replaced.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
@@ -21,6 +21,10 @@ public partial record Dialog
     public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
                                                                    IDialogPartIdentifier partId)
     {
+        if (!CanResetPartResultsByPartId(partId))
+        {
+            throw new InvalidOperationException("Cannot reset part results");
+        }
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
         return existingPartResults.Where(x => !Equals(x.DialogPartId, partId));
@@ -33,6 +37,17 @@ public partial record Dialog
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
         return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
+    }
+
+    public bool CanStart(IDialogContext context, IConditionEvaluator conditionEvaluator)
+    {
+        var firstPart = Parts.FirstOrDefault();
+        if (firstPart == null)
+        {
+            return false;
+        }
+
+        return TryGetDynamicResult(firstPart, context, conditionEvaluator) != null;
     }
 
     public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
@@ -116,5 +131,45 @@ public partial record Dialog
         }
 
         return dialogPart;
+    }
+
+    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart, IDialogContext context, IConditionEvaluator conditionEvaluator)
+    {
+        IDialogPart? result = dialogPart;
+        while (true)
+        {
+            if (result is IDecisionDialogPart decisionDialogPart)
+            {
+                var nextPartId = decisionDialogPart.GetNextPartId(context, this, conditionEvaluator);
+                result = TryGetPartById(nextPartId);
+            }
+            else if (result is INavigationDialogPart navigationDialogPart)
+            {
+                result = TryGetPartById(navigationDialogPart.GetNextPartId(context));
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private IDialogPart? TryGetPartById(IDialogPartIdentifier id)
+    {
+        if (Equals(id, AbortedPart.Id)) return AbortedPart;
+        if (Equals(id, CompletedPart.Id)) return CompletedPart;
+        if (Equals(id, ErrorPart.Id)) return ErrorPart;
+        var parts = Parts.Where(x => Equals(x.Id, id)).ToArray();
+        if (parts.Length == 1)
+        {
+            return parts[0];
+        }
+        if (parts.Length > 1)
+        {
+            return null;
+        }
+        return null;
     }
 }

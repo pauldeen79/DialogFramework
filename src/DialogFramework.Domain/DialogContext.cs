@@ -30,8 +30,7 @@ public partial record DialogContext
 
     public void Continue(IDialog dialog,
                          IEnumerable<IDialogPartResult> partResults,
-                         IConditionEvaluator conditionEvaluator,
-                         IEnumerable<IDialogValidationResult> validationResults)
+                         IConditionEvaluator conditionEvaluator)
     {
         if (!CanContinue(dialog, partResults))
         {
@@ -42,18 +41,19 @@ public partial record DialogContext
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
         Results = new ReadOnlyValueCollection<IDialogPartResult>(dialog.ReplaceAnswers(Results, partResults));
-        ValidationErrors = new ValueCollection<IDialogValidationResult>(validationResults);
+        ValidationErrors = new ValueCollection<IDialogValidationResult>(nextPart.GetValidationResults());
     }
 
     public void Error(IDialog dialog, IEnumerable<IError> errors)
     {
         CurrentPartId = dialog.ErrorPart.Id;
         CurrentGroupId = dialog.ErrorPart.GetGroupId();
-        CurrentState = DialogState.ErrorOccured;
+        CurrentState = dialog.ErrorPart.GetState();
+        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
         Errors = new ReadOnlyValueCollection<IError>(errors);
     }
 
-    public bool CanStart(IDialog dialog)
+    public bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
         if (CurrentState != DialogState.Initial)
         {
@@ -65,12 +65,17 @@ public partial record DialogContext
             return false;
         }
 
+        if (!dialog.CanStart(this, conditionEvaluator))
+        {
+            return false;
+        }
+
         return true;
     }
 
     public void Start(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
-        if (!CanStart(dialog))
+        if (!CanStart(dialog, conditionEvaluator))
         {
             throw new InvalidOperationException("Could not start dialog");
         }
@@ -81,7 +86,7 @@ public partial record DialogContext
     }
 
     public bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-        => (CurrentState == DialogState.InProgress || CurrentState == DialogState.Completed)
+        => CurrentState == DialogState.InProgress
         && dialog.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
 
     public void NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
@@ -94,6 +99,7 @@ public partial record DialogContext
         CurrentPartId = navigateToPartId;
         CurrentGroupId = navigateToPart.GetGroupId();
         CurrentState = navigateToPart.GetState();
+        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
     }
 
     public bool CanResetCurrentState(IDialog dialog)
