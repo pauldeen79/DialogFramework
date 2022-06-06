@@ -4,7 +4,7 @@ public static class DialogPartExtensions
 {
     public static IDialogPart? Validate(this IDialogPart part,
                                         IDialogContext context,
-                                        IDialog dialog,
+                                        IDialogDefinition dialog,
                                         IEnumerable<IDialogPartResult> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart
             ? questionDialogPart.Validate(context, dialog, providedAnswers)

@@ -9,10 +9,10 @@ public class TestFlowTests
         var loggerMock = new Mock<ILogger>();
         using var provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
             .AddSingleton(loggerMock.Object)
             .BuildServiceProvider();
-        var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
+        var dialog = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
         var sut = provider.GetRequiredService<IDialogService>();
 
         // Act & Assert

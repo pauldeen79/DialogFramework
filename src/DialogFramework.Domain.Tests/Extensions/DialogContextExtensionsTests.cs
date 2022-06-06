@@ -8,7 +8,7 @@ public class DialogContextExtensionsTests
     public void GetDialogPartResultsByPartIdentifier_Returns_Empty_Result_When_No_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var welcomePart = dialog.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var context = DialogContextFixture.Create(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
@@ -24,7 +24,7 @@ public class DialogContextExtensionsTests
     public void GetDialogPartResultsByPartIdentifier_Returns_Correct_Result_When_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);

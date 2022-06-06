@@ -3,12 +3,12 @@
 public class DialogService : IDialogService
 {
     private readonly IDialogContextFactory _contextFactory;
-    private readonly IDialogRepository _dialogRepository;
+    private readonly IDialogDefinitionRepository _dialogRepository;
     private readonly IConditionEvaluator _conditionEvaluator;
     private readonly ILogger _logger;
 
     public DialogService(IDialogContextFactory contextFactory,
-                         IDialogRepository dialogRepository,
+                         IDialogDefinitionRepository dialogRepository,
                          IConditionEvaluator conditionEvaluator,
                          ILogger logger)
     {
@@ -54,7 +54,7 @@ public class DialogService : IDialogService
 
     public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        IDialog? dialog = null;
+        IDialogDefinition? dialog = null;
         try
         {
             dialog = GetDialog(context);
@@ -77,7 +77,7 @@ public class DialogService : IDialogService
 
     public IDialogContext Abort(IDialogContext context)
     {
-        IDialog? dialog = null;
+        IDialogDefinition? dialog = null;
         try
         {
             dialog = GetDialog(context);
@@ -100,7 +100,7 @@ public class DialogService : IDialogService
 
     public IDialogContext NavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId)
     {
-        IDialog? dialog = null;
+        IDialogDefinition? dialog = null;
         try
         {
             dialog = GetDialog(context);
@@ -123,7 +123,7 @@ public class DialogService : IDialogService
 
     public IDialogContext ResetCurrentState(IDialogContext context)
     {
-        IDialog? dialog = null;
+        IDialogDefinition? dialog = null;
         try
         {
             dialog = GetDialog(context);
@@ -141,9 +141,9 @@ public class DialogService : IDialogService
         }
     }
 
-    private IDialog GetDialog(IDialogContext context) => GetDialog(context.CurrentDialogIdentifier);
+    private IDialogDefinition GetDialog(IDialogContext context) => GetDialog(context.CurrentDialogIdentifier);
 
-    private IDialog GetDialog(IDialogIdentifier dialogIdentifier)
+    private IDialogDefinition GetDialog(IDialogIdentifier dialogIdentifier)
     {
         var dialog = _dialogRepository.GetDialog(dialogIdentifier);
         if (dialog == null)

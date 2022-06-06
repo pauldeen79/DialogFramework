@@ -6,7 +6,7 @@ public interface IQuestionDialogPart : IGroupedDialogPart
     IReadOnlyCollection<IDialogPartResultDefinition> Results { get; }
     IReadOnlyCollection<IQuestionDialogPartValidator> Validators { get; }
     IDialogPart? Validate(IDialogContext context,
-                          IDialog dialog,
+                          IDialogDefinition dialog,
                           IEnumerable<IDialogPartResult> dialogPartResults);
     IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
 }

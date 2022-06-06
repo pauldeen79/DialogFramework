@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record Dialog : IValidatableObject
+public partial record DialogDefinition : IValidatableObject
 {
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                          IEnumerable<IDialogPartResult> newPartResults)

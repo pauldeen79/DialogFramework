@@ -10,7 +10,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         _loggerMock = new Mock<ILogger>();
         _provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddSingleton<IDialogRepository, TestDialogRepository>()
+            .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
             .AddSingleton(_loggerMock.Object)
             .BuildServiceProvider();
     }
@@ -19,7 +19,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act
@@ -80,7 +80,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act
@@ -156,7 +156,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_In_Different_Session()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act step 1: Start a session, submit first question
@@ -223,7 +223,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act
@@ -261,7 +261,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act
@@ -297,7 +297,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = _provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialog = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
         var sut = _provider.GetRequiredService<IDialogService>();
 
         // Act
@@ -320,9 +320,9 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialog = new TestDialogRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
+        var dialog = new TestDialogDefinitionRepository().GetDialog(new DialogIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogContextFactory();
-        var repository = new TestDialogRepository();
+        var repository = new TestDialogDefinitionRepository();
         var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
 
         // Act

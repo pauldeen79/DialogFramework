@@ -3,7 +3,7 @@
 public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+                                                         IDialogDefinition dialog,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var answerCount = dialogPartResults.Count(x => Equals(x.DialogPartId, context.CurrentPartId) && !string.IsNullOrEmpty(x.ResultId.Value));

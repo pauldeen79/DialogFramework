@@ -2,9 +2,9 @@
 
 public class DialogContextFactory : IDialogContextFactory
 {
-    public bool CanCreate(IDialog dialog) => dialog is Dialog;
+    public bool CanCreate(IDialogDefinition dialog) => dialog is DialogDefinition;
 
-    public IDialogContext Create(IDialog dialog)
+    public IDialogContext Create(IDialogDefinition dialog)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(dialog.Metadata))

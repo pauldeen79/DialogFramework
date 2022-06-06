@@ -6,7 +6,7 @@ public class ValueTypeValidator : IDialogPartResultDefinitionValidator
     public ValueTypeValidator(Type type) => Type = type;
 
     public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+                                                         IDialogDefinition dialog,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)

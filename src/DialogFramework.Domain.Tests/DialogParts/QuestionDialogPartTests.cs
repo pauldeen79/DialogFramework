@@ -7,7 +7,7 @@ public class QuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
@@ -29,7 +29,7 @@ public class QuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
@@ -49,7 +49,7 @@ public class QuestionDialogPartTests
     public void Validate_With_Known_Id_And_Correct_ValueType_Gives_No_ValidationError()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = dialog.Parts.OfType<IQuestionDialogPart>().First();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()

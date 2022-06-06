@@ -11,22 +11,22 @@ public interface IDialogContext
     IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
     IReadOnlyCollection<IError> Errors { get; }
 
-    bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator);
-    void Start(IDialog dialog, IConditionEvaluator conditionEvaluator);
+    bool CanStart(IDialogDefinition dialog, IConditionEvaluator conditionEvaluator);
+    void Start(IDialogDefinition dialog, IConditionEvaluator conditionEvaluator);
 
-    bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> partResults);
-    void Continue(IDialog dialog,
+    bool CanContinue(IDialogDefinition dialog, IEnumerable<IDialogPartResult> partResults);
+    void Continue(IDialogDefinition dialog,
                   IEnumerable<IDialogPartResult> partResults,
                   IConditionEvaluator conditionEvaluator);
 
-    bool CanAbort(IDialog dialog);
-    void Abort(IDialog dialog);
+    bool CanAbort(IDialogDefinition dialog);
+    void Abort(IDialogDefinition dialog);
 
-    void Error(IDialog dialog, IEnumerable<IError> errors);
+    void Error(IDialogDefinition dialog, IEnumerable<IError> errors);
 
-    bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
-    void NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+    bool CanNavigateTo(IDialogDefinition dialog, IDialogPartIdentifier navigateToPartId);
+    void NavigateTo(IDialogDefinition dialog, IDialogPartIdentifier navigateToPartId);
 
-    bool CanResetCurrentState(IDialog dialog);
-    void ResetCurrentState(IDialog dialog);
+    bool CanResetCurrentState(IDialogDefinition dialog);
+    void ResetCurrentState(IDialogDefinition dialog);
 }

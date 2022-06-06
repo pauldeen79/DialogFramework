@@ -1,6 +1,4 @@
-﻿using DialogFramework.Domain.Builders;
-
-namespace DialogFramework.Tests;
+﻿namespace DialogFramework.Tests;
 
 public class SerializationTests
 {
@@ -11,10 +9,10 @@ public class SerializationTests
         var dialogToSerialize = SimpleFormFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
@@ -27,10 +25,10 @@ public class SerializationTests
         var dialogToSerialize = TestFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);

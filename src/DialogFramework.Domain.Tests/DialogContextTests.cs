@@ -163,7 +163,7 @@ public class DialogContextTests
     public void ResetCurrentState_Updates_Results_Correctly_When_CanResetCurrentState_Is_True()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);

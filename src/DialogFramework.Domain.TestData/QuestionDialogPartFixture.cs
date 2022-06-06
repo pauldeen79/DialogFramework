@@ -22,7 +22,7 @@ public static class QuestionDialogPartFixture
 
     public static IQuestionDialogPart Validate(IDialogPart instance,
                                                IDialogContext context,
-                                               IDialog dialog,
+                                               IDialogDefinition dialog,
                                                IEnumerable<IDialogPartResult> providedAnswers)
         => instance.Validate(context, dialog, providedAnswers) as IQuestionDialogPart
             ?? new QuestionDialogPartBuilder()

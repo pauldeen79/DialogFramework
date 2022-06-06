@@ -1,11 +1,11 @@
 ﻿namespace DialogFramework.Application.TestData;
 
-public class TestDialogRepository : IDialogRepository
+public class TestDialogDefinitionRepository : IDialogDefinitionRepository
 {
-    private static readonly IDialog[] _dialogs = new[]
+    private static readonly IDialogDefinition[] _dialogs = new[]
     {
-        DialogFixture.CreateBuilder().Build(),
-        DialogFixture.CreateHowDoYouFeelBuilder().Build(),
+        DialogDefinitionFixture.CreateBuilder().Build(),
+        DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build(),
         TestFlowDialog.Create(),
         SimpleFormFlowDialog.Create(),
     };
@@ -13,6 +13,6 @@ public class TestDialogRepository : IDialogRepository
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
         => _dialogs.Select(x => x.Metadata);
 
-    public IDialog? GetDialog(IDialogIdentifier identifier)
+    public IDialogDefinition? GetDialog(IDialogIdentifier identifier)
         => _dialogs.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id) && Equals(x.Metadata.Version, identifier.Version));
 }

@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IDialog
+public interface IDialogDefinition
 {
     IDialogMetadata Metadata { get; }
     IReadOnlyCollection<IDialogPart> Parts { get; }

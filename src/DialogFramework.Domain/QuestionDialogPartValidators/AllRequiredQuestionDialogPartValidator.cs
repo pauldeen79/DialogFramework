@@ -3,7 +3,7 @@
 public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+                                                         IDialogDefinition dialog,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var submittedPartCount = dialogPartResults

@@ -2,8 +2,8 @@
 
 public static class TestFlowDialog
 {
-    public static IDialog Create()
-        => DialogFixture.CreateBuilderBase()
+    public static IDialogDefinition Create()
+        => DialogDefinitionFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithId("TestFlowDialog")
                 .WithFriendlyName("Test flow dialog")

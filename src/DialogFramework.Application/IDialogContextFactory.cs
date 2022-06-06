@@ -2,6 +2,6 @@
 
 public interface IDialogContextFactory
 {
-    bool CanCreate(IDialog dialog);
-    IDialogContext Create(IDialog dialog);
+    bool CanCreate(IDialogDefinition dialog);
+    IDialogContext Create(IDialogDefinition dialog);
 }

@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
-public static class DialogFixture
+public static class DialogDefinitionFixture
 {
-    public static DialogBuilder CreateBuilder()
+    public static DialogDefinitionBuilder CreateBuilder()
         => CreateBuilderBase()
             .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .AddParts
@@ -17,7 +17,7 @@ public static class DialogFixture
             )
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder());
 
-    public static DialogBuilder CreateHowDoYouFeelBuilder(bool addParts = true)
+    public static DialogDefinitionBuilder CreateHowDoYouFeelBuilder(bool addParts = true)
     {
         var group1 = new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1")).WithTitle("Give information").WithNumber(1);
         var group2 = new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2")).WithTitle("Completed").WithNumber(2);
@@ -58,8 +58,8 @@ public static class DialogFixture
             .AddPartGroups(group1, group2);
     }
 
-    public static DialogBuilder CreateBuilderBase()
-        => new DialogBuilder()
+    public static DialogDefinitionBuilder CreateBuilderBase()
+        => new DialogDefinitionBuilder()
             .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .WithAbortedPart(new AbortedDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"))

@@ -6,6 +6,6 @@ public static class DialogContextExtensions
                                                                                       IDialogPartIdentifier dialogPartIdentifier)
         => context.Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier));
 
-    public static void Error(this IDialogContext context, IDialog dialog, params IError[] errorMessages)
+    public static void Error(this IDialogContext context, IDialogDefinition dialog, params IError[] errorMessages)
         => context.Error(dialog, errorMessages.AsEnumerable());
 }

@@ -7,7 +7,7 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
@@ -28,7 +28,7 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder())
@@ -51,7 +51,7 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
@@ -73,7 +73,7 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
+        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
         var results = new[]
         {

@@ -2,19 +2,19 @@
 
 public class DialogContextFactoryFixture : IDialogContextFactory
 {
-    private readonly Func<IDialog, IDialogContext> _createDelegate;
-    private readonly Func<IDialog, bool> _canCreateDelegate;
+    private readonly Func<IDialogDefinition, IDialogContext> _createDelegate;
+    private readonly Func<IDialogDefinition, bool> _canCreateDelegate;
 
-    public DialogContextFactoryFixture(Func<IDialog, bool> canCreateDelegate,
-                                       Func<IDialog, IDialogContext> createDelegate)
+    public DialogContextFactoryFixture(Func<IDialogDefinition, bool> canCreateDelegate,
+                                       Func<IDialogDefinition, IDialogContext> createDelegate)
     {
         _canCreateDelegate = canCreateDelegate;
         _createDelegate = createDelegate;
     }
 
-    public bool CanCreate(IDialog dialog)
+    public bool CanCreate(IDialogDefinition dialog)
         => _canCreateDelegate(dialog);
 
-    public IDialogContext Create(IDialog dialog)
+    public IDialogContext Create(IDialogDefinition dialog)
         => _createDelegate(dialog);
 }
