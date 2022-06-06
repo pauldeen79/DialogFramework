@@ -355,17 +355,15 @@ public class DialogTests
     }
 
     [Fact]
-    public void GetPartById_Throws_When_Id_Occurs_Multiple_Times_In_Dialog() //TODO: Add validation that all Ids need to be unique (including error, aborted and completed)
+    public void Constructing_Dialog_With_Duplicate_Ids_Throws_ValidationException()
     {
         // Arrange
-        var sut = DialogFixture.CreateBuilder()
-            .Chain(x => x.AddParts(x.Parts.First()))
-            .Build();
+        var builder = DialogFixture.CreateBuilder().Chain(x => x.AddParts(x.Parts.First()));
 
         // Act
-        var act = new Action(() => _ = sut.GetPartById(sut.Parts.First().Id));
+        var act = new Action(() => _ = builder.Build());
 
         // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
+        act.Should().ThrowExactly<ValidationException>();
     }
 }

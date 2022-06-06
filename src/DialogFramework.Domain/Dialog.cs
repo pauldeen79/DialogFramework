@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record Dialog
+public partial record Dialog : IValidatableObject
 {
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                          IEnumerable<IDialogPartResult> newPartResults)
@@ -98,10 +98,6 @@ public partial record Dialog
         {
             return parts[0];
         }
-        if (parts.Length > 1)
-        {
-            throw new InvalidOperationException($"Dialog has multiple parts with id [{id}]");
-        }
         throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
     }
 
@@ -167,5 +163,20 @@ public partial record Dialog
             return null;
         }
         return null;
+    }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var duplicateIds = new[] { AbortedPart.Id, CompletedPart.Id, ErrorPart.Id }
+            .Concat(Parts.Select(x => x.Id))
+            .GroupBy(x => x)
+            .Where(x => x.Count() > 1)
+            .Select(x => x.Key)
+            .ToArray();
+
+        if (duplicateIds.Any())
+        {
+            yield return new ValidationResult($"DialogPart Ids should be unique. Non unique ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
+        }
     }
 }
