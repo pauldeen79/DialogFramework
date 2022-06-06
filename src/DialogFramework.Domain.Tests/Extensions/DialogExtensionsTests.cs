@@ -8,13 +8,13 @@ public class DialogExtensionsTests
     public void GetDialogPartResultsByPartIdentifier_Returns_Empty_Result_When_No_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
-        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
-        var welcomePart = dialog.Parts.OfType<IMessageDialogPart>().First();
-        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
-        var context = DialogFixture.Create(Id, dialog.Metadata, welcomePart, DialogState.InProgress);
+        var definition = DialogDefinitionFixture.CreateBuilder().Build();
+        var welcomePart = definition.Parts.OfType<IMessageDialogPart>().First();
+        var questionPart = definition.Parts.OfType<IQuestionDialogPart>().Single();
+        var dialog = DialogFixture.Create(Id, definition.Metadata, welcomePart, DialogState.InProgress);
 
         // Act
-        var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
+        var result = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id);
 
         // Assert
         result.Should().BeEmpty();
@@ -24,14 +24,14 @@ public class DialogExtensionsTests
     public void GetDialogPartResultsByPartIdentifier_Returns_Correct_Result_When_Provided_Answers_Found_In_Current_Context()
     {
         // Arrange
-        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog context = DialogFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context = context.Chain(x => x.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object));
+        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object));
 
         // Act
-        var result = context.GetDialogPartResultsByPartIdentifier(questionPart.Id);
+        var result = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id);
 
         // Assert
         result.Should().NotBeNull();

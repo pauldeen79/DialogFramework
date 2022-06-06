@@ -17,13 +17,13 @@ using var provider = new ServiceCollection()
     .AddSingleton<IDialogRepository, TestDialogRepository>()
     .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
-var dialog = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
+var dialogDefinition = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
 var sut = provider.GetRequiredService<IDialogService>();
 
-var context = sut.Start(dialog.Metadata);
-context = sut.Continue
+var dialog = sut.Start(dialogDefinition.Metadata);
+dialog = sut.Continue
 (
-    context,
+    dialog,
     new DialogPartResultBuilder()
         .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
         .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -35,9 +35,9 @@ context = sut.Continue
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
         .Build()
 ); // ContactInfo -> Newsletter
-context = sut.Continue
+dialog = sut.Continue
 (
-    context,
+    dialog,
     new DialogPartResultBuilder()
         .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
         .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))

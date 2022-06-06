@@ -2,34 +2,43 @@
 
 public static class DialogFixture
 {
-    public static IDialog Create(IDialogDefinitionIdentifier currentDialogIdentifier)
+    public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentState(DialogState.Initial)
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
-    public static IDialog Create(IDialogDefinitionIdentifier currentDialogIdentifier, IDialogPartIdentifier currentPartIdentifier)
+    public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
+                                 IDialogPartIdentifier currentPartIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentState(DialogState.Initial)
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
             .Build();
 
-    public static IDialog Create(string id, IDialogDefinitionIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
+    public static IDialog Create(string id,
+                                 IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
+                                 IDialogPart currentPart,
+                                 DialogState currentState)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentState(currentState)
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
 
-    public static IDialog Create(string id, IDialogDefinitionIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
+    public static IDialog Create(string id,
+                                 IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
+                                 IDialogPart currentPart,
+                                 IDialogPartGroup? currentGroup,
+                                 DialogState currentState,
+                                 IEnumerable<IDialogPartResult> results)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .WithCurrentGroupId(currentGroup == null ? new DialogPartGroupIdentifierBuilder() : new DialogPartGroupIdentifierBuilder(currentGroup.Id))
             .WithCurrentState(currentState)

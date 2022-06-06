@@ -20,11 +20,11 @@ public interface IDialogDefinition
                        IDialogPartIdentifier navigateToPartId,
                        IEnumerable<IDialogPartResult> existingPartResults);
 
-    bool CanStart(IDialog context, IConditionEvaluator conditionEvaluator);
+    bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator);
 
-    IDialogPart GetFirstPart(IDialog context, IConditionEvaluator conditionEvaluator);
+    IDialogPart GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator);
 
-    IDialogPart GetNextPart(IDialog context,
+    IDialogPart GetNextPart(IDialog dialog,
                             IConditionEvaluator conditionEvaluator,
                             IEnumerable<IDialogPartResult> providedResults);
 

@@ -3,11 +3,11 @@
 public static class DialogPartExtensions
 {
     public static IDialogPart? Validate(this IDialogPart part,
-                                        IDialog context,
-                                        IDialogDefinition dialog,
+                                        IDialog dialog,
+                                        IDialogDefinition dialogDefinition,
                                         IEnumerable<IDialogPartResult> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart
-            ? questionDialogPart.Validate(context, dialog, providedAnswers)
+            ? questionDialogPart.Validate(dialog, dialogDefinition, providedAnswers)
             : null;
 
     public static IDialogPartGroup? GetGroup(this IDialogPart part)

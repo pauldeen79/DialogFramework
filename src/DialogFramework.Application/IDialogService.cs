@@ -2,14 +2,14 @@
 
 public interface IDialogService
 {
-    bool CanStart(IDialogDefinitionIdentifier dialogIdentifier);
-    IDialog Start(IDialogDefinitionIdentifier dialogIdentifier);
-    bool CanContinue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults);
-    IDialog Continue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults);
-    bool CanAbort(IDialog context);
-    IDialog Abort(IDialog context);
-    bool CanNavigateTo(IDialog context, IDialogPartIdentifier navigateToPartId);
-    IDialog NavigateTo(IDialog context, IDialogPartIdentifier navigateToPartId);
-    bool CanResetCurrentState(IDialog context);
-    IDialog ResetCurrentState(IDialog context);
+    bool CanStart(IDialogDefinitionIdentifier dialogDefinitionIdentifier);
+    IDialog Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier);
+    bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults);
+    IDialog Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults);
+    bool CanAbort(IDialog dialog);
+    IDialog Abort(IDialog dialog);
+    bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+    IDialog NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
+    bool CanResetCurrentState(IDialog dialog);
+    IDialog ResetCurrentState(IDialog dialog);
 }

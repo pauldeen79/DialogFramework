@@ -2,10 +2,12 @@
 
 public static class DialogExtensions
 {
-    public static IEnumerable<IDialogPartResult> GetDialogPartResultsByPartIdentifier(this IDialog context,
+    public static IEnumerable<IDialogPartResult> GetDialogPartResultsByPartIdentifier(this IDialog instance,
                                                                                       IDialogPartIdentifier dialogPartIdentifier)
-        => context.Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier));
+        => instance.Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier));
 
-    public static void Error(this IDialog context, IDialogDefinition dialog, params IError[] errorMessages)
-        => context.Error(dialog, errorMessages.AsEnumerable());
+    public static void Error(this IDialog instance,
+                             IDialogDefinition dialogDefinition,
+                             params IError[] errorMessages)
+        => instance.Error(dialogDefinition, errorMessages.AsEnumerable());
 }

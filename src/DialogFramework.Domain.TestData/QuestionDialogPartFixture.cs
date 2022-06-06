@@ -21,10 +21,10 @@ public static class QuestionDialogPartFixture
             );
 
     public static IQuestionDialogPart Validate(IDialogPart instance,
-                                               IDialog context,
-                                               IDialogDefinition dialog,
+                                               IDialog dialog,
+                                               IDialogDefinition dialogDefinition,
                                                IEnumerable<IDialogPartResult> providedAnswers)
-        => instance.Validate(context, dialog, providedAnswers) as IQuestionDialogPart
+        => instance.Validate(dialog, dialogDefinition, providedAnswers) as IQuestionDialogPart
             ?? new QuestionDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder())
                 .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))

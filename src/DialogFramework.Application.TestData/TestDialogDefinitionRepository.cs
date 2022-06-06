@@ -2,7 +2,7 @@
 
 public class TestDialogDefinitionRepository : IDialogDefinitionRepository
 {
-    private static readonly IDialogDefinition[] _dialogs = new[]
+    private static readonly IDialogDefinition[] _dialogDefinitions = new[]
     {
         DialogDefinitionFixture.CreateBuilder().Build(),
         DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build(),
@@ -11,8 +11,9 @@ public class TestDialogDefinitionRepository : IDialogDefinitionRepository
     };
 
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
-        => _dialogs.Select(x => x.Metadata);
+        => _dialogDefinitions.Select(x => x.Metadata);
 
-    public IDialogDefinition? GetDialog(IDialogDefinitionIdentifier identifier)
-        => _dialogs.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id) && Equals(x.Metadata.Version, identifier.Version));
+    public IDialogDefinition? GetDialogDefinition(IDialogDefinitionIdentifier identifier)
+        => _dialogDefinitions.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id)
+                                                && Equals(x.Metadata.Version, identifier.Version));
 }

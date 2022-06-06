@@ -2,5 +2,7 @@
 
 public interface IDecisionDialogPart : IDialogPart
 {
-    IDialogPartIdentifier GetNextPartId(IDialog context, IDialogDefinition dialog, IConditionEvaluator conditionEvaluator);
+    IDialogPartIdentifier GetNextPartId(IDialog dialog,
+                                        IDialogDefinition dialogDefinition,
+                                        IConditionEvaluator conditionEvaluator);
 }

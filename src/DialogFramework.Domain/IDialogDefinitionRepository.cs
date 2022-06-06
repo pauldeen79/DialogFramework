@@ -3,5 +3,5 @@
 public interface IDialogDefinitionRepository
 {
     IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas();
-    IDialogDefinition? GetDialog(IDialogDefinitionIdentifier identifier);
+    IDialogDefinition? GetDialogDefinition(IDialogDefinitionIdentifier identifier);
 }

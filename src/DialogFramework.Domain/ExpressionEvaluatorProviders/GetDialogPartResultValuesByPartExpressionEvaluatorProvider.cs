@@ -6,14 +6,14 @@ public class GetDialogPartResultValuesByPartExpressionEvaluatorProvider : IExpre
     {
         if (expression is GetDialogPartResultValuesByPartExpression partValuesByPart)
         {
-            var context = item as IDialog;
-            if (context == null)
+            var dialog = item as IDialog;
+            if (dialog == null)
             {
                 result = null;
             }
             else
             {
-                result = context.GetDialogPartResultsByPartIdentifier(partValuesByPart.DialogPartId)
+                result = dialog.GetDialogPartResultsByPartIdentifier(partValuesByPart.DialogPartId)
                     .Where(x => x.Value.Value != null)
                     .Select(x => x.Value.Value);
             }

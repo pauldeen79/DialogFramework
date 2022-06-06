@@ -163,23 +163,23 @@ public class DialogTests
     public void ResetCurrentState_Updates_Results_Correctly_When_CanResetCurrentState_Is_True()
     {
         // Arrange
-        var dialog = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog context = DialogFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
-        context.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object);
-        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
-        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
+        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        dialog.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object);
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
-        context.ResetCurrentState(dialog);
+        dialog.ResetCurrentState(dialogDefinition);
         // Assert 1
-        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
-        context.ResetCurrentState(dialog);
+        dialog.ResetCurrentState(dialogDefinition);
         // Assert 2
-        context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
     }
 
     [Fact]

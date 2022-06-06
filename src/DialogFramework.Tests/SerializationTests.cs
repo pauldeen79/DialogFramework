@@ -6,47 +6,47 @@ public class SerializationTests
     public void Can_Serialize_And_Deserialize_SimpleFormFlowDialog()
     {
         // Arrange
-        var dialogToSerialize = SimpleFormFlowDialog.Create();
+        var dialogDefinitionToSerialize = SimpleFormFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogDefinitionToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
+        var deserializedDialogDefinition = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
 
         // Assert
-        deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
+        deserializedDialogDefinition.Should().BeEquivalentTo(dialogDefinitionToSerialize);
     }
 
     [Fact]
     public void Can_Serialize_And_Deserialize_TestFlowDialog()
     {
         // Arrange
-        var dialogToSerialize = TestFlowDialog.Create();
+        var dialogDefinitionToSerialize = TestFlowDialog.Create();
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogDefinitionBuilder(dialogDefinitionToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
+        var deserializedDialogDefinition = JsonSerializerFixture.Deserialize<DialogDefinitionBuilder>(json)!.Build();
 
         // Assert
-        deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
+        deserializedDialogDefinition.Should().BeEquivalentTo(dialogDefinitionToSerialize);
     }
 
     [Fact]
-    public void Can_Serialize_And_Deserialize_DialogContext()
+    public void Can_Serialize_And_Deserialize_Dialog()
     {
         // Arrange
-        var dialogContextToSerialize = new DialogContextFactory().Create(SimpleFormFlowDialog.Create());
+        var dialogToSerialize = new DialogFactory().Create(SimpleFormFlowDialog.Create());
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogContextToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize));
 
         // Deserialize
         var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
 
         // Assert
-        deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);
+        deserializedDialog.Should().BeEquivalentTo(dialogToSerialize);
     }
 }

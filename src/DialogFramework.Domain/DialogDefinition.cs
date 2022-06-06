@@ -39,7 +39,7 @@ public partial record DialogDefinition : IValidatableObject
         return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
     }
 
-    public bool CanStart(IDialog context, IConditionEvaluator conditionEvaluator)
+    public bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
         var firstPart = Parts.FirstOrDefault();
         if (firstPart == null)
@@ -47,23 +47,23 @@ public partial record DialogDefinition : IValidatableObject
             return false;
         }
 
-        return TryGetDynamicResult(firstPart, context, conditionEvaluator) != null;
+        return TryGetDynamicResult(firstPart, dialog, conditionEvaluator) != null;
     }
 
-    public IDialogPart GetFirstPart(IDialog context, IConditionEvaluator conditionEvaluator)
+    public IDialogPart GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
         var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
 
-        return GetDynamicResult(firstPart, context, conditionEvaluator);
+        return GetDynamicResult(firstPart, dialog, conditionEvaluator);
     }
 
-    public IDialogPart GetNextPart(IDialog context,
+    public IDialogPart GetNextPart(IDialog dialog,
                                    IConditionEvaluator conditionEvaluator,
                                    IEnumerable<IDialogPartResult> providedResults)
     {
         // first perform validation
-        var currentPart = GetPartById(context.CurrentPartId);
-        var error = currentPart.Validate(context, this, providedResults);
+        var currentPart = GetPartById(dialog.CurrentPartId);
+        var error = currentPart.Validate(dialog, this, providedResults);
         if (error != null)
         {
             return error;
@@ -82,10 +82,10 @@ public partial record DialogDefinition : IValidatableObject
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return GetDynamicResult(CompletedPart, context, conditionEvaluator);
+            return GetDynamicResult(CompletedPart, dialog, conditionEvaluator);
         }
 
-        return GetDynamicResult(nextPartWithIndex.Part, context, conditionEvaluator);
+        return GetDynamicResult(nextPartWithIndex.Part, dialog, conditionEvaluator);
     }
 
     public IDialogPart GetPartById(IDialogPartIdentifier id)
@@ -102,19 +102,19 @@ public partial record DialogDefinition : IValidatableObject
     }
 
     private IDialogPart GetDynamicResult(IDialogPart dialogPart,
-                                         IDialog context,
+                                         IDialog dialog,
                                          IConditionEvaluator conditionEvaluator)
     {
         while (true)
         {
             if (dialogPart is IDecisionDialogPart decisionDialogPart)
             {
-                var nextPartId = decisionDialogPart.GetNextPartId(context, this, conditionEvaluator);
+                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, conditionEvaluator);
                 dialogPart = GetPartById(nextPartId);
             }
             else if (dialogPart is INavigationDialogPart navigationDialogPart)
             {
-                dialogPart = GetPartById(navigationDialogPart.GetNextPartId(context));
+                dialogPart = GetPartById(navigationDialogPart.GetNextPartId(dialog));
             }
             else
             {
@@ -125,19 +125,21 @@ public partial record DialogDefinition : IValidatableObject
         return dialogPart;
     }
 
-    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart, IDialog context, IConditionEvaluator conditionEvaluator)
+    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart,
+                                             IDialog dialog,
+                                             IConditionEvaluator conditionEvaluator)
     {
         IDialogPart? result = dialogPart;
         while (true)
         {
             if (result is IDecisionDialogPart decisionDialogPart)
             {
-                var nextPartId = decisionDialogPart.GetNextPartId(context, this, conditionEvaluator);
+                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, conditionEvaluator);
                 result = TryGetPartById(nextPartId);
             }
             else if (result is INavigationDialogPart navigationDialogPart)
             {
-                result = TryGetPartById(navigationDialogPart.GetNextPartId(context));
+                result = TryGetPartById(navigationDialogPart.GetNextPartId(dialog));
             }
             else
             {

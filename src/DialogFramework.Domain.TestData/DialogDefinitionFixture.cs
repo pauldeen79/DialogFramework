@@ -4,7 +4,7 @@ public static class DialogDefinitionFixture
 {
     public static DialogDefinitionBuilder CreateBuilder()
         => CreateBuilderBase()
-            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
+            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogDefinitionFixture"))
             .AddParts
             (
                 QuestionDialogPartFixture.CreateBuilder(),
@@ -60,7 +60,7 @@ public static class DialogDefinitionFixture
 
     public static DialogDefinitionBuilder CreateBuilderBase()
         => new DialogDefinitionBuilder()
-            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
+            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogDefinitionFixtureBase"))
             .WithAbortedPart(new AbortedDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"))
                 .WithMessage("The dialog is aborted. You can come back any time to start the application again."))

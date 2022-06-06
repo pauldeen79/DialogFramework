@@ -11,8 +11,8 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
     public RequiredValidator(bool checkForSingleOccurence)
         => _checkForSingleOccurence = checkForSingleOccurence;
 
-    public IEnumerable<IDialogValidationResult> Validate(IDialog context,
-                                                         IDialogDefinition dialog,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                         IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)

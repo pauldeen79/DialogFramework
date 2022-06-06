@@ -2,8 +2,8 @@
 
 public interface IDialogPartResultDefinitionValidator
 {
-    IEnumerable<IDialogValidationResult> Validate(IDialog context,
-                                                  IDialogDefinition dialog,
+    IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                  IDialogDefinition dialogDefinition,
                                                   IDialogPart dialogPart,
                                                   IDialogPartResultDefinition dialogPartResultDefinition,
                                                   IEnumerable<IDialogPartResult> dialogPartResults);

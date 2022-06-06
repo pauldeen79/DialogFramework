@@ -134,10 +134,10 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase().Build();
-        var context = DialogFixture.Create(sut.Metadata);
+        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
         actual.Should().BeSameAs(sut.CompletedPart);
@@ -148,10 +148,10 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
-        var context = DialogFixture.Create(sut.Metadata);
+        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
         actual.Should().BeEquivalentTo(sut.Parts.First());
@@ -164,10 +164,10 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(0, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogFixture.Create(sut.Metadata);
+        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
         actual.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First());
@@ -180,10 +180,10 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(0, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogFixture.Create(sut.Metadata);
+        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
         actual.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First());
@@ -194,14 +194,14 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
-        var context = DialogFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
         // Act
-        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result } );
+        var actual = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { result } );
 
         // Assert
         actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IQuestionDialogPart>().First().Id); //first part
@@ -212,14 +212,14 @@ public class DialogDefinitionTests
     public void GetNextPart_Returns_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_Static_DialogPart()
     {
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
-        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
         // Act
-        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result } );
+        var actual = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { result } );
 
         // Assert
         actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
@@ -233,14 +233,14 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
         // Act
-        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+        var actual = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { result });
 
         // Assert
         actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
@@ -254,14 +254,14 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
         // Act
-        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+        var actual = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { result });
 
         // Assert
         actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
@@ -275,14 +275,14 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.RemoveAt(1))
             .Build();
-        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
         // Act
-        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+        var actual = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { result });
 
         // Assert
         actual.Id.Should().BeEquivalentTo(sut.CompletedPart.Id);
@@ -355,7 +355,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void Constructing_Dialog_With_Duplicate_Ids_Throws_ValidationException()
+    public void Constructing_DialogDefinition_With_Duplicate_Ids_Throws_ValidationException()
     {
         // Arrange
         var builder = DialogDefinitionFixture.CreateBuilder().Chain(x => x.AddParts(x.Parts.First()));

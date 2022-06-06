@@ -7,16 +7,16 @@ public class RequiredValidatorTests
     {
         // Arrange
         var sut = new RequiredValidator();
-        var dialogMock = new Mock<IDialogDefinition>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogFixture.Create(dialogMock.Object.Metadata);
+        var dialogDefinitionMock = new Mock<IDialogDefinition>();
+        dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -27,16 +27,16 @@ public class RequiredValidatorTests
     {
         // Arrange
         var sut = new RequiredValidator(false);
-        var dialogMock = new Mock<IDialogDefinition>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogFixture.Create(dialogMock.Object.Metadata);
+        var dialogDefinitionMock = new Mock<IDialogDefinition>();
+        dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -47,16 +47,16 @@ public class RequiredValidatorTests
     {
         // Arrange
         var sut = new RequiredValidator(true);
-        var dialogMock = new Mock<IDialogDefinition>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogFixture.Create(dialogMock.Object.Metadata);
+        var dialogDefinitionMock = new Mock<IDialogDefinition>();
+        dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
 
         // Assert
         actual.Should().ContainSingle();
@@ -68,16 +68,16 @@ public class RequiredValidatorTests
     {
         // Arrange
         var sut = new RequiredValidator();
-        var dialogMock = new Mock<IDialogDefinition>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogFixture.Create(dialogMock.Object.Metadata);
+        var dialogDefinitionMock = new Mock<IDialogDefinition>();
+        dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -89,9 +89,9 @@ public class RequiredValidatorTests
     {
         // Arrange
         var sut = new RequiredValidator();
-        var dialogMock = new Mock<IDialogDefinition>();
-        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogFixture.Create(dialogMock.Object.Metadata);
+        var dialogDefinitionMock = new Mock<IDialogDefinition>();
+        dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -102,7 +102,7 @@ public class RequiredValidatorTests
             .Build();
 
         // Act
-        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { result });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { result });
 
         // Assert
         actual.Should().ContainSingle();
