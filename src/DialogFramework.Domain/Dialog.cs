@@ -52,11 +52,7 @@ public partial record Dialog
 
     public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
     {
-        var firstPart = Parts.FirstOrDefault();
-        if (firstPart == null)
-        {
-            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
-        }
+        var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
 
         return GetDynamicResult(firstPart, context, conditionEvaluator);
     }

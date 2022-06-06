@@ -130,17 +130,17 @@ public class DialogTests
     }
 
     [Fact]
-    public void GetFirstPart_Throws_Wnen_No_Parts_Are_Available() //TODO: move to validation in c'tor
+    public void GetFirstPart_Returns_CompletedPart_When_No_Other_Parts_Are_Available()
     {
         // Arrange
         var sut = DialogFixture.CreateBuilderBase().Build();
         var context = DialogContextFixture.Create(sut.Metadata);
 
         // Act
-        var act = new Action(() => sut.GetFirstPart(context, _conditionEvaluatorMock.Object));
+        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
 
         // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
+        actual.Should().BeSameAs(sut.CompletedPart);
     }
 
     [Fact]
@@ -292,36 +292,80 @@ public class DialogTests
     [Fact]
     public void GetPartById_Returns_AbortedPart_When_Id_Is_AbortedPartId()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.GetPartById(sut.AbortedPart.Id);
+
+        // Assert
+        actual.Should().BeSameAs(sut.AbortedPart);
     }
 
     [Fact]
     public void GetPartById_Returns_CompletedPart_When_Id_Is_CompletedPartId()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.GetPartById(sut.CompletedPart.Id);
+
+        // Assert
+        actual.Should().BeSameAs(sut.CompletedPart);
     }
 
     [Fact]
     public void GetPartById_Returns_ErrorPart_When_Id_Is_ErrorPartId()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.GetPartById(sut.ErrorPart.Id);
+
+        // Assert
+        actual.Should().BeSameAs(sut.ErrorPart);
     }
 
     [Fact]
     public void GetPartById_Returns_Part_From_Parts_Collection_When_Available_And_Id_Is_Not_Aborted_Completed_Or_Error()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.GetPartById(sut.Parts.First().Id);
+
+        // Assert
+        actual.Should().BeSameAs(sut.Parts.First());
     }
 
     [Fact]
     public void GetPartById_Throws_When_Id_Is_Unknown_In_Dialog()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var act = new Action(() => _ = sut.GetPartById(new DialogPartIdentifier("unknown")));
+
+        // Assert
+        act.Should().ThrowExactly<InvalidOperationException>();
     }
 
     [Fact]
     public void GetPartById_Throws_When_Id_Occurs_Multiple_Times_In_Dialog() //TODO: Add validation that all Ids need to be unique (including error, aborted and completed)
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.AddParts(x.Parts.First()))
+            .Build();
+
+        // Act
+        var act = new Action(() => _ = sut.GetPartById(sut.Parts.First().Id));
+
+        // Assert
+        act.Should().ThrowExactly<InvalidOperationException>();
     }
 }
