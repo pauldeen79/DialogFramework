@@ -39,19 +39,15 @@ public partial record QuestionDialogPart : IValidatableObject
             {
                 continue;
             }
-            var dialogPartResultDefinition = Results.SingleOrDefault(x => Equals(x.Id, dialogPartResult.ResultId));
-            if (dialogPartResultDefinition == null)
+            var results = Results.Where(x => Equals(x.Id, dialogPartResult.ResultId)).ToArray();
+            if (results.Length == 0)
             {
                 errors.Add(new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>()));
             }
-            else
-            {
-                var resultValueType = dialogPartResultDefinition.ValueType;
-                if (dialogPartResult.Value.ResultValueType != resultValueType)
-                {
-                    errors.Add(new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered", new ReadOnlyValueCollection<IDialogPartResultIdentifier>()));
-                }
-            }
+            errors.AddRange(from dialogPartResultDefinition in results
+                            let resultValueType = dialogPartResultDefinition.ValueType
+                            where dialogPartResult.Value.ResultValueType != resultValueType
+                            select new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered", new ReadOnlyValueCollection<IDialogPartResultIdentifier>()));
         }
 
         foreach (var dialogPartResultDefinition in Results)
