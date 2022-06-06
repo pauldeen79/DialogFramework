@@ -12,7 +12,7 @@ public class TestFlowTests
             .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
             .AddSingleton(loggerMock.Object)
             .BuildServiceProvider();
-        var dialog = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
+        var dialog = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialog(new DialogDefinitionIdentifier(nameof(TestFlowDialog), "1.0.0"))!;
         var sut = provider.GetRequiredService<IDialogService>();
 
         // Act & Assert

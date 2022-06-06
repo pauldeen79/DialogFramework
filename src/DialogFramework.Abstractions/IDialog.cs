@@ -3,7 +3,7 @@
 public interface IDialog
 {
     IDialogContextIdentifier Id { get; }
-    IDialogIdentifier CurrentDialogIdentifier { get; }
+    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
     IDialogPartIdentifier CurrentPartId { get; }
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }

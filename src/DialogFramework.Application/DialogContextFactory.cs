@@ -7,7 +7,7 @@ public class DialogContextFactory : IDialogFactory
     public IDialog Create(IDialogDefinition dialog)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(dialog.Metadata))
+            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(dialog.Metadata))
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .WithCurrentState(DialogState.Initial)
             .Build();

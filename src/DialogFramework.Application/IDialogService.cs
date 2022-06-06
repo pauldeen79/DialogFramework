@@ -2,8 +2,8 @@
 
 public interface IDialogService
 {
-    bool CanStart(IDialogIdentifier dialogIdentifier);
-    IDialog Start(IDialogIdentifier dialogIdentifier);
+    bool CanStart(IDialogDefinitionIdentifier dialogIdentifier);
+    IDialog Start(IDialogDefinitionIdentifier dialogIdentifier);
     bool CanContinue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults);
     IDialog Continue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults);
     bool CanAbort(IDialog context);

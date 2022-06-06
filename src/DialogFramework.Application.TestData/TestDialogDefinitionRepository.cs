@@ -13,6 +13,6 @@ public class TestDialogDefinitionRepository : IDialogDefinitionRepository
     public IEnumerable<IDialogMetadata> GetAvailableDialogMetadatas()
         => _dialogs.Select(x => x.Metadata);
 
-    public IDialogDefinition? GetDialog(IDialogIdentifier identifier)
+    public IDialogDefinition? GetDialog(IDialogDefinitionIdentifier identifier)
         => _dialogs.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id) && Equals(x.Metadata.Version, identifier.Version));
 }

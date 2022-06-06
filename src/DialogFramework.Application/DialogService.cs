@@ -18,7 +18,7 @@ public class DialogService : IDialogService
         _logger = logger;
     }
 
-    public bool CanStart(IDialogIdentifier dialogIdentifier)
+    public bool CanStart(IDialogDefinitionIdentifier dialogIdentifier)
     {
         var dialog = GetDialog(dialogIdentifier);
         var context = _contextFactory.Create(dialog);
@@ -26,7 +26,7 @@ public class DialogService : IDialogService
         return context.CanStart(dialog, _conditionEvaluator);
     }
 
-    public IDialog Start(IDialogIdentifier dialogIdentifier)
+    public IDialog Start(IDialogDefinitionIdentifier dialogIdentifier)
     {
         var dialog = GetDialog(dialogIdentifier);
         if (!_contextFactory.CanCreate(dialog))
@@ -143,7 +143,7 @@ public class DialogService : IDialogService
 
     private IDialogDefinition GetDialog(IDialog context) => GetDialog(context.CurrentDialogIdentifier);
 
-    private IDialogDefinition GetDialog(IDialogIdentifier dialogIdentifier)
+    private IDialogDefinition GetDialog(IDialogDefinitionIdentifier dialogIdentifier)
     {
         var dialog = _dialogRepository.GetDialog(dialogIdentifier);
         if (dialog == null)
