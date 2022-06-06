@@ -39,7 +39,7 @@ public partial record DialogDefinition : IValidatableObject
         return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
     }
 
-    public bool CanStart(IDialogContext context, IConditionEvaluator conditionEvaluator)
+    public bool CanStart(IDialog context, IConditionEvaluator conditionEvaluator)
     {
         var firstPart = Parts.FirstOrDefault();
         if (firstPart == null)
@@ -50,14 +50,14 @@ public partial record DialogDefinition : IValidatableObject
         return TryGetDynamicResult(firstPart, context, conditionEvaluator) != null;
     }
 
-    public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
+    public IDialogPart GetFirstPart(IDialog context, IConditionEvaluator conditionEvaluator)
     {
         var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
 
         return GetDynamicResult(firstPart, context, conditionEvaluator);
     }
 
-    public IDialogPart GetNextPart(IDialogContext context,
+    public IDialogPart GetNextPart(IDialog context,
                                    IConditionEvaluator conditionEvaluator,
                                    IEnumerable<IDialogPartResult> providedResults)
     {
@@ -102,7 +102,7 @@ public partial record DialogDefinition : IValidatableObject
     }
 
     private IDialogPart GetDynamicResult(IDialogPart dialogPart,
-                                         IDialogContext context,
+                                         IDialog context,
                                          IConditionEvaluator conditionEvaluator)
     {
         while (true)
@@ -125,7 +125,7 @@ public partial record DialogDefinition : IValidatableObject
         return dialogPart;
     }
 
-    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart, IDialogContext context, IConditionEvaluator conditionEvaluator)
+    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart, IDialog context, IConditionEvaluator conditionEvaluator)
     {
         IDialogPart? result = dialogPart;
         while (true)

@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
-public static class DialogContextFixture
+public static class DialogFixture
 {
-    public static IDialogContext Create(IDialogIdentifier currentDialogIdentifier)
+    public static IDialog Create(IDialogIdentifier currentDialogIdentifier)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
@@ -10,7 +10,7 @@ public static class DialogContextFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
-    public static IDialogContext Create(IDialogIdentifier currentDialogIdentifier, IDialogPartIdentifier currentPartIdentifier)
+    public static IDialog Create(IDialogIdentifier currentDialogIdentifier, IDialogPartIdentifier currentPartIdentifier)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
@@ -18,7 +18,7 @@ public static class DialogContextFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
             .Build();
 
-    public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
+    public static IDialog Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
@@ -26,7 +26,7 @@ public static class DialogContextFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
 
-    public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
+    public static IDialog Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, IDialogPartGroup? currentGroup, DialogState currentState, IEnumerable<IDialogPartResult> results)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
@@ -36,7 +36,7 @@ public static class DialogContextFixture
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
             .Build();
 
-    public static IDialogContext Create(IDialogContext source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
+    public static IDialog Create(IDialog source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
         => new DialogContextBuilder(source)
             .AddResults(additionalAnswers.Select(x => new DialogPartResultBuilder(x)))
             .Build();

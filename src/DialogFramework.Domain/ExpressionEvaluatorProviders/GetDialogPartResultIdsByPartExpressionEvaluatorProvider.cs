@@ -6,7 +6,7 @@ public class GetDialogPartResultIdsByPartExpressionEvaluatorProvider : IExpressi
     {
         if (expression is GetDialogPartResultIdsByPartExpression partIdsByPart)
         {
-            var context = item as IDialogContext;
+            var context = item as IDialog;
             if (context == null)
             {
                 result = null;

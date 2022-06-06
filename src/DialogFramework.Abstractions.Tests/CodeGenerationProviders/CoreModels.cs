@@ -21,7 +21,7 @@ public class CoreModels : CSharpExpressionDumperClassBase
     {
         typeof(IDecision),
         typeof(IDialogDefinition),
-        typeof(IDialogContext),
+        typeof(IDialog),
         typeof(IDialogContextIdentifier),
         typeof(IDialogIdentifier),
         typeof(IDialogMetadata),

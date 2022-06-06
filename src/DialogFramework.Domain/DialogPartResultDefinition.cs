@@ -2,7 +2,7 @@
 
 public partial record DialogPartResultDefinition
 {
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog context,
                                                          IDialogDefinition dialog,
                                                          IDialogPart dialogPart,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)

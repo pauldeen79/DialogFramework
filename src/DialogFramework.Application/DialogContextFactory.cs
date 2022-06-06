@@ -1,10 +1,10 @@
 ﻿namespace DialogFramework.Application;
 
-public class DialogContextFactory : IDialogContextFactory
+public class DialogContextFactory : IDialogFactory
 {
     public bool CanCreate(IDialogDefinition dialog) => dialog is DialogDefinition;
 
-    public IDialogContext Create(IDialogDefinition dialog)
+    public IDialog Create(IDialogDefinition dialog)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(dialog.Metadata))

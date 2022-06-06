@@ -2,12 +2,12 @@
 
 public class DialogService : IDialogService
 {
-    private readonly IDialogContextFactory _contextFactory;
+    private readonly IDialogFactory _contextFactory;
     private readonly IDialogDefinitionRepository _dialogRepository;
     private readonly IConditionEvaluator _conditionEvaluator;
     private readonly ILogger _logger;
 
-    public DialogService(IDialogContextFactory contextFactory,
+    public DialogService(IDialogFactory contextFactory,
                          IDialogDefinitionRepository dialogRepository,
                          IConditionEvaluator conditionEvaluator,
                          ILogger logger)
@@ -26,7 +26,7 @@ public class DialogService : IDialogService
         return context.CanStart(dialog, _conditionEvaluator);
     }
 
-    public IDialogContext Start(IDialogIdentifier dialogIdentifier)
+    public IDialog Start(IDialogIdentifier dialogIdentifier)
     {
         var dialog = GetDialog(dialogIdentifier);
         if (!_contextFactory.CanCreate(dialog))
@@ -46,13 +46,13 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanContinue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+    public bool CanContinue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
         var dialog = GetDialog(context);
         return context.CanContinue(dialog, dialogPartResults);
     }
 
-    public IDialogContext Continue(IDialogContext context, IEnumerable<IDialogPartResult> dialogPartResults)
+    public IDialog Continue(IDialog context, IEnumerable<IDialogPartResult> dialogPartResults)
     {
         IDialogDefinition? dialog = null;
         try
@@ -72,10 +72,10 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanAbort(IDialogContext context)
+    public bool CanAbort(IDialog context)
         => context.CanAbort(GetDialog(context));
 
-    public IDialogContext Abort(IDialogContext context)
+    public IDialog Abort(IDialog context)
     {
         IDialogDefinition? dialog = null;
         try
@@ -95,10 +95,10 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanNavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId)
+    public bool CanNavigateTo(IDialog context, IDialogPartIdentifier navigateToPartId)
         => context.CanNavigateTo(GetDialog(context), navigateToPartId);
 
-    public IDialogContext NavigateTo(IDialogContext context, IDialogPartIdentifier navigateToPartId)
+    public IDialog NavigateTo(IDialog context, IDialogPartIdentifier navigateToPartId)
     {
         IDialogDefinition? dialog = null;
         try
@@ -118,10 +118,10 @@ public class DialogService : IDialogService
         }
     }
 
-    public bool CanResetCurrentState(IDialogContext context)
+    public bool CanResetCurrentState(IDialog context)
         => context.CanResetCurrentState(GetDialog(context));
 
-    public IDialogContext ResetCurrentState(IDialogContext context)
+    public IDialog ResetCurrentState(IDialog context)
     {
         IDialogDefinition? dialog = null;
         try
@@ -141,7 +141,7 @@ public class DialogService : IDialogService
         }
     }
 
-    private IDialogDefinition GetDialog(IDialogContext context) => GetDialog(context.CurrentDialogIdentifier);
+    private IDialogDefinition GetDialog(IDialog context) => GetDialog(context.CurrentDialogIdentifier);
 
     private IDialogDefinition GetDialog(IDialogIdentifier dialogIdentifier)
     {

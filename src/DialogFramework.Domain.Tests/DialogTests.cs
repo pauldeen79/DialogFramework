@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.Tests;
 
-public class DialogContextTests
+public class DialogTests
 {
     private static string Id => Guid.NewGuid().ToString();
 
@@ -166,7 +166,7 @@ public class DialogContextTests
         var dialog = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialog.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialogContext context = DialogContextFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
+        IDialog context = DialogFixture.Create(Id, dialog.Metadata, questionPart, DialogState.InProgress);
         context.Continue(dialog, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object);
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         context.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);

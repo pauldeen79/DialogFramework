@@ -3,7 +3,7 @@
 public static class DialogPartExtensions
 {
     public static IDialogPart? Validate(this IDialogPart part,
-                                        IDialogContext context,
+                                        IDialog context,
                                         IDialogDefinition dialog,
                                         IEnumerable<IDialogPartResult> providedAnswers)
         => part is IQuestionDialogPart questionDialogPart

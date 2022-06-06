@@ -134,7 +134,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase().Build();
-        var context = DialogContextFixture.Create(sut.Metadata);
+        var context = DialogFixture.Create(sut.Metadata);
 
         // Act
         var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
@@ -148,7 +148,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create(sut.Metadata);
+        var context = DialogFixture.Create(sut.Metadata);
 
         // Act
         var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
@@ -164,7 +164,7 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(0, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogContextFixture.Create(sut.Metadata);
+        var context = DialogFixture.Create(sut.Metadata);
 
         // Act
         var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
@@ -180,7 +180,7 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(0, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogContextFixture.Create(sut.Metadata);
+        var context = DialogFixture.Create(sut.Metadata);
 
         // Act
         var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
@@ -194,7 +194,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
-        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
+        var context = DialogFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -212,7 +212,7 @@ public class DialogDefinitionTests
     public void GetNextPart_Returns_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_Static_DialogPart()
     {
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -233,7 +233,7 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -254,7 +254,7 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
-        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -275,7 +275,7 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder()
             .Chain(x => x.Parts.RemoveAt(1))
             .Build();
-        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var context = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())

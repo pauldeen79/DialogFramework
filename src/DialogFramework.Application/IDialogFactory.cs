@@ -1,7 +1,7 @@
 ﻿namespace DialogFramework.Application;
 
-public interface IDialogContextFactory
+public interface IDialogFactory
 {
     bool CanCreate(IDialogDefinition dialog);
-    IDialogContext Create(IDialogDefinition dialog);
+    IDialog Create(IDialogDefinition dialog);
 }

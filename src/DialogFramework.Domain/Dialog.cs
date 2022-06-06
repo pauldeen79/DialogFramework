@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record DialogContext
+public partial record Dialog
 {
     public bool CanAbort(IDialogDefinition dialog)
         => CurrentState == DialogState.InProgress

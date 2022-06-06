@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IDialogContext
+public interface IDialog
 {
     IDialogContextIdentifier Id { get; }
     IDialogIdentifier CurrentDialogIdentifier { get; }

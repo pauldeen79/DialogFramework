@@ -2,9 +2,9 @@
 
 public static class DialogServiceExtensions
 {
-    public static IDialogContext Continue(this IDialogService instance, IDialogContext context)
+    public static IDialog Continue(this IDialogService instance, IDialog context)
         => instance.Continue(context, new[] { new DialogPartResult(context.CurrentPartId, new EmptyDialogPartResultDefinition().Id, new EmptyDialogPartResultValue()) });
 
-    public static IDialogContext Continue(this IDialogService instance, IDialogContext context, params IDialogPartResult[] results)
+    public static IDialog Continue(this IDialogService instance, IDialog context, params IDialogPartResult[] results)
         => instance.Continue(context, results.AsEnumerable());
 }

@@ -2,7 +2,7 @@
 
 public partial record QuestionDialogPart : IValidatableObject
 {
-    public IDialogPart? Validate(IDialogContext context,
+    public IDialogPart? Validate(IDialog context,
                                  IDialogDefinition dialog,
                                  IEnumerable<IDialogPartResult> dialogPartResults)
     {
@@ -37,7 +37,7 @@ public partial record QuestionDialogPart : IValidatableObject
 
     public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
 
-    protected virtual void HandleValidate(IDialogContext context,
+    protected virtual void HandleValidate(IDialog context,
                                           IDialogDefinition dialog,
                                           IEnumerable<IDialogPartResult> dialogPartResults,
                                           List<IDialogValidationResult> errors)

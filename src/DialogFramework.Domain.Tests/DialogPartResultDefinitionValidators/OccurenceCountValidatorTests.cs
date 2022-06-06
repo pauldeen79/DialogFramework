@@ -9,7 +9,7 @@ public class OccurenceCountValidatorTests
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialogDefinition>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
+        var context = DialogFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -29,7 +29,7 @@ public class OccurenceCountValidatorTests
         var sut = new OccurenceCountValidator(1);
         var dialogMock = new Mock<IDialogDefinition>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
+        var context = DialogFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -50,7 +50,7 @@ public class OccurenceCountValidatorTests
         var sut = new OccurenceCountValidator(1, 2);
         var dialogMock = new Mock<IDialogDefinition>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
+        var context = DialogFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
@@ -71,7 +71,7 @@ public class OccurenceCountValidatorTests
         var sut = new OccurenceCountValidator(2, 2);
         var dialogMock = new Mock<IDialogDefinition>();
         dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
-        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
+        var context = DialogFixture.Create(dialogMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();

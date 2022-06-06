@@ -15,7 +15,7 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
         _maximumOccurenceCount = maximumOccurenceCount;
     }
 
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog context,
                                                          IDialogDefinition dialog,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,

@@ -2,7 +2,7 @@
 
 public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog context,
                                                          IDialogDefinition dialog,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
