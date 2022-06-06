@@ -17,12 +17,13 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        if (!dialogPartResults.Any()
-            || dialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
+        var filteredDialogPartResults = dialogPartResults.Where(x => Equals(x.DialogPartId, dialogPart.Id)).ToArray();
+        if (!filteredDialogPartResults.Any()
+            || filteredDialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
         {
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
         }
-        else if (_checkForSingleOccurence && dialogPartResults.Count() > 1)
+        else if (_checkForSingleOccurence && filteredDialogPartResults.Count() > 1)
         {
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
         }

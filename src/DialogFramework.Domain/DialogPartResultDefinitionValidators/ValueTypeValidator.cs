@@ -11,7 +11,7 @@ public class ValueTypeValidator : IDialogPartResultDefinitionValidator
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
+        if (dialogPartResults.Any(x => Equals(x.DialogPartId, dialogPart.Id) && (x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value))))
         {
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id  }));
         }

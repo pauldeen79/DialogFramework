@@ -24,6 +24,29 @@ public class AllRequiredQuestionDialogPartTests
     }
 
     [Fact]
+    public void Answers_From_Different_Question_Gives_ValidationError()
+    {
+        // Arrange
+        var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
+        var dialog = DialogFixture.CreateBuilder().Build();
+        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder())
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+        var results = new[] { result };
+
+        // Act
+        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+
+        // Assert
+        actual.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        {
+            "Provided answer from wrong question",
+            "All 2 answers are required"
+        });
+    }
+    [Fact]
     public void One_Answer_Gives_ValidationError()
     {
         // Arrange

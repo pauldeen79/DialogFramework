@@ -83,4 +83,29 @@ public class RequiredValidatorTests
         actual.Should().ContainSingle();
         actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
+
+    [Fact]
+    public void Validate_Returns_NonEmpty_Result_When_Value_Is_Provided_For_Other_Question()
+    {
+        // Arrange
+        var sut = new RequiredValidator();
+        var dialogMock = new Mock<IDialog>();
+        dialogMock.SetupGet(x => x.Metadata).Returns(new DialogMetadata("Test", true, "Test", "1.0.0.0"));
+        var context = DialogContextFixture.Create(dialogMock.Object.Metadata);
+        var dialogPartMock = new Mock<IDialogPart>();
+        dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder())
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.Validate(context, dialogMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { result });
+
+        // Assert
+        actual.Should().ContainSingle();
+        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+    }
 }

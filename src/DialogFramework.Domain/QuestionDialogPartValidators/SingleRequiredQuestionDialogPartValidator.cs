@@ -6,7 +6,7 @@ public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartVali
                                                          IDialog dialog,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId.Value));
+        var answerCount = dialogPartResults.Count(x => Equals(x.DialogPartId, context.CurrentPartId) && !string.IsNullOrEmpty(x.ResultId.Value));
         if (answerCount == 0)
         {
             yield return new DialogValidationResult("Answer is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
