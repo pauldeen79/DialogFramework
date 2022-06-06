@@ -178,10 +178,10 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         ); // ContactInfo -> Newsletter
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogContextBuilder(context));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(context));
 
         // Act step 2: Re-create the context in a new session (simulating that the context is saved to a store, and reconstructed again)
-        var context2 = JsonSerializerFixture.Deserialize<DialogContextBuilder>(json)!.Build();
+        var context2 = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
         var result = sut.Continue
         (
             context2,

@@ -41,10 +41,10 @@ public class SerializationTests
         var dialogContextToSerialize = new DialogContextFactory().Create(SimpleFormFlowDialog.Create());
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogContextBuilder(dialogContextToSerialize));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogContextToSerialize));
 
         // Deserialize
-        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogContextBuilder>(json)!.Build();
+        var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
 
         // Assert
         deserializedDialog.Should().BeEquivalentTo(dialogContextToSerialize);

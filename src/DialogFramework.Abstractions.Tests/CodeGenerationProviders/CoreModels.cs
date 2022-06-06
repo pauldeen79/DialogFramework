@@ -22,7 +22,7 @@ public class CoreModels : CSharpExpressionDumperClassBase
         typeof(IDecision),
         typeof(IDialogDefinition),
         typeof(IDialog),
-        typeof(IDialogContextIdentifier),
+        typeof(IDialogIdentifier),
         typeof(IDialogDefinitionIdentifier),
         typeof(IDialogMetadata),
         typeof(IDialogPartGroup),
