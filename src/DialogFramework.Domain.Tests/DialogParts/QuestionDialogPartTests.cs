@@ -96,4 +96,22 @@ public class QuestionDialogPartTests
         // Assert
         actual.Should().BeEquivalentTo(((QuestionDialogPartBuilder)input).Build());
     }
+
+    [Fact]
+    public void Constructing_QuestionDialogPart_With_Duplicate_Ids_Throws_ValidationException()
+    {
+        // Arrange
+        var result = new DialogPartResultDefinitionBuilder()
+            .WithId(new DialogPartResultIdentifierBuilder().WithValue("Test"));
+        var builder = new QuestionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder())
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(result, result);
+
+        // Act
+        var act = new Action(() => _ = builder.Build());
+
+        // Assert
+        act.Should().ThrowExactly<ValidationException>();
+    }
 }

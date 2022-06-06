@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record QuestionDialogPart
+public partial record QuestionDialogPart : IValidatableObject
 {
     public IDialogPart? Validate(IDialogContext context,
                                  IDialog dialog,
@@ -61,6 +61,20 @@ public partial record QuestionDialogPart
                 .ToArray();
             errors.AddRange(dialogPartResultDefinition.Validate(context, dialog, this, dialogPartResultsByPart)
                                                       .Where(x => !string.IsNullOrEmpty(x.ErrorMessage)));
+        }
+    }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var duplicateIds = Results
+            .GroupBy(x => x.Id)
+            .Where(x => x.Count() > 1)
+            .Select(x => x.Key)
+            .ToArray();
+
+        if (duplicateIds.Any())
+        {
+            yield return new ValidationResult($"Result Ids should be unique. Non unique ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
         }
     }
 }
