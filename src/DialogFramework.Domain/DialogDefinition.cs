@@ -155,10 +155,6 @@ public partial record DialogDefinition : IValidatableObject
         {
             return parts[0];
         }
-        if (parts.Length > 1)
-        {
-            return null;
-        }
         return null;
     }
 
