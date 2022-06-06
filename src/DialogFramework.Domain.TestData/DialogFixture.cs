@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
+[ExcludeFromCodeCoverage]
 public static class DialogFixture
 {
     public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier)

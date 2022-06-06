@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
+[ExcludeFromCodeCoverage]
 public static class DialogMetadataFixture
 {
     public static DialogMetadataBuilder CreateBuilder()

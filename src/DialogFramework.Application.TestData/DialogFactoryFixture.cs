@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Application.TestData;
 
+[ExcludeFromCodeCoverage]
 public class DialogFactoryFixture : IDialogFactory
 {
     private readonly Func<IDialogDefinition, IDialog> _createDelegate;

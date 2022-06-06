@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Application.TestData;
 
+[ExcludeFromCodeCoverage]
 public class TestDialogDefinitionRepository : IDialogDefinitionRepository
 {
     private static readonly IDialogDefinition[] _dialogDefinitions = new[]
