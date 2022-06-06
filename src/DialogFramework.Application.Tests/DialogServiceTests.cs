@@ -11,15 +11,13 @@ public class DialogServiceTests
 
     private static string Id => Guid.NewGuid().ToString();
 
-    [Theory]
-    [InlineData(DialogState.Aborted)]
-    [InlineData(DialogState.InProgress)]
-    public void Abort_Returns_ErrorDialogPart_When_Already_Aborted(DialogState currentState)
+    [Fact]
+    public void Abort_Returns_ErrorDialogPart_When_Already_Aborted()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var abortedPart = dialogDefinition.AbortedPart;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, abortedPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, abortedPart);
         var sut = CreateSut();
 
         // Act
@@ -42,7 +40,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart, DialogState.Completed);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
         var sut = CreateSut();
 
         // Act
@@ -65,7 +63,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.ErrorPart, DialogState.ErrorOccured);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.ErrorPart);
         var sut = CreateSut();
 
         // Act
@@ -90,7 +88,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var abortedPart = dialogDefinition.AbortedPart;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -135,25 +133,20 @@ public class DialogServiceTests
         abort.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
-    [Theory]
-    [InlineData(DialogState.Aborted, false)]
-    [InlineData(DialogState.Completed, false)]
-    [InlineData(DialogState.ErrorOccured, false)]
-    [InlineData(DialogState.Initial, false)]
-    [InlineData(DialogState.InProgress, true)]
-    public void CanAbort_Returns_Correct_Result_Based_On_Current_State(DialogState currentState, bool expectedResult)
+    [Fact]
+    public void CanAbort_Returns_Correct_Result_Based_On_Current_State()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
         var result = sut.CanAbort(dialog);
 
         // Assert
-        result.Should().Be(expectedResult);
+        result.Should().BeTrue();
     }
 
     [Fact]
@@ -162,7 +155,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var abortedPart = dialogDefinition.AbortedPart;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, abortedPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, abortedPart);
         var sut = CreateSut();
 
         // Act
@@ -187,7 +180,7 @@ public class DialogServiceTests
             DialogState.ErrorOccured => dialogDefinition.ErrorPart,
             _ => throw new NotImplementedException()
         };
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
 
         // Act
@@ -211,8 +204,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
-        var currentState = DialogState.InProgress;
-        var definition = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart, currentState);
+        var definition = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
@@ -234,8 +226,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
-        var currentState = DialogState.InProgress;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
@@ -258,8 +249,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
-        var currentState = DialogState.InProgress;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
         var wrongQuestionMock = new Mock<IQuestionDialogPart>();
         wrongQuestionMock.SetupGet(x => x.Results).Returns(new ReadOnlyValueCollection<IDialogPartResultDefinition>());
@@ -284,14 +274,12 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
-        var currentState = DialogState.Initial;
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
-                                               _ => DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart, currentState));
+                                               _ => DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart));
         var repository = new TestDialogDefinitionRepository();
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
         var sut = new DialogService(factory, repository, conditionEvaluator, _loggerMock.Object);
-        var dialog = sut.Start(dialogDefinition.Metadata); // start the dialog, this will get the welcome message
-        dialog = sut.Continue(dialog); // skip the welcome message
+        var dialog = sut.Continue(factory.Create(dialogDefinition)); // skip the welcome message
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Terrible"))
@@ -398,7 +386,14 @@ public class DialogServiceTests
     {
         // Arrange
         var sut = CreateSutForTwoDialogsWithRedirect(out var dialog1);
-        var dialog = DialogFixture.Create(Id, dialog1.Metadata, dialog1.Parts.First(), currentState);
+        IDialogPart currentPart = currentState switch
+        {
+            DialogState.Aborted => dialog1.AbortedPart,
+            DialogState.Completed => dialog1.CompletedPart,
+            DialogState.ErrorOccured => dialog1.ErrorPart,
+            _ => throw new NotImplementedException()
+        };
+        var dialog = DialogFixture.Create(Id, dialog1.Metadata, currentPart);
 
         // Act
         var result = sut.Continue(dialog); // this will trigger the redirect to dialog 2
@@ -481,25 +476,20 @@ public class DialogServiceTests
         continuation.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
-    [Theory]
-    [InlineData(DialogState.Aborted, false)]
-    [InlineData(DialogState.Completed, false)]
-    [InlineData(DialogState.ErrorOccured, false)]
-    [InlineData(DialogState.Initial, false)]
-    [InlineData(DialogState.InProgress, true)]
-    public void CanContinue_Returns_Correct_Result_Based_On_Current_State(DialogState currentState, bool expectedResult)
+    [Fact]
+    public void CanContinue_Returns_Correct_Result_Based_On_Current_State()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
         var result = sut.CanContinue(dialog, Enumerable.Empty<IDialogPartResult>());
 
         // Assert
-        result.Should().Be(expectedResult);
+        result.Should().BeTrue();
     }
 
     [Theory]
@@ -535,7 +525,7 @@ public class DialogServiceTests
             .AddParts(new MessageDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder())))
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
-                                               dialog => DialogFixture.Create("Id", dialog.Metadata, dialog.ErrorPart, DialogState.InProgress)); // dialog state is already in progress
+                                               dialog => DialogFixture.Create("Id", dialog.Metadata, dialog.ErrorPart)); // dialog state is already in progress
         var repositoryMock = new Mock<IDialogDefinitionRepository>();
         repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
@@ -581,7 +571,7 @@ public class DialogServiceTests
         dialogDefinitionMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
         dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(dialogPartMock.Object);
         var factory = new DialogFactoryFixture(_ => true,
-                                               _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object, DialogState.Initial));
+                                               _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object));
         var repositoryMock = new Mock<IDialogDefinitionRepository>();
         repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinitionMock.Object);
         var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
@@ -729,31 +719,6 @@ public class DialogServiceTests
     }
 
     [Fact]
-    public void Start_Returns_ErrorDialogPart_When_First_DialogPart_Could_Not_Be_Determined()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder(false).Build();
-        var factory = new DialogFactory();
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
-
-        // Act
-        var result = sut.Start(dialogDefinition.Metadata);
-
-        // Assert
-        result.CurrentGroupId.Should().BeNull();
-        _loggerMock.Verify(logger => logger.Log(
-            It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
-            It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Start failed" && @type.Name == "FormattedLogValues"),
-            It.Is<InvalidOperationException>(ex => ex.Message == "Could not start dialog"),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-        Times.Once);
-    }
-
-    [Fact]
     public void Start_Returns_First_DialogPart_When_It_Could_Be_Determined()
     {
         // Arrange
@@ -837,7 +802,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var completedPart = dialogDefinition.CompletedPart;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -854,7 +819,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var errorPart = dialogDefinition.ErrorPart;
         var completedPart = dialogDefinition.CompletedPart;
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, errorPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, errorPart);
         var sut = CreateSut();
 
         // Act
@@ -871,7 +836,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var sut = CreateSut();
 
         // Act
@@ -887,7 +852,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -904,7 +869,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart, DialogState.InProgress);
+        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
@@ -926,7 +891,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var sut = CreateSut();
 
         // Act
@@ -943,7 +908,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart, DialogState.InProgress);
+        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
@@ -993,17 +958,12 @@ public class DialogServiceTests
         navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
     }
 
-    [Theory]
-    [InlineData(DialogState.Aborted)]
-    [InlineData(DialogState.Completed)]
-    [InlineData(DialogState.ErrorOccured)]
-    [InlineData(DialogState.Initial)]
-    public void CanResetCurrentState_Returns_False_When_CurrentState_Is(DialogState currentState)
+    [Fact]
+    public void CanResetCurrentState_Returns_False_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, currentState);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.AbortedPart);
         var sut = CreateSut();
 
         // Act
@@ -1018,7 +978,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart, DialogState.InProgress); // note that this actually invalid state, but we currently can't prevent it on the interface
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart); // note that this actually invalid state, but we currently can't prevent it on the interface
         var sut = CreateSut();
 
         // Act
@@ -1034,7 +994,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         var sut = CreateSut();
 
         // Act
@@ -1050,7 +1010,7 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         dialog = DialogFixture.Create(dialog, new[]
         {
             new DialogPartResultBuilder()
@@ -1078,8 +1038,7 @@ public class DialogServiceTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.Aborted);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.AbortedPart);
         var sut = CreateSut();
 
         // Act

@@ -41,7 +41,7 @@ public partial record DialogDefinition : IValidatableObject
 
     public bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
-        var firstPart = Parts.FirstOrDefault();
+        var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
         if (firstPart == null)
         {
             return false;

@@ -8,7 +8,7 @@ public class QuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut, DialogState.InProgress);
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("C"))
@@ -30,7 +30,7 @@ public class QuestionDialogPartTests
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut, DialogState.InProgress);
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
@@ -52,7 +52,7 @@ public class QuestionDialogPartTests
 
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
-        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut, DialogState.InProgress);
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))

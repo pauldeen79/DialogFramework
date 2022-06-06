@@ -6,7 +6,6 @@ public static class DialogFixture
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
-            .WithCurrentState(DialogState.Initial)
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
@@ -15,18 +14,16 @@ public static class DialogFixture
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
-            .WithCurrentState(DialogState.Initial)
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
             .Build();
 
     public static IDialog Create(string id,
                                  IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
-                                 IDialogPart currentPart,
-                                 DialogState currentState)
+                                 IDialogPart currentPart)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
-            .WithCurrentState(currentState)
+            .WithCurrentState(currentPart.GetState())
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
 

@@ -11,7 +11,7 @@ public class DialogExtensionsTests
         var definition = DialogDefinitionFixture.CreateBuilder().Build();
         var welcomePart = definition.Parts.OfType<IMessageDialogPart>().First();
         var questionPart = definition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, definition.Metadata, welcomePart, DialogState.InProgress);
+        var dialog = DialogFixture.Create(Id, definition.Metadata, welcomePart);
 
         // Act
         var result = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id);
@@ -27,7 +27,7 @@ public class DialogExtensionsTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart, DialogState.InProgress);
+        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object));
 
         // Act
