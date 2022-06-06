@@ -42,11 +42,6 @@ public partial record DialogDefinition : IValidatableObject
     public bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
         var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
-        if (firstPart == null)
-        {
-            return false;
-        }
-
         return TryGetDynamicResult(firstPart, dialog, conditionEvaluator) != null;
     }
 
