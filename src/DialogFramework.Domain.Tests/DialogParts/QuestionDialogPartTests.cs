@@ -34,7 +34,6 @@ public class QuestionDialogPartTests
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .WithValue(new EmptyDialogPartResultValueBuilder())
             .Build();
         var results = new[] { result };
 

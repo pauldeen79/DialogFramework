@@ -2,6 +2,13 @@
 
 public class DialogTests
 {
+    private readonly Mock<IConditionEvaluator> _conditionEvaluatorMock;
+
+    public DialogTests()
+    {
+        _conditionEvaluatorMock = new Mock<IConditionEvaluator>();
+    }
+
     [Fact]
     public void ReplaceAnswers_Replaces_Previous_Anwers_From_Same_Question()
     {
@@ -86,73 +93,200 @@ public class DialogTests
     [Fact]
     public void CanNavigateTo_Returns_False_When_Requested_DialogPart_Has_Not_Been_Processed_Yet()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.CanNavigateTo(sut.Parts.First().Id, sut.CompletedPart.Id, Enumerable.Empty<IDialogPartResult>());
+
+        // Assert
+        actual.Should().BeFalse();
     }
 
     [Fact]
     public void CanNavigateTo_Returns_True_When_Requested_DialogPart_Has_Been_Processed()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.CanNavigateTo(sut.CompletedPart.Id, sut.Parts.First().Id, new[] { new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id)).WithResultId(new DialogPartResultIdentifierBuilder()).Build() } );
+
+        // Assert
+        actual.Should().BeTrue();
     }
 
     [Fact]
     public void CanNavigateTo_Returns_True_When_Requested_DialogPart_Is_CurrentPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+
+        // Act
+        var actual = sut.CanNavigateTo(sut.Parts.First().Id, sut.Parts.First().Id, Enumerable.Empty<IDialogPartResult>());
+
+        // Assert
+        actual.Should().BeTrue();
     }
 
     [Fact]
     public void GetFirstPart_Throws_Wnen_No_Parts_Are_Available() //TODO: move to validation in c'tor
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilderBase().Build();
+        var context = DialogContextFixture.Create(sut.Metadata);
+
+        // Act
+        var act = new Action(() => sut.GetFirstPart(context, _conditionEvaluatorMock.Object));
+
+        // Assert
+        act.Should().ThrowExactly<InvalidOperationException>();
     }
 
     [Fact]
     public void GetFirstPart_Returns_First_Part_When_It_Is_A_Static_DialogPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder().Build();
+        var context = DialogContextFixture.Create(sut.Metadata);
+
+        // Act
+        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+
+        // Assert
+        actual.Should().BeEquivalentTo(sut.Parts.First());
     }
 
     [Fact]
     public void GetFirstPart_Returns_Processed_Decision_From_First_Part_When_It_Is_A_DecisionDialogPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.Parts.Insert(0, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .Build();
+        var context = DialogContextFixture.Create(sut.Metadata);
+
+        // Act
+        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+
+        // Assert
+        actual.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First());
     }
 
     [Fact]
     public void GetFirstPart_Returns_Processed_Navigation_From_First_Part_When_It_Is_A_NavigationDialogPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.Parts.Insert(0, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .Build();
+        var context = DialogContextFixture.Create(sut.Metadata);
+
+        // Act
+        var actual = sut.GetFirstPart(context, _conditionEvaluatorMock.Object);
+
+        // Assert
+        actual.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First());
     }
 
     [Fact]
     public void GetNextPart_Returns_Current_Part_With_ValidationErrors_When_Validation_Fails()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateHowDoYouFeelBuilder().Build();
+        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result } );
+
+        // Assert
+        actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IQuestionDialogPart>().First().Id); //first part
+        actual.GetValidationResults().Should().NotBeEmpty();
     }
 
     [Fact]
     public void GetNextPart_Returns_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_Static_DialogPart()
     {
-        throw new NotImplementedException();
+        var sut = DialogFixture.CreateBuilder().Build();
+        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result } );
+
+        // Assert
+        actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
+        actual.GetValidationResults().Should().BeEmpty();
     }
 
     [Fact]
     public void GetNextPart_Returns_Processed_Decision_From_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_DecisionDialogPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .Build();
+        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+
+        // Assert
+        actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
+        actual.GetValidationResults().Should().BeEmpty();
     }
 
     [Fact]
     public void GetNextPart_Returns_Processed_Decision_From_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_NavigationDialogPart()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .Build();
+        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+
+        // Assert
+        actual.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
+        actual.GetValidationResults().Should().BeEmpty();
     }
 
     [Fact]
     public void GetNextPart_Returns_CompletedPart_When_Validation_Succeeds_And_There_Is_No_Next_Part()
     {
-        throw new NotImplementedException();
+        // Arrange
+        var sut = DialogFixture.CreateBuilder()
+            .Chain(x => x.Parts.RemoveAt(1))
+            .Build();
+        var context = DialogContextFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var actual = sut.GetNextPart(context, _conditionEvaluatorMock.Object, new[] { result });
+
+        // Assert
+        actual.Id.Should().BeEquivalentTo(sut.CompletedPart.Id);
+        actual.GetValidationResults().Should().BeEmpty();
     }
 
     [Fact]

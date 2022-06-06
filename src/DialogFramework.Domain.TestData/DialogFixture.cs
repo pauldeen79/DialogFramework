@@ -25,7 +25,13 @@ public static class DialogFixture
         var answerGreat = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Great")).WithTitle("I feel great, thank you!");
         var answerOkay = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Okay")).WithTitle("I feel kind of okay");
         var answerTerrible = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Terrible")).WithTitle("I feel terrible, don't want to talk about it");
-        var questionPart = new QuestionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Question1")).WithHeading("How do you feel").WithTitle("Please tell us how you feel").WithGroup(group1).AddResults(answerGreat, answerOkay, answerTerrible);
+        var questionPart = new QuestionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Question1"))
+            .WithHeading("How do you feel")
+            .WithTitle("Please tell us how you feel")
+            .WithGroup(group1)
+            .AddResults(answerGreat, answerOkay, answerTerrible)
+            .AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator()));
         var messagePart = new MessageDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Message")).WithHeading("Message").WithMessage("I'm sorry to hear that. Let us know if we can do something to help you.").WithGroup(group1);
         var decisionPart = new DecisionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
@@ -54,6 +60,7 @@ public static class DialogFixture
 
     public static DialogBuilder CreateBuilderBase()
         => new DialogBuilder()
+            .WithMetadata(DialogMetadataFixture.CreateBuilder().WithId("DialogFixture"))
             .WithAbortedPart(new AbortedDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder().WithValue("Abort"))
                 .WithMessage("The dialog is aborted. You can come back any time to start the application again."))

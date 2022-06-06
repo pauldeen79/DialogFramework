@@ -10,6 +10,14 @@ public static class DialogContextFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
+    public static IDialogContext Create(IDialogIdentifier currentDialogIdentifier, IDialogPartIdentifier currentPartIdentifier)
+        => new DialogContextBuilder()
+            .WithId(new DialogContextIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
+            .WithCurrentDialogIdentifier(new DialogIdentifierBuilder(currentDialogIdentifier))
+            .WithCurrentState(DialogState.Initial)
+            .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
+            .Build();
+
     public static IDialogContext Create(string id, IDialogIdentifier currentDialogIdentifier, IDialogPart currentPart, DialogState currentState)
         => new DialogContextBuilder()
             .WithId(new DialogContextIdentifierBuilder().WithValue(id))
