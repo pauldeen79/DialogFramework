@@ -74,7 +74,7 @@ public partial record Dialog : IValidatableObject
             .Select((part, index) => new { Index = index, Part = part })
             .ToArray();
         var currentPartWithIndex = parts
-            .SingleOrDefault(p => Equals(p.Part.Id, currentPart.Id));
+            .FirstOrDefault(p => Equals(p.Part.Id, currentPart.Id));
         var nextPartWithIndex = parts
             .Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index)
             .OrderBy(p => p.Index)
