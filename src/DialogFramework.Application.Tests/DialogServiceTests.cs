@@ -3,10 +3,14 @@
 public class DialogServiceTests
 {
     private readonly Mock<ILogger> _loggerMock;
+    private readonly Mock<IDialogDefinitionRepository> _repositoryMock;
+    private readonly Mock<IConditionEvaluator> _conditionEvaluatorMock;
 
     public DialogServiceTests()
     {
         _loggerMock = new Mock<ILogger>();
+        _repositoryMock = new Mock<IDialogDefinitionRepository>();
+        _conditionEvaluatorMock = new Mock<IConditionEvaluator>();
     }
 
     private static string Id => Guid.NewGuid().ToString();
@@ -107,9 +111,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var abort = new Action(() => sut.Abort(factory.Create(dialogDefinition)));
 
         // Act
@@ -123,10 +125,8 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var abort = new Action(() => sut.Abort(factory.Create(dialogDefinition)));
 
         // Act
@@ -277,8 +277,7 @@ public class DialogServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart));
         var repository = new TestDialogDefinitionRepository();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repository, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialog = sut.Continue(factory.Create(dialogDefinition)); // skip the welcome message
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
@@ -318,8 +317,7 @@ public class DialogServiceTests
             if (Equals(identifier.Id, dialogDefinition2.Metadata.Id) && Equals(identifier.Version, dialogDefinition2.Metadata.Version)) return dialogDefinition2.Build();
             return null;
         });
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialog = sut.Start(dialogDefinition1.Metadata.Build()); // this will trigger the message on dialog 1
 
         // Act
@@ -363,10 +361,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialog = sut.Start(dialogDefinition.Metadata); // this will trigger the message
 
         // Act
@@ -429,10 +425,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialog = sut.Start(dialogDefinition.Metadata); // this will trigger the message
 
         // Act
@@ -450,9 +444,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var continuation = new Action(() => sut.Continue(factory.Create(dialogDefinition)));
 
         // Act
@@ -466,10 +458,8 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var continuation = new Action(() => sut.Continue(factory.Create(dialogDefinition)));
 
         // Act
@@ -504,10 +494,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                dialog => DialogFixture.Create(dialog.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var actual = sut.CanStart(dialogDefinition.Metadata);
@@ -526,10 +514,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                dialog => DialogFixture.Create("Id", dialog.Metadata, dialog.ErrorPart)); // dialog state is already in progress
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var actual = sut.CanStart(dialogDefinition.Metadata);
@@ -545,8 +531,7 @@ public class DialogServiceTests
         var factory = new DialogFactoryFixture(_ => false,
                                                _ => throw new InvalidOperationException("Not intended to get to this point"));
         var repository = new TestDialogDefinitionRepository();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repository, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var act = new Action(() => sut.Start(dialogDefinition.Metadata));
 
@@ -572,10 +557,8 @@ public class DialogServiceTests
         dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(dialogPartMock.Object);
         var factory = new DialogFactoryFixture(_ => true,
                                                _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinitionMock.Object);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinitionMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialog = dialogDefinitionMock.Object;
 
         // Act
@@ -616,15 +599,13 @@ public class DialogServiceTests
                                                dialog => Equals(dialog.Metadata.Id, dialogDefinition1.Metadata.Id)
                                                    ? DialogFixture.Create(dialogDefinition1.Metadata)
                                                    : DialogFixture.Create(dialogDefinition2.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
         {
             if (Equals(identifier.Id, dialogDefinition1.Metadata.Id) && Equals(identifier.Version, dialogDefinition1.Metadata.Version)) return dialogDefinition1;
             if (Equals(identifier.Id, dialogDefinition2.Metadata.Id) && Equals(identifier.Version, dialogDefinition2.Metadata.Version)) return dialogDefinition2;
             return null;
         });
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var result = sut.Start(dialogDefinition1.Metadata);
@@ -655,10 +636,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var result = sut.Start(dialogDefinition.Metadata);
@@ -677,8 +656,7 @@ public class DialogServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => throw new InvalidOperationException("Kaboom"));
         var repository = new TestDialogDefinitionRepository();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repository, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var start = new Action(() => sut.Start(dialogDefinition.Metadata));
 
         // Act
@@ -692,9 +670,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var start = new Action(() => sut.Start(dialogDefinition.Metadata));
 
         // Act
@@ -708,10 +684,8 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var start = new Action(() => sut.Start(dialogDefinition.Metadata));
 
         // Act
@@ -750,10 +724,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var result = sut.Start(dialogDefinition.Metadata);
@@ -781,10 +753,8 @@ public class DialogServiceTests
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinition);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
         var result = sut.Start(dialogDefinition.Metadata);
@@ -868,13 +838,12 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
-        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, conditionEvaluatorMock.Object));
+        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object));
         var sut = CreateSut();
 
         // Act
@@ -907,13 +876,12 @@ public class DialogServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
-        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
         var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, conditionEvaluatorMock.Object));
+        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object));
         var sut = CreateSut();
 
         // Act
@@ -932,9 +900,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var navigate = new Action(() => sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id));
 
         // Act
@@ -948,10 +914,8 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var navigate = new Action(() => sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id));
 
         // Act
@@ -1057,9 +1021,7 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialogDefinition)));
 
         // Act
@@ -1073,10 +1035,8 @@ public class DialogServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        var sut = new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        var sut = new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialogDefinition)));
 
         // Act
@@ -1087,8 +1047,7 @@ public class DialogServiceTests
     {
         var factory = new DialogFactory();
         var repository = new TestDialogDefinitionRepository();
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        return new DialogService(factory, repository, conditionEvaluator, _loggerMock.Object);
+        return new DialogService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
     }
 
     private DialogService CreateSutForTwoDialogsWithRedirect(out IDialogDefinition dialogDefinition1)
@@ -1121,16 +1080,14 @@ public class DialogServiceTests
         var metadata1 = dialogDefinition1.Metadata;
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, id1),
                                                _ => DialogFixture.Create(metadata1));
-        var repositoryMock = new Mock<IDialogDefinitionRepository>();
         var d1 = dialogDefinition1;
         var d2 = dialogDefinition2;
-        repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
         {
             if (Equals(identifier.Id, "Dialog1")) return d1;
             if (Equals(identifier.Id, "Dialog2")) return d2;
             return null;
         });
-        var conditionEvaluator = new Mock<IConditionEvaluator>().Object;
-        return new DialogService(factory, repositoryMock.Object, conditionEvaluator, _loggerMock.Object);
+        return new DialogService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
     }
 }

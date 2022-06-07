@@ -2,7 +2,7 @@
 Framework for creating dialogs (conversations) between a target system and an actor (user or system)
 
 # Usage
-The entry point for this framework is the DialogService. You need to have a Dialog instance, and call the Start method on the DialogService with this Dialog instance as argument. This will return a DialogContext. Then, you have to call Continue on the DialogService until the state of the DialogContext is Completed. (which is whenever there is no next part, so the Completed part will be returned)
+The entry point for this framework is the DialogService. You need to have a DialogDefinition instance, and call the Start method on the DialogService with this Dialog instance as argument. This will return a DialogContext. Then, you have to call Continue on the DialogService until the state of the Dialog is Completed. (which is whenever there is no next part, so the Completed part will be returned)
 
 Besides the Continue method, you also have Abort method on the DialogService to abort the dialog, or the NavigateTo method to navigate to another dialog part.
 
@@ -14,7 +14,7 @@ Here is some example C# code, which starts and finishes a two-step dialog:
 ```C#
 using var provider = new ServiceCollection()
     .AddDialogFramework()
-    .AddSingleton<IDialogRepository, TestDialogRepository>()
+    .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
     .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
 var dialogDefinition = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
