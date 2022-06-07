@@ -7,8 +7,8 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -16,7 +16,7 @@ public class AllRequiredQuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -24,12 +24,35 @@ public class AllRequiredQuestionDialogPartTests
     }
 
     [Fact]
+    public void Answers_From_Different_Question_Gives_ValidationError()
+    {
+        // Arrange
+        var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
+        var result = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder())
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+        var results = new[] { result };
+
+        // Act
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+
+        // Assert
+        actual.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        {
+            "Provided answer from wrong question",
+            "All 2 answers are required"
+        });
+    }
+    [Fact]
     public void One_Answer_Gives_ValidationError()
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
@@ -38,7 +61,7 @@ public class AllRequiredQuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -50,8 +73,8 @@ public class AllRequiredQuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var results = new[]
         {
             new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
@@ -59,7 +82,7 @@ public class AllRequiredQuestionDialogPartTests
         };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().BeEmpty();

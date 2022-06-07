@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
+[ExcludeFromCodeCoverage]
 public static class QuestionDialogPartFixture
 {
     public static QuestionDialogPartBuilder CreateBuilder()
@@ -21,10 +22,10 @@ public static class QuestionDialogPartFixture
             );
 
     public static IQuestionDialogPart Validate(IDialogPart instance,
-                                               IDialogContext context,
                                                IDialog dialog,
+                                               IDialogDefinition dialogDefinition,
                                                IEnumerable<IDialogPartResult> providedAnswers)
-        => instance.Validate(context, dialog, providedAnswers) as IQuestionDialogPart
+        => instance.Validate(dialog, dialogDefinition, providedAnswers) as IQuestionDialogPart
             ?? new QuestionDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder())
                 .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))

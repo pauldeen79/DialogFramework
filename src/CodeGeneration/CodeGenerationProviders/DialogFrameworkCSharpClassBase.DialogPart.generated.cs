@@ -98,11 +98,11 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"GetNextPartId")
                             .AddParameters(
                                 new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.IDialogContext")
-                                    .WithName(@"context"),
-                                new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.IDialog")
                                     .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.IDialogDefinition")
+                                    .WithName(@"dialogDefinition"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"ExpressionFramework.Abstractions.IConditionEvaluator")
                                     .WithName(@"conditionEvaluator"))
@@ -193,7 +193,7 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"GetNextPartId")
                             .AddParameters(
                                 new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.IDialogContext")
+                                    .WithTypeName(@"DialogFramework.Abstractions.IDialog")
                                     .WithName(@"context"))
                             .WithTypeName(@"DialogFramework.Abstractions.IDialogPartIdentifier"),
                         new ClassMethodBuilder()
@@ -248,11 +248,11 @@ namespace CodeGeneration.CodeGenerationProviders
                             .WithName(@"Validate")
                             .AddParameters(
                                 new ParameterBuilder()
-                                    .WithTypeName(@"DialogFramework.Abstractions.IDialogContext")
-                                    .WithName(@"context"),
-                                new ParameterBuilder()
                                     .WithTypeName(@"DialogFramework.Abstractions.IDialog")
                                     .WithName(@"dialog"),
+                                new ParameterBuilder()
+                                    .WithTypeName(@"DialogFramework.Abstractions.IDialogDefinition")
+                                    .WithName(@"dialogDefinition"),
                                 new ParameterBuilder()
                                     .WithTypeName(@"System.Collections.Generic.IEnumerable<DialogFramework.Abstractions.IDialogPartResult>")
                                     .WithName(@"dialogPartResults"))

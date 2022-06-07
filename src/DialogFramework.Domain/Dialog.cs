@@ -2,119 +2,117 @@
 
 public partial record Dialog
 {
-    public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                          IEnumerable<IDialogPartResult> newPartResults)
+    public bool CanAbort(IDialogDefinition dialogDefinition)
+        => CurrentState == DialogState.InProgress
+        && !Equals(CurrentPartId, dialogDefinition.AbortedPart.Id);
+
+    public void Abort(IDialogDefinition dialogDefinition)
     {
-        // Decision: By default, only the results from the requested part are replaced.
-        // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        var dialogPartIds = newPartResults
-            .GroupBy(x => x.DialogPartId)
-            .Select(x => x.Key)
-            .ToArray();
-        return existingPartResults
-            .Where(x => !dialogPartIds.Any(y => Equals(y, x.DialogPartId)))
-            .Concat(newPartResults);
+        if (!CanAbort(dialogDefinition))
+        {
+            throw new InvalidOperationException("Dialog cannot be aborted");
+        }
+        CurrentPartId = dialogDefinition.AbortedPart.Id;
+        CurrentGroupId = dialogDefinition.AbortedPart.GetGroupId();
+        CurrentState = DialogState.Aborted;
     }
 
-    public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId) => GetPartById(partId) is IQuestionDialogPart;
-
-    public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                                   IDialogPartIdentifier partId)
+    public bool CanContinue(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> partResults)
     {
-        // Decision: By default, only remove the results from the requested part.
-        // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return existingPartResults.Where(x => !Equals(x.DialogPartId, partId));
+        if (CurrentState != DialogState.InProgress)
+        {
+            // Wrong state
+            return false;
+        }
+
+        return true;
     }
 
-    public bool CanNavigateTo(IDialogPartIdentifier currentPartId,
-                              IDialogPartIdentifier navigateToPartId,
-                              IEnumerable<IDialogPartResult> existingPartResults)
+    public void Continue(IDialogDefinition dialogDefinition,
+                         IEnumerable<IDialogPartResult> partResults,
+                         IConditionEvaluator conditionEvaluator)
     {
-        // Decision: By default, you can navigate to either the current part, or any part you have already visited.
-        // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
+        if (!CanContinue(dialogDefinition, partResults))
+        {
+            throw new InvalidOperationException("Can only continue when the dialog is in progress");
+        }
+        var nextPart = dialogDefinition.GetNextPart(this, conditionEvaluator, partResults);
+        CurrentPartId = nextPart.Id;
+        CurrentGroupId = nextPart.GetGroupId();
+        CurrentState = nextPart.GetState();
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(dialogDefinition.ReplaceAnswers(Results, partResults));
+        ValidationErrors = new ValueCollection<IDialogValidationResult>(nextPart.GetValidationResults());
     }
 
-    public IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator)
+    public void Error(IDialogDefinition dialogDefinition, IEnumerable<IError> errors)
     {
-        var firstPart = Parts.FirstOrDefault();
-        if (firstPart == null)
-        {
-            throw new InvalidOperationException("Could not determine next part. Dialog does not have any parts.");
-        }
-
-        return GetDynamicResult(firstPart, context, conditionEvaluator);
+        CurrentPartId = dialogDefinition.ErrorPart.Id;
+        CurrentGroupId = dialogDefinition.ErrorPart.GetGroupId();
+        CurrentState = dialogDefinition.ErrorPart.GetState();
+        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
+        Errors = new ReadOnlyValueCollection<IError>(errors);
     }
 
-    public IDialogPart GetNextPart(IDialogContext context,
-                                   IConditionEvaluator conditionEvaluator,
-                                   IEnumerable<IDialogPartResult> providedResults)
+    public bool CanStart(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator)
     {
-        // first perform validation
-        var currentPart = GetPartById(context.CurrentPartId);
-        var error = currentPart.Validate(context, this, providedResults);
-        if (error != null)
+        if (CurrentState != DialogState.Initial)
         {
-            return error;
+            return false;
         }
 
-        // if validation succeeds, then get the next part
-        var parts = Parts
-            .Select((part, index) => new { Index = index, Part = part })
-            .ToArray();
-        var currentPartWithIndex = parts
-            .SingleOrDefault(p => Equals(p.Part.Id, currentPart.Id));
-        var nextPartWithIndex = parts
-            .Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index)
-            .OrderBy(p => p.Index)
-            .FirstOrDefault();
-        if (nextPartWithIndex == null)
+        if (!dialogDefinition.Metadata.CanStart)
         {
-            // there is no next part, so get the completed part
-            return GetDynamicResult(CompletedPart, context, conditionEvaluator);
+            return false;
         }
 
-        return GetDynamicResult(nextPartWithIndex.Part, context, conditionEvaluator);
+        if (!dialogDefinition.CanStart(this, conditionEvaluator))
+        {
+            return false;
+        }
+
+        return true;
     }
 
-    public IDialogPart GetPartById(IDialogPartIdentifier id)
+    public void Start(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator)
     {
-        if (Equals(id, AbortedPart.Id)) return AbortedPart;
-        if (Equals(id, CompletedPart.Id)) return CompletedPart;
-        if (Equals(id, ErrorPart.Id)) return ErrorPart;
-        var parts = Parts.Where(x => Equals(x.Id, id)).ToArray();
-        if (parts.Length == 1)
+        if (!CanStart(dialogDefinition, conditionEvaluator))
         {
-            return parts[0];
+            throw new InvalidOperationException("Could not start dialog");
         }
-        if (parts.Length > 1)
-        {
-            throw new InvalidOperationException($"Dialog has multiple parts with id [{id}]");
-        }
-        throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
+        var firstPart = dialogDefinition.GetFirstPart(this, conditionEvaluator);
+        CurrentPartId = firstPart.Id;
+        CurrentGroupId = firstPart.GetGroupId();
+        CurrentState = firstPart.GetState();
     }
 
-    private IDialogPart GetDynamicResult(IDialogPart dialogPart,
-                                         IDialogContext context,
-                                         IConditionEvaluator conditionEvaluator)
-    {
-        while (true)
-        {
-            if (dialogPart is IDecisionDialogPart decisionDialogPart)
-            {
-                var nextPartId = decisionDialogPart.GetNextPartId(context, this, conditionEvaluator);
-                dialogPart = GetPartById(nextPartId);
-            }
-            else if (dialogPart is INavigationDialogPart navigationDialogPart)
-            {
-                dialogPart = GetPartById(navigationDialogPart.GetNextPartId(context));
-            }
-            else
-            {
-                break;
-            }
-        }
+    public bool CanNavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId)
+        => CurrentState == DialogState.InProgress
+        && dialogDefinition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
 
-        return dialogPart;
+    public void NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId)
+    {
+        if (!CanNavigateTo(dialogDefinition, navigateToPartId))
+        {
+            throw new InvalidOperationException("Cannot navigate to requested dialog part");
+        }
+        var navigateToPart = dialogDefinition.GetPartById(navigateToPartId);
+        CurrentPartId = navigateToPartId;
+        CurrentGroupId = navigateToPart.GetGroupId();
+        CurrentState = navigateToPart.GetState();
+        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
+    }
+
+    public bool CanResetCurrentState(IDialogDefinition dialogDefinition)
+        => CurrentState == DialogState.InProgress
+        && dialogDefinition.CanResetPartResultsByPartId(CurrentPartId);
+
+    public void ResetCurrentState(IDialogDefinition dialogDefinition)
+    {
+        if (!CanResetCurrentState(dialogDefinition))
+        {
+            throw new InvalidOperationException("Current state cannot be reset");
+        }
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(dialogDefinition.ResetPartResultsByPartId(Results, CurrentPartId));
+        ValidationErrors = new ReadOnlyValueCollection<IDialogValidationResult>();
     }
 }

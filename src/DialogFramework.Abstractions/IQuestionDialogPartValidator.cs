@@ -2,7 +2,7 @@
 
 public interface IQuestionDialogPartValidator
 {
-    IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                  IDialog dialog,
+    IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                  IDialogDefinition dialogDefinition,
                                                   IEnumerable<IDialogPartResult> dialogPartResults);
 }

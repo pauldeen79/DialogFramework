@@ -1,7 +1,5 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IDialogIdentifier
+public interface IDialogIdentifier : IIdentifier
 {
-    string Id { get; }
-    string Version { get; }
 }

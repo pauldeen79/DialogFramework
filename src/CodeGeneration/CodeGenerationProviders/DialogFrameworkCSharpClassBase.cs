@@ -8,7 +8,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool AddNullChecks => true;
     protected override string FileNameSuffix => ".template.generated";
     protected override Type RecordCollectionType => typeof(IReadOnlyCollection<>);
-    protected override bool InheritFromInterfaces => true;
+    protected override bool AddPrivateSetters => true;
 
     protected override string FormatInstanceTypeName(ITypeBase instance, bool forCreate)
     {

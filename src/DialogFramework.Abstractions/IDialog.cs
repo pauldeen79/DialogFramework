@@ -2,28 +2,31 @@
 
 public interface IDialog
 {
-    IDialogMetadata Metadata { get; }
-    IReadOnlyCollection<IDialogPart> Parts { get; }
-    IErrorDialogPart ErrorPart { get; }
-    IAbortedDialogPart AbortedPart { get; }
-    ICompletedDialogPart CompletedPart { get; }
-    IReadOnlyCollection<IDialogPartGroup> PartGroups { get; }
+    IDialogIdentifier Id { get; }
+    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
+    IDialogPartIdentifier CurrentPartId { get; }
+    IDialogPartGroupIdentifier? CurrentGroupId { get; }
+    DialogState CurrentState { get; }
+    IReadOnlyCollection<IDialogPartResult> Results { get; }
+    IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
+    IReadOnlyCollection<IError> Errors { get; }
 
-    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                                  IEnumerable<IDialogPartResult> newPartResults);
+    bool CanStart(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator);
+    void Start(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator);
 
-    bool CanResetPartResultsByPartId(IDialogPartIdentifier partId);
+    bool CanContinue(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> partResults);
+    void Continue(IDialogDefinition dialogDefinition,
+                  IEnumerable<IDialogPartResult> partResults,
+                  IConditionEvaluator conditionEvaluator);
 
-    IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                            IDialogPartIdentifier partId);
-    bool CanNavigateTo(IDialogPartIdentifier currentPartId,
-                       IDialogPartIdentifier navigateToPartId,
-                       IEnumerable<IDialogPartResult> existingPartResults);
+    bool CanAbort(IDialogDefinition dialogDefinition);
+    void Abort(IDialogDefinition dialogDefinition);
 
-    IDialogPart GetFirstPart(IDialogContext context, IConditionEvaluator conditionEvaluator);
-    IDialogPart GetNextPart(IDialogContext context,
-                            IConditionEvaluator conditionEvaluator,
-                            IEnumerable<IDialogPartResult> providedResults);
+    void Error(IDialogDefinition dialogDefinition, IEnumerable<IError> errors);
 
-    IDialogPart GetPartById(IDialogPartIdentifier id);
+    bool CanNavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId);
+    void NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId);
+
+    bool CanResetCurrentState(IDialogDefinition dialogDefinition);
+    void ResetCurrentState(IDialogDefinition dialogDefinition);
 }

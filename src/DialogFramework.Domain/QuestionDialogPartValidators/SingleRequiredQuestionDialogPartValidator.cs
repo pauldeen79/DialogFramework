@@ -2,11 +2,11 @@
 
 public class SingleRequiredQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                         IDialogDefinition dialogDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        var answerCount = dialogPartResults.Count(x => !string.IsNullOrEmpty(x.ResultId.Value));
+        var answerCount = dialogPartResults.Count(x => Equals(x.DialogPartId, dialog.CurrentPartId) && !string.IsNullOrEmpty(x.ResultId.Value));
         if (answerCount == 0)
         {
             yield return new DialogValidationResult("Answer is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());

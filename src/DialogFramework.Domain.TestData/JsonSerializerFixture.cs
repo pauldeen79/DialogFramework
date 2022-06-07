@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
+[ExcludeFromCodeCoverage]
 public static class JsonSerializerFixture
 {
     public static string Serialize(object instance)

@@ -7,8 +7,8 @@ public class QuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("C"))
@@ -17,7 +17,7 @@ public class QuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -29,17 +29,16 @@ public class QuestionDialogPartTests
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .WithValue(new EmptyDialogPartResultValueBuilder())
             .Build();
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().ContainSingle();
@@ -50,9 +49,10 @@ public class QuestionDialogPartTests
     public void Validate_With_Known_Id_And_Correct_ValueType_Gives_No_ValidationError()
     {
         // Arrange
-        var dialog = DialogFixture.CreateBuilder().Build();
-        var sut = dialog.Parts.OfType<IQuestionDialogPart>().First();
-        var context = DialogContextFixture.Create("Id", dialog.Metadata, sut, DialogState.InProgress);
+
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var sut = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
+        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var result = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
@@ -61,7 +61,7 @@ public class QuestionDialogPartTests
         var results = new[] { result };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, context, dialog, results).ValidationErrors;
+        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
         actual.Should().BeEmpty();
@@ -96,5 +96,23 @@ public class QuestionDialogPartTests
 
         // Assert
         actual.Should().BeEquivalentTo(((QuestionDialogPartBuilder)input).Build());
+    }
+
+    [Fact]
+    public void Constructing_QuestionDialogPart_With_Duplicate_Ids_Throws_ValidationException()
+    {
+        // Arrange
+        var result = new DialogPartResultDefinitionBuilder()
+            .WithId(new DialogPartResultIdentifierBuilder().WithValue("Test"));
+        var builder = new QuestionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder())
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(result, result);
+
+        // Act
+        var act = new Action(() => _ = builder.Build());
+
+        // Assert
+        act.Should().ThrowExactly<ValidationException>();
     }
 }

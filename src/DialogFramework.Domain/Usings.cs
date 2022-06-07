@@ -1,4 +1,5 @@
-﻿global using CrossCutting.Common;
+﻿global using System.ComponentModel.DataAnnotations;
+global using CrossCutting.Common;
 global using CrossCutting.Common.Extensions;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DialogParts;

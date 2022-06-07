@@ -2,5 +2,5 @@
 
 public interface INavigationDialogPart : IDialogPart
 {
-    IDialogPartIdentifier GetNextPartId(IDialogContext context);
+    IDialogPartIdentifier GetNextPartId(IDialog dialog);
 }

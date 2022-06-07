@@ -1,9 +1,10 @@
 ﻿namespace DialogFramework.Domain.TestData;
 
+[ExcludeFromCodeCoverage]
 public static class SimpleFormFlowDialog
 {
-    public static IDialog Create()
-        => DialogFixture.CreateBuilderBase()
+    public static IDialogDefinition Create()
+        => DialogDefinitionFixture.CreateBuilderBase()
             .WithMetadata(new DialogMetadataBuilder()
                 .WithId("SimpleFormFlowDialog")
                 .WithFriendlyName("Simple form flow dialog")

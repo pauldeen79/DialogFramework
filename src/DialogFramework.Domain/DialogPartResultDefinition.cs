@@ -2,14 +2,14 @@
 
 public partial record DialogPartResultDefinition
 {
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                         IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
         foreach (var validator in Validators)
         {
-            foreach (var validationError in validator.Validate(context, dialog, dialogPart, this, dialogPartResults))
+            foreach (var validationError in validator.Validate(dialog, dialogDefinition, dialogPart, this, dialogPartResults))
             {
                 yield return validationError;
             }

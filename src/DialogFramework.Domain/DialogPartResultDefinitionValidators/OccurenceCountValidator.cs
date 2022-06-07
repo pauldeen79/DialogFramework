@@ -15,13 +15,13 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
         _maximumOccurenceCount = maximumOccurenceCount;
     }
 
-    public IEnumerable<IDialogValidationResult> Validate(IDialogContext context,
-                                                         IDialog dialog,
+    public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
+                                                         IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        var actualCount = dialogPartResults.Count();
+        var actualCount = dialogPartResults.Count(x => Equals(x.DialogPartId, dialogPart.Id));
         if (actualCount < _minimumOccurenceCount || actualCount > _maximumOccurenceCount)
         {
             var timesName = _minimumOccurenceCount == _maximumOccurenceCount

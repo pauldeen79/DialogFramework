@@ -10,7 +10,7 @@ public class ModelGenerationTests
     );
 
     [Fact]
-    public void Can_Generate_Records_From_Model()
+    public void Can_Generate_Records_And_Builders_From_Model()
     {
         var multipleContentBuilder = new MultipleContentBuilder(Settings.BasePath);
         GenerateCode.For<CoreModels>(Settings, multipleContentBuilder);
