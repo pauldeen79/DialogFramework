@@ -17,7 +17,7 @@ using var provider = new ServiceCollection()
     .AddSingleton<IDialogRepository, TestDialogRepository>()
     .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
-var dialogDefinition = provider.GetRequiredService<IDialogRepository>().GetDialog(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
+var dialogDefinition = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
 var sut = provider.GetRequiredService<IDialogService>();
 
 var dialog = sut.Start(dialogDefinition.Metadata);
@@ -58,6 +58,6 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Move/copy unit tests from Service (Application) to Domain
+- Move/copy unit tests from Service (Application) to Domain, including refactor to remove duplication like new Mock<> and using mocks where we can use the real domain model
 - Refactor Service into separate request handlers, and implement Mediatr.
-- Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
+- Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration). Or, as an alternative, remove manual step from Abstractions.tests to code generation models, by adding project reference and using reflection to get  the model.
