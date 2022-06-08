@@ -10,7 +10,7 @@ public class CoreBuilders : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableBuilderClasses(GetCoreModels(),
+        => GetImmutableBuilderClasses(CoreModels,
                                       "DialogFramework.Domain",
                                       "DialogFramework.Domain.Builders");
 }

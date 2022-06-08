@@ -169,4 +169,35 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             ? $"DialogFramework.Domain.DialogParts.Builders.{name}"
             : $"DialogFramework.Domain.Builders.{name}";
     }
+
+    protected static Type[] CoreModels => new[]
+    {
+        typeof(IDecision),
+        typeof(IDialogDefinition),
+        typeof(IDialog),
+        typeof(IDialogIdentifier),
+        typeof(IDialogDefinitionIdentifier),
+        typeof(IDialogMetadata),
+        typeof(IDialogPartGroup),
+        typeof(IDialogPartGroupIdentifier),
+        typeof(IDialogPartIdentifier),
+        typeof(IDialogPartResult),
+        typeof(IDialogPartResultDefinition),
+        typeof(IDialogPartResultIdentifier),
+        typeof(IDialogPartResultValue),
+        typeof(IDialogValidationResult),
+        typeof(IError),
+    };
+
+    protected static Type[] DialogPartModels => new[]
+    {
+        typeof(IAbortedDialogPart),
+        typeof(ICompletedDialogPart),
+        typeof(IDecisionDialogPart),
+        typeof(IErrorDialogPart),
+        typeof(IMessageDialogPart),
+        typeof(INavigationDialogPart),
+        typeof(IQuestionDialogPart),
+        typeof(IRedirectDialogPart),
+    };
 }

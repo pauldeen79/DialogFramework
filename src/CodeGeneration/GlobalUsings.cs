@@ -4,6 +4,8 @@ global using System.Linq;
 global using CodeGeneration.CodeGenerationProviders;
 global using CrossCutting.Common;
 global using CrossCutting.Common.Extensions;
+global using DialogFramework.Abstractions;
+global using DialogFramework.Abstractions.DialogParts;
 global using ModelFramework.CodeGeneration.CodeGenerationProviders;
 global using ModelFramework.Common;
 global using ModelFramework.Common.Extensions;

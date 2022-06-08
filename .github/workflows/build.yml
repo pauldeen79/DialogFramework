@@ -29,6 +29,8 @@ jobs:
           dotnet-version: 6.0.x
       - name: Restore
         run: dotnet restore
+      - name: Run code generation
+        run: dotnet build src/CodeGeneration/CodeGeneration.csproj -c Release --no-restore
       - name: Build
         run: dotnet build -c Release --no-restore
       - name: Test
