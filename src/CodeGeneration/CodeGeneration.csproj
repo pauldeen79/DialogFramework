@@ -16,6 +16,10 @@
     <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.3.52" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="dotnet $(TargetDir)CodeGeneration.dll" />
   </Target>
