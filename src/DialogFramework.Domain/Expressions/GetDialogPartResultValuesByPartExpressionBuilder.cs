@@ -17,8 +17,8 @@ public class GetDialogPartResultValuesByPartExpressionBuilder : IExpressionBuild
         => new GetDialogPartResultValuesByPartExpression(Function?.Build(), DialogPartId.Build());
 
     public GetDialogPartResultValuesByPartExpressionBuilder WithDialogPartId(IDialogPartIdentifier id)
-        => this.Chain(x => x.DialogPartId = new DialogPartIdentifierBuilder(id));
+        => this.With(x => x.DialogPartId = new DialogPartIdentifierBuilder(id));
 
     public GetDialogPartResultValuesByPartExpressionBuilder WithDialogPartId(DialogPartIdentifierBuilder id)
-        => this.Chain(x => x.DialogPartId = id);
+        => this.With(x => x.DialogPartId = id);
 }

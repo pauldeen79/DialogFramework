@@ -628,7 +628,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object));
+        dialog.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object);
         var sut = CreateSut();
 
         // Act
@@ -666,7 +666,7 @@ public class DialogServiceTests
             .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
-        dialog = dialog.Chain(x => x.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object));
+        dialog.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object);
         var sut = CreateSut();
 
         // Act

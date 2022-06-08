@@ -36,13 +36,15 @@ public class DialogService : IDialogService
         var dialog = _dialogFactory.Create(dialogDefinition);
         try
         {
-            return dialog.Chain(x => x.Start(dialogDefinition, _conditionEvaluator));
+            dialog.Start(dialogDefinition, _conditionEvaluator);
+            return dialog;
         }
         catch (Exception ex)
         {
             var msg = $"{nameof(Start)} failed";
             _logger.LogError(ex, msg);
-            return dialog.Chain(x => x.Error(dialogDefinition, new Error(msg)));
+            dialog.Error(dialogDefinition, new Error(msg));
+            return dialog;
         }
     }
 
@@ -58,7 +60,8 @@ public class DialogService : IDialogService
         try
         {
             dialogDefinition = GetDialogDefinition(dialog);
-            return dialog.Chain(x => x.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator));
+            dialog.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator);
+            return dialog;
         }
         catch (Exception ex)
         {
@@ -66,7 +69,8 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialogDefinition != null)
             {
-                return dialog.Chain(x => x.Error(dialogDefinition, new Error(msg)));
+                dialog.Error(dialogDefinition, new Error(msg));
+                return dialog;
             }
             throw;
         }
@@ -81,7 +85,8 @@ public class DialogService : IDialogService
         try
         {
             dialogDefinition = GetDialogDefinition(dialog);
-            return dialog.Chain(x => x.Abort(dialogDefinition));
+            dialog.Abort(dialogDefinition);
+            return dialog;
         }
         catch (Exception ex)
         {
@@ -89,7 +94,8 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialogDefinition != null)
             {
-                return dialog.Chain(x => x.Error(dialogDefinition, new Error(msg)));
+                dialog.Error(dialogDefinition, new Error(msg));
+                return dialog;
             }
             throw;
         }
@@ -104,7 +110,8 @@ public class DialogService : IDialogService
         try
         {
             dialogDefinition = GetDialogDefinition(dialog);
-            return dialog.Chain(x => x.NavigateTo(dialogDefinition, navigateToPartId));
+            dialog.NavigateTo(dialogDefinition, navigateToPartId);
+            return dialog;
         }
         catch (Exception ex)
         {
@@ -112,7 +119,8 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialogDefinition != null)
             {
-                return dialog.Chain(x => x.Error(dialogDefinition, new Error(msg)));
+                dialog.Error(dialogDefinition, new Error(msg));
+                return dialog;
             }
             throw;
         }
@@ -127,7 +135,8 @@ public class DialogService : IDialogService
         try
         {
             dialogDefinition = GetDialogDefinition(dialog);
-            return dialog.Chain(x => x.ResetCurrentState(dialogDefinition));
+            dialog.ResetCurrentState(dialogDefinition);
+            return dialog;
         }
         catch (Exception ex)
         {
@@ -135,7 +144,8 @@ public class DialogService : IDialogService
             _logger.LogError(ex, msg);
             if (dialogDefinition != null)
             {
-                return dialog.Chain(x => x.Error(dialogDefinition, new Error(msg)));
+                dialog.Error(dialogDefinition, new Error(msg));
+                return dialog;
             }
             throw;
         }

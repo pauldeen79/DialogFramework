@@ -180,7 +180,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
-            .Chain(x => x.Parts.Insert(0, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .With(x => x.Parts.Insert(0, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata);
 
@@ -196,7 +196,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
-            .Chain(x => x.Parts.Insert(0, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .With(x => x.Parts.Insert(0, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata);
 
@@ -249,7 +249,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
-            .Chain(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .With(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
@@ -270,7 +270,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
-            .Chain(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
+            .With(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
@@ -291,7 +291,7 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
-            .Chain(x => x.Parts.RemoveAt(1))
+            .With(x => x.Parts.RemoveAt(1))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
         var result = new DialogPartResultBuilder()
@@ -376,7 +376,7 @@ public class DialogDefinitionTests
     public void Constructing_DialogDefinition_With_Duplicate_Ids_Throws_ValidationException()
     {
         // Arrange
-        var builder = DialogDefinitionFixture.CreateBuilder().Chain(x => x.AddParts(x.Parts.First()));
+        var builder = DialogDefinitionFixture.CreateBuilder().With(x => x.AddParts(x.Parts.First()));
 
         // Act
         var act = new Action(() => _ = builder.Build());
