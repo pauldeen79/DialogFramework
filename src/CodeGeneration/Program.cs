@@ -6,7 +6,10 @@ internal static class Program
     private static void Main(string[] args)
     {
         // Setup code generation
-        var basePath = Path.Combine(Directory.GetCurrentDirectory(), @"../");
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var basePath = currentDirectory == "/home/runner/work/DialogFramework/DialogFramework"
+            ? Path.Combine(currentDirectory, @"src/")
+            : Path.Combine(currentDirectory, @"../../../../");
         var generateMultipleFiles = true;
         var dryRun = false;
         var multipleContentBuilder = new MultipleContentBuilder { BasePath = basePath };
