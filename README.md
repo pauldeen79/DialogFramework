@@ -53,8 +53,10 @@ See unit tests for more examples.
 To build the solution on your development machine, you first need to build and run the CodeGeneration project. This is because I have decided not to commit generated code to the Git repository.
 
 To do this, simply set the CodeGeneration project as start up project in Visual Studio, and hit F5.
-Or, alternatively, use dotnet from the command line to run it.
-dotnet src/CodeGeneration/bin/Release/net6.0/CodeGeneration.dll
+Or, alternatively, use dotnet from the command line to build and run it.
+e.g.
+dotnet build src/CodeGeneration/CodeGeneration.csproj
+dotnet src/CodeGeneration/bin/Debug/net6.0/CodeGeneration.dll
 
 # Project structure
 
