@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Abstractions", "src\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj", "{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain", "src\DialogFramework.Domain\DialogFramework.Domain.csproj", "{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}"
-	ProjectSection(ProjectDependencies) = postProject
-		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8} = {DBCEA97F-BE1E-4152-8BD5-910CA28466F8}
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.Tests", "src\DialogFramework.Domain.Tests\DialogFramework.Domain.Tests.csproj", "{1CECF992-6EF9-43CB-9792-3F310A67BCD0}"
 EndProject

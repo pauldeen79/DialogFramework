@@ -17,8 +17,10 @@ jobs:
           dotnet-version: 6.0.x
       - name: Restore
         run: dotnet restore
-      - name: Run code generation
+      - name: Build code generation
         run: dotnet build src/CodeGeneration/CodeGeneration.csproj -c Release --no-restore
+      - name: Run code generation
+        run: dotnet src/CodeGeneration/bin/Release/net6.0/CodeGeneration.dll
       - name: sonarscan-dotnet
         uses: highbyte/sonarscan-dotnet@v2.1.2
         with:
