@@ -36,6 +36,8 @@ public partial record QuestionDialogPart : IValidatableObject
 
     public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
 
+    public bool SupportsReset() => true;
+
     protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
                                                                           IDialogDefinition dialogDefinition,
                                                                           IEnumerable<IDialogPartResult> dialogPartResults)

@@ -10,4 +10,5 @@ public partial record DecisionDialogPart
 
     public DialogState GetState() => DialogState.InProgress;
     public IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
+    public bool SupportsReset() => false;
 }

@@ -18,9 +18,9 @@ public partial record DialogDefinition : IValidatableObject
 
     public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId)
     {
-        if (GetPartById(partId) is not IQuestionDialogPart)
+        if (!GetPartById(partId).SupportsReset())
         {
-            // Only question dialog part supports reset. Other types are only informational.
+            // Part does not support reset (probably a informational part like message, error, aborted or completed)
             return false;
         }
 
@@ -108,12 +108,8 @@ public partial record DialogDefinition : IValidatableObject
         if (Equals(id, AbortedPart.Id)) return AbortedPart;
         if (Equals(id, CompletedPart.Id)) return CompletedPart;
         if (Equals(id, ErrorPart.Id)) return ErrorPart;
-        var parts = Parts.Where(x => Equals(x.Id, id)).ToArray();
-        if (parts.Length == 1)
-        {
-            return parts[0];
-        }
-        throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
+        var part = Parts.FirstOrDefault(x => Equals(x.Id, id));
+        return part ?? throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
     }
 
     private IDialogPart GetDynamicResult(IDialogPart dialogPart,
