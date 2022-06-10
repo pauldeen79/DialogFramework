@@ -3,8 +3,20 @@
 public partial record Dialog
 {
     public bool CanAbort(IDialogDefinition dialogDefinition)
-        => CurrentState == DialogState.InProgress
-        && !Equals(CurrentPartId, dialogDefinition.AbortedPart.Id);
+    {
+        if (CurrentState != DialogState.InProgress)
+        {
+            // Wrong state
+            return false;
+        }
+        if (Equals(CurrentPartId, dialogDefinition.AbortedPart.Id))
+        {
+            // Already on the aborted part
+            return false;
+        }
+
+        return true;
+    }
 
     public void Abort(IDialogDefinition dialogDefinition)
     {
@@ -57,16 +69,19 @@ public partial record Dialog
     {
         if (CurrentState != DialogState.Initial)
         {
+            // Wrong state
             return false;
         }
 
         if (!dialogDefinition.Metadata.CanStart)
         {
+            // Dialog definition cannot be started (only exixting ones can be finished)
             return false;
         }
 
-        if (!dialogDefinition.CanStart(this, conditionEvaluator))
+        if (!dialogDefinition.CanGetFirstPart(this, conditionEvaluator))
         {
+            // Dialog definition does not have a first part
             return false;
         }
 
@@ -86,8 +101,21 @@ public partial record Dialog
     }
 
     public bool CanNavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId)
-        => CurrentState == DialogState.InProgress
-        && dialogDefinition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
+    {
+        if (CurrentState != DialogState.InProgress)
+        {
+            // Wrong state
+            return false;
+        }
+
+        if (!dialogDefinition.CanNavigateTo(CurrentPartId, navigateToPartId, Results))
+        {
+            // Not possible to navigate to the requested part
+            return false;
+        }
+
+        return true;
+    }
 
     public void NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId)
     {
@@ -103,8 +131,21 @@ public partial record Dialog
     }
 
     public bool CanResetCurrentState(IDialogDefinition dialogDefinition)
-        => CurrentState == DialogState.InProgress
-        && dialogDefinition.CanResetPartResultsByPartId(CurrentPartId);
+    {
+        if (CurrentState != DialogState.InProgress)
+        {
+            // Wrong state
+            return false;
+        }
+
+        if (!dialogDefinition.CanResetPartResultsByPartId(CurrentPartId))
+        {
+            // Current part does not support reset (possibly not a question?)
+            return false;
+        }
+
+        return true;
+    }
 
     public void ResetCurrentState(IDialogDefinition dialogDefinition)
     {

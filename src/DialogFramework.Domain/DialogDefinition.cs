@@ -16,7 +16,16 @@ public partial record DialogDefinition : IValidatableObject
             .Concat(newPartResults);
     }
 
-    public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId) => GetPartById(partId) is IQuestionDialogPart;
+    public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId)
+    {
+        if (GetPartById(partId) is not IQuestionDialogPart)
+        {
+            // Only question dialog part supports reset. Other types are only informational.
+            return false;
+        }
+
+        return true;
+    }
 
     public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
                                                                    IDialogPartIdentifier partId)
@@ -36,13 +45,24 @@ public partial record DialogDefinition : IValidatableObject
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        return Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId));
+        if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId))))
+        {
+            // Part has not been visited yet
+            return false;
+        }
+
+        return true;
     }
 
-    public bool CanStart(IDialog dialog, IConditionEvaluator conditionEvaluator)
+    public bool CanGetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
     {
-        var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
-        return TryGetDynamicResult(firstPart, dialog, conditionEvaluator) != null;
+        if (TryGetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, conditionEvaluator) == null)
+        {
+            // There is no first part
+            return false;
+        }
+
+        return true;
     }
 
     public IDialogPart GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)

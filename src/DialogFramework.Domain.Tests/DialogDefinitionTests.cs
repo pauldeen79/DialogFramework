@@ -130,7 +130,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void CanStart_Returns_False_When_Dynamic_Part_Returns_An_Unknown_PartId()
+    public void CanGetFirstPart_Returns_False_When_Dynamic_Part_Returns_An_Unknown_PartId()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase()
@@ -141,7 +141,7 @@ public class DialogDefinitionTests
         var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.CanStart(dialog, _conditionEvaluatorMock.Object);
+        var actual = sut.CanGetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
         actual.Should().BeFalse();
