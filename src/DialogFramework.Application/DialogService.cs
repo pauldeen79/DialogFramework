@@ -50,7 +50,7 @@ public class DialogService : IDialogService
 
     public bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
     {
-        return dialog.CanContinue((IDialogDefinition?)GetDialogDefinition(dialog), dialogPartResults);
+        return dialog.CanContinue(GetDialogDefinition(dialog), dialogPartResults);
     }
 
     public IDialog Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
