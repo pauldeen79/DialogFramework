@@ -34,112 +34,44 @@ public class DialogService : IDialogService
             throw new InvalidOperationException("Could not create dialog");
         }
         var dialog = _dialogFactory.Create(dialogDefinition);
-        try
-        {
-            dialog.Start(dialogDefinition, _conditionEvaluator);
-            return dialog;
-        }
-        catch (Exception ex)
-        {
-            var msg = $"{nameof(Start)} failed";
-            _logger.LogError(ex, msg);
-            dialog.Error(dialogDefinition, new Error(msg));
-            return dialog;
-        }
+        return PerformAction(dialog, nameof(Start), dialogDefinition => dialog.Start(dialogDefinition, _conditionEvaluator), dialogDefinition);
     }
 
     public bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        return dialog.CanContinue(GetDialogDefinition(dialog), dialogPartResults);
-    }
+        => dialog.CanContinue(GetDialogDefinition(dialog), dialogPartResults);
 
     public IDialog Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
-    {
-        IDialogDefinition? dialogDefinition = null;
-        try
-        {
-            dialogDefinition = GetDialogDefinition(dialog);
-            dialog.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator);
-            return dialog;
-        }
-        catch (Exception ex)
-        {
-            var msg = $"{nameof(Continue)} failed";
-            _logger.LogError(ex, msg);
-            if (dialogDefinition != null)
-            {
-                dialog.Error(dialogDefinition, new Error(msg));
-                return dialog;
-            }
-            throw;
-        }
-    }
+        => PerformAction(dialog, nameof(Continue), dialogDefinition => dialog.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator));
 
     public bool CanAbort(IDialog dialog)
         => dialog.CanAbort(GetDialogDefinition(dialog));
 
     public IDialog Abort(IDialog dialog)
-    {
-        IDialogDefinition? dialogDefinition = null;
-        try
-        {
-            dialogDefinition = GetDialogDefinition(dialog);
-            dialog.Abort(dialogDefinition);
-            return dialog;
-        }
-        catch (Exception ex)
-        {
-            var msg = $"{nameof(Abort)} failed";
-            _logger.LogError(ex, msg);
-            if (dialogDefinition != null)
-            {
-                dialog.Error(dialogDefinition, new Error(msg));
-                return dialog;
-            }
-            throw;
-        }
-    }
+        => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.Abort(dialogDefinition));
 
     public bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
         => dialog.CanNavigateTo(GetDialogDefinition(dialog), navigateToPartId);
 
     public IDialog NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-    {
-        IDialogDefinition? dialogDefinition = null;
-        try
-        {
-            dialogDefinition = GetDialogDefinition(dialog);
-            dialog.NavigateTo(dialogDefinition, navigateToPartId);
-            return dialog;
-        }
-        catch (Exception ex)
-        {
-            var msg = $"{nameof(NavigateTo)} failed";
-            _logger.LogError(ex, msg);
-            if (dialogDefinition != null)
-            {
-                dialog.Error(dialogDefinition, new Error(msg));
-                return dialog;
-            }
-            throw;
-        }
-    }
+        => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId));
 
     public bool CanResetCurrentState(IDialog dialog)
         => dialog.CanResetCurrentState(GetDialogDefinition(dialog));
 
     public IDialog ResetCurrentState(IDialog dialog)
+        => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.ResetCurrentState(dialogDefinition));
+
+    private IDialog PerformAction(IDialog dialog, string operationName, Action<IDialogDefinition> action, IDialogDefinition? dialogDefinition = null)
     {
-        IDialogDefinition? dialogDefinition = null;
         try
         {
-            dialogDefinition = GetDialogDefinition(dialog);
-            dialog.ResetCurrentState(dialogDefinition);
+            dialogDefinition??= GetDialogDefinition(dialog);
+            action.Invoke(dialogDefinition!);
             return dialog;
         }
         catch (Exception ex)
         {
-            var msg = $"{nameof(ResetCurrentState)} failed";
+            var msg = $"{operationName} failed";
             _logger.LogError(ex, msg);
             if (dialogDefinition != null)
             {
