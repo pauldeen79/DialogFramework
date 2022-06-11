@@ -20,7 +20,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act
         var dialog = sut.Start(dialogDefinition.Metadata);
@@ -81,7 +81,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act
         var dialog = sut.Start(dialogDefinition.Metadata);
@@ -157,7 +157,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act step 1: Start a session, submit first question
         var dialog1 = sut.Start(dialogDefinition.Metadata);
@@ -224,7 +224,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata);
@@ -262,7 +262,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata);
@@ -298,7 +298,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     {
         // Arrange
         var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
-        var sut = _provider.GetRequiredService<IDialogService>();
+        var sut = _provider.GetRequiredService<IDialogApplicaionService>();
 
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata);
@@ -323,7 +323,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var dialogDefinition = new TestDialogDefinitionRepository().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
         var factory = new DialogFactory();
         var repository = new TestDialogDefinitionRepository();
-        var sut = new DialogService(factory, repository, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
+        var sut = new DialogApplicationService(factory, repository, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
 
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata);

@@ -9,5 +9,5 @@ public static class ServiceCollectionExtensions
                   .AddSingleton<IExpressionEvaluatorProvider, GetDialogPartResultValuesByPartExpressionEvaluatorProvider>()
         )
         .AddScoped<IDialogFactory, DialogFactory>()
-        .AddScoped<IDialogService, DialogService>();
+        .AddScoped<IDialogApplicaionService, DialogApplicationService>();
 }

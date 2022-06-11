@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application;
 
-public interface IDialogService
+public interface IDialogApplicaionService
 {
     bool CanStart(IDialogDefinitionIdentifier dialogDefinitionIdentifier);
     IDialog Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier);

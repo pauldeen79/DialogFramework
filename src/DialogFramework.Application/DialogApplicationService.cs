@@ -1,13 +1,13 @@
 ﻿namespace DialogFramework.Application;
 
-public class DialogService : IDialogService
+public class DialogApplicationService : IDialogApplicaionService
 {
     private readonly IDialogFactory _dialogFactory;
     private readonly IDialogDefinitionRepository _dialogDefinitionRepository;
     private readonly IConditionEvaluator _conditionEvaluator;
     private readonly ILogger _logger;
 
-    public DialogService(IDialogFactory dialogFactory,
+    public DialogApplicationService(IDialogFactory dialogFactory,
                          IDialogDefinitionRepository dialogDefinitionRepository,
                          IConditionEvaluator conditionEvaluator,
                          ILogger logger)
