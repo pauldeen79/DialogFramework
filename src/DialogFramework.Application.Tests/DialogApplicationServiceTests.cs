@@ -670,27 +670,6 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void NavigateTo_Returns_Error_When_CanNavigateTo_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
-        var sut = CreateSut();
-
-        // Act
-        var result = sut.NavigateTo(dialog, questionPart.Id);
-
-        // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
-    }
-
-    [Fact]
     public void NavigateTo_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
     {
         // Arrange
