@@ -22,12 +22,12 @@ public partial record DialogDefinition : IValidatableObject
         var partByIdResult = GetPartById(partId);
         if (!partByIdResult.IsSuccessful())
         {
-            return Result<IEnumerable<IDialogPartResult>>.Error(partByIdResult.ErrorMessage!);
+            return Result<IEnumerable<IDialogPartResult>>.Error(partByIdResult.Status, partByIdResult.ErrorMessage!);
         }
         if (!partByIdResult.Value!.SupportsReset())
         {
             // Part does not support reset (probably a informational part like message, error, aborted or completed)
-            return Result<IEnumerable<IDialogPartResult>>.Error("The specified part cannot be reset");
+            return Result<IEnumerable<IDialogPartResult>>.Error(ResultStatus.Invalid, "The specified part cannot be reset");
         }
 
         // Decision: By default, only remove the results from the requested part.
@@ -44,7 +44,7 @@ public partial record DialogDefinition : IValidatableObject
         if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId))))
         {
             // Part has not been visited yet
-            return Result.Error("Cannot navigate to the specified part");
+            return Result.Error(ResultStatus.Invalid, "Cannot navigate to the specified part");
         }
 
         return Result.Success();
@@ -92,7 +92,7 @@ public partial record DialogDefinition : IValidatableObject
         var part = this.GetAllParts().FirstOrDefault(x => Equals(x.Id, id));
         if (part == null)
         {
-            return Result<IDialogPart>.Error("Dialog does not have a part with id [{id}]");
+            return Result<IDialogPart>.Error(ResultStatus.NotFound, "Dialog does not have a part with id [{id}]");
         }
         return Result<IDialogPart>.Success(part);
     }

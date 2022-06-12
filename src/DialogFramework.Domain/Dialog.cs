@@ -7,12 +7,12 @@ public partial record Dialog
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
-            return Result.Error("Current state is invalid");
+            return Result.Error(ResultStatus.Invalid, "Current state is invalid");
         }
         if (Equals(CurrentPartId, dialogDefinition.AbortedPart.Id))
         {
             // Already on the aborted part
-            return Result.Error("Current part is the aborted part");
+            return Result.Error(ResultStatus.Invalid, "Current part is the aborted part");
         }
 
         CurrentPartId = dialogDefinition.AbortedPart.Id;
@@ -28,7 +28,7 @@ public partial record Dialog
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
-            return Result.Error("Current state is invalid");
+            return Result.Error(ResultStatus.Invalid, "Current state is invalid");
         }
 
         var nextPartResult = dialogDefinition.GetNextPart(this, conditionEvaluator, partResults);
@@ -60,19 +60,19 @@ public partial record Dialog
         if (CurrentState != DialogState.Initial)
         {
             // Wrong state
-            return Result.Error("Current state is invalid");
+            return Result.Error(ResultStatus.Invalid, "Current state is invalid");
         }
 
         if (!dialogDefinition.Metadata.CanStart)
         {
             // Dialog definition cannot be started (only exixting ones can be finished)
-            return Result.Error("Dialog definition cannot be started");
+            return Result.Error(ResultStatus.Error, "Dialog definition cannot be started");
         }
 
         var firstPartResult = dialogDefinition.GetFirstPart(this, conditionEvaluator);
         if (!firstPartResult.IsSuccessful())
         {
-            return Result.Error(firstPartResult.ErrorMessage!);
+            return Result.Error(firstPartResult.Status, firstPartResult.ErrorMessage!);
         }
         CurrentPartId = firstPartResult.Value!.Id;
         CurrentGroupId = firstPartResult.Value!.GetGroupId();
@@ -85,7 +85,7 @@ public partial record Dialog
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
-            return Result.Error("Current state is invalid");
+            return Result.Error(ResultStatus.Invalid, "Current state is invalid");
         }
 
         var canNavigateToResult = dialogDefinition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
@@ -113,7 +113,7 @@ public partial record Dialog
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
-            return Result.Error("Current state is invalid");
+            return Result.Error(ResultStatus.Invalid, "Current state is invalid");
         }
 
         var canResetResult = dialogDefinition.ResetPartResultsByPartId(Results, CurrentPartId);

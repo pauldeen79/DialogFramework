@@ -29,6 +29,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -49,6 +50,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.Aborted);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(abortedPart.Id);
     }
@@ -65,6 +67,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
         result.ErrorMessage.Should().Be(msg);
         AssertLogging(msg, null);
@@ -83,6 +86,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
         AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
@@ -110,6 +114,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -133,6 +138,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.Completed);
         result.Value!.CurrentPartId.Value.Should().Be("Completed");
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
@@ -156,6 +162,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
         result.Value!.ValidationErrors.Should().ContainSingle();
@@ -183,6 +190,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.Completed);
         result.Value!.CurrentPartId.Value.Should().Be("Completed");
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
@@ -220,6 +228,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition1.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -237,6 +246,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
         result.ErrorMessage.Should().Be(msg);
         AssertLogging(msg, null);
@@ -255,6 +265,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
         AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
@@ -279,6 +290,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         if (expectedResult)
         {
             result.Value!.CurrentState.Should().Be(DialogState.InProgress);
@@ -286,6 +298,7 @@ public class DialogApplicationServiceTests
         else
         {
             result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+            result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
             result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Dialog definition cannot be started" });
         }
     }
@@ -303,6 +316,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not create dialog");
     }
 
@@ -316,7 +330,7 @@ public class DialogApplicationServiceTests
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
         var errorPartMock = new Mock<IErrorDialogPart>();
-        errorPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().Build());
+        errorPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().WithValue("Error").Build());
         errorPartMock.Setup(x => x.GetState()).Returns(DialogState.ErrorOccured);
         var dialogDefinitionMock = new Mock<IDialogDefinition>();
         dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
@@ -333,7 +347,9 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(errorPartMock.Object.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Dialog definition cannot be started" });
     }
 
@@ -380,6 +396,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.Completed);
         result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition1.Metadata.Id);
         result.Value!.CurrentGroupId.Should().BeNull();
@@ -413,6 +430,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id);
@@ -431,6 +449,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Dialog creation failed");
         AssertLogging("Start failed", "Kaboom");
     }
@@ -447,6 +466,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
         result.ErrorMessage.Should().Be(msg);
         AssertLogging(msg, null);
@@ -465,6 +485,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
         AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
@@ -481,6 +502,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IGroupedDialogPart>().First().Group.Id);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.First().Id);
     }
@@ -510,8 +532,8 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentGroupId.Should().BeNull();
         result.Value!.CurrentPartId.Value.Should().Be("Error");
     }
 
@@ -540,8 +562,8 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.Aborted);
-        result.Value!.CurrentGroupId.Should().BeNull();
         result.Value!.CurrentPartId.Value.Should().Be("Abort");
     }
 
@@ -560,6 +582,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
@@ -580,6 +603,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -600,6 +624,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
@@ -619,6 +644,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
     }
 
     [Fact]
@@ -640,6 +666,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
     }
 
     [Fact]
@@ -657,7 +684,10 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
     }
 
     [Fact]
@@ -679,6 +709,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
         result.Value!.CurrentGroupId.Should().BeEquivalentTo(messagePart.Group.Id);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(messagePart.Id);
@@ -696,6 +727,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
         result.ErrorMessage.Should().Be(msg);
         AssertLogging(msg, null);
@@ -714,6 +746,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
         AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
@@ -731,6 +764,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -749,6 +783,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
@@ -779,6 +814,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         var dialogPartResults = result.Value!.Results;
         dialogPartResults.Should().ContainSingle();
         dialogPartResults.Single().DialogPartId.Value.Should().Be("Other part");
@@ -797,9 +833,11 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentGroupId.Should().BeNull();
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
@@ -814,6 +852,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
         result.ErrorMessage.Should().Be(msg);
         AssertLogging(msg, null);
@@ -832,6 +871,7 @@ public class DialogApplicationServiceTests
 
         // Act
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
         AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
