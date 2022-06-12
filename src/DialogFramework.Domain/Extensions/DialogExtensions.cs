@@ -6,8 +6,8 @@ public static class DialogExtensions
                                                                                       IDialogPartIdentifier dialogPartIdentifier)
         => instance.Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier));
 
-    public static void Error(this IDialog instance,
-                             IDialogDefinition dialogDefinition,
-                             params IError[] errorMessages)
+    public static Result Error(this IDialog instance,
+                               IDialogDefinition dialogDefinition,
+                               params IError[] errorMessages)
         => instance.Error(dialogDefinition, errorMessages.AsEnumerable());
 }
