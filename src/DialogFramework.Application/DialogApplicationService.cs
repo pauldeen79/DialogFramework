@@ -8,9 +8,9 @@ public class DialogApplicationService : IDialogApplicationService
     private readonly ILogger _logger;
 
     public DialogApplicationService(IDialogFactory dialogFactory,
-                         IDialogDefinitionRepository dialogDefinitionRepository,
-                         IConditionEvaluator conditionEvaluator,
-                         ILogger logger)
+                                    IDialogDefinitionRepository dialogDefinitionRepository,
+                                    IConditionEvaluator conditionEvaluator,
+                                    ILogger logger)
     {
         _dialogFactory = dialogFactory;
         _dialogDefinitionRepository = dialogDefinitionRepository;
@@ -30,10 +30,10 @@ public class DialogApplicationService : IDialogApplicationService
         {
             return Result<IDialog>.Error("Could not create dialog");
         }
+        IDialog? dialog = null;
         try
         {
-            var dialog = _dialogFactory.Create(dialogDefinition);
-            return PerformAction(dialog, nameof(Start), dialogDefinition => dialog.Start(dialogDefinition, _conditionEvaluator), dialogDefinition);
+            dialog = _dialogFactory.Create(dialogDefinition);
         }
         catch (Exception ex)
         {
@@ -41,6 +41,7 @@ public class DialogApplicationService : IDialogApplicationService
             _logger.LogError(ex, msg);
             return Result<IDialog>.Error("Dialog creation failed");
         }
+        return PerformAction(dialog, nameof(Start), dialogDefinition => dialog.Start(dialogDefinition, _conditionEvaluator), dialogDefinition);
     }
 
     public Result<IDialog> Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
@@ -71,8 +72,8 @@ public class DialogApplicationService : IDialogApplicationService
             var result = action.Invoke(dialogDefinition!);
             if (!result.IsSuccessful())
             {
-                //return Result<IDialog>.Error(result.Status, result.ErrorMessage!);
-                dialog.Error(dialogDefinition, new Error(result.ErrorMessage!));
+                //return Result<IDialog>.FromExistingResult(result);
+                dialog.Error(dialogDefinition, new Error(result.ErrorMessage ?? string.Empty));
                 return Result<IDialog>.Success(dialog);
             }
             return Result<IDialog>.Success(dialog);
