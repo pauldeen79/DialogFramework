@@ -11,121 +11,66 @@ public class DialogTests
     }
 
     [Fact]
-    public void CanAbort_Returns_False_When_CurrentPart_Is_AbortedPart()
+    public void Abort_Returns_Error_When_CurrentPart_Is_AbortedPart()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.AbortedPart);
 
         // Act
-        var actual = sut.CanAbort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanAbort_Returns_False_When_CurrentState_Is_Not_InProgess()
+    public void Abort_Returns_Error_When_CurrentState_Is_Not_InProgess()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
 
         // Act
-        var actual = sut.CanAbort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanAbort_Returns_True_When_CurrentState_Is_InProgess_And_CurrentPart_Is_Not_AbortedPart()
+    public void Abort_Returns_Success_And_Updates_State_Correcly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
 
         // Act
-        var actual = sut.CanAbort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition);
 
         // Assert
-        actual.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Abort_Throws_When_CanAbort_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
-
-        // Act
-        var act = new Action(() => sut.Abort(dialogDefinition));
-
-        // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
-    }
-
-    [Fact]
-    public void Abort_Updates_State_Correcly_When_CanAbort_Is_True()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
-
-        // Act
-        sut.Abort(dialogDefinition);
-
-        // Assert
+        result.IsSuccessful().Should().BeTrue();
         sut.CurrentPartId.Should().Be(dialogDefinition.AbortedPart.Id);
         sut.CurrentGroupId.Should().BeNull();
         sut.CurrentState.Should().Be(DialogState.Aborted);
     }
 
     [Fact]
-    public void CanContinue_Returns_False_When_CurrentState_Is_Not_InProgress()
+    public void Continue_Returns_Error_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
 
         // Act
-        var actual = sut.CanContinue(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
+        var result = sut.Continue(dialogDefinition, Enumerable.Empty<IDialogPartResult>(), _conditionEvaluatorMock.Object);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanContinue_Returns_True_When_CurrentState_Is_InProgress()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
-
-        // Act
-        var actual = sut.CanContinue(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
-
-        // Assert
-        actual.Should().BeTrue();
-    }
-
-    [Fact]
-    public void Continue_Throws_When_CanContinue_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
-
-        // Act
-        var act = new Action(() => sut.Continue(dialogDefinition, Enumerable.Empty<IDialogPartResult>(), _conditionEvaluatorMock.Object));
-
-        // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
-    }
-
-    [Fact]
-    public void Continue_Updates_State_Correctly_When_CanContinue_Is_True()
+    public void Continue_Returns_Success_And_Updates_State_Correctly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -151,7 +96,7 @@ public class DialogTests
         );
 
         // Act
-        sut.Continue
+        var result = sut.Continue
         (
             dialogDefinition,
             new[]
@@ -164,6 +109,7 @@ public class DialogTests
             }, _conditionEvaluatorMock.Object);
 
         // Assert
+        result.IsSuccessful().Should().BeTrue();
         var nextPart = dialogDefinition.Parts.Skip(1).First();
         sut.CurrentPartId.Should().Be(nextPart.Id);
         sut.CurrentGroupId.Should().Be(nextPart.GetGroupId());
@@ -203,6 +149,7 @@ public class DialogTests
                 new ErrorBuilder().WithMessage("Kaboom").Build()
             }
         );
+
         // Act
         sut.Error(dialogDefinition, new Error("Something went wrong"));
 
@@ -216,35 +163,21 @@ public class DialogTests
     }
 
     [Fact]
-    public void CanStart_Returns_True_When_CurrentState_Is_Initial_And_Metadata_CanStart_Is_True()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(dialogDefinition.Metadata);
-
-        // Act
-        var actual = sut.CanStart(dialogDefinition, _conditionEvaluatorMock.Object);
-
-        // Assert
-        actual.Should().BeTrue();
-    }
-
-    [Fact]
-    public void CanStart_Returns_False_When_CurrentState_Is_Not_Initial()
+    public void Start_Returns_Error_When_CurrentState_Is_Not_Initial()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
 
         // Act
-        var actual = sut.CanStart(dialogDefinition, _conditionEvaluatorMock.Object);
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanStart_Returns_False_When_Metadata_CanStart_Is_False()
+    public void Start_Returns_Error_When_Metadata_CanStart_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture
@@ -256,100 +189,59 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
         // Act
-        var actual = sut.CanStart(dialogDefinition, _conditionEvaluatorMock.Object);
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void Start_Throws_When_CanStart_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
-
-        // Act
-        var act = new Action(() => sut.Start(dialogDefinition, _conditionEvaluatorMock.Object));
-
-        // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
-    }
-
-    [Fact]
-    public void Start_Updates_State_Correctly_When_CanStart_Is_True()
+    public void Start_Returns_Success_And_Updates_State_Correctly_When_Validations_Succeeed()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
         // Act
-        sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
+        result.IsSuccessful().Should().BeTrue();
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.First().Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.First().GetGroupId());
         sut.CurrentState.Should().Be(dialogDefinition.Parts.First().GetState());
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_False_When_CurrentState_Is_Not_InProgress()
+    public void NavigateTo_Returns_Error_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
 
         // Act
-        var actual = sut.CanNavigateTo(dialogDefinition, dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.First().Id);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_False_When_Dialog_CanNavigateTo_Is_False()
+    public void NavigateTo_Returns_Error_When_Dialog_CanNavigateTo_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
 
         // Act
-        var actual = sut.CanNavigateTo(dialogDefinition, dialogDefinition.Parts.Skip(1).First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.Skip(1).First().Id);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_True_When_CurrentState_Is_InProgress_And_Dialog_CanNavigateTo_Is_True()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
-
-        // Act
-        var actual = sut.CanNavigateTo(dialogDefinition, dialogDefinition.Parts.First().Id);
-
-        // Assert
-        actual.Should().BeTrue();
-    }
-
-    [Fact]
-    public void NavigateTo_Throws_When_CanNavigateTo_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
-
-        // Act
-        var act = new Action(() => sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.Skip(1).First().Id));
-
-        // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
-    }
-
-    [Fact]
-    public void NavigateTo_Updates_State_Correctly_When_CanNavigateTo_Is_True()
+    public void NavigateTo_Returns_Success_And_Updates_State_Correctly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -372,9 +264,10 @@ public class DialogTests
         );
 
         // Act
-        sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
 
         // Assert
+        result.IsSuccessful().Should().BeTrue();
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetGroupId());
         sut.CurrentState.Should().Be(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetState());
@@ -382,63 +275,35 @@ public class DialogTests
     }
 
     [Fact]
-    public void CanResetCurrentState_Returns_False_When_CurrentState_Is_Not_InProgress()
+    public void ResetCurrentState_Returns_Error_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
         // Act
-        var actual = sut.CanResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanResetCurrentState_Returns_False_When_Dialog_CanResetResultsByPartId_Is_False()
+    public void ResetCurrentState_Returns_Error_When_Dialog_CanResetResultsByPartId_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.OfType<IMessageDialogPart>().First());
 
         // Act
-        var actual = sut.CanResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition);
 
         // Assert
-        actual.Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
     }
 
     [Fact]
-    public void CanResetCurrentState_Returns_True_When_CurrentState_Is_InProgress_And_Dialog_CanResetResultsByPartId_Is_True()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.OfType<IQuestionDialogPart>().First());
-
-        // Act
-        var actual = sut.CanResetCurrentState(dialogDefinition);
-
-        // Assert
-        actual.Should().BeTrue();
-    }
-
-    [Fact]
-    public void ResetCurrentState_Throws_When_CanResetCurrentState_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.OfType<IMessageDialogPart>().First());
-
-        // Act
-        var act = new Action(() => sut.ResetCurrentState(dialogDefinition));
-
-        // Assert
-        act.Should().ThrowExactly<InvalidOperationException>();
-    }
-
-    [Fact]
-    public void ResetCurrentState_Updates_Results_Correctly_When_CanResetCurrentState_Is_True()
+    public void ResetCurrentState_Returns_Success_And_Updates_Results_Correctly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -461,7 +326,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Clears_ValidationErrors_When_CanResetCurrentState_Is_True()
+    public void ResetCurrentState_Returns_Success_And_Clears_ValidationErrors_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -478,9 +343,10 @@ public class DialogTests
         );
 
         // Act
-        sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition);
 
         // Assert
+        result.IsSuccessful().Should().BeTrue();
         sut.ValidationErrors.Should().BeEmpty();
     }
 }

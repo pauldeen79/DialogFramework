@@ -12,21 +12,17 @@ public interface IDialogDefinition
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                   IEnumerable<IDialogPartResult> newPartResults);
 
-    bool CanResetPartResultsByPartId(IDialogPartIdentifier partId);
+    Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+                                                                    IDialogPartIdentifier partId);
+    Result CanNavigateTo(IDialogPartIdentifier currentPartId,
+                         IDialogPartIdentifier navigateToPartId,
+                         IEnumerable<IDialogPartResult> existingPartResults);
 
-    IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                            IDialogPartIdentifier partId);
-    bool CanNavigateTo(IDialogPartIdentifier currentPartId,
-                       IDialogPartIdentifier navigateToPartId,
-                       IEnumerable<IDialogPartResult> existingPartResults);
+    Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator);
 
-    bool CanGetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator);
+    Result<IDialogPart> GetNextPart(IDialog dialog,
+                                    IConditionEvaluator conditionEvaluator,
+                                    IEnumerable<IDialogPartResult> providedResults);
 
-    IDialogPart GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator);
-
-    IDialogPart GetNextPart(IDialog dialog,
-                            IConditionEvaluator conditionEvaluator,
-                            IEnumerable<IDialogPartResult> providedResults);
-
-    IDialogPart GetPartById(IDialogPartIdentifier id);
+    Result<IDialogPart> GetPartById(IDialogPartIdentifier id);
 }

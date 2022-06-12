@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application;
 
-public class DialogApplicationService : IDialogApplicaionService
+public class DialogApplicationService : IDialogApplicationService
 {
     private readonly IDialogFactory _dialogFactory;
     private readonly IDialogDefinitionRepository _dialogDefinitionRepository;
@@ -18,56 +18,64 @@ public class DialogApplicationService : IDialogApplicaionService
         _logger = logger;
     }
 
-    public bool CanStart(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
+    public Result<IDialog> Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
     {
-        var dialogDefinition = GetDialogDefinition(dialogDefinitionIdentifier);
-        var dialog = _dialogFactory.Create(dialogDefinition);
-        
-        return dialog.CanStart(dialogDefinition, _conditionEvaluator);
-    }
-
-    public IDialog Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
-    {
-        var dialogDefinition = GetDialogDefinition(dialogDefinitionIdentifier);
+        var dialogDefinitionResult = GetDialogDefinition(dialogDefinitionIdentifier);
+        if (!dialogDefinitionResult.IsSuccessful())
+        {
+            return Result<IDialog>.Error(dialogDefinitionResult.ErrorMessage!);
+        }
+        var dialogDefinition = dialogDefinitionResult.Value!;
         if (!_dialogFactory.CanCreate(dialogDefinition))
         {
-            throw new InvalidOperationException("Could not create dialog");
+            return Result<IDialog>.Error("Could not create dialog");
         }
-        var dialog = _dialogFactory.Create(dialogDefinition);
-        return PerformAction(dialog, nameof(Start), dialogDefinition => dialog.Start(dialogDefinition, _conditionEvaluator), dialogDefinition);
+        try
+        {
+            var dialog = _dialogFactory.Create(dialogDefinition);
+            return PerformAction(dialog, nameof(Start), dialogDefinition => dialog.Start(dialogDefinition, _conditionEvaluator), dialogDefinition);
+        }
+        catch (Exception ex)
+        {
+            var msg = $"{nameof(Start)} failed";
+            _logger.LogError(ex, msg);
+            return Result<IDialog>.Error("Dialog creation failed");
+        }
     }
 
-    public bool CanContinue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
-        => dialog.CanContinue(GetDialogDefinition(dialog), dialogPartResults);
-
-    public IDialog Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
+    public Result<IDialog> Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
         => PerformAction(dialog, nameof(Continue), dialogDefinition => dialog.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator));
 
-    public bool CanAbort(IDialog dialog)
-        => dialog.CanAbort(GetDialogDefinition(dialog));
-
-    public IDialog Abort(IDialog dialog)
+    public Result<IDialog> Abort(IDialog dialog)
         => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.Abort(dialogDefinition));
 
-    public bool CanNavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-        => dialog.CanNavigateTo(GetDialogDefinition(dialog), navigateToPartId);
-
-    public IDialog NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
+    public Result<IDialog> NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
         => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId));
 
-    public bool CanResetCurrentState(IDialog dialog)
-        => dialog.CanResetCurrentState(GetDialogDefinition(dialog));
-
-    public IDialog ResetCurrentState(IDialog dialog)
+    public Result<IDialog> ResetCurrentState(IDialog dialog)
         => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.ResetCurrentState(dialogDefinition));
 
-    private IDialog PerformAction(IDialog dialog, string operationName, Action<IDialogDefinition> action, IDialogDefinition? dialogDefinition = null)
+    private Result<IDialog> PerformAction(IDialog dialog, string operationName, Func<IDialogDefinition, Result> action, IDialogDefinition? dialogDefinition = null)
     {
         try
         {
-            dialogDefinition??= GetDialogDefinition(dialog);
-            action.Invoke(dialogDefinition!);
-            return dialog;
+            if (dialogDefinition == null)
+            {
+                var dialogDefinitionResult = GetDialogDefinition(dialog);
+                if (!dialogDefinitionResult.IsSuccessful())
+                {
+                    return Result<IDialog>.Error(dialogDefinitionResult.ErrorMessage!);
+                }
+                dialogDefinition = dialogDefinitionResult.Value!;
+            }
+            var result = action.Invoke(dialogDefinition!);
+            if (!result.IsSuccessful())
+            {
+                //return Result<IDialog>.Error(result.ErrorMessage!);
+                dialog.Error(dialogDefinition, new Error(result.ErrorMessage!));
+                return Result<IDialog>.Success(dialog);
+            }
+            return Result<IDialog>.Success(dialog);
         }
         catch (Exception ex)
         {
@@ -76,21 +84,33 @@ public class DialogApplicationService : IDialogApplicaionService
             if (dialogDefinition != null)
             {
                 dialog.Error(dialogDefinition, new Error(msg));
-                return dialog;
+                return Result<IDialog>.Success(dialog);
             }
             throw;
         }
     }
 
-    private IDialogDefinition GetDialogDefinition(IDialog dialog) => GetDialogDefinition(dialog.CurrentDialogIdentifier);
+    private Result<IDialogDefinition> GetDialogDefinition(IDialog dialog) => GetDialogDefinition(dialog.CurrentDialogIdentifier);
 
-    private IDialogDefinition GetDialogDefinition(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
+    private Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
     {
-        var dialog = _dialogDefinitionRepository.GetDialogDefinition(dialogDefinitionIdentifier);
+        IDialogDefinition? dialog = null;
+        try
+        {
+            dialog = _dialogDefinitionRepository.GetDialogDefinition(dialogDefinitionIdentifier);
+        }
+        catch (Exception ex)
+        {
+            var msg = $"{nameof(GetDialogDefinition)} failed";
+            _logger.LogError(ex, msg);
+            return Result<IDialogDefinition>.Error("Could not retrieve dialog definition");
+        }
         if (dialog == null)
         {
-            throw new InvalidOperationException($"Unknown dialog definition: Id [{dialogDefinitionIdentifier.Id}], Version [{dialogDefinitionIdentifier.Version}]");
+            var msg = $"Unknown dialog definition: Id [{dialogDefinitionIdentifier.Id}], Version [{dialogDefinitionIdentifier.Version}]";
+            _logger.LogError(msg);
+            return Result<IDialogDefinition>.Error(msg);
         }
-        return dialog;
+        return Result<IDialogDefinition>.Success(dialog);
     }
 }

@@ -16,7 +16,7 @@ public class DialogApplicationServiceTests
     private static string Id => Guid.NewGuid().ToString();
 
     [Fact]
-    public void Abort_Returns_ErrorDialogPart_When_CanAbort_Is_False()
+    public void Abort_Returns_ErrorDialogPart_When_Validation_Fails()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -28,19 +28,14 @@ public class DialogApplicationServiceTests
         var result = sut.Abort(dialog);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroupId.Should().BeNull();
-        _loggerMock.Verify(logger => logger.Log(
-            It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
-            It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Abort failed" && @type.Name == "FormattedLogValues"),
-            It.IsAny<Exception>(),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-        Times.Once);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
-    public void Abort_Returns_AbortDialogPart_Dialog_When_CanAbort_Is_True()
+    public void Abort_Returns_AbortDialogPart_Dialog_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -53,27 +48,30 @@ public class DialogApplicationServiceTests
         var result = sut.Abort(dialog);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.Aborted);
-        result.CurrentPartId.Should().BeEquivalentTo(abortedPart.Id);
-        result.CurrentGroupId.Should().BeNull();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.Aborted);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(abortedPart.Id);
     }
 
     [Fact]
-    public void Abort_Throws_When_Dialog_Could_Not_Be_Found()
+    public void Abort_Returns_ErrorMessage_When_Dialog_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var abort = new Action(() => sut.Abort(factory.Create(dialogDefinition)));
+        var result = sut.Abort(factory.Create(dialogDefinition));
 
         // Act
-        abort.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]");
+        result.IsSuccessful().Should().BeFalse();
+        var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
+        result.ErrorMessage.Should().Be(msg);
+        AssertLogging(msg, null);
     }
 
     [Fact]
-    public void Abort_Throws_When_Dialog_Retrieval_Throws()
+    public void Abort_Returns_ErrorMessage_When_Dialog_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -81,26 +79,12 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var abort = new Action(() => sut.Abort(factory.Create(dialogDefinition)));
+        var result = sut.Abort(factory.Create(dialogDefinition));
 
         // Act
-        abort.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
-    }
-
-    [Fact]
-    public void CanAbort_Returns_Correct_Result_Based_On_Current_State()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        var sut = CreateSut();
-
-        // Act
-        var result = sut.CanAbort(dialog);
-
-        // Assert
-        result.Should().BeTrue();
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
+        AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
 
     [Theory]
@@ -125,15 +109,10 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(dialog);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroupId.Should().BeNull();
-        _loggerMock.Verify(logger => logger.Log(
-            It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
-            It.Is<EventId>(eventId => eventId.Id == 0),
-            It.Is<It.IsAnyType>((@object, @type) => @object.ToString() == "Continue failed" && @type.Name == "FormattedLogValues"),
-            It.Is<InvalidOperationException>(ex => ex.Message == "Can only continue when the dialog is in progress"),
-            It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-        Times.Once);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
@@ -153,9 +132,10 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(definition, new[] { dialogPartResult });
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPartId.Value.Should().Be("Completed");
-        result.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.Completed);
+        result.Value!.CurrentPartId.Value.Should().Be("Completed");
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
     }
 
     [Fact]
@@ -175,10 +155,11 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(dialog, new[] { dialogPartResult });
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
-        result.ValidationErrors.Should().ContainSingle();
-        result.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]");
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
+        result.Value!.ValidationErrors.Should().ContainSingle();
+        result.Value!.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]");
     }
 
     [Fact]
@@ -191,7 +172,7 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart));
         var repository = new TestDialogDefinitionRepository();
         var sut = new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var dialog = sut.Continue(factory.Create(dialogDefinition)); // skip the welcome message
+        var dialog = sut.Continue(factory.Create(dialogDefinition)).Value!; // skip the welcome message
         var dialogPartResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Terrible"))
@@ -201,13 +182,14 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(dialog, new[] { dialogPartResult }); // answer the question with 'Terrible', this will trigger a second message
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentPartId.Value.Should().Be("Completed");
-        result.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.Completed);
+        result.Value!.CurrentPartId.Value.Should().Be("Completed");
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.CompletedPart.Group.Id);
     }
 
     [Fact]
-    public void Continue_Does_Not_Work_On_RedirectPart()
+    public void Continue_Returns_ErrorDialogPart_On_RedirectPart()
     {
         // Arrange
         var dialogDefinition2 = DialogDefinitionFixture.CreateBuilder();
@@ -231,33 +213,37 @@ public class DialogApplicationServiceTests
             return null;
         });
         var sut = new DialogApplicationService(factory, repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var dialog = sut.Start(dialogDefinition1.Metadata.Build()); // this will trigger the message on dialog 1
+        var dialog = sut.Start(dialogDefinition1.Metadata.Build()).Value!; // this will trigger the message on dialog 1
 
         // Act
         var result = sut.Continue(dialog); // this will trigger the redirect to dialog 2
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentPartId.Value.Should().Be("Error");
-        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Continue failed" });
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition1.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
-    public void Continue_Throws_When_Dialog_Could_Not_Be_Found()
+    public void Continue_Returns_Error_When_Dialog_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var continuation = new Action(() => sut.Continue(factory.Create(dialogDefinition)));
+        var result = sut.Continue(factory.Create(dialogDefinition));
 
         // Act
-        continuation.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]");
+        result.IsSuccessful().Should().BeFalse();
+        var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
+        result.ErrorMessage.Should().Be(msg);
+        AssertLogging(msg, null);
     }
 
     [Fact]
-    public void Continue_Throws_When_Dialog_Retrieval_Throws()
+    public void Continue_Returns_Error_When_Dialog_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -265,32 +251,18 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var continuation = new Action(() => sut.Continue(factory.Create(dialogDefinition)));
+        var result = sut.Continue(factory.Create(dialogDefinition));
 
         // Act
-        continuation.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
-    }
-
-    [Fact]
-    public void CanContinue_Returns_Correct_Result_Based_On_Current_State()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        var sut = CreateSut();
-
-        // Act
-        var result = sut.CanContinue(dialog, Enumerable.Empty<IDialogPartResult>());
-
-        // Assert
-        result.Should().BeTrue();
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
+        AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
 
     [Theory]
     [InlineData(false, false)]
     [InlineData(true, true)]
-    public void CanStart_Returns_Correct_Value_Based_On_DialogDefinition_CanStart(bool dialogCanStart, bool expectedResult)
+    public void Start_Returns_Correct_Result_Based_On_DialogDefinition_CanStart(bool dialogCanStart, bool expectedResult)
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
@@ -303,14 +275,23 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var actual = sut.CanStart(dialogDefinition.Metadata);
+        var result = sut.Start(dialogDefinition.Metadata);
 
         // Assert
-        actual.Should().Be(expectedResult);
+        result.IsSuccessful().Should().BeTrue();
+        if (expectedResult)
+        {
+            result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        }
+        else
+        {
+            result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+            result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Dialog definition cannot be started" });
+        }
     }
 
     [Fact]
-    public void Start_Throws_When_ContextFactory_CanCreate_Returns_False()
+    public void Start_Returns_Error_When_ContextFactory_CanCreate_Returns_False()
     {
         // Arrange
         var factory = new DialogFactoryFixture(_ => false,
@@ -318,10 +299,11 @@ public class DialogApplicationServiceTests
         var repository = new TestDialogDefinitionRepository();
         var sut = new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var act = new Action(() => sut.Start(dialogDefinition.Metadata));
+        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
-        act.Should().ThrowExactly<InvalidOperationException>().WithMessage("Could not create dialog");
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not create dialog");
     }
 
     [Fact]
@@ -339,7 +321,7 @@ public class DialogApplicationServiceTests
         var dialogDefinitionMock = new Mock<IDialogDefinition>();
         dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
         dialogDefinitionMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
-        dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(dialogPartMock.Object);
+        dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(Result<IDialogPart>.Success(dialogPartMock.Object));
         var factory = new DialogFactoryFixture(_ => true,
                                                _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(dialogDefinitionMock.Object);
@@ -350,8 +332,9 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialog.Metadata);
 
         // Act
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Start failed" });
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Dialog definition cannot be started" });
     }
 
     [Fact]
@@ -396,10 +379,11 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialogDefinition1.Metadata);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition1.Metadata.Id);
-        result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Value.Should().Be("Redirect");
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.Completed);
+        result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition1.Metadata.Id);
+        result.Value!.CurrentGroupId.Should().BeNull();
+        result.Value!.CurrentPartId.Value.Should().Be("Redirect");
     }
 
     [Fact]
@@ -428,13 +412,14 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialogDefinition.Metadata);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id);
-        result.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id);
     }
 
     [Fact]
-    public void Start_Throws_When_Dialog_Could_Not_Be_Created()
+    public void Start_Returns_Error_When_Dialog_Could_Not_Be_Created()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -442,28 +427,33 @@ public class DialogApplicationServiceTests
                                                _ => throw new InvalidOperationException("Kaboom"));
         var repository = new TestDialogDefinitionRepository();
         var sut = new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var start = new Action(() => sut.Start(dialogDefinition.Metadata));
+        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
-        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Dialog creation failed");
+        AssertLogging("Start failed", "Kaboom");
     }
 
     [Fact]
-    public void Start_Throws_When_DialogDefinition_Could_Not_Be_Found()
+    public void Start_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var start = new Action(() => sut.Start(dialogDefinition.Metadata));
+        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
-        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]");
+        result.IsSuccessful().Should().BeFalse();
+        var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
+        result.ErrorMessage.Should().Be(msg);
+        AssertLogging(msg, null);
     }
 
     [Fact]
-    public void Start_Throws_When_DialogDefinition_Retrieval_Throws()
+    public void Start_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -471,10 +461,12 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var start = new Action(() => sut.Start(dialogDefinition.Metadata));
+        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
-        start.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
+        AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
 
     [Fact]
@@ -488,8 +480,9 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialogDefinition.Metadata);
 
         // Assert
-        result.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IGroupedDialogPart>().First().Group.Id);
-        result.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.First().Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IGroupedDialogPart>().First().Group.Id);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.First().Id);
     }
 
     [Fact]
@@ -516,9 +509,10 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialogDefinition.Metadata);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Value.Should().Be("Error");
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentGroupId.Should().BeNull();
+        result.Value!.CurrentPartId.Value.Should().Be("Error");
     }
 
     [Fact]
@@ -545,13 +539,14 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialogDefinition.Metadata);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.Aborted);
-        result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Value.Should().Be("Abort");
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.Aborted);
+        result.Value!.CurrentGroupId.Should().BeNull();
+        result.Value!.CurrentPartId.Value.Should().Be("Abort");
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_False_When_Parts_Does_Not_Contain_Current_Part()
+    public void NavigateTo_Returns_ErrorDialogPart_When_Parts_Does_Not_Contain_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -561,14 +556,17 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(dialog, completedPart.Id);
+        var result = sut.NavigateTo(dialog, completedPart.Id);
 
         // Assert
-        result.Should().BeFalse();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_False_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
+    public void NavigateTo_Returns_ErrorDialogPart_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -578,14 +576,17 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(dialog, completedPart.Id);
+        var result = sut.NavigateTo(dialog, completedPart.Id);
 
         // Assert
-        result.Should().BeFalse();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_False_When_Requested_Part_Is_After_Current_Part()
+    public void NavigateTo_Returns_ErrorDialogPart_When_Requested_Part_Is_After_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -595,14 +596,17 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(dialog, questionPart.Id);
+        var result = sut.NavigateTo(dialog, questionPart.Id);
 
         // Assert
-        result.Should().BeFalse();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Current_Part()
+    public void NavigateTo_Returns_Success_When_Requested_Part_Is_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -611,14 +615,14 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(dialog, questionPart.Id);
+        var result = sut.NavigateTo(dialog, questionPart.Id);
 
         // Assert
-        result.Should().BeTrue();
+        result.IsSuccessful().Should().BeTrue();
     }
 
     [Fact]
-    public void CanNavigateTo_Returns_True_When_Requested_Part_Is_Before_Current_Part()
+    public void NavigateTo_Returns_Success_When_Requested_Part_Is_Before_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
@@ -632,10 +636,10 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanNavigateTo(dialog, messagePart.Id);
+        var result = sut.NavigateTo(dialog, messagePart.Id);
 
         // Assert
-        result.Should().BeTrue();
+        result.IsSuccessful().Should().BeTrue();
     }
 
     [Fact]
@@ -652,7 +656,8 @@ public class DialogApplicationServiceTests
         var result = sut.NavigateTo(dialog, questionPart.Id);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
     }
 
     [Fact]
@@ -673,27 +678,31 @@ public class DialogApplicationServiceTests
         var result = sut.NavigateTo(dialog, messagePart.Id);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.InProgress);
-        result.CurrentGroupId.Should().BeEquivalentTo(messagePart.Group.Id);
-        result.CurrentPartId.Should().BeEquivalentTo(messagePart.Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(messagePart.Group.Id);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(messagePart.Id);
     }
 
     [Fact]
-    public void NavigateTo_Throws_When_DialogDefinition_Could_Not_Be_Found()
+    public void NavigateTo_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id));
+        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
 
         // Act
-        navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]");
+        result.IsSuccessful().Should().BeFalse();
+        var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
+        result.ErrorMessage.Should().Be(msg);
+        AssertLogging(msg, null);
     }
 
     [Fact]
-    public void NavigateTo_Throws_When_DialogDefinition_Retrieval_Throws()
+    public void NavigateTo_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -701,14 +710,16 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var navigate = new Action(() => sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id));
+        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
 
         // Act
-        navigate.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
+        AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
 
     [Fact]
-    public void CanResetCurrentState_Returns_False_When_CurrentState_Is_Not_InProgress()
+    public void ResetCurrentState_Returns_ErrorDialogPart_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -716,14 +727,17 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanResetCurrentState(dialog);
+        var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        result.Should().BeFalse();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
-    public void CanResetCurrentState_Returns_False_When_Current_DialogPart_Is_Not_QuestionDialogPart()
+    public void ResetCurrentState_Returns_ErrorDialogPart_When_Current_DialogPart_Is_Not_QuestionDialogPart()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -731,26 +745,13 @@ public class DialogApplicationServiceTests
         var sut = CreateSut();
 
         // Act
-        var result = sut.CanResetCurrentState(dialog);
+        var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        result.Should().BeFalse();
-    }
-
-    [Fact]
-    public void CanResetCurrentState_Returns_True_When_CurrentState_Is_InProgress_And_Current_DialogPart_Is_QuestionDialogPart()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        var sut = CreateSut();
-
-        // Act
-        var result = sut.CanResetCurrentState(dialog);
-
-        // Assert
-        result.Should().BeTrue();
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
     }
 
     [Fact]
@@ -777,7 +778,8 @@ public class DialogApplicationServiceTests
         var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        var dialogPartResults = result.Results;
+        result.IsSuccessful().Should().BeTrue();
+        var dialogPartResults = result.Value!.Results;
         dialogPartResults.Should().ContainSingle();
         dialogPartResults.Single().DialogPartId.Value.Should().Be("Other part");
     }
@@ -794,27 +796,31 @@ public class DialogApplicationServiceTests
         var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        result.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.CurrentGroupId.Should().BeNull();
-        result.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
+        result.IsSuccessful().Should().BeTrue();
+        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
+        result.Value!.CurrentGroupId.Should().BeNull();
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
     }
 
     [Fact]
-    public void ResetCurrentState_Throws_When_DialogDefinition_Could_Not_Be_Found()
+    public void ResetCurrentState_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialogDefinition)));
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
 
         // Act
-        resetCurrentState.Should().ThrowExactly<InvalidOperationException>().WithMessage("Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]");
+        result.IsSuccessful().Should().BeFalse();
+        var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
+        result.ErrorMessage.Should().Be(msg);
+        AssertLogging(msg, null);
     }
 
     [Fact]
-    public void ResetCurrentState_Throws_When_DialogDefinition_Retrieval_Throws()
+    public void ResetCurrentState_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -822,16 +828,42 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var resetCurrentState = new Action(() => sut.ResetCurrentState(factory.Create(dialogDefinition)));
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
 
         // Act
-        resetCurrentState.Should().ThrowExactly<InvalidOperationException>().WithMessage("Kaboom");
+        result.IsSuccessful().Should().BeFalse();
+        result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
+        AssertLogging("GetDialogDefinition failed", "Kaboom");
     }
 
     private DialogApplicationService CreateSut()
+        => new DialogApplicationService(
+            new DialogFactory(),
+            new TestDialogDefinitionRepository(),
+            _conditionEvaluatorMock.Object,
+            _loggerMock.Object);
+
+    private void AssertLogging(string title, string? exceptionMessage)
     {
-        var factory = new DialogFactory();
-        var repository = new TestDialogDefinitionRepository();
-        return new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        if (exceptionMessage != null)
+        {
+            _loggerMock.Verify(logger => logger.Log(
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
+                    It.Is<EventId>(eventId => eventId.Id == 0),
+                    It.Is<It.IsAnyType>((@object, @type) => @object != null && @object.ToString() == title && @type != null && @type.Name == "FormattedLogValues"),
+                    It.Is<InvalidOperationException>(ex => ex.Message == exceptionMessage),
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+        }
+        else
+        {
+            _loggerMock.Verify(logger => logger.Log(
+                    It.Is<LogLevel>(logLevel => logLevel == LogLevel.Error),
+                    It.Is<EventId>(eventId => eventId.Id == 0),
+                    It.Is<It.IsAnyType>((@object, @type) => @object != null && @object.ToString() == title && @type != null && @type.Name == "FormattedLogValues"),
+                    null,
+                    It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+                Times.Once);
+        }
     }
 }

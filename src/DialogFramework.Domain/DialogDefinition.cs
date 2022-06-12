@@ -16,80 +16,64 @@ public partial record DialogDefinition : IValidatableObject
             .Concat(newPartResults);
     }
 
-    public bool CanResetPartResultsByPartId(IDialogPartIdentifier partId)
+    public Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+                                                                           IDialogPartIdentifier partId)
     {
-        if (!GetPartById(partId).SupportsReset())
+        var partByIdResult = GetPartById(partId);
+        if (!partByIdResult.IsSuccessful())
+        {
+            return Result<IEnumerable<IDialogPartResult>>.Error(partByIdResult.ErrorMessage!);
+        }
+        if (!partByIdResult.Value!.SupportsReset())
         {
             // Part does not support reset (probably a informational part like message, error, aborted or completed)
-            return false;
+            return Result<IEnumerable<IDialogPartResult>>.Error("The specified part cannot be reset");
         }
 
-        return true;
-    }
-
-    public IEnumerable<IDialogPartResult> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
-                                                                   IDialogPartIdentifier partId)
-    {
-        if (!CanResetPartResultsByPartId(partId))
-        {
-            throw new InvalidOperationException("Cannot reset part results");
-        }
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return existingPartResults.Where(x => !Equals(x.DialogPartId, partId));
+        return Result<IEnumerable<IDialogPartResult>>.Success(existingPartResults.Where(x => !Equals(x.DialogPartId, partId)));
     }
 
-    public bool CanNavigateTo(IDialogPartIdentifier currentPartId,
-                              IDialogPartIdentifier navigateToPartId,
-                              IEnumerable<IDialogPartResult> existingPartResults)
+    public Result CanNavigateTo(IDialogPartIdentifier currentPartId,
+                                IDialogPartIdentifier navigateToPartId,
+                                IEnumerable<IDialogPartResult> existingPartResults)
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
         if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId))))
         {
             // Part has not been visited yet
-            return false;
+            return Result.Error("Cannot navigate to the specified part");
         }
 
-        return true;
+        return Result.Success();
     }
 
-    public bool CanGetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
-    {
-        if (TryGetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, conditionEvaluator) == null)
-        {
-            // There is no first part
-            return false;
-        }
+    public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
+        => GetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, conditionEvaluator);
 
-        return true;
-    }
-
-    public IDialogPart GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
-    {
-        var firstPart = Parts.FirstOrDefault() ?? CompletedPart;
-
-        return GetDynamicResult(firstPart, dialog, conditionEvaluator);
-    }
-
-    public IDialogPart GetNextPart(IDialog dialog,
-                                   IConditionEvaluator conditionEvaluator,
-                                   IEnumerable<IDialogPartResult> providedResults)
+    public Result<IDialogPart> GetNextPart(IDialog dialog,
+                                           IConditionEvaluator conditionEvaluator,
+                                           IEnumerable<IDialogPartResult> providedResults)
     {
         // first perform validation
-        var currentPart = GetPartById(dialog.CurrentPartId);
-        var error = currentPart.Validate(dialog, this, providedResults);
-        if (error != null)
+        var currentPartResult = GetPartById(dialog.CurrentPartId);
+        if (!currentPartResult.IsSuccessful())
         {
-            return error;
+            return currentPartResult;
+        }
+        var partWithValidationErrors = currentPartResult.Value!.Validate(dialog, this, providedResults);
+        if (partWithValidationErrors != null)
+        {
+            return Result<IDialogPart>.Success(partWithValidationErrors);
         }
 
         // if validation succeeds, then get the next part
         var parts = Parts
             .Select((part, index) => new { Index = index, Part = part })
             .ToArray();
-        var currentPartWithIndex = parts
-            .FirstOrDefault(p => Equals(p.Part.Id, currentPart.Id));
+        var currentPartWithIndex = parts.FirstOrDefault(p => Equals(p.Part.Id, currentPartResult.Value!.Id));
         var nextPartWithIndex = parts
             .Where(p => currentPartWithIndex != null && p.Index > currentPartWithIndex.Index)
             .OrderBy(p => p.Index)
@@ -103,29 +87,40 @@ public partial record DialogDefinition : IValidatableObject
         return GetDynamicResult(nextPartWithIndex.Part, dialog, conditionEvaluator);
     }
 
-    public IDialogPart GetPartById(IDialogPartIdentifier id)
+    public Result<IDialogPart> GetPartById(IDialogPartIdentifier id)
     {
-        if (Equals(id, AbortedPart.Id)) return AbortedPart;
-        if (Equals(id, CompletedPart.Id)) return CompletedPart;
-        if (Equals(id, ErrorPart.Id)) return ErrorPart;
-        var part = Parts.FirstOrDefault(x => Equals(x.Id, id));
-        return part ?? throw new InvalidOperationException($"Dialog does not have a part with id [{id}]");
+        var part = this.GetAllParts().FirstOrDefault(x => Equals(x.Id, id));
+        if (part == null)
+        {
+            return Result<IDialogPart>.Error("Dialog does not have a part with id [{id}]");
+        }
+        return Result<IDialogPart>.Success(part);
     }
 
-    private IDialogPart GetDynamicResult(IDialogPart dialogPart,
-                                         IDialog dialog,
-                                         IConditionEvaluator conditionEvaluator)
+    private Result<IDialogPart> GetDynamicResult(IDialogPart dialogPart,
+                                                 IDialog dialog,
+                                                 IConditionEvaluator conditionEvaluator)
     {
         while (true)
         {
             if (dialogPart is IDecisionDialogPart decisionDialogPart)
             {
                 var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, conditionEvaluator);
-                dialogPart = GetPartById(nextPartId);
+                var partByIdResult = GetPartById(nextPartId);
+                if (!partByIdResult.IsSuccessful())
+                {
+                    return partByIdResult;
+                }
+                dialogPart = partByIdResult.Value!;
             }
             else if (dialogPart is INavigationDialogPart navigationDialogPart)
             {
-                dialogPart = GetPartById(navigationDialogPart.GetNextPartId(dialog));
+                var partByIdResult = GetPartById(navigationDialogPart.GetNextPartId(dialog));
+                if (!partByIdResult.IsSuccessful())
+                {
+                    return partByIdResult;
+                }
+                dialogPart = partByIdResult.Value!;
             }
             else
             {
@@ -133,51 +128,13 @@ public partial record DialogDefinition : IValidatableObject
             }
         }
 
-        return dialogPart;
-    }
-
-    private IDialogPart? TryGetDynamicResult(IDialogPart dialogPart,
-                                             IDialog dialog,
-                                             IConditionEvaluator conditionEvaluator)
-    {
-        IDialogPart? result = dialogPart;
-        while (true)
-        {
-            if (result is IDecisionDialogPart decisionDialogPart)
-            {
-                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, conditionEvaluator);
-                result = TryGetPartById(nextPartId);
-            }
-            else if (result is INavigationDialogPart navigationDialogPart)
-            {
-                result = TryGetPartById(navigationDialogPart.GetNextPartId(dialog));
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return result;
-    }
-
-    private IDialogPart? TryGetPartById(IDialogPartIdentifier id)
-    {
-        if (Equals(id, AbortedPart.Id)) return AbortedPart;
-        if (Equals(id, CompletedPart.Id)) return CompletedPart;
-        if (Equals(id, ErrorPart.Id)) return ErrorPart;
-        var parts = Parts.Where(x => Equals(x.Id, id)).ToArray();
-        if (parts.Length == 1)
-        {
-            return parts[0];
-        }
-        return null;
+        return Result<IDialogPart>.Success(dialogPart);
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        var duplicateIds = new[] { AbortedPart.Id, CompletedPart.Id, ErrorPart.Id }
-            .Concat(Parts.Select(x => x.Id))
+        var duplicateIds = this.GetAllParts()
+            .Select(x => x.Id)
             .GroupBy(x => x)
             .Where(x => x.Count() > 1)
             .Select(x => x.Key)
@@ -185,7 +142,7 @@ public partial record DialogDefinition : IValidatableObject
 
         if (duplicateIds.Any())
         {
-            yield return new ValidationResult($"DialogPart Ids should be unique. Non unique ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
+            yield return new ValidationResult($"Dialog part ids should be unique. Duplicate ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
         }
     }
 }
