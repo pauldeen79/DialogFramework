@@ -23,12 +23,12 @@ public class DialogApplicationService : IDialogApplicationService
         var dialogDefinitionResult = GetDialogDefinition(dialogDefinitionIdentifier);
         if (!dialogDefinitionResult.IsSuccessful())
         {
-            return Result<IDialog>.Error(dialogDefinitionResult.Status, dialogDefinitionResult.ErrorMessage!);
+            return Result<IDialog>.FromExistingResult(dialogDefinitionResult);
         }
         var dialogDefinition = dialogDefinitionResult.Value!;
         if (!_dialogFactory.CanCreate(dialogDefinition))
         {
-            return Result<IDialog>.Error(ResultStatus.Error, "Could not create dialog");
+            return Result<IDialog>.Error("Could not create dialog");
         }
         try
         {
@@ -39,7 +39,7 @@ public class DialogApplicationService : IDialogApplicationService
         {
             var msg = $"{nameof(Start)} failed";
             _logger.LogError(ex, msg);
-            return Result<IDialog>.Error(ResultStatus.Error, "Dialog creation failed");
+            return Result<IDialog>.Error("Dialog creation failed");
         }
     }
 
@@ -64,7 +64,7 @@ public class DialogApplicationService : IDialogApplicationService
                 var dialogDefinitionResult = GetDialogDefinition(dialog);
                 if (!dialogDefinitionResult.IsSuccessful())
                 {
-                    return Result<IDialog>.Error(dialogDefinitionResult.Status, dialogDefinitionResult.ErrorMessage!);
+                    return Result<IDialog>.FromExistingResult(dialogDefinitionResult);
                 }
                 dialogDefinition = dialogDefinitionResult.Value!;
             }
@@ -103,13 +103,13 @@ public class DialogApplicationService : IDialogApplicationService
         {
             var msg = $"{nameof(GetDialogDefinition)} failed";
             _logger.LogError(ex, msg);
-            return Result<IDialogDefinition>.Error(ResultStatus.Error, "Could not retrieve dialog definition");
+            return Result<IDialogDefinition>.Error("Could not retrieve dialog definition");
         }
         if (dialog == null)
         {
             var msg = $"Unknown dialog definition: Id [{dialogDefinitionIdentifier.Id}], Version [{dialogDefinitionIdentifier.Version}]";
             _logger.LogError(msg);
-            return Result<IDialogDefinition>.Error(ResultStatus.NotFound, msg);
+            return Result<IDialogDefinition>.NotFound(msg);
         }
         return Result<IDialogDefinition>.Success(dialog);
     }
