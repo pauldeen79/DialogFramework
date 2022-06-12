@@ -41,7 +41,7 @@ public partial record Dialog
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
         Results = new ReadOnlyValueCollection<IDialogPartResult>(dialogDefinition.ReplaceAnswers(Results, partResults));
-        ValidationErrors = new ValueCollection<IDialogValidationResult>(nextPart.GetValidationResults());
+        ValidationErrors = new ReadOnlyValueCollection<IDialogValidationResult>(nextPart.GetValidationResults());
         return Result.Success();
     }
 
