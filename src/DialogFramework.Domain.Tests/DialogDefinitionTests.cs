@@ -30,20 +30,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void ResetPartResultsByPartId_Returns_Error_On_Non_QuestionDialogPart()
-    {
-        // Arrange
-        var sut = DialogDefinitionFixture.CreateBuilder().Build();
-
-        // Act
-        var actual = sut.ResetPartResultsByPartId(Enumerable.Empty<IDialogPartResult>(), sut.CompletedPart.Id);
-
-        // Assert
-        actual.IsSuccessful().Should().BeFalse();
-    }
-
-    [Fact]
-    public void ResetPartResultsByPartId_Returns_Error_When_CanResetPartResultsByPartId_Is_False()
+    public void ResetPartResultsByPartId_Returns_Invalid_On_Non_QuestionDialogPart()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
@@ -53,6 +40,7 @@ public class DialogDefinitionTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
@@ -118,7 +106,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetFirstPart_Returns_Error_When_Dynamic_Part_Returns_An_Unknown_PartId()
+    public void GetFirstPart_Returns_NotFound_When_Dynamic_Part_Returns_An_Unknown_PartId()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase()
@@ -129,10 +117,11 @@ public class DialogDefinitionTests
         var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
+        var result = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
 
         // Assert
-        actual.IsSuccessful().Should().BeFalse();
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
     }
 
     [Fact]
@@ -360,7 +349,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetPartById_Returns_Error_When_Id_Is_Unknown_In_Dialog()
+    public void GetPartById_Returns_NotFound_When_Id_Is_Unknown_In_Dialog()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
@@ -370,6 +359,7 @@ public class DialogDefinitionTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
     }
 
     [Fact]

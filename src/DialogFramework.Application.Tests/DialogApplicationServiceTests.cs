@@ -170,7 +170,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Continue_Returns_Error_When_Dialog_Could_Not_Be_Found()
+    public void Continue_Returns_NotFound_When_Dialog_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -223,7 +223,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_CanStart_Is_False()
+    public void Start_Returns_ErrorDialogPart_When_CanStart_Is_False()
     {
         // Arrange
         var dialogMetadataMock = new Mock<IDialogMetadata>();
@@ -357,7 +357,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
+    public void Start_Returns_NotFound_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();

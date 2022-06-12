@@ -11,7 +11,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Abort_Returns_Error_When_CurrentPart_Is_AbortedPart()
+    public void Abort_Returns_Invalid_When_CurrentPart_Is_AbortedPart()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -22,10 +22,11 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
-    public void Abort_Returns_Error_When_CurrentState_Is_Not_InProgess()
+    public void Abort_Returns_Invalid_When_CurrentState_Is_Not_InProgess()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -36,6 +37,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
@@ -56,7 +58,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Continue_Returns_Error_When_CurrentState_Is_Not_InProgress()
+    public void Continue_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -67,6 +69,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
@@ -121,7 +124,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Error_Updates_State_Correctly()
+    public void Error_Updates_State_Correctly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -163,7 +166,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_CurrentState_Is_Not_Initial()
+    public void Start_Returns_Invalid_When_CurrentState_Is_Not_Initial()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -174,6 +177,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
@@ -193,6 +197,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
     }
 
     [Fact]
@@ -213,7 +218,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void NavigateTo_Returns_Error_When_CurrentState_Is_Not_InProgress()
+    public void NavigateTo_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -224,10 +229,11 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
-    public void NavigateTo_Returns_Error_When_Dialog_CanNavigateTo_Is_False()
+    public void NavigateTo_Returns_Invalid_When_Dialog_CanNavigateTo_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -238,6 +244,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
@@ -275,7 +282,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Error_When_CurrentState_Is_Not_InProgress()
+    public void ResetCurrentState_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -286,10 +293,11 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Error_When_Dialog_CanResetResultsByPartId_Is_False()
+    public void ResetCurrentState_Returns_Invalid_When_Dialog_CanResetResultsByPartId_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -300,6 +308,7 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
     }
 
     [Fact]
