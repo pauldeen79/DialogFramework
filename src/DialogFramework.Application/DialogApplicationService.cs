@@ -78,8 +78,8 @@ public class DialogApplicationService : IDialogApplicationService
                 // But as there is a requirement on the Dialog domain, we want to return a user-friendly message which is part of the dialog definition.
                 // That's why we have to return the error like this
                 var errors = result.ErrorMessage == null
-                    ? Array.Empty<Error>()
-                    : new[] { new Error(result.ErrorMessage!) };
+                    ? null
+                    : new Error(result.ErrorMessage);
                 dialog.Error(dialogDefinition, errors);
                 return Result<IDialog>.Success(dialog);
             }

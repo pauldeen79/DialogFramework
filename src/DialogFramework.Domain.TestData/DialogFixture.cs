@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Domain.TestData;
+﻿using DialogFramework.Domain.DialogPartResultValues.Builders;
+
+namespace DialogFramework.Domain.TestData;
 
 [ExcludeFromCodeCoverage]
 public static class DialogFixture
@@ -39,7 +41,7 @@ public static class DialogFixture
             currentPart,
             results,
             Enumerable.Empty<IDialogValidationResult>(),
-            Enumerable.Empty<IError>()
+            null
         );
 
     public static IDialog Create(string id,
@@ -54,7 +56,7 @@ public static class DialogFixture
             currentPart,
             results,
             validationErrors,
-            Enumerable.Empty<IError>()
+            null
         );
 
     public static IDialog Create(string id,
@@ -62,7 +64,7 @@ public static class DialogFixture
                                  IDialogPart currentPart,
                                  IEnumerable<IDialogPartResult> results,
                                  IEnumerable<IDialogValidationResult> validationErrors,
-                                 IEnumerable<IError> errors)
+                                 IError? error)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
@@ -73,11 +75,34 @@ public static class DialogFixture
             .WithCurrentState(currentPart.GetState())
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
             .AddValidationErrors(validationErrors.Select(x => new DialogValidationResultBuilder(x)))
-            .AddErrors(errors.Select(x => new ErrorBuilder(x)))
+            .WithErrorInformation(error == null ? null : new ErrorBuilder(error))
             .Build();
 
     public static IDialog Create(IDialog source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
         => new DialogBuilder(source)
             .AddResults(additionalAnswers.Select(x => new DialogPartResultBuilder(x)))
             .Build();
+
+    public static IDialog CreateErrorDialog(IDialogDefinition dialogDefinition, string id)
+        => Create
+        (
+            id,
+            dialogDefinition.Metadata,
+            dialogDefinition.Parts.First(),
+            new[]
+            {
+                new DialogPartResultBuilder()
+                    .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
+                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
+                    .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+                    .Build()
+            },
+            new[]
+            {
+                new DialogValidationResultBuilder()
+                    .WithErrorMessage("You fool! You provided the wrong input")
+                    .Build()
+            },
+            new ErrorBuilder().WithMessage("Kaboom").Build()
+        );
 }

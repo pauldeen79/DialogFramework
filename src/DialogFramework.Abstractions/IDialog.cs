@@ -9,7 +9,7 @@ public interface IDialog
     DialogState CurrentState { get; }
     IReadOnlyCollection<IDialogPartResult> Results { get; }
     IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
-    IReadOnlyCollection<IError> Errors { get; }
+    IError? ErrorInformation { get; }
 
     Result Start(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator);
 
@@ -19,7 +19,7 @@ public interface IDialog
 
     Result Abort(IDialogDefinition dialogDefinition);
 
-    Result Error(IDialogDefinition dialogDefinition, IEnumerable<IError> errors);
+    Result Error(IDialogDefinition dialogDefinition, IError? error);
 
     Result NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId);
 

@@ -128,30 +128,7 @@ public class DialogTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.Create
-        (
-            Id,
-            dialogDefinition.Metadata,
-            dialogDefinition.Parts.First(),
-            new[]
-            {
-                new DialogPartResultBuilder()
-                    .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
-                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
-                    .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
-                    .Build()
-            },
-            new[]
-            {
-                new DialogValidationResultBuilder()
-                    .WithErrorMessage("You fool! You provided the wrong input")
-                    .Build()
-            },
-            new[]
-            {
-                new ErrorBuilder().WithMessage("Kaboom").Build()
-            }
-        );
+        var sut = DialogFixture.CreateErrorDialog(dialogDefinition, Id);
 
         // Act
         sut.Error(dialogDefinition, new Error("Something went wrong"));
@@ -160,7 +137,8 @@ public class DialogTests
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.GetGroupId());
         sut.CurrentState.Should().Be(DialogState.ErrorOccured);
-        sut.Errors.Should().BeEquivalentTo(new[] { new Error("Something went wrong") });
+        sut.ErrorInformation.Should().NotBeNull();
+        sut.ErrorInformation!.Message.Should().Be("Something went wrong");
         sut.ValidationErrors.Should().BeEmpty(); // cleared
         sut.Results.Should().ContainSingle(); // not overwritten
     }

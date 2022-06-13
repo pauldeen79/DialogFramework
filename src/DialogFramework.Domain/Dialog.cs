@@ -45,13 +45,13 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result Error(IDialogDefinition dialogDefinition, IEnumerable<IError> errors)
+    public Result Error(IDialogDefinition dialogDefinition, IError? error)
     {
         CurrentPartId = dialogDefinition.ErrorPart.Id;
         CurrentGroupId = dialogDefinition.ErrorPart.GetGroupId();
         CurrentState = dialogDefinition.ErrorPart.GetState();
         ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
-        Errors = new ReadOnlyValueCollection<IError>(errors);
+        ErrorInformation = error;
         return Result.Success();
     }
 

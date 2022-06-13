@@ -32,7 +32,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -117,7 +118,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -252,7 +254,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(errorPartMock.Object.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Dialog definition cannot be started" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Dialog definition cannot be started");
     }
 
     [Fact]
@@ -487,7 +490,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Cannot navigate to the specified part");
     }
 
     [Fact]
@@ -508,7 +512,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -529,7 +534,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Cannot navigate to the specified part" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Cannot navigate to the specified part");
     }
 
     [Fact]
@@ -648,7 +654,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -667,7 +674,8 @@ public class DialogApplicationServiceTests
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -718,7 +726,8 @@ public class DialogApplicationServiceTests
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentGroupId.Should().BeNull();
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.Errors.Select(x => x.Message).Should().BeEquivalentTo(new[] { "Current state is invalid" });
+        result.Value!.ErrorInformation.Should().NotBeNull();
+        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]
