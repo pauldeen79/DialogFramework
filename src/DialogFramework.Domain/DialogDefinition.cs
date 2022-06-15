@@ -50,12 +50,10 @@ public partial record DialogDefinition : IValidatableObject
         return Result.Success();
     }
 
-    public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator conditionEvaluator)
-        => GetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, conditionEvaluator);
+    public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator)
+        => GetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, evaluator);
 
-    public Result<IDialogPart> GetNextPart(IDialog dialog,
-                                           IConditionEvaluator conditionEvaluator,
-                                           IEnumerable<IDialogPartResult> providedResults)
+    public Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResult> results)
     {
         // first perform validation
         var currentPartResult = GetPartById(dialog.CurrentPartId);
@@ -63,7 +61,7 @@ public partial record DialogDefinition : IValidatableObject
         {
             return currentPartResult;
         }
-        var validationResult = currentPartResult.Value!.Validate(dialog, this, providedResults);
+        var validationResult = currentPartResult.Value!.Validate(dialog, this, results);
         if (!validationResult.IsSuccessful())
         {
             return Result<IDialogPart>.FromExistingResult(validationResult);
@@ -81,10 +79,10 @@ public partial record DialogDefinition : IValidatableObject
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return GetDynamicResult(CompletedPart, dialog, conditionEvaluator);
+            return GetDynamicResult(CompletedPart, dialog, evaluator);
         }
 
-        return GetDynamicResult(nextPartWithIndex.Part, dialog, conditionEvaluator);
+        return GetDynamicResult(nextPartWithIndex.Part, dialog, evaluator);
     }
 
     public Result<IDialogPart> GetPartById(IDialogPartIdentifier id)
@@ -97,15 +95,13 @@ public partial record DialogDefinition : IValidatableObject
         return Result<IDialogPart>.Success(part);
     }
 
-    private Result<IDialogPart> GetDynamicResult(IDialogPart dialogPart,
-                                                 IDialog dialog,
-                                                 IConditionEvaluator conditionEvaluator)
+    private Result<IDialogPart> GetDynamicResult(IDialogPart dialogPart, IDialog dialog, IConditionEvaluator evaluator)
     {
         while (true)
         {
             if (dialogPart is IDecisionDialogPart decisionDialogPart)
             {
-                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, conditionEvaluator);
+                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, evaluator);
                 var partByIdResult = GetPartById(nextPartId);
                 if (!partByIdResult.IsSuccessful())
                 {
