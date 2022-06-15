@@ -188,7 +188,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetNextPart_Returns_Current_Part_With_ValidationErrors_When_Validation_Fails()
+    public void GetNextPart_Returns_Invalid_With_ValidationErrors_When_Validation_Fails()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
@@ -202,9 +202,10 @@ public class DialogDefinitionTests
         var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult } );
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Value!.Id.Should().BeEquivalentTo(sut.Parts.OfType<IQuestionDialogPart>().First().Id); //first part
-        result.Value!.GetValidationResults().Should().NotBeEmpty();
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Validation failed, see ValidationErrors for more details");
+        result.ValidationErrors.Should().ContainSingle();
     }
 
     [Fact]
@@ -223,7 +224,7 @@ public class DialogDefinitionTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Value!.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
-        result.Value!.GetValidationResults().Should().BeEmpty();
+        result.ValidationErrors.Should().BeEmpty();
     }
 
     [Fact]
@@ -245,7 +246,7 @@ public class DialogDefinitionTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Value!.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
-        result.Value!.GetValidationResults().Should().BeEmpty();
+        result.ValidationErrors.Should().BeEmpty();
     }
 
     [Fact]
@@ -267,7 +268,7 @@ public class DialogDefinitionTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Value!.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
-        result.Value!.GetValidationResults().Should().BeEmpty();
+        result.ValidationErrors.Should().BeEmpty();
     }
 
     [Fact]
@@ -289,7 +290,7 @@ public class DialogDefinitionTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Value!.Id.Should().BeEquivalentTo(sut.CompletedPart.Id);
-        result.Value!.GetValidationResults().Should().BeEmpty();
+        result.ValidationErrors.Should().BeEmpty();
     }
 
     [Fact]

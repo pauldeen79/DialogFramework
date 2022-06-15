@@ -2,28 +2,26 @@
 
 public partial record Dialog
 {
-    public Result Abort(IDialogDefinition dialogDefinition)
+    public Result Abort(IDialogDefinition definition)
     {
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
             return Result.Invalid("Current state is invalid");
         }
-        if (Equals(CurrentPartId, dialogDefinition.AbortedPart.Id))
+        if (Equals(CurrentPartId, definition.AbortedPart.Id))
         {
             // Already on the aborted part
             return Result.Invalid("Current part is the aborted part");
         }
 
-        CurrentPartId = dialogDefinition.AbortedPart.Id;
-        CurrentGroupId = dialogDefinition.AbortedPart.GetGroupId();
+        CurrentPartId = definition.AbortedPart.Id;
+        CurrentGroupId = definition.AbortedPart.GetGroupId();
         CurrentState = DialogState.Aborted;
         return Result.Success();
     }
 
-    public Result Continue(IDialogDefinition dialogDefinition,
-                           IEnumerable<IDialogPartResult> partResults,
-                           IConditionEvaluator conditionEvaluator)
+    public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResult> results, IConditionEvaluator evaluator)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -31,7 +29,7 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        var nextPartResult = dialogDefinition.GetNextPart(this, conditionEvaluator, partResults);
+        var nextPartResult = definition.GetNextPart(this, evaluator, results);
         if (!nextPartResult.IsSuccessful())
         {
             return nextPartResult;
@@ -40,22 +38,19 @@ public partial record Dialog
         CurrentPartId = nextPart.Id;
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
-        Results = new ReadOnlyValueCollection<IDialogPartResult>(dialogDefinition.ReplaceAnswers(Results, partResults));
-        ValidationErrors = new ReadOnlyValueCollection<IDialogValidationResult>(nextPart.GetValidationResults());
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results));
         return Result.Success();
     }
 
-    public Result Error(IDialogDefinition dialogDefinition, IError? error)
+    public Result Error(IDialogDefinition definition, IError? error)
     {
-        CurrentPartId = dialogDefinition.ErrorPart.Id;
-        CurrentGroupId = dialogDefinition.ErrorPart.GetGroupId();
-        CurrentState = dialogDefinition.ErrorPart.GetState();
-        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
-        ErrorInformation = error;
+        CurrentPartId = definition.ErrorPart.Id;
+        CurrentGroupId = definition.ErrorPart.GetGroupId();
+        CurrentState = definition.ErrorPart.GetState();
         return Result.Success();
     }
 
-    public Result Start(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator)
+    public Result Start(IDialogDefinition definition, IConditionEvaluator evaluator)
     {
         if (CurrentState != DialogState.Initial)
         {
@@ -63,13 +58,13 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        if (!dialogDefinition.Metadata.CanStart)
+        if (!definition.Metadata.CanStart)
         {
             // Dialog definition cannot be started (only exixting ones can be finished)
             return Result.Error("Dialog definition cannot be started");
         }
 
-        var firstPartResult = dialogDefinition.GetFirstPart(this, conditionEvaluator);
+        var firstPartResult = definition.GetFirstPart(this, evaluator);
         if (!firstPartResult.IsSuccessful())
         {
             return firstPartResult;
@@ -80,7 +75,7 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId)
+    public Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -88,14 +83,14 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        var canNavigateToResult = dialogDefinition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
+        var canNavigateToResult = definition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
         if(!canNavigateToResult.IsSuccessful())
         {
             // Not possible to navigate to the requested part
             return canNavigateToResult;
         }
 
-        var navigateToPartResult = dialogDefinition.GetPartById(navigateToPartId);
+        var navigateToPartResult = definition.GetPartById(navigateToPartId);
         if (!navigateToPartResult.IsSuccessful())
         {
             return navigateToPartResult;
@@ -104,11 +99,10 @@ public partial record Dialog
         CurrentPartId = navigateToPartId;
         CurrentGroupId = navigateToPart.GetGroupId();
         CurrentState = navigateToPart.GetState();
-        ValidationErrors = new ReadOnlyValueCollection<DialogValidationResult>();
         return Result.Success();
     }
 
-    public Result ResetCurrentState(IDialogDefinition dialogDefinition)
+    public Result ResetCurrentState(IDialogDefinition definition)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -116,13 +110,12 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        var canResetResult = dialogDefinition.ResetPartResultsByPartId(Results, CurrentPartId);
+        var canResetResult = definition.ResetPartResultsByPartId(Results, CurrentPartId);
         if (!canResetResult.IsSuccessful())
         {
             return canResetResult;
         }
         Results = new ReadOnlyValueCollection<IDialogPartResult>(canResetResult.Value!);
-        ValidationErrors = new ReadOnlyValueCollection<IDialogValidationResult>();
         return Result.Success();
     }
 }

@@ -229,7 +229,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue
+        var result = sut.Continue
         (
             dialog,
             new DialogPartResultBuilder()
@@ -242,13 +242,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
                 .Build()
-        ).Value!; // Current part remains ContactInfo because of validation errors
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result for [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] should be of type [Text], but type [Number] was answered",
             "Result for [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] should be of type [Text], but type [YesNo] was answered",
@@ -267,7 +267,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue
+        var result = sut.Continue
         (
             dialog,
             new DialogPartResultBuilder()
@@ -280,13 +280,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue((object?)null))
                 .Build()
-        ).Value!; // Current part remains ContactInfo because of validation errors
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
@@ -303,13 +303,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue(dialog).Value!; // Current part remains ContactInfo because of validation errors
+        var result = sut.Continue(dialog); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
@@ -328,7 +328,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue
+        var result = sut.Continue
         (
             dialog,
             new DialogPartResultBuilder()
@@ -341,13 +341,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
-        ).Value!; // Current part remains ContactInfo because of validation errors
+        ); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Result for [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] should be of type [Text], but type [Number] was answered",
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]"

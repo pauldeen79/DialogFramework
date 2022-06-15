@@ -63,10 +63,10 @@ public partial record DialogDefinition : IValidatableObject
         {
             return currentPartResult;
         }
-        var partWithValidationErrors = currentPartResult.Value!.Validate(dialog, this, providedResults);
-        if (partWithValidationErrors != null)
+        var validationResult = currentPartResult.Value!.Validate(dialog, this, providedResults);
+        if (!validationResult.IsSuccessful())
         {
-            return Result<IDialogPart>.Success(partWithValidationErrors);
+            return Result<IDialogPart>.FromExistingResult(validationResult);
         }
 
         // if validation succeeds, then get the next part

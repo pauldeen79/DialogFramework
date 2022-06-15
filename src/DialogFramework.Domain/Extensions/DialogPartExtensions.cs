@@ -2,13 +2,13 @@
 
 public static class DialogPartExtensions
 {
-    public static IDialogPart? Validate(this IDialogPart part,
-                                        IDialog dialog,
-                                        IDialogDefinition dialogDefinition,
-                                        IEnumerable<IDialogPartResult> providedAnswers)
+    public static Result Validate(this IDialogPart part,
+                                  IDialog dialog,
+                                  IDialogDefinition definition,
+                                  IEnumerable<IDialogPartResult> results)
         => part is IQuestionDialogPart questionDialogPart
-            ? questionDialogPart.Validate(dialog, dialogDefinition, providedAnswers)
-            : null;
+            ? questionDialogPart.Validate(dialog, definition, results)
+            : Result.Success();
 
     public static IDialogPartGroup? GetGroup(this IDialogPart part)
         => part is IGroupedDialogPart groupedDialogPart
@@ -17,7 +17,4 @@ public static class DialogPartExtensions
 
     public static IDialogPartGroupIdentifier? GetGroupId(this IDialogPart part)
         => part.GetGroup()?.Id;
-
-    public static IEnumerable<IDialogValidationResult> GetValidationResults(this IDialogPart part)
-        => (part as IQuestionDialogPart)?.ValidationErrors ?? Enumerable.Empty<IDialogValidationResult>();
 }

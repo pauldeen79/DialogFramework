@@ -89,12 +89,6 @@ public class DialogTests
                     .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
                     .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
                     .Build()
-            },
-            new[]
-            {
-                new DialogValidationResultBuilder()
-                    .WithErrorMessage("You fool! You provided the wrong input")
-                    .Build()
             }
         );
 
@@ -117,30 +111,9 @@ public class DialogTests
         sut.CurrentPartId.Should().Be(nextPart.Id);
         sut.CurrentGroupId.Should().Be(nextPart.GetGroupId());
         sut.CurrentState.Should().Be(nextPart.GetState());
-        sut.ValidationErrors.Should().BeEmpty(); //cleared
         //first result value (true) is replaced with second (false)
         sut.Results.Should().ContainSingle();
         sut.Results.Single().Value.Value.Should().BeEquivalentTo(false);
-    }
-
-    [Fact]
-    public void Error_Updates_State_Correctly_When_Validation_Succeeds()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = DialogFixture.CreateErrorDialog(dialogDefinition, Id);
-
-        // Act
-        sut.Error(dialogDefinition, new Error("Something went wrong"));
-
-        // Assert
-        sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.GetGroupId());
-        sut.CurrentState.Should().Be(DialogState.ErrorOccured);
-        sut.ErrorInformation.Should().NotBeNull();
-        sut.ErrorInformation!.Message.Should().Be("Something went wrong");
-        sut.ValidationErrors.Should().BeEmpty(); // cleared
-        sut.Results.Should().ContainSingle(); // not overwritten
     }
 
     [Fact]
@@ -241,10 +214,6 @@ public class DialogTests
                     .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id))
                     .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
                     .Build()
-            },
-            new[]
-            {
-                new DialogValidationResultBuilder().WithErrorMessage("Validation error").Build()
             }
         );
 
@@ -256,7 +225,6 @@ public class DialogTests
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetGroupId());
         sut.CurrentState.Should().Be(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetState());
-        sut.ValidationErrors.Should().BeEmpty();
     }
 
     [Fact]
@@ -296,8 +264,10 @@ public class DialogTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        dialog.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
+        dialog.Start(dialogDefinition, _conditionEvaluatorMock.Object);
+        dialog.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new YesNoDialogPartResultValue(true)) }, conditionEvaluatorMock.Object);
+        dialog.NavigateTo(dialogDefinition, questionPart.Id);
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
@@ -313,7 +283,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Success_And_Clears_ValidationErrors_When_Validation_Succeeds()
+    public void ResetCurrentState_Returns_Success_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -322,11 +292,7 @@ public class DialogTests
             Id,
             dialogDefinition.Metadata,
             dialogDefinition.Parts.OfType<IQuestionDialogPart>().First(),
-            Enumerable.Empty<IDialogPartResult>(),
-            new[]
-            {
-                new DialogValidationResultBuilder().WithErrorMessage("Validation error").Build()
-            }
+            Enumerable.Empty<IDialogPartResult>()
         );
 
         // Act
@@ -334,6 +300,5 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
-        sut.ValidationErrors.Should().BeEmpty();
     }
 }

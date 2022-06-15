@@ -10,6 +10,7 @@ public record Result<T> : Result where T: class
     public static new Result<T> NotFound(string? errorMessage) => new Result<T>(null, ResultStatus.NotFound, errorMessage, Enumerable.Empty<ValidationError>());
     public static new Result<T> Invalid(IEnumerable<ValidationError> validationErrors) => new Result<T>(null, ResultStatus.Invalid, null, validationErrors);
     public static new Result<T> Invalid(string? errorMessage) => new Result<T>(null, ResultStatus.Invalid, errorMessage, Enumerable.Empty<ValidationError>());
+    public static new Result<T> Invalid(string? errorMessage, IEnumerable<ValidationError> validationErrors) => new Result<T>(null, ResultStatus.Invalid, errorMessage, validationErrors);
     public static Result<T> FromExistingResult(Result existingResult) => new Result<T>(null, existingResult.Status, existingResult.ErrorMessage, existingResult.ValidationErrors);
 }
 
@@ -32,4 +33,5 @@ public record Result
     public static Result NotFound(string? errorMessage) => new Result(ResultStatus.NotFound, errorMessage, Enumerable.Empty<ValidationError>());
     public static Result Invalid(IEnumerable<ValidationError> validationErrors) => new Result(ResultStatus.Invalid, null, validationErrors);
     public static Result Invalid(string? errorMessage) => new Result(ResultStatus.Invalid, errorMessage, Enumerable.Empty<ValidationError>());
+    public static Result Invalid(string? errorMessage, IEnumerable<ValidationError> validationErrors) => new Result(ResultStatus.Invalid, errorMessage, validationErrors);
 }

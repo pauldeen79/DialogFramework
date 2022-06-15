@@ -16,7 +16,7 @@ public class DialogApplicationServiceTests
     private static string Id => Guid.NewGuid().ToString();
 
     [Fact]
-    public void Abort_Returns_ErrorDialogPart_When_Validation_Fails()
+    public void Abort_Returns_Invalid_When_Validation_Fails()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -28,12 +28,9 @@ public class DialogApplicationServiceTests
         var result = sut.Abort(dialog);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -96,7 +93,7 @@ public class DialogApplicationServiceTests
     [InlineData(DialogState.Aborted)]
     [InlineData(DialogState.Completed)]
     [InlineData(DialogState.ErrorOccured)]
-    public void Continue_Returns_ErrorDialogPart_On_Invalid_State(DialogState currentState)
+    public void Continue_Returns_Invalid_On_Invalid_State(DialogState currentState)
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -114,12 +111,9 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(dialog);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -147,7 +141,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Continue_Returns_Same_DialogPart_When_Current_State_Is_Question_And_Answer_Is_Not_Valid()
+    public void Continue_Returns_Invalid_When_Current_State_Is_Question_And_Answer_Is_Not_Valid()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -163,12 +157,10 @@ public class DialogApplicationServiceTests
         var result = sut.Continue(dialog, new[] { dialogPartResult });
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
-        result.Value!.CurrentGroupId.Should().BeEquivalentTo(currentPart.GetGroupId());
-        result.Value!.ValidationErrors.Should().ContainSingle();
-        result.Value!.ValidationErrors.Single().ErrorMessage.Should().Be("Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Validation failed, see ValidationErrors for more details");
+        result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[] { "Unknown Result Id: [DialogPartResultIdentifier { Value = Unknown result }]" });
     }
 
     [Fact]
@@ -225,7 +217,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Returns_ErrorDialogPart_When_CanStart_Is_False()
+    public void Start_Returns_Error_When_CanStart_Is_False()
     {
         // Arrange
         var dialogMetadataMock = new Mock<IDialogMetadata>();
@@ -250,12 +242,9 @@ public class DialogApplicationServiceTests
         var result = sut.Start(dialog.Metadata);
 
         // Act
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(errorPartMock.Object.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Dialog definition cannot be started");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
+        result.ErrorMessage.Should().Be("Dialog definition cannot be started");
     }
 
     [Fact]
@@ -473,7 +462,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void NavigateTo_Returns_ErrorDialogPart_When_Parts_Does_Not_Contain_Current_Part()
+    public void NavigateTo_Returns_Invalid_When_Parts_Does_Not_Contain_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -486,16 +475,13 @@ public class DialogApplicationServiceTests
         var result = sut.NavigateTo(dialog, completedPart.Id);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Cannot navigate to the specified part");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Cannot navigate to the specified part");
     }
 
     [Fact]
-    public void NavigateTo_Returns_ErrorDialogPart_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
+    public void NavigateTo_Returns_Invalid_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -508,16 +494,13 @@ public class DialogApplicationServiceTests
         var result = sut.NavigateTo(dialog, completedPart.Id);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
-    public void NavigateTo_Returns_ErrorDialogPart_When_Requested_Part_Is_After_Current_Part()
+    public void NavigateTo_Returns_Invalid_When_Requested_Part_Is_After_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -530,12 +513,9 @@ public class DialogApplicationServiceTests
         var result = sut.NavigateTo(dialog, questionPart.Id);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Cannot navigate to the specified part");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Cannot navigate to the specified part");
     }
 
     [Fact]
@@ -639,7 +619,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_ErrorDialogPart_When_CurrentState_Is_Not_InProgress()
+    public void ResetCurrentState_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -650,16 +630,13 @@ public class DialogApplicationServiceTests
         var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_ErrorDialogPart_When_Current_DialogPart_Is_Not_QuestionDialogPart()
+    public void ResetCurrentState_Returns_Invalid_When_Current_DialogPart_Is_Not_QuestionDialogPart()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -670,12 +647,9 @@ public class DialogApplicationServiceTests
         var result = sut.ResetCurrentState(dialog);
 
         // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -707,27 +681,6 @@ public class DialogApplicationServiceTests
         var dialogPartResults = result.Value!.Results;
         dialogPartResults.Should().ContainSingle();
         dialogPartResults.Single().DialogPartId.Value.Should().Be("Other part");
-    }
-
-    [Fact]
-    public void ResetCurrentState_Returns_ErrorDialogPart_When_CanResetCurrentState_Is_False()
-    {
-        // Arrange
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.AbortedPart);
-        var sut = CreateSut();
-
-        // Act
-        var result = sut.ResetCurrentState(dialog);
-
-        // Assert
-        result.IsSuccessful().Should().BeTrue();
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
-        result.Value!.CurrentGroupId.Should().BeNull();
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.ErrorPart.Id);
-        result.Value!.ErrorInformation.Should().NotBeNull();
-        result.Value!.ErrorInformation!.Message.Should().Be("Current state is invalid");
     }
 
     [Fact]

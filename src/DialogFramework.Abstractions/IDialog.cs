@@ -8,20 +8,11 @@ public interface IDialog
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
     IReadOnlyCollection<IDialogPartResult> Results { get; }
-    IReadOnlyCollection<IDialogValidationResult> ValidationErrors { get; }
-    IError? ErrorInformation { get; }
 
-    Result Start(IDialogDefinition dialogDefinition, IConditionEvaluator conditionEvaluator);
-
-    Result Continue(IDialogDefinition dialogDefinition,
-                    IEnumerable<IDialogPartResult> partResults,
-                    IConditionEvaluator conditionEvaluator);
-
-    Result Abort(IDialogDefinition dialogDefinition);
-
-    Result Error(IDialogDefinition dialogDefinition, IError? error);
-
-    Result NavigateTo(IDialogDefinition dialogDefinition, IDialogPartIdentifier navigateToPartId);
-
-    Result ResetCurrentState(IDialogDefinition dialogDefinition);
+    Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
+    Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResult> results, IConditionEvaluator evaluator);
+    Result Abort(IDialogDefinition definition);
+    Result Error(IDialogDefinition definition, IError? error);
+    Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId);
+    Result ResetCurrentState(IDialogDefinition definition);
 }

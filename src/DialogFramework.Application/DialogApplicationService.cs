@@ -72,16 +72,7 @@ public class DialogApplicationService : IDialogApplicationService
             var result = action.Invoke(dialogDefinition!);
             if (!result.IsSuccessful())
             {
-                // Here is a quirk that you might not expect.
-                // Normally, in Domain Driven Design, you would expect that we would simply return the error like this
-                ///return Result<IDialog>.FromExistingResult(result);
-                // But as there is a requirement on the Dialog domain, we want to return a user-friendly message which is part of the dialog definition.
-                // That's why we have to return the error like this
-                var errors = result.ErrorMessage == null
-                    ? null
-                    : new Error(result.ErrorMessage);
-                dialog.Error(dialogDefinition, errors);
-                return Result<IDialog>.Success(dialog);
+                return Result<IDialog>.FromExistingResult(result);
             }
             return Result<IDialog>.Success(dialog);
         }
