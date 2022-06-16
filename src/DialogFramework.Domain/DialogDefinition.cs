@@ -90,7 +90,7 @@ public partial record DialogDefinition : IValidatableObject
         var part = this.GetAllParts().FirstOrDefault(x => Equals(x.Id, id));
         if (part == null)
         {
-            return Result<IDialogPart>.NotFound("Dialog does not have a part with id [{id}]");
+            return Result<IDialogPart>.NotFound($"Dialog does not have a part with id [{id}]");
         }
         return Result<IDialogPart>.Success(part);
     }

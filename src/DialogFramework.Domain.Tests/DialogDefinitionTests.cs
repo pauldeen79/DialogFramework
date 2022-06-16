@@ -44,6 +44,21 @@ public class DialogDefinitionTests
     }
 
     [Fact]
+    public void ResetPartResultsByPartId_Returns_NotFound_On_NonExisting_DialogPart()
+    {
+        // Arrange
+        var sut = DialogDefinitionFixture.CreateBuilder().Build();
+
+        // Act
+        var result = sut.ResetPartResultsByPartId(Enumerable.Empty<IDialogPartResult>(), new DialogPartIdentifier("non existing id"));
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = non existing id }]");
+    }
+
+    [Fact]
     public void ResetPartResultsByPartId_Returns_Correct_Result_When_CanResetPartResultsByPartId_Is_True()
     {
         // Arrange
@@ -106,13 +121,13 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetFirstPart_Returns_NotFound_When_Dynamic_Part_Returns_An_Unknown_PartId()
+    public void GetFirstPart_Returns_NotFound_When_Decision_Part_Returns_An_Unknown_PartId()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase()
             .AddParts(new DecisionDialogPartBuilder()
                 .WithId(new DialogPartIdentifierBuilder())
-                .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Unknown")))
+                .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("non existing id")))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata);
 
@@ -122,6 +137,27 @@ public class DialogDefinitionTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = non existing id }]");
+    }
+
+    [Fact]
+    public void GetFirstPart_Returns_NotFound_When_Navigation_Part_Returns_An_Unknown_PartId()
+    {
+        // Arrange
+        var sut = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(new NavigationDialogPartBuilder()
+                .WithId(new DialogPartIdentifierBuilder())
+                .WithNavigateToId(new DialogPartIdentifierBuilder().WithValue("non existing id")))
+            .Build();
+        var dialog = DialogFixture.Create(sut.Metadata);
+
+        // Act
+        var result = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = non existing id }]");
     }
 
     [Fact]
@@ -206,6 +242,26 @@ public class DialogDefinitionTests
         result.Status.Should().Be(ResultStatus.Invalid);
         result.ErrorMessage.Should().Be("Validation failed, see ValidationErrors for more details");
         result.ValidationErrors.Should().ContainSingle();
+    }
+
+    [Fact]
+    public void GetNextPart_Returns_NotFound_When_CurrentPartId_Is_Unknown()
+    {
+        // Arrange
+        var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
+        var dialog = DialogFixture.Create(sut.Metadata, new DialogPartIdentifier("non existing id"));
+        var partResult = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult });
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = non existing id }]");
     }
 
     [Fact]
@@ -356,11 +412,12 @@ public class DialogDefinitionTests
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
 
         // Act
-        var result = sut.GetPartById(new DialogPartIdentifier("unknown"));
+        var result = sut.GetPartById(new DialogPartIdentifier("non existing id"));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = non existing id }]");
     }
 
     [Fact]
