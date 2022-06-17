@@ -136,7 +136,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_Metadata_CanStart_Is_False()
+    public void Start_Returns_Invalid_When_Metadata_CanStart_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture
@@ -152,7 +152,31 @@ public class DialogTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Dialog definition cannot be started");
+    }
+
+    [Fact]
+    public void Start_Returns_Error_When_First_Part_Is_Dynamic_And_Gives_Error()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture
+            .CreateBuilderBase()
+            .AddParts(new NavigationDialogPartBuilder()
+                .WithNavigateToId(new DialogPartIdentifierBuilder().WithValue("Non existing id"))
+                .WithId(new DialogPartIdentifierBuilder()))
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithId("Id"))
+            .Build();
+        var sut = DialogFixture.Create(dialogDefinition.Metadata);
+
+        // Act
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = Non existing id }]");
     }
 
     [Fact]

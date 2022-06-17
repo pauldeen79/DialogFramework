@@ -226,7 +226,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_CanStart_Is_False()
+    public void Start_Returns_Invalid_When_CanStart_Is_False()
     {
         // Arrange
         var dialogMetadataMock = new Mock<IDialogMetadata>();
@@ -252,7 +252,7 @@ public class DialogApplicationServiceTests
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
+        result.Status.Should().Be(ResultStatus.Invalid);
         result.ErrorMessage.Should().Be("Dialog definition cannot be started");
     }
 

@@ -62,13 +62,13 @@ public partial record Dialog
         if (!definition.Metadata.CanStart)
         {
             // Dialog definition cannot be started (only exixting ones can be finished)
-            return Result.Error("Dialog definition cannot be started");
+            return Result.Invalid("Dialog definition cannot be started");
         }
 
         var firstPartResult = definition.GetFirstPart(this, evaluator);
         if (!firstPartResult.IsSuccessful())
         {
-            return firstPartResult;
+            return Result.Error(firstPartResult.ErrorMessage);
         }
         CurrentPartId = firstPartResult.Value!.Id;
         CurrentGroupId = firstPartResult.Value!.GetGroupId();
