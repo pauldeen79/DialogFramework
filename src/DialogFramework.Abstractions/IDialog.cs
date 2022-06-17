@@ -12,7 +12,7 @@ public interface IDialog
     Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
     Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResult> results, IConditionEvaluator evaluator);
     Result Abort(IDialogDefinition definition);
-    Result Error(IDialogDefinition definition, IError? error);
+    Result Error(IDialogDefinition definition);
     Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId);
     Result ResetCurrentState(IDialogDefinition definition);
 }

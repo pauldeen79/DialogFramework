@@ -51,10 +51,10 @@ public class DialogApplicationService : IDialogApplicationService
         => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.Abort(dialogDefinition));
 
     public Result<IDialog> NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-        => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId));
+        => PerformAction(dialog, nameof(NavigateTo), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId));
 
     public Result<IDialog> ResetCurrentState(IDialog dialog)
-        => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.ResetCurrentState(dialogDefinition));
+        => PerformAction(dialog, nameof(ResetCurrentState), dialogDefinition => dialog.ResetCurrentState(dialogDefinition));
 
     private Result<IDialog> PerformAction(IDialog dialog, string operationName, Func<IDialogDefinition, Result> action, IDialogDefinition? dialogDefinition = null)
     {
@@ -80,12 +80,8 @@ public class DialogApplicationService : IDialogApplicationService
         {
             var msg = $"{operationName} failed";
             _logger.LogError(ex, msg);
-            if (dialogDefinition != null)
-            {
-                dialog.Error(dialogDefinition, new Error(msg));
-                return Result<IDialog>.Success(dialog);
-            }
-            throw;
+            dialog.Error(dialogDefinition!);
+            return Result<IDialog>.Success(dialog);
         }
     }
 

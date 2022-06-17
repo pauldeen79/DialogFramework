@@ -301,4 +301,21 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
     }
+
+    [Fact]
+    public void Error_Returns_Ok_And_Updates_State_Correctly()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
+
+        // Act
+        var result = sut.Error(dialogDefinition);
+
+        // Assert
+        result.Status.Should().Be(ResultStatus.Ok);
+        result.ErrorMessage.Should().BeNull();
+        result.IsSuccessful().Should().BeTrue();
+        sut.CurrentPartId.Should().Be(dialogDefinition.ErrorPart.Id);
+    }
 }

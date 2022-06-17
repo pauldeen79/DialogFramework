@@ -61,9 +61,11 @@ public class DialogApplicationServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Abort(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.Abort(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
@@ -80,9 +82,11 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Abort(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.Abort(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
@@ -171,9 +175,11 @@ public class DialogApplicationServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Continue(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.Continue(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
@@ -190,9 +196,11 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Continue(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.Continue(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
@@ -208,9 +216,11 @@ public class DialogApplicationServiceTests
         var repository = new TestDialogDefinitionRepository();
         var sut = new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
+        var result = sut.Start(dialogDefinition.Metadata);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not create dialog");
@@ -241,10 +251,34 @@ public class DialogApplicationServiceTests
         // Act
         var result = sut.Start(dialog.Metadata);
 
-        // Act
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Dialog definition cannot be started");
+    }
+
+    [Fact]
+    public void Start_Returns_Ok_And_Puts_Dialog_In_Errortate_When_Dialog_Start_Throws()
+    {
+        // Arrange
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateErrorThrowingDialogPartBuilder())
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+        var factory = new DialogFactoryFixture(_ => true, _ => dialog);
+        _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                       .Returns(definition);
+        var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+
+        // Act
+        var result = sut.Start(definition.Metadata);
+
+        // Assert
+        result.Status.Should().Be(ResultStatus.Ok);
+        result.IsSuccessful().Should().BeTrue();
+        result.ErrorMessage.Should().BeNull();
+        result.Value.Should().NotBeNull();
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(definition.ErrorPart.Id);
     }
 
     [Fact]
@@ -339,9 +373,11 @@ public class DialogApplicationServiceTests
                                                _ => throw new InvalidOperationException("Kaboom"));
         var repository = new TestDialogDefinitionRepository();
         var sut = new DialogApplicationService(factory, repository, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
+        var result = sut.Start(dialogDefinition.Metadata);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Dialog creation failed");
@@ -356,9 +392,11 @@ public class DialogApplicationServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
+        var result = sut.Start(dialogDefinition.Metadata);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
@@ -375,9 +413,11 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.Start(dialogDefinition.Metadata);
 
         // Act
+        var result = sut.Start(dialogDefinition.Metadata);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
@@ -590,9 +630,11 @@ public class DialogApplicationServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
 
         // Act
+        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
@@ -609,9 +651,11 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
 
         // Act
+        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");
@@ -691,9 +735,11 @@ public class DialogApplicationServiceTests
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
         var msg = "Unknown dialog definition: Id [DialogDefinitionFixture], Version [1.0.0]";
@@ -710,9 +756,11 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _repositoryMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _repositoryMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
 
         // Act
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
+
+        // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
         result.ErrorMessage.Should().Be("Could not retrieve dialog definition");

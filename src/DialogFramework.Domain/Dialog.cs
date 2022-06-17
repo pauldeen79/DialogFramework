@@ -42,7 +42,7 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result Error(IDialogDefinition definition, IError? error)
+    public Result Error(IDialogDefinition definition)
     {
         CurrentPartId = definition.ErrorPart.Id;
         CurrentGroupId = definition.ErrorPart.GetGroupId();
