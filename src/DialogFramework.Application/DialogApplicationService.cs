@@ -44,21 +44,25 @@ public class DialogApplicationService : IDialogApplicationService
 
     private Result<IDialog> PerformAction(IDialog dialog,
                                           string operationName,
+                                          Func<IDialogDefinition, Result> action)
+    {
+        var dialogDefinitionResult = GetDialogDefinition(dialog.CurrentDialogIdentifier);
+        if (!dialogDefinitionResult.IsSuccessful())
+        {
+            return Result<IDialog>.FromExistingResult(dialogDefinitionResult);
+        }
+        var definition = dialogDefinitionResult.Value!;
+        return PerformAction(dialog, operationName, action, definition);
+    }
+
+    private Result<IDialog> PerformAction(IDialog dialog,
+                                          string operationName,
                                           Func<IDialogDefinition, Result> action,
-                                          IDialogDefinition? definition = null)
+                                          IDialogDefinition definition)
     {
         try
         {
-            if (definition == null)
-            {
-                var dialogDefinitionResult = GetDialogDefinition(dialog.CurrentDialogIdentifier);
-                if (!dialogDefinitionResult.IsSuccessful())
-                {
-                    return Result<IDialog>.FromExistingResult(dialogDefinitionResult);
-                }
-                definition = dialogDefinitionResult.Value!;
-            }
-            var result = action.Invoke(definition!);
+            var result = action.Invoke(definition);
             if (!result.IsSuccessful())
             {
                 return Result<IDialog>.FromExistingResult(result);
