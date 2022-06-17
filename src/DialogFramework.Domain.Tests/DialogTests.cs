@@ -228,6 +228,26 @@ public class DialogTests
     }
 
     [Fact]
+    public void NavigateTo_Returns_NotFound_When_Requested_Part_Does_Not_Exist_On_Dialog()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var partIdBuilder = new DialogPartIdentifierBuilder().WithValue("NonExisting");
+        var partResult = new DialogPartResultBuilder()
+            .WithDialogPartId(partIdBuilder)
+            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Something"))
+            .Build();
+        var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First(), new[] { partResult });
+
+        // Act
+        var result = sut.NavigateTo(dialogDefinition, partIdBuilder.Build());
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+    }
+
+    [Fact]
     public void NavigateTo_Returns_Success_And_Updates_State_Correctly_When_Validation_Succeeds()
     {
         // Arrange
