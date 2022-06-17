@@ -23,6 +23,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Dialog has already been aborted");
     }
 
     [Fact]
@@ -38,6 +39,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -70,6 +72,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -129,6 +132,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -181,6 +185,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]
@@ -240,6 +245,7 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
+        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]

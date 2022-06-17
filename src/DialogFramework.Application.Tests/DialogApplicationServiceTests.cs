@@ -30,7 +30,6 @@ public class DialogApplicationServiceTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
-        result.ErrorMessage.Should().Be("Current state is invalid");
     }
 
     [Fact]

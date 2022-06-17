@@ -4,15 +4,16 @@ public partial record Dialog
 {
     public Result Abort(IDialogDefinition definition)
     {
+        if (Equals(CurrentPartId, definition.AbortedPart.Id))
+        {
+            // Already on the aborted part
+            return Result.Invalid("Dialog has already been aborted");
+        }
+
         if (CurrentState != DialogState.InProgress)
         {
             // Wrong state
             return Result.Invalid("Current state is invalid");
-        }
-        if (Equals(CurrentPartId, definition.AbortedPart.Id))
-        {
-            // Already on the aborted part
-            return Result.Invalid("Current part is the aborted part");
         }
 
         CurrentPartId = definition.AbortedPart.Id;
