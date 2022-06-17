@@ -22,7 +22,7 @@ public class TestFlowTests
         dialog.CurrentPartId.Value.Should().Be("Age");
         var result = sut.Continue(dialog); // How old are you -> empty answer -> validation error
         result.IsSuccessful().Should().BeFalse();
-        result.Status.Should().Be(Abstractions.Results.ResultStatus.Invalid);
+        result.Status.Should().Be(ResultStatus.Invalid);
         dialog.CurrentPartId.Value.Should().Be("Age");
         dialog = sut.Continue(dialog, new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))

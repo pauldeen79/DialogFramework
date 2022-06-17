@@ -1,8 +1,8 @@
 ﻿global using System.ComponentModel.DataAnnotations;
 global using CrossCutting.Common.Extensions;
+global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DialogParts;
-global using DialogFramework.Abstractions.Results;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.DialogPartResultDefinitions;
 global using DialogFramework.Domain.DialogPartResultDefinitionValidators;
