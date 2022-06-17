@@ -20,33 +20,33 @@ using var provider = new ServiceCollection()
     .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
     .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
-var dialogDefinition = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
-var service = provider.GetRequiredService<IDialogApplicationService>();
+var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+var service = _provider.GetRequiredService<IDialogApplicationService>();
 
-var dialog = service.Start(dialogDefinition.Metadata);
-dialog = service.Continue
+var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
+dialog = sut.Continue
 (
     dialog,
     new DialogPartResultBuilder()
-        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))
         .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("email@address.com"))
         .Build(),
     new DialogPartResultBuilder()
-        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))
         .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
         .Build()
-); // ContactInfo -> Newsletter
-dialog = service.Continue
+).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+dialog = sut.Continue
 (
     dialog,
     new DialogPartResultBuilder()
-        .WithDialogPartId(new DialogPartIdentifierBuilder(context.CurrentPartId))
+        .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))
         .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
         .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
         .Build()
-); // Newsletter -> Completed
+).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 ```
 
 See unit tests for more examples.
@@ -74,3 +74,4 @@ The solution consists of the following projects:
 # TODOs
 
 - Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
+- Create a minimal web api as a demo project, using some sort of state store (local in-memory cache?) for persisting state.

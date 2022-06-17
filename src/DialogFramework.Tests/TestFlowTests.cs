@@ -16,9 +16,9 @@ public class TestFlowTests
         var sut = provider.GetRequiredService<IDialogApplicationService>();
 
         // Act & Assert
-        var dialog = sut.Start(dialogDefinition.Metadata).Value!; // empty -> Welcome
+        var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed"); // empty -> Welcome
         dialog.CurrentPartId.Value.Should().Be("Welcome");
-        dialog = sut.Continue(dialog).Value!; // Welcome -> How old are you?
+        dialog = sut.Continue(dialog).GetValueOrThrow("Welcome failed"); // Welcome -> How old are you?
         dialog.CurrentPartId.Value.Should().Be("Age");
         var result = sut.Continue(dialog); // How old are you -> empty answer -> validation error
         result.IsSuccessful().Should().BeFalse();
@@ -27,13 +27,13 @@ public class TestFlowTests
         dialog = sut.Continue(dialog, new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("10-19"))
-            .Build()).Value!; // How old are you -> 10-19 -> decision -> sports types
+            .Build()).GetValueOrThrow("How old are you failed"); // How old are you -> 10-19 -> decision -> sports types
         dialog.CurrentPartId.Value.Should().Be("SportsTypes");
-        dialog = sut.Continue(dialog).Value!; // Sports types -> empty answer -> unhealthy
+        dialog = sut.Continue(dialog).GetValueOrThrow("Sports types failed"); // Sports types -> empty answer -> unhealthy
         dialog.CurrentPartId.Value.Should().Be("Unhealthy");
-        dialog = sut.Continue(dialog).Value!; // Unhealthy -> e-mail address
+        dialog = sut.Continue(dialog).GetValueOrThrow("Unhealthy failed"); // Unhealthy -> e-mail address
         dialog.CurrentPartId.Value.Should().Be("Email");
-        dialog = sut.Continue(dialog).Value!; // E-mail address -> empty answer -> completed
+        dialog = sut.Continue(dialog).GetValueOrThrow("E-mail address failed"); // E-mail address -> empty answer -> completed
         dialog.CurrentPartId.Value.Should().Be("Completed");
     }
 }

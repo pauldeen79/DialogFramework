@@ -23,7 +23,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
-        var dialog = sut.Start(dialogDefinition.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         dialog = sut.Continue
         (
@@ -38,7 +38,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
-        ).Value!; // ContactInfo -> Newsletter
+        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
         dialog = sut.Continue
         (
             dialog,
@@ -47,7 +47,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
                 .Build()
-        ).Value!; // Newsletter -> Completed
+        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
@@ -84,7 +84,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
-        var dialog = sut.Start(dialogDefinition.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         dialog = sut.Continue
         (
@@ -99,8 +99,8 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
-        ).Value!; // ContactInfo -> Newsletter
-        dialog = sut.NavigateTo(dialog, new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Value!; // navigate back: Completed -> ContactInfo
+        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+        dialog = sut.NavigateTo(dialog, new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow("Navigate back to ContactInfo failed"); // navigate back: Completed -> ContactInfo
         dialog = sut.Continue
         (
             dialog,
@@ -114,7 +114,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
-        ).Value!; // ContactInfo -> Newsletter
+        ).GetValueOrThrow("ContactInfo second time failed"); // ContactInfo -> Newsletter
         dialog = sut.Continue
         (
             dialog,
@@ -123,7 +123,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
                 .Build()
-        ).Value!; // Newsletter -> Completed
+        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
@@ -160,7 +160,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act step 1: Start a session, submit first question
-        var dialog1 = sut.Start(dialogDefinition.Metadata).Value!;
+        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
         dialog1.CurrentPartId.Value.Should().Be("ContactInfo");
         dialog1 = sut.Continue
         (
@@ -175,7 +175,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
                 .Build()
-        ).Value!; // ContactInfo -> Newsletter
+        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
 
         // Serialize
         var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1));
@@ -190,7 +190,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
                 .Build()
-        ).Value!; // Newsletter -> Completed
+        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -227,7 +227,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         var result = sut.Continue
         (
@@ -265,7 +265,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         var result = sut.Continue
         (
@@ -301,7 +301,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         var result = sut.Continue(dialog); // Current part remains ContactInfo because of validation errors
 
@@ -326,7 +326,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = new DialogApplicationService(factory, repository, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
 
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).Value!;
+        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         var result = sut.Continue
         (
