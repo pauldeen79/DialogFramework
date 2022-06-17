@@ -43,11 +43,12 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result Error(IDialogDefinition definition)
+    public Result Error(IDialogDefinition definition, IError? error)
     {
         CurrentPartId = definition.ErrorPart.Id;
         CurrentGroupId = definition.ErrorPart.GetGroupId();
         CurrentState = definition.ErrorPart.GetState();
+        ErrorMessage = error?.Message;
         return Result.Success();
     }
 

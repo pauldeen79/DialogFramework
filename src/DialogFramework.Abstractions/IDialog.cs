@@ -8,11 +8,12 @@ public interface IDialog
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
     IReadOnlyCollection<IDialogPartResult> Results { get; }
+    string? ErrorMessage { get; }
 
     Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
     Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResult> results, IConditionEvaluator evaluator);
     Result Abort(IDialogDefinition definition);
-    Result Error(IDialogDefinition definition);
+    Result Error(IDialogDefinition definition, IError? error);
     Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId);
     Result ResetCurrentState(IDialogDefinition definition);
 }

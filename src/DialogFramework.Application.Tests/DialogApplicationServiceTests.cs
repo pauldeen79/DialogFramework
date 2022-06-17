@@ -53,7 +53,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Abort_Returns_ErrorMessage_When_Dialog_Could_Not_Be_Found()
+    public void Abort_Returns_NotFound_When_Dialog_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -73,7 +73,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Abort_Returns_ErrorMessage_When_Dialog_Retrieval_Throws()
+    public void Abort_Returns_Error_When_Dialog_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -257,7 +257,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Returns_Ok_And_Puts_Dialog_In_Errortate_When_Dialog_Start_Throws()
+    public void Start_Returns_Ok_And_Puts_Dialog_In_ErrorState_When_Dialog_Start_Throws()
     {
         // Arrange
         var definition = DialogDefinitionFixture.CreateBuilderBase()
@@ -278,6 +278,7 @@ public class DialogApplicationServiceTests
         result.ErrorMessage.Should().BeNull();
         result.Value.Should().NotBeNull();
         result.Value!.CurrentPartId.Should().BeEquivalentTo(definition.ErrorPart.Id);
+        result.Value!.ErrorMessage.Should().Be("Start failed");
     }
 
     [Fact]
@@ -466,6 +467,7 @@ public class DialogApplicationServiceTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Status.Should().Be(ResultStatus.Ok);
+        result.Value.Should().NotBeNull();
         result.Value!.CurrentState.Should().Be(DialogState.ErrorOccured);
         result.Value!.CurrentPartId.Value.Should().Be("Error");
     }

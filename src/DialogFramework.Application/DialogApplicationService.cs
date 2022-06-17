@@ -80,7 +80,7 @@ public class DialogApplicationService : IDialogApplicationService
         {
             var msg = $"{operationName} failed";
             _logger.LogError(ex, msg);
-            dialog.Error(dialogDefinition!);
+            dialog.Error(dialogDefinition!, new Error(msg));
             return Result<IDialog>.Success(dialog);
         }
     }

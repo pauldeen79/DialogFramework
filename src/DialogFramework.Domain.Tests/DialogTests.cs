@@ -360,12 +360,13 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
 
         // Act
-        var result = sut.Error(dialogDefinition);
+        var result = sut.Error(dialogDefinition, new Error("message"));
 
         // Assert
         result.Status.Should().Be(ResultStatus.Ok);
         result.ErrorMessage.Should().BeNull();
         result.IsSuccessful().Should().BeTrue();
         sut.CurrentPartId.Should().Be(dialogDefinition.ErrorPart.Id);
+        sut.ErrorMessage.Should().Be("message");
     }
 }
