@@ -12,9 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0B20E9B-055B-4D2A-B04A-3156ECB19017}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		ExampleContext.json = ExampleContext.json
-		ExampleDialog.json = ExampleDialog.json
 		README.md = README.md
+		ExampleDialog.json = ExampleDialog.json
+		ExampleDialogDefinition.json = ExampleDialogDefinition.json
 		TestFlow.png = TestFlow.png
 		TestFlow.svg = TestFlow.svg
 		TestFlow.txt = TestFlow.txt

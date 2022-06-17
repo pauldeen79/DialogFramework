@@ -9,18 +9,18 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var result = new DialogPartResultBuilder()
+        var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
-        var results = new[] { result };
+        var results = new[] { partResult };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("All 2 answers are required");
+        result.Should().ContainSingle();
+        result.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]
@@ -30,17 +30,17 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var result = new DialogPartResultBuilder()
+        var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder())
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
-        var results = new[] { result };
+        var results = new[] { partResult };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
+        result.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
             "Provided answer from wrong question",
             "All 2 answers are required"
@@ -53,19 +53,19 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var result = new DialogPartResultBuilder()
+        var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
             .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
             .Build();
-        var results = new[] { result };
+        var results = new[] { partResult };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("All 2 answers are required");
+        result.Should().ContainSingle();
+        result.Single().ErrorMessage.Should().Be("All 2 answers are required");
     }
 
     [Fact]
@@ -82,9 +82,9 @@ public class AllRequiredQuestionDialogPartTests
         };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Should().BeEmpty();
+        result.Should().BeEmpty();
     }
 }

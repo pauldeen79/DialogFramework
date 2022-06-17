@@ -9,19 +9,19 @@ public class SingleRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var result = new DialogPartResultBuilder()
+        var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .WithValue(new DialogPartResultValueBuilder())
             .Build();
-        var results = new[] { result };
+        var results = new[] { partResult };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("Answer is required");
+        result.Should().ContainSingle();
+        result.Single().ErrorMessage.Should().Be("Answer is required");
     }
 
     [Fact]
@@ -31,18 +31,18 @@ public class SingleRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var result = new DialogPartResultBuilder()
+        var partResult = new DialogPartResultBuilder()
             .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
             .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
             .Build();
-        var results = new[] { result };
+        var results = new[] { partResult };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialogDefinition, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
 
         // Assert
-        actual.Should().BeEmpty();
+        result.Should().BeEmpty();
     }
 
     [Fact]
@@ -59,10 +59,10 @@ public class SingleRequiredQuestionDialogPartTests
         };
 
         // Act
-        var actual = QuestionDialogPartFixture.Validate(sut, dialog, dialDefinitionog, results).ValidationErrors;
+        var result = sut.Validate(dialog, dialDefinitionog, results).ValidationErrors;
 
         // Assert
-        actual.Should().ContainSingle();
-        actual.Single().ErrorMessage.Should().Be("Only one answer is allowed");
+        result.Should().ContainSingle();
+        result.Single().ErrorMessage.Should().Be("Only one answer is allowed");
     }
 }

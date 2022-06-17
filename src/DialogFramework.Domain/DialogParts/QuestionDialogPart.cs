@@ -2,20 +2,18 @@
 
 public partial record QuestionDialogPart : IValidatableObject
 {
-    public IDialogPart? Validate(IDialog dialog,
-                                 IDialogDefinition dialogDefinition,
-                                 IEnumerable<IDialogPartResult> dialogPartResults)
+    public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResult> results)
     {
-        var errors = new List<IDialogValidationResult>(HandleValidate(dialog, dialogDefinition, dialogPartResults));
+        var errors = new List<IDialogValidationResult>(HandleValidate(dialog, definition, results));
 
         foreach (var validator in Validators)
         {
-            errors.AddRange(validator.Validate(dialog, dialogDefinition, dialogPartResults));
+            errors.AddRange(validator.Validate(dialog, definition, results));
         }
 
         return errors.Count > 0
-            ? new QuestionDialogPart(Title, Results, Validators, errors, Group, Heading, Id)
-            : null;
+            ? Result.Invalid("Validation failed, see ValidationErrors for more details", errors.Select(x => new ValidationError(x.ErrorMessage, x.DialogPartResultIds.Select(y => y.Value))))
+            : Result.Success();
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -36,11 +34,11 @@ public partial record QuestionDialogPart : IValidatableObject
 
     public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
 
-    protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
-                                                                          IDialogDefinition dialogDefinition,
-                                                                          IEnumerable<IDialogPartResult> dialogPartResults)
+    public bool SupportsReset() => true;
+
+    protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResult> results)
     {
-        foreach (var dialogPartResult in dialogPartResults)
+        foreach (var dialogPartResult in results)
         {
             if (!Equals(dialogPartResult.DialogPartId, Id))
             {
@@ -51,12 +49,12 @@ public partial record QuestionDialogPart : IValidatableObject
             {
                 continue;
             }
-            var results = Results.Where(x => Equals(x.Id, dialogPartResult.ResultId)).ToArray();
-            if (results.Length == 0)
+            var currentPartResults = Results.Where(x => Equals(x.Id, dialogPartResult.ResultId)).ToArray();
+            if (currentPartResults.Length == 0)
             {
                 yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
             }
-            var errors = from dialogPartResultDefinition in results
+            var errors = from dialogPartResultDefinition in currentPartResults
                 let resultValueType = dialogPartResultDefinition.ValueType
                 where dialogPartResult.Value.ResultValueType != resultValueType
                 select new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
@@ -68,10 +66,10 @@ public partial record QuestionDialogPart : IValidatableObject
 
         foreach (var dialogPartResultDefinition in Results)
         {
-            var dialogPartResultsByPart = dialogPartResults
+            var dialogPartResultsByPart = results
                 .Where(x => Equals(x.DialogPartId, Id) && Equals(x.ResultId, dialogPartResultDefinition.Id))
                 .ToArray();
-            var errors = dialogPartResultDefinition.Validate(dialog, dialogDefinition, this, dialogPartResultsByPart)
+            var errors = dialogPartResultDefinition.Validate(dialog, definition, this, dialogPartResultsByPart)
                                                    .Where(x => !string.IsNullOrEmpty(x.ErrorMessage));
             foreach (var error in errors)
             {

@@ -2,11 +2,14 @@
 Framework for creating dialogs (conversations) between a target system and an actor (user or system)
 
 # Usage
-The entry point for this framework is the DialogService. You need to have a DialogDefinition instance, and call the Start method on the DialogService with this Dialog instance as argument. This will return a DialogContext. Then, you have to call Continue on the DialogService until the state of the Dialog is Completed. (which is whenever there is no next part, so the Completed part will be returned)
+The entry point for this framework is the DialogApplicationService.
+You need to have a DialogDefinition instance, and call the Start method on the DialogService with this Dialog instance as argument. 
+This will return a Dialog. Then, you have to call Continue on the DialogApplicationService until the state of the Dialog is Completed. (which is whenever there is no next part, so the Completed part will be returned)
 
-Besides the Continue method, you also have Abort method on the DialogService to abort the dialog, or the NavigateTo method to navigate to another dialog part.
+Besides the Continue method, you also have Abort method on the DialogApplicationService to abort the dialog, or the NavigateTo method to navigate to another dialog part.
 
-Each method on the DialogService has a second method to check whether the method can be called in the current state. These methods begin with 'Can', for example CanStart and CanContinue.
+Each method on the DialogApplicationService has a second method to check whether the method can be called in the current state.
+These methods begin with 'Can', for example CanStart and CanContinue.
 
 # Example
 Here is some example C# code, which starts and finishes a two-step dialog:
@@ -18,10 +21,10 @@ using var provider = new ServiceCollection()
     .AddSingleton<ILogger, TestLogger>()
     .BuildServiceProvider();
 var dialogDefinition = provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogIdentifier("SimpleFormFlowDialog", "1.0.0"))!;
-var sut = provider.GetRequiredService<IDialogService>();
+var service = provider.GetRequiredService<IDialogApplicationService>();
 
-var dialog = sut.Start(dialogDefinition.Metadata);
-dialog = sut.Continue
+var dialog = service.Start(dialogDefinition.Metadata);
+dialog = service.Continue
 (
     dialog,
     new DialogPartResultBuilder()
@@ -35,7 +38,7 @@ dialog = sut.Continue
         .WithValue(new TextDialogPartResultValueBuilder().WithValue("911"))
         .Build()
 ); // ContactInfo -> Newsletter
-dialog = sut.Continue
+dialog = service.Continue
 (
     dialog,
     new DialogPartResultBuilder()
@@ -50,10 +53,12 @@ See unit tests for more examples.
 
 # Getting local environment up and running
 
-To build the solution on your development machine, you first need to build and run the CodeGeneration project. This is because I have decided not to commit generated code to the Git repository.
+To build the solution on your development machine, you first need to build and run the CodeGeneration project.
+This is because I have decided not to commit generated code to the Git repository.
 
 To do this, simply set the CodeGeneration project as start up project in Visual Studio, and hit F5.
 Or, alternatively, use dotnet from the command line to build and run it.
+Be sure to run it from the root directory, where the solution file resides.
 e.g.
 dotnet build src/CodeGeneration/CodeGeneration.csproj
 dotnet src/CodeGeneration/bin/Debug/net6.0/CodeGeneration.dll
@@ -63,10 +68,9 @@ dotnet src/CodeGeneration/bin/Debug/net6.0/CodeGeneration.dll
 The solution consists of the following projects:
 - DialogFramework.Abstractions: Interfaces used in code generation
 - CodeGeneration: Code generation for domain entity models and builders
-- DialogFramework.Domain: Domain entity models and builders
+- DialogFramework.Domain: Domain entities and builders
 - DialogFramework.Application: Application logic
 
 # TODOs
 
-- Refactor Service into separate request handlers, and implement Mediatr.
 - Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).

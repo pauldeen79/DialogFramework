@@ -20,14 +20,4 @@ public static class QuestionDialogPartFixture
                     .WithTitle("Second")
                     .WithValueType(ResultValueType.YesNo)
             );
-
-    public static IQuestionDialogPart Validate(IDialogPart instance,
-                                               IDialog dialog,
-                                               IDialogDefinition dialogDefinition,
-                                               IEnumerable<IDialogPartResult> providedAnswers)
-        => instance.Validate(dialog, dialogDefinition, providedAnswers) as IQuestionDialogPart
-            ?? new QuestionDialogPartBuilder()
-                .WithId(new DialogPartIdentifierBuilder())
-                .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-                .Build();
 }
