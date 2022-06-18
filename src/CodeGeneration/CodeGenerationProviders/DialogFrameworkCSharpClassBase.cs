@@ -55,6 +55,12 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         interfaceBuilder.AddProperties(GetAdditionalProperties(interfaceBuilder.Name));
     }
 
+    protected override void FixImmutableClassProperties(ClassBuilder classBuilder)
+        => FixImmutableBuilderProperties(classBuilder);
+
+    protected override void FixImmutableClassProperties(InterfaceBuilder interfaceBuilder)
+        => FixImmutableBuilderProperties(interfaceBuilder);
+
     private static void FixProperty(ClassPropertyBuilder property)
     {
         FixTypeName(property);
