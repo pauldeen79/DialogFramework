@@ -28,6 +28,6 @@ public static class DialogPartFixture
 
         public DialogState GetState() => DialogState.InProgress;
 
-        public bool SupportsReset() => false;
+        public bool SupportsReset => false;
     }
 }

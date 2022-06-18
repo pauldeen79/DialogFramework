@@ -24,7 +24,7 @@ public partial record DialogDefinition : IValidatableObject
         {
             return Result<IEnumerable<IDialogPartResult>>.FromExistingResult(partByIdResult);
         }
-        if (!partByIdResult.Value!.SupportsReset())
+        if (!partByIdResult.Value!.SupportsReset)
         {
             // Part does not support reset (probably a informational part like message, error, aborted or completed)
             return Result<IEnumerable<IDialogPartResult>>.Invalid("The specified part cannot be reset");
