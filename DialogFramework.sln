@@ -12,9 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0B20E9B-055B-4D2A-B04A-3156ECB19017}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		README.md = README.md
 		ExampleDialog.json = ExampleDialog.json
 		ExampleDialogDefinition.json = ExampleDialogDefinition.json
+		README.md = README.md
 		TestFlow.png = TestFlow.png
 		TestFlow.svg = TestFlow.svg
 		TestFlow.txt = TestFlow.txt
@@ -33,6 +33,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.TestData", "src\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj", "{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application.TestData", "src\DialogFramework.Application.TestData\DialogFramework.Application.TestData.csproj", "{0BE430A1-F4FB-404B-A643-519F41951F46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogFramework.SpecFlow.Tests", "src\DialogFramework.SpecFlow.Tests\DialogFramework.SpecFlow.Tests.csproj", "{D3536861-48A8-49FD-9615-DA6625911B10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{0BE430A1-F4FB-404B-A643-519F41951F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BE430A1-F4FB-404B-A643-519F41951F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BE430A1-F4FB-404B-A643-519F41951F46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3536861-48A8-49FD-9615-DA6625911B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3536861-48A8-49FD-9615-DA6625911B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3536861-48A8-49FD-9615-DA6625911B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3536861-48A8-49FD-9615-DA6625911B10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
