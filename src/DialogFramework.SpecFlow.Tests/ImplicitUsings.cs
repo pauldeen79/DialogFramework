@@ -1,4 +1,5 @@
 ﻿global using System.Globalization;
+global using System.Text;
 global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Application;
