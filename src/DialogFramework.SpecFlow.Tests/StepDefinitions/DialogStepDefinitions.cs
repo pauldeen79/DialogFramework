@@ -20,11 +20,8 @@ public sealed class DialogStepDefinitions : IDisposable
     }
 
     [Given(@"I start the '([^']*)' dialog")]
-    public void GivenIStartTheDialog(string id)
-    {
-        var identifier = new DialogDefinitionIdentifierBuilder().WithId(id).WithVersion("1.0.0").Build();
-        _lastResult = _dialogApplicationService.Start(identifier);
-    }
+    public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
+        => _lastResult = _dialogApplicationService.Start(id);
 
     [When(@"I answer the following questions for the '([^']*)' dialog part")]
     public void WhenIAnswerTheFollowingQuestionsForTheDialogPart(IDialogPartIdentifier dialogPartId, Table table)
