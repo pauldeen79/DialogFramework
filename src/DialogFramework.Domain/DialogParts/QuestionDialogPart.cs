@@ -24,6 +24,11 @@ public partial record QuestionDialogPart : IValidatableObject
             .Select(x => x.Key)
             .ToArray();
 
+        if (!Results.Any())
+        {
+            yield return new ValidationResult("At least one result is required for a question dialog part", new[] { nameof(Results) });
+        }
+
         if (duplicateIds.Any())
         {
             yield return new ValidationResult($"Result Ids should be unique. Non unique ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");

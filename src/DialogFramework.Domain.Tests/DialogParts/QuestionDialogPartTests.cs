@@ -73,6 +73,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPart)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
             .Build();
 
         // Act
@@ -88,7 +89,8 @@ public class QuestionDialogPartTests
         // Arrange
         var input = (IDialogPartBuilder)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
-            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()));
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
 
         // Act
         var result = input.Build();
