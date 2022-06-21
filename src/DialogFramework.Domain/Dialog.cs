@@ -22,7 +22,7 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResult> results, IConditionEvaluator evaluator)
+    public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results, IConditionEvaluator evaluator)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -36,10 +36,10 @@ public partial record Dialog
             return nextPartResult;
         }
         var nextPart = nextPartResult.Value!;
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentPartId));
         CurrentPartId = nextPart.Id;
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
-        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results));
         return Result.Success();
     }
 

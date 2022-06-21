@@ -67,7 +67,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
 
         // Act
-        var result = sut.Continue(dialogDefinition, Enumerable.Empty<IDialogPartResult>(), _conditionEvaluatorMock.Object);
+        var result = sut.Continue(dialogDefinition, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -90,7 +90,7 @@ public class DialogTests
                 new DialogPartResultBuilder()
                     .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
                     .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
-                    .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
                     .Build()
             }
         );
@@ -101,10 +101,9 @@ public class DialogTests
             dialogDefinition,
             new[]
             {
-                new DialogPartResultBuilder()
-                    .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
+                new DialogPartResultAnswerBuilder()
                     .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
-                    .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(false))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
                     .Build()
             }, _conditionEvaluatorMock.Object);
 
@@ -316,7 +315,7 @@ public class DialogTests
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         dialog.Start(dialogDefinition, _conditionEvaluatorMock.Object);
-        dialog.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new YesNoDialogPartResultValue(true)) }, conditionEvaluatorMock.Object);
+        dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Results.First().Id, new DialogPartResultValueAnswer(true)) }, conditionEvaluatorMock.Object);
         dialog.NavigateTo(dialogDefinition, questionPart.Id);
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);

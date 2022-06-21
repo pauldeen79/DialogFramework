@@ -19,9 +19,9 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
-        var actualCount = dialogPartResults.Count(x => Equals(x.DialogPartId, dialogPart.Id));
+        var actualCount = dialogPartResults.Count();
         if (actualCount < _minimumOccurenceCount || actualCount > _maximumOccurenceCount)
         {
             var timesName = _minimumOccurenceCount == _maximumOccurenceCount

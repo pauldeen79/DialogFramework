@@ -9,8 +9,7 @@ public class AllRequiredQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
         var results = new[] { partResult };
@@ -24,39 +23,15 @@ public class AllRequiredQuestionDialogPartTests
     }
 
     [Fact]
-    public void Answers_From_Different_Question_Gives_ValidationError()
-    {
-        // Arrange
-        var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder())
-            .WithResultId(new DialogPartResultIdentifierBuilder())
-            .Build();
-        var results = new[] { partResult };
-
-        // Act
-        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
-
-        // Assert
-        result.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
-        {
-            "Provided answer from wrong question",
-            "All 2 answers are required"
-        });
-    }
-    [Fact]
     public void One_Answer_Gives_ValidationError()
     {
         // Arrange
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new AllRequiredQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
             .Build();
         var results = new[] { partResult };
 
@@ -77,8 +52,8 @@ public class AllRequiredQuestionDialogPartTests
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var results = new[]
         {
-            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
-            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("B")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
+            new DialogPartResultAnswerBuilder().WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true)).Build(),
+            new DialogPartResultAnswerBuilder().WithResultId(new DialogPartResultIdentifierBuilder().WithValue("B")).WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true)).Build()
         };
 
         // Act

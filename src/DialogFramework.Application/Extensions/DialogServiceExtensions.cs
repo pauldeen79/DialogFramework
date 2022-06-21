@@ -3,8 +3,8 @@
 public static class DialogServiceExtensions
 {
     public static Result<IDialog> Continue(this IDialogApplicationService instance, IDialog dialog)
-        => instance.Continue(dialog, new[] { new DialogPartResult(dialog.CurrentPartId, new EmptyDialogPartResultDefinition().Id, new EmptyDialogPartResultValue()) });
+        => instance.Continue(dialog, new[] { new DialogPartResultAnswer(new EmptyDialogPartResultDefinition().Id, new DialogPartResultValueAnswer(null)) });
 
-    public static Result<IDialog> Continue(this IDialogApplicationService instance, IDialog dialog, params IDialogPartResult[] results)
+    public static Result<IDialog> Continue(this IDialogApplicationService instance, IDialog dialog, params IDialogPartResultAnswer[] results)
         => instance.Continue(dialog, results.AsEnumerable());
 }

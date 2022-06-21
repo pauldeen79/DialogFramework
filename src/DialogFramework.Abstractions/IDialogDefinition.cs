@@ -10,7 +10,8 @@ public interface IDialogDefinition
     IReadOnlyCollection<IDialogPartGroup> PartGroups { get; }
 
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                                  IEnumerable<IDialogPartResult> newPartResults);
+                                                  IEnumerable<IDialogPartResultAnswer> newPartResults,
+                                                  IDialogPartIdentifier dialogPartId);
 
     Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
                                                                     IDialogPartIdentifier partId);
@@ -20,7 +21,7 @@ public interface IDialogDefinition
 
     Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator);
 
-    Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResult> results);
+    Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResultAnswer> results);
 
     Result<IDialogPart> GetPartById(IDialogPartIdentifier id);
 }

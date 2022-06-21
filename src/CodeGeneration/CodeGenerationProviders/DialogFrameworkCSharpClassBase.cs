@@ -72,9 +72,9 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             property.WithConstructorNullCheck(false);
         }
 
-        if (property.TypeName.GetClassName() == "IDialogPartResultValue")
+        if (property.TypeName.GetClassName() == "IDialogPartResultValueAnswer")
         {
-            property.SetDefaultValueForBuilderClassConstructor(new Literal("new DialogFramework.Domain.DialogPartResultValues.Builders.EmptyDialogPartResultValueBuilder()"));
+            property.SetDefaultValueForBuilderClassConstructor(new Literal("new DialogFramework.Domain.Builders.DialogPartResultValueAnswerBuilder()"));
         }
     }
 
@@ -188,9 +188,11 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         typeof(IDialogPartGroupIdentifier),
         typeof(IDialogPartIdentifier),
         typeof(IDialogPartResult),
+        typeof(IDialogPartResultAnswer),
         typeof(IDialogPartResultDefinition),
         typeof(IDialogPartResultIdentifier),
         typeof(IDialogPartResultValue),
+        typeof(IDialogPartResultValueAnswer),
         typeof(IDialogValidationResult),
         typeof(IError),
     };

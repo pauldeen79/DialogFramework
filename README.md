@@ -75,5 +75,3 @@ The solution consists of the following projects:
 
 - Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Create a minimal web api as a demo project, using some sort of state store (local in-memory cache?) for persisting state.
-- Review interface: Why do we have to send the dialog part for which we have results? We can simply use the current part id?
-- Review interface: Why do we have to send the result value type? It would be better if the domain simply gets it from the dialog part, using the dialog part id.

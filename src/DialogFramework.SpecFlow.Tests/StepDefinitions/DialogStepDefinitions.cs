@@ -9,13 +9,9 @@ public sealed class DialogStepDefinitions
     public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
         => _lastResult = ApplicationEntrypoint.DialogApplicationService.Start(id);
 
-    [When(@"I answer the following results for the '([^']*)' dialog part")]
-    public void WhenIAnswerTheFollowingResultsForTheDialogPart(IDialogPartIdentifier dialogPartId, Table table)
-        => AnswerQuestionsFor(dialogPartId, table);
-
     [When(@"I answer the following results for the current dialog part")]
     public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(Table table)
-        => AnswerQuestionsFor(GetCurrentDialog().CurrentPartId, table);
+        => AnswerQuestionsFor(table);
 
     [Then("the current state should be (.*)")]
     public void ThenTheCurrentStateShouldBe(string result)
@@ -23,35 +19,34 @@ public sealed class DialogStepDefinitions
 
     [When(@"I answer '([^']*)' for result '([^']*)'")]
     public void WhenIAnswerForResult(string value, string result)
-        => Answer(result, value, ResultValueType.Text);
+        => Answer(result, value);
 
     [When(@"I answer '([^']*)' for the current result")]
     public void WhenIAnswerForTheCurrentResult(string value)
-        => Answer(GetCurrentResultId(), value, ResultValueType.Text);
+        => Answer(GetFirstResultIdOfCurrentPart(), value);
 
     [When(@"I answer No for result '([^']*)'")]
     public void WhenIAnswerNoForResult(string result)
-        => AnwerBoolean(result, false);
+        => Answer(result, false);
 
     [When(@"I answer Yes for result '([^']*)'")]
     public void WhenIAnswerYesForResult(string result)
-        => AnwerBoolean(result, true);
+        => Answer(result, true);
 
     [When(@"I answer No for the current result")]
     public void WhenIAnswerNoForTheCurrentResult()
-        => AnwerBoolean(GetCurrentResultId(), false);
+        => Answer(GetFirstResultIdOfCurrentPart(), false);
 
     [When(@"I answer Yes for the current result")]
     public void WhenIAnswerYesForTheCurrentResult()
-        => AnwerBoolean(GetCurrentResultId(), true);
+        => Answer(GetFirstResultIdOfCurrentPart(), true);
 
-    private void AnswerQuestionsFor(IDialogPartIdentifier dialogPartId, Table table)
+    private void AnswerQuestionsFor(Table table)
     {
-        var results = table.CreateSet<(string Result, ResultValueType ResultValueType, string Value)>()
-            .Select(x => new DialogPartResultBuilder()
-                .WithDialogPartId(new DialogPartIdentifierBuilder(dialogPartId))
+        var results = table.CreateSet<(string Result, string Value)>()
+            .Select(x => new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(x.Result))
-                .WithValue(new DialogPartResultValueBuilder().WithResultValueType(x.ResultValueType).WithValue(ConvertValue(x.Value, x.ResultValueType)))
+                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(x.Value))
                 .Build());
         _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), results);
     }
@@ -65,44 +60,26 @@ public sealed class DialogStepDefinitions
         return _lastResult!.GetValueOrThrow($"Last result was not successful. Details: {_lastResult}");
     }
     
-    private void AnwerBoolean(string resultId, bool value)
-        => Answer(resultId, value, ResultValueType.YesNo);
-
-    private void Answer(string result, object? value, ResultValueType type)
+    private void Answer(string result, object? value)
     {
         var results = new[]
         {
-            new DialogPartResultBuilder()
-                .WithDialogPartId(new DialogPartIdentifierBuilder(GetCurrentDialog().CurrentPartId))
+            new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(result))
-                .WithValue(new DialogPartResultValueBuilder().WithResultValueType(type).WithValue(value))
+                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(value))
                 .Build()
         };
         _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), results);
     }
 
-    private string GetCurrentResultId()
+    private string GetFirstResultIdOfCurrentPart()
     {
         var dialog = GetCurrentDialog();
         var currentDialogId = dialog.CurrentDialogIdentifier;
         var currentPartId = dialog.CurrentPartId;
         var definition = ApplicationEntrypoint.DialogDefinitionRepository.GetDialogDefinition(currentDialogId) ?? throw new InvalidOperationException("Dialog definition could not be retrieved");
         var part = definition.GetPartById(currentPartId).GetValueOrThrow($"Could not get current part, Id is {currentPartId}");
-        var questionDialogPart = part as IQuestionDialogPart;
-        if (questionDialogPart == null)
-        {
-            throw new InvalidOperationException($"Current part with Id [{currentPartId}] is not a question type, but {part.GetType().FullName}");
-        }
+        var questionDialogPart = part as IQuestionDialogPart ?? throw new InvalidOperationException($"Current part with Id [{currentPartId}] is not a question type, but {part.GetType().FullName}");
         return questionDialogPart.Results.First().Id.Value;
     }
-
-    private static object? ConvertValue(string value, ResultValueType resultValueType) => resultValueType switch
-    {
-        ResultValueType.None => null,
-        ResultValueType.Text => value,
-        ResultValueType.Number => Convert.ToDecimal(value, CultureInfo.InvariantCulture),
-        ResultValueType.YesNo => Convert.ToBoolean(value, CultureInfo.InvariantCulture),
-        ResultValueType.Date or ResultValueType.DateTime => Convert.ToDateTime(value, CultureInfo.InvariantCulture),
-        _ => throw new NotSupportedException($"Unsupported result value type: {resultValueType}"),
-    };
 }

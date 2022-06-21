@@ -1,8 +1,7 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IDialogPartResult 
+public interface IDialogPartResultAnswer
 {
-    IDialogPartIdentifier DialogPartId { get; }
     IDialogPartResultIdentifier ResultId { get; }
     IDialogPartResultValueAnswer Value { get; }
 }

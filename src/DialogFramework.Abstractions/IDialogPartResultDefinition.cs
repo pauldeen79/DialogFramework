@@ -10,5 +10,5 @@ public interface IDialogPartResultDefinition
     IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                   IDialogDefinition dialogDefinition,
                                                   IDialogPart dialogPart,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults);
+                                                  IEnumerable<IDialogPartResultAnswer> dialogPartResults);
 }

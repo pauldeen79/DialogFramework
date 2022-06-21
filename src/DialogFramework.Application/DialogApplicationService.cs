@@ -30,7 +30,7 @@ public class DialogApplicationService : IDialogApplicationService
         return PerformAction(dialog, nameof(Start), _ => dialog.Start(definition, _conditionEvaluator), definition);
     }
 
-    public Result<IDialog> Continue(IDialog dialog, IEnumerable<IDialogPartResult> dialogPartResults)
+    public Result<IDialog> Continue(IDialog dialog, IEnumerable<IDialogPartResultAnswer> dialogPartResults)
         => PerformAction(dialog, nameof(Continue), dialogDefinition => dialog.Continue(dialogDefinition, dialogPartResults, _conditionEvaluator));
 
     public Result<IDialog> Abort(IDialog dialog)

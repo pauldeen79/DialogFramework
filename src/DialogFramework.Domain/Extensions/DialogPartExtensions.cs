@@ -5,7 +5,7 @@ public static class DialogPartExtensions
     public static Result Validate(this IDialogPart part,
                                   IDialog dialog,
                                   IDialogDefinition definition,
-                                  IEnumerable<IDialogPartResult> results)
+                                  IEnumerable<IDialogPartResultAnswer> results)
         => part is IQuestionDialogPart questionDialogPart
             ? questionDialogPart.Validate(dialog, definition, results)
             : Result.Success();

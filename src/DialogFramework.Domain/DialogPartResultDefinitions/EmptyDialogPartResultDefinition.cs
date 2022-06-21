@@ -12,6 +12,6 @@ public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
         => Enumerable.Empty<IDialogValidationResult>();
 }

@@ -4,5 +4,5 @@ public interface IQuestionDialogPartValidator
 {
     IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                   IDialogDefinition dialogDefinition,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults);
+                                                  IEnumerable<IDialogPartResultAnswer> dialogPartResults);
 }

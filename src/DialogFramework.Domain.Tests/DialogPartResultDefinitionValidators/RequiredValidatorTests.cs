@@ -16,7 +16,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResultAnswer(dialogPartResultDefinitionMock.Object.Id, new DialogPartResultValueAnswer("value")) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -36,7 +36,11 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[]
+        {
+            new DialogPartResultAnswer(dialogPartResultDefinitionMock.Object.Id, new DialogPartResultValueAnswer("value")),
+            new DialogPartResultAnswer(dialogPartResultDefinitionMock.Object.Id, new DialogPartResultValueAnswer("value"))
+        });
 
         // Assert
         actual.Should().BeEmpty();
@@ -56,7 +60,11 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")), new DialogPartResult(dialogPartMock.Object.Id, dialogPartResultDefinitionMock.Object.Id, new TextDialogPartResultValue("value")) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[]
+        {
+            new DialogPartResultAnswer(dialogPartResultDefinitionMock.Object.Id, new DialogPartResultValueAnswer("value")),
+            new DialogPartResultAnswer(dialogPartResultDefinitionMock.Object.Id, new DialogPartResultValueAnswer("value"))
+        });
 
         // Assert
         actual.Should().ContainSingle();
@@ -77,7 +85,7 @@ public class RequiredValidatorTests
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResult>());
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, Enumerable.Empty<IDialogPartResultAnswer>());
 
         // Assert
         actual.Should().ContainSingle();
@@ -85,7 +93,7 @@ public class RequiredValidatorTests
     }
 
     [Fact]
-    public void Validate_Returns_NonEmpty_Result_When_Value_Is_Provided_For_Other_Question()
+    public void Validate_Returns_NonEmpty_Result_When_Value_Is_Provided_For_Other_Result()
     {
         // Arrange
         var sut = new RequiredValidator();
@@ -96,8 +104,7 @@ public class RequiredValidatorTests
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
         var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
-        var result = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder())
+        var result = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 

@@ -5,7 +5,7 @@ public partial record DialogPartResultDefinition
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
         foreach (var validator in Validators)
         {

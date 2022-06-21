@@ -15,15 +15,15 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
                                                          IDialogPartResultDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
-        var filteredDialogPartResults = dialogPartResults.Where(x => Equals(x.DialogPartId, dialogPart.Id)).ToArray();
-        if (!filteredDialogPartResults.Any()
-            || filteredDialogPartResults.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
+        var dialogPartResultsArray = dialogPartResults.ToArray();
+        if (!dialogPartResultsArray.Any()
+            || dialogPartResultsArray.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
         {
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
         }
-        else if (_checkForSingleOccurence && filteredDialogPartResults.Count() > 1)
+        else if (_checkForSingleOccurence && dialogPartResultsArray.Count() > 1)
         {
             yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
         }
