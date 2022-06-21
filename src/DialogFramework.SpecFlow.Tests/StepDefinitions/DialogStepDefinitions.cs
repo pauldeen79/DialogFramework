@@ -10,8 +10,8 @@ public sealed class DialogStepDefinitions
         => _lastResult = ApplicationEntrypoint.DialogApplicationService.Start(id);
 
     [When(@"I answer the following results for the current dialog part")]
-    public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(Table table)
-        => AnswerQuestionsFor(table);
+    public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(DialogPartResultAnswerBuilder[] answers)
+        => _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), answers.Select(x => x.Build()));
 
     [Then("the current state should be (.*)")]
     public void ThenTheCurrentStateShouldBe(string result)
@@ -28,16 +28,6 @@ public sealed class DialogStepDefinitions
     [When(@"I answer Yes for result '([^']*)'")]
     public void WhenIAnswerYesForResult(string result)
         => Answer(result, true);
-
-    private void AnswerQuestionsFor(Table table)
-    {
-        var results = table.CreateSet<(string Result, string Value)>()
-            .Select(x => new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(x.Result))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(x.Value))
-                .Build());
-        _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), results);
-    }
 
     private IDialog GetCurrentDialog()
     {

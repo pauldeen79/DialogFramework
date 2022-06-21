@@ -14,4 +14,13 @@ public static class DialogTransforms
     [StepArgumentTransformation]
     public static IDialogPartResultIdentifier DialogPartResultIdentifierTransform(string value)
         => new DialogPartResultIdentifierBuilder().WithValue(value).Build();
+
+    [StepArgumentTransformation]
+    public static DialogPartResultAnswerBuilder[] RecipientTransform(Table table)
+        => table.CreateSet
+        (
+            row => new DialogPartResultAnswerBuilder()
+                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(row["Result"]))
+                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(row["Value"]))
+        ).ToArray();
 }
