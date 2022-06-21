@@ -3,7 +3,7 @@
 public interface IDialogPart
 {
     IDialogPartIdentifier Id { get; }
-    bool SupportsReset { get; }
     DialogState GetState();
     IDialogPartBuilder CreateBuilder();
+    bool SupportsReset();
 }
