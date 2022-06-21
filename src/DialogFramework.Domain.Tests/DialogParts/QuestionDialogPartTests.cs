@@ -93,4 +93,19 @@ public class QuestionDialogPartTests
         // Assert
         act.Should().ThrowExactly<ValidationException>();
     }
+
+    [Fact]
+    public void Constructing_QuestionDialogPart_Without_Results_Throws_ValidationException()
+    {
+        // Arrange
+        var builder = new QuestionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder())
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()));
+
+        // Act
+        var act = new Action(() => _ = builder.Build());
+
+        // Assert
+        act.Should().ThrowExactly<ValidationException>();
+    }
 }
