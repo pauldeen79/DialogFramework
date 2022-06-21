@@ -57,6 +57,6 @@ public sealed class ApplicationEntrypoint
         }
     }
 
-    public static IDialogApplicationService DialogApplicationService
+    public static IDialogApplicationService Instance
         => Provider.GetRequiredService<IDialogApplicationService>();
 }

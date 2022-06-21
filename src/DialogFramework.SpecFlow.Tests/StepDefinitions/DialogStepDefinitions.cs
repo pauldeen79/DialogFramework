@@ -7,11 +7,11 @@ public sealed class DialogStepDefinitions
 
     [Given(@"I start the '([^']*)' dialog")]
     public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
-        => _lastResult = ApplicationEntrypoint.DialogApplicationService.Start(id);
+        => _lastResult = ApplicationEntrypoint.Instance.Start(id);
 
     [When(@"I answer the following results for the current dialog part")]
     public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(DialogPartResultAnswerBuilder[] answers)
-        => _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), answers.Select(x => x.Build()));
+        => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers.Select(x => x.Build()));
 
     [Then("the current state should be (.*)")]
     public void ThenTheCurrentStateShouldBe(string result)
@@ -47,6 +47,6 @@ public sealed class DialogStepDefinitions
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(value))
                 .Build()
         };
-        _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), results);
+        _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), results);
     }
 }
