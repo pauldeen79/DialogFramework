@@ -1,7 +1,7 @@
-﻿namespace DialogFramework.SpecFlow.Tests.StepDefinitions;
+﻿namespace DialogFramework.SpecFlow.Tests.Support;
 
 [Binding]
-public static class DialogTransforms
+public static class DialogTransformations
 {
     [StepArgumentTransformation]
     public static IDialogDefinitionIdentifier DialogDefinitionIdentifierTransform(string value)
