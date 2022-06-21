@@ -13,8 +13,8 @@ public sealed class ApplicationEntrypoint
         _loggerMock = new Mock<ILogger>();
         _provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddTransient<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
-            .AddTransient(_ => _loggerMock.Object)
+            .AddScoped<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
+            .AddScoped(_ => _loggerMock.Object)
             .BuildServiceProvider();
     }
 
@@ -59,7 +59,4 @@ public sealed class ApplicationEntrypoint
 
     public static IDialogApplicationService DialogApplicationService
         => Provider.GetRequiredService<IDialogApplicationService>();
-
-    public static IDialogDefinitionRepository DialogDefinitionRepository
-        => Provider.GetRequiredService<IDialogDefinitionRepository>();
 }

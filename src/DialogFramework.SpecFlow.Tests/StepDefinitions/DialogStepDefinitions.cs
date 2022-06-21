@@ -21,10 +21,6 @@ public sealed class DialogStepDefinitions
     public void WhenIAnswerForResult(string value, string result)
         => Answer(result, value);
 
-    [When(@"I answer '([^']*)' for the current result")]
-    public void WhenIAnswerForTheCurrentResult(string value)
-        => Answer(GetFirstResultIdOfCurrentPart(), value);
-
     [When(@"I answer No for result '([^']*)'")]
     public void WhenIAnswerNoForResult(string result)
         => Answer(result, false);
@@ -32,14 +28,6 @@ public sealed class DialogStepDefinitions
     [When(@"I answer Yes for result '([^']*)'")]
     public void WhenIAnswerYesForResult(string result)
         => Answer(result, true);
-
-    [When(@"I answer No for the current result")]
-    public void WhenIAnswerNoForTheCurrentResult()
-        => Answer(GetFirstResultIdOfCurrentPart(), false);
-
-    [When(@"I answer Yes for the current result")]
-    public void WhenIAnswerYesForTheCurrentResult()
-        => Answer(GetFirstResultIdOfCurrentPart(), true);
 
     private void AnswerQuestionsFor(Table table)
     {
@@ -70,16 +58,5 @@ public sealed class DialogStepDefinitions
                 .Build()
         };
         _lastResult = ApplicationEntrypoint.DialogApplicationService.Continue(GetCurrentDialog(), results);
-    }
-
-    private string GetFirstResultIdOfCurrentPart()
-    {
-        var dialog = GetCurrentDialog();
-        var currentDialogId = dialog.CurrentDialogIdentifier;
-        var currentPartId = dialog.CurrentPartId;
-        var definition = ApplicationEntrypoint.DialogDefinitionRepository.GetDialogDefinition(currentDialogId) ?? throw new InvalidOperationException("Dialog definition could not be retrieved");
-        var part = definition.GetPartById(currentPartId).GetValueOrThrow($"Could not get current part, Id is {currentPartId}");
-        var questionDialogPart = part as IQuestionDialogPart ?? throw new InvalidOperationException($"Current part with Id [{currentPartId}] is not a question type, but {part.GetType().FullName}");
-        return questionDialogPart.Results.First().Id.Value;
     }
 }

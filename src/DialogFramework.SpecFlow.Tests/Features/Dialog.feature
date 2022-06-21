@@ -9,6 +9,5 @@ Scenario: Complete simple form flow from beginning to end
         | TelephoneNumber | 911               |
     #When I answer 'email@address.com' for result 'EmailAddress'
     #And I answer '911' for result 'TelephoneNumber'
-    #And I answer No for the current result
     And I answer No for result 'SignUpForNewsletter'
 	Then the current state should be Completed
