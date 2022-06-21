@@ -6,6 +6,7 @@ public sealed class DialogStepDefinitions : IDisposable
     private readonly Mock<ILogger> _loggerMock;
     private readonly ServiceProvider _provider;
     private readonly IDialogApplicationService _dialogApplicationService;
+    private readonly IDialogDefinitionRepository _dialogDefinitionRepository;
     private Result<IDialog>? _lastResult;
     
     public DialogStepDefinitions()
@@ -17,19 +18,20 @@ public sealed class DialogStepDefinitions : IDisposable
             .AddSingleton(_loggerMock.Object)
             .BuildServiceProvider();
         _dialogApplicationService = _provider.GetRequiredService<IDialogApplicationService>();
+        _dialogDefinitionRepository = _provider.GetRequiredService<IDialogDefinitionRepository>();
     }
 
     [Given(@"I start the '([^']*)' dialog")]
     public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
         => _lastResult = _dialogApplicationService.Start(id);
 
-    [When(@"I answer the following questions for the '([^']*)' dialog part")]
-    public void WhenIAnswerTheFollowingQuestionsForTheDialogPart(IDialogPartIdentifier dialogPartId, Table table)
+    [When(@"I answer the following results for the '([^']*)' dialog part")]
+    public void WhenIAnswerTheFollowingResultsForTheDialogPart(IDialogPartIdentifier dialogPartId, Table table)
         => AnswerQuestionsFor(dialogPartId, table);
 
-    [When(@"I answer the following questions for the current dialog part")]
-    public void WhenIAnswerTheFollowingQuestionsForTheCurrentDialogPart(Table table)
-        => AnswerQuestionsFor(_lastResult!.GetValueOrThrow().CurrentPartId, table);
+    [When(@"I answer the following results for the current dialog part")]
+    public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(Table table)
+        => AnswerQuestionsFor(_lastResult!.GetValueOrThrow(BuildErrorMessage(_lastResult)).CurrentPartId, table);
 
     [Then("the current state should be (.*)")]
     public void ThenTheCurrentStateShouldBe(string result)
@@ -39,14 +41,22 @@ public sealed class DialogStepDefinitions : IDisposable
     }
 
     [When(@"I answer '([^']*)' for result '([^']*)'")]
-    public void WhenIAnswerForResult(string value, string result)
-        => Answer(result, value, ResultValueType.Text);
+    public void WhenIAnswerForResult(string value, string result) => Answer(result, value, ResultValueType.Text);
+
+    [When(@"I answer '([^']*)' for the current result")]
+    public void WhenIAnswerForTheCurrentResult(string value) => Answer(GetCurrentResultId(), value, ResultValueType.Text);
 
     [When(@"I answer No for result '([^']*)'")]
     public void WhenIAnswerNoForResult(string result) => AnwerBoolean(result, false);
 
     [When(@"I answer Yes for result '([^']*)'")]
     public void WhenIAnswerYesForResult(string result) => AnwerBoolean(result, true);
+
+    [When(@"I answer No for the current result")]
+    public void WhenIAnswerNoForTheCurrentResult() => AnwerBoolean(GetCurrentResultId(), false);
+
+    [When(@"I answer Yes for the current result")]
+    public void WhenIAnswerYesForTheCurrentResult() => AnwerBoolean(GetCurrentResultId(), true);
 
     public void Dispose() => _provider.Dispose();
 
@@ -65,8 +75,8 @@ public sealed class DialogStepDefinitions : IDisposable
     private void EnsureDialog()
         => _lastResult.Should().NotBeNull(because: "You should have started a dialog");
 
-    private void AnwerBoolean(string result, bool value)
-        => Answer(result, value, ResultValueType.YesNo);
+    private void AnwerBoolean(string resultId, bool value)
+        => Answer(resultId, value, ResultValueType.YesNo);
 
     private void Answer(string result, object? value, ResultValueType type)
     {
@@ -80,6 +90,22 @@ public sealed class DialogStepDefinitions : IDisposable
                 .Build()
         };
         _lastResult = _dialogApplicationService.Continue(_lastResult!.GetValueOrThrow(BuildErrorMessage(_lastResult)), results);
+    }
+
+    private string GetCurrentResultId()
+    {
+        EnsureDialog();
+        var dialog = _lastResult!.GetValueOrThrow(BuildErrorMessage(_lastResult));
+        var currentDialogId = dialog.CurrentDialogIdentifier;
+        var currentPartId = dialog.CurrentPartId;
+        var definition = _dialogDefinitionRepository.GetDialogDefinition(currentDialogId) ?? throw new InvalidOperationException("Dialog definition could not be retrieved");
+        var part = definition.GetPartById(currentPartId).GetValueOrThrow($"Could not get current part, Id is {currentPartId}");
+        var questionDialogPart = part as IQuestionDialogPart;
+        if (questionDialogPart == null)
+        {
+            throw new InvalidOperationException($"Current part with Id [{currentPartId}] is not a question type, but {part.GetType().FullName}");
+        }
+        return questionDialogPart.Results.First().Id.Value;
     }
 
     private static object? ConvertValue(string value, ResultValueType resultValueType) => resultValueType switch

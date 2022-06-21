@@ -2,6 +2,7 @@
 global using System.Text;
 global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
+global using DialogFramework.Abstractions.DialogParts;
 global using DialogFramework.Application;
 global using DialogFramework.Application.TestData;
 global using DialogFramework.Domain;
