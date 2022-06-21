@@ -1,5 +1,4 @@
 ﻿global using System.Globalization;
-global using System.Text;
 global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DialogParts;
@@ -7,6 +6,7 @@ global using DialogFramework.Application;
 global using DialogFramework.Application.TestData;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
+global using DialogFramework.SpecFlow.Tests.Support;
 global using FluentAssertions;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
