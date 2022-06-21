@@ -9,8 +9,8 @@ public sealed class DialogStepDefinitions
     public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
         => _lastResult = ApplicationEntrypoint.Instance.Start(id);
 
-    [When(@"I answer the following results for the current dialog part")]
-    public void WhenIAnswerTheFollowingResultsForTheCurrentDialogPart(DialogPartResultAnswerBuilder[] answers)
+    [When(@"I answer the following results")]
+    public void WhenIAnswerTheFollowingResults(DialogPartResultAnswerBuilder[] answers)
         => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers.Select(x => x.Build()));
 
     [Then("the current state should be (.*)")]
