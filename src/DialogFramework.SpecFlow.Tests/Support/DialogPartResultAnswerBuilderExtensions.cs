@@ -4,7 +4,7 @@ public static class DialogPartResultAnswerBuilderExtensions
 {
     public static DialogPartResultAnswerBuilder EvaluateExpressions(this DialogPartResultAnswerBuilder instance)
     {
-        instance.Value.Value = TableValueHelpers.EvaluateExpressions(instance.Value.Value);
+        instance.Value.Value = ValueExpression.Evaluate(instance.Value.Value);
         return instance;
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.SpecFlow.Tests.Support;
 
-public static class TableValueHelpers
+public static class ValueExpression
 {
     /// <summary>
     /// Replaces values speified from a table that need conversion, for example because the target type is object.
@@ -8,11 +8,11 @@ public static class TableValueHelpers
     /// <remarks>You can use expressions like [null], [boolean:true], [boolean:false] and [today[</remarks>
     /// <param name="value">input value (automatically mapped table value)</param>
     /// <returns>Corrected value</returns>
-    public static object? EvaluateExpressions(object? value)
+    public static object? Evaluate(object? value)
     {
         if (value is string s)
         {
-            switch (s.ToLowerInvariant())
+            switch (s?.ToLowerInvariant())
             {
                 case "[null]":
                     return null;
