@@ -16,7 +16,7 @@ public static class DialogTransformations
         => new DialogPartResultIdentifierBuilder().WithValue(value).Build();
 
     [StepArgumentTransformation]
-    public static DialogPartResultAnswerBuilder[] RecipientTransform(Table table)
+    public static DialogPartResultAnswerBuilder[] DialogPartResultAnswerBuilderTransform(Table table)
         => table.CreateSet
         (
             row => new DialogPartResultAnswerBuilder()
