@@ -14,7 +14,7 @@ public sealed class DialogStepDefinitions
         => _lastResult = ApplicationEntrypoint.Instance.Continue
         (
             GetCurrentDialog(),
-            answers.Select(x => x.Chain(y => y.Value.Value = TableValueHelpers.EvaluateExpressions(y.Value.Value)).Build())
+            answers.Select(x => x.EvaluateExpressions().Build())
         );
 
     [Then("the current state should be (.*)")]
