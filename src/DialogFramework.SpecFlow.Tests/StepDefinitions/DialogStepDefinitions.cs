@@ -10,8 +10,8 @@ public sealed class DialogStepDefinitions
         => _lastResult = ApplicationEntrypoint.Instance.Start(id);
 
     [When(@"I answer the following results")]
-    public void WhenIAnswerTheFollowingResults(DialogPartResultAnswerBuilder[] answers)
-        => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers.Select(x => x.Build()));
+    public void WhenIAnswerTheFollowingResults(IDialogPartResultAnswer[] answers)
+        => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers);
 
     [Then("the current state should be (.*)")]
     public void ThenTheCurrentStateShouldBe(DialogState state)

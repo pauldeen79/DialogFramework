@@ -16,12 +16,12 @@ public static class DialogTransformations
         => new DialogPartResultIdentifierBuilder().WithValue(value).Build();
 
     [StepArgumentTransformation]
-    public static DialogPartResultAnswerBuilder[] DialogPartResultAnswerBuilderTransform(Table table)
+    public static IDialogPartResultAnswer[] DialogPartResultAnswerBuilderTransform(Table table)
         => table.CreateSet
         (
             row => new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(row["Result"]))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(row["Value"]))
                 .EvaluateExpressions()
-        ).ToArray();
+        ).Select(x => x.Build()).ToArray();
 }
