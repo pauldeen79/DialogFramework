@@ -22,5 +22,6 @@ public static class DialogTransformations
             row => new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(row["Result"]))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(row["Value"]))
+                .EvaluateExpressions()
         ).ToArray();
 }
