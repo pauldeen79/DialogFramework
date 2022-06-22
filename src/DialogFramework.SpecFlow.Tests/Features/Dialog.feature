@@ -7,5 +7,7 @@ Scenario: Complete simple form flow from beginning to end
         | Result          | Value             |
         | EmailAddress    | email@address.com |
         | TelephoneNumber | 911               |
-    And I answer No for result 'SignUpForNewsletter'
+    And I answer the following results
+        | Result              | Value          |
+        | SignUpForNewsletter | [boolean:true] |
     Then the current state should be Completed
