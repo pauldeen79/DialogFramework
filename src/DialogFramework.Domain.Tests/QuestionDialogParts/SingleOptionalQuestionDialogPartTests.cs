@@ -9,10 +9,9 @@ public class SingleOptionalQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleOptionalQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
-            .WithValue(new DialogPartResultValueBuilder())
+            .WithValue(new DialogPartResultValueAnswerBuilder())
             .Build();
         var results = new[] { partResult };
 
@@ -30,10 +29,9 @@ public class SingleOptionalQuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().AddValidators(new QuestionDialogPartValidatorBuilder(new SingleOptionalQuestionDialogPartValidator())).Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
             .Build();
         var results = new[] { partResult };
 
@@ -53,8 +51,8 @@ public class SingleOptionalQuestionDialogPartTests
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
         var results = new[]
         {
-            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build(),
-            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id)).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("B")).WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true)).Build()
+            new DialogPartResultAnswerBuilder().WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A")).WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true)).Build(),
+            new DialogPartResultAnswerBuilder().WithResultId(new DialogPartResultIdentifierBuilder().WithValue("B")).WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true)).Build()
         };
 
         // Act

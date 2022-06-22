@@ -127,8 +127,7 @@ public class DialogApplicationServiceTests
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
         var definition = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
-        var dialogPartResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
+        var dialogPartResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Great"))
             .Build();
 
@@ -151,8 +150,7 @@ public class DialogApplicationServiceTests
         var currentPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
         var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, currentPart);
         var sut = CreateSut();
-        var dialogPartResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(currentPart.Id))
+        var dialogPartResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Unknown result"))
             .Build();
 
@@ -582,9 +580,8 @@ public class DialogApplicationServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
         dialog.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object);
@@ -604,9 +601,8 @@ public class DialogApplicationServiceTests
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var messagePart = dialogDefinition.Parts.OfType<IMessageDialogPart>().First();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(messagePart.Id))
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, messagePart);
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(string.Empty))
             .Build();
         dialog.Continue(dialogDefinition, new[] { partResult }, _conditionEvaluatorMock.Object);

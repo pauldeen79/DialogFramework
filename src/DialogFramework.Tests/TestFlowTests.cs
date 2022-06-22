@@ -24,8 +24,7 @@ public class TestFlowTests
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Invalid);
         dialog.CurrentPartId.Value.Should().Be("Age");
-        dialog = sut.Continue(dialog, new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(dialog.CurrentPartId))
+        dialog = sut.Continue(dialog, new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("10-19"))
             .Build()).GetValueOrThrow("How old are you failed"); // How old are you -> 10-19 -> decision -> sports types
         dialog.CurrentPartId.Value.Should().Be("SportsTypes");

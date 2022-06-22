@@ -6,5 +6,5 @@ public interface IDialogPartResultDefinitionValidator
                                                   IDialogDefinition dialogDefinition,
                                                   IDialogPart dialogPart,
                                                   IDialogPartResultDefinition dialogPartResultDefinition,
-                                                  IEnumerable<IDialogPartResult> dialogPartResults);
+                                                  IEnumerable<IDialogPartResultAnswer> dialogPartResults);
 }

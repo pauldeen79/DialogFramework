@@ -3,17 +3,14 @@
 public partial record DialogDefinition : IValidatableObject
 {
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                                         IEnumerable<IDialogPartResult> newPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> newPartResults,
+                                                         IDialogPartIdentifier dialogPartId)
     {
         // Decision: By default, only the results from the requested part are replaced.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        var dialogPartIds = newPartResults
-            .GroupBy(x => x.DialogPartId)
-            .Select(x => x.Key)
-            .ToArray();
         return existingPartResults
-            .Where(x => !dialogPartIds.Any(y => Equals(y, x.DialogPartId)))
-            .Concat(newPartResults);
+            .Where(x => !Equals(dialogPartId, x.DialogPartId))
+            .Concat(newPartResults.Select(x => new DialogPartResult(dialogPartId, x.ResultId, x.Value)));
     }
 
     public Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
@@ -24,7 +21,7 @@ public partial record DialogDefinition : IValidatableObject
         {
             return Result<IEnumerable<IDialogPartResult>>.FromExistingResult(partByIdResult);
         }
-        if (!partByIdResult.Value!.SupportsReset)
+        if (!partByIdResult.Value!.SupportsReset())
         {
             // Part does not support reset (probably a informational part like message, error, aborted or completed)
             return Result<IEnumerable<IDialogPartResult>>.Invalid("The specified part cannot be reset");
@@ -53,7 +50,9 @@ public partial record DialogDefinition : IValidatableObject
     public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator)
         => GetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, evaluator);
 
-    public Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResult> results)
+    public Result<IDialogPart> GetNextPart(IDialog dialog,
+                                           IConditionEvaluator evaluator,
+                                           IEnumerable<IDialogPartResultAnswer> results)
     {
         // first perform validation
         var currentPartResult = GetPartById(dialog.CurrentPartId);

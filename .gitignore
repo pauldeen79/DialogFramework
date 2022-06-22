@@ -351,3 +351,6 @@ MigrationBackup/
 
 # ModelFramework generated files
 *.template.generated.cs
+
+# SpecFlow generated files
+*.feature.cs

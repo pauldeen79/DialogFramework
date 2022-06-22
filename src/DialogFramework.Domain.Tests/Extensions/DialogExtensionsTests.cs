@@ -27,8 +27,8 @@ public class DialogExtensionsTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        IDialog dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        dialog.Continue(dialogDefinition, new[] { new DialogPartResult(questionPart.Id, questionPart.Results.First().Id, new EmptyDialogPartResultValue()) }, conditionEvaluatorMock.Object);
+        var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
+        dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Results.First().Id, new DialogPartResultValueAnswer(null)) }, conditionEvaluatorMock.Object);
 
         // Act
         var result = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id);

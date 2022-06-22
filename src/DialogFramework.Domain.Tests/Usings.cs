@@ -6,8 +6,6 @@ global using DialogFramework.Abstractions.DialogParts;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.DialogPartResultDefinitions;
 global using DialogFramework.Domain.DialogPartResultDefinitionValidators;
-global using DialogFramework.Domain.DialogPartResultValues;
-global using DialogFramework.Domain.DialogPartResultValues.Builders;
 global using DialogFramework.Domain.DialogParts.Builders;
 global using DialogFramework.Domain.Extensions;
 global using DialogFramework.Domain.QuestionDialogPartValidators;

@@ -9,10 +9,9 @@ public class QuestionDialogPartTests
         var sut = QuestionDialogPartFixture.CreateBuilder().Build();
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("C"))
-            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
             .Build();
         var results = new[] { partResult };
 
@@ -25,37 +24,15 @@ public class QuestionDialogPartTests
     }
 
     [Fact]
-    public void Validate_With_Known_Id_And_Wrong_ValueType_Gives_ValidationError()
-    {
-        // Arrange
-        var sut = QuestionDialogPartFixture.CreateBuilder().Build();
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
-            .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .Build();
-        var results = new[] { partResult };
-
-        // Act
-        var result = sut.Validate(dialog, dialogDefinition, results).ValidationErrors;
-
-        // Assert
-        result.Should().ContainSingle();
-        result.Single().ErrorMessage.Should().Be("Result for [DialogPartIdentifier { Value = Test }.DialogPartResultIdentifier { Value = A }] should be of type [YesNo], but type [None] was answered");
-    }
-
-    [Fact]
     public void Validate_With_Known_Id_And_Correct_ValueType_Gives_No_ValidationError()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
         var dialog = DialogFixture.Create("Id", dialogDefinition.Metadata, sut);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("A"))
-            .WithValue(new YesNoDialogPartResultValueBuilder().WithValue(true))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
             .Build();
         var results = new[] { partResult };
 
@@ -73,6 +50,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPart)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
             .Build();
 
         // Act
@@ -88,7 +66,8 @@ public class QuestionDialogPartTests
         // Arrange
         var input = (IDialogPartBuilder)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
-            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()));
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
+            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
 
         // Act
         var result = input.Build();
@@ -107,6 +86,21 @@ public class QuestionDialogPartTests
             .WithId(new DialogPartIdentifierBuilder())
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
             .AddResults(result, result);
+
+        // Act
+        var act = new Action(() => _ = builder.Build());
+
+        // Assert
+        act.Should().ThrowExactly<ValidationException>();
+    }
+
+    [Fact]
+    public void Constructing_QuestionDialogPart_Without_Results_Throws_ValidationException()
+    {
+        // Arrange
+        var builder = new QuestionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder())
+            .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()));
 
         // Act
         var act = new Action(() => _ = builder.Build());

@@ -2,7 +2,7 @@
 
 public partial record QuestionDialogPart : IValidatableObject
 {
-    public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResult> results)
+    public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results)
     {
         var errors = new List<IDialogValidationResult>(HandleValidate(dialog, definition, results));
 
@@ -24,6 +24,11 @@ public partial record QuestionDialogPart : IValidatableObject
             .Select(x => x.Key)
             .ToArray();
 
+        if (!Results.Any())
+        {
+            yield return new ValidationResult("At least one result is required for a question dialog part", new[] { nameof(Results) });
+        }
+
         if (duplicateIds.Any())
         {
             yield return new ValidationResult($"Result Ids should be unique. Non unique ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
@@ -34,40 +39,25 @@ public partial record QuestionDialogPart : IValidatableObject
 
     public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
 
-    public bool SupportsReset => true;
+    public bool SupportsReset() => true;
 
-    protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResult> results)
+    protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
+                                                                          IDialogDefinition definition,
+                                                                          IEnumerable<IDialogPartResultAnswer> results)
     {
-        foreach (var dialogPartResult in results)
+        foreach (var dialogPartResultId in results.Select(x => x.ResultId).Where(x => !string.IsNullOrEmpty(x.Value)))
         {
-            if (!Equals(dialogPartResult.DialogPartId, Id))
-            {
-                yield return new DialogValidationResult("Provided answer from wrong question", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
-                continue;
-            }
-            if (string.IsNullOrEmpty(dialogPartResult.ResultId.Value))
-            {
-                continue;
-            }
-            var currentPartResults = Results.Where(x => Equals(x.Id, dialogPartResult.ResultId)).ToArray();
+            var currentPartResults = Results.Where(x => Equals(x.Id, dialogPartResultId)).ToArray();
             if (currentPartResults.Length == 0)
             {
-                yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResult.ResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
-            }
-            var errors = from dialogPartResultDefinition in currentPartResults
-                let resultValueType = dialogPartResultDefinition.ValueType
-                where dialogPartResult.Value.ResultValueType != resultValueType
-                select new DialogValidationResult($"Result for [{dialogPartResult.DialogPartId}.{dialogPartResult.ResultId}] should be of type [{resultValueType}], but type [{dialogPartResult.Value.ResultValueType}] was answered", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
-            foreach (var error in errors)
-            {
-                yield return error;
+                yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
             }
         }
 
         foreach (var dialogPartResultDefinition in Results)
         {
             var dialogPartResultsByPart = results
-                .Where(x => Equals(x.DialogPartId, Id) && Equals(x.ResultId, dialogPartResultDefinition.Id))
+                .Where(x => Equals(x.ResultId, dialogPartResultDefinition.Id))
                 .ToArray();
             var errors = dialogPartResultDefinition.Validate(dialog, definition, this, dialogPartResultsByPart)
                                                    .Where(x => !string.IsNullOrEmpty(x.ErrorMessage));

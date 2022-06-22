@@ -4,10 +4,10 @@ public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidat
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
-                                                         IEnumerable<IDialogPartResult> dialogPartResults)
+                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
         var submittedPartCount = dialogPartResults
-            .Where(x => Equals(x.DialogPartId, dialog.CurrentPartId) && !string.IsNullOrEmpty(x.ResultId.Value))
+            .Where(x => !string.IsNullOrEmpty(x.ResultId.Value))
             .GroupBy(x => x.ResultId)
             .Count();
         var definedResultCount = (dialogDefinition.GetPartById(dialog.CurrentPartId).Value as IQuestionDialogPart)?.Results?.Count ?? 0;

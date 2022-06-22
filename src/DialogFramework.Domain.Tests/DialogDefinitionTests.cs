@@ -23,7 +23,7 @@ public class DialogDefinitionTests
         var expectedResults = new[] { result21, result12 }; //note that as this time, the values are appended at the end. so order is not preserved (which is probably not a problem)
 
         // Act
-        var actual = sut.ReplaceAnswers(oldResults, new[] { result12 });
+        var actual = sut.ReplaceAnswers(oldResults, new[] { new DialogPartResultAnswer(result12.ResultId, result12.Value) }, dialogPartId1.Build());
 
         // Assert
         actual.Should().BeEquivalentTo(expectedResults, options => options.WithStrictOrdering());
@@ -229,8 +229,7 @@ public class DialogDefinitionTests
         // Arrange
         var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.OfType<IQuestionDialogPart>().First().Id);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
@@ -250,8 +249,7 @@ public class DialogDefinitionTests
         // Arrange
         var sut = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
         var dialog = DialogFixture.Create(sut.Metadata, new DialogPartIdentifier("non existing id"));
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.OfType<IQuestionDialogPart>().First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
@@ -269,8 +267,7 @@ public class DialogDefinitionTests
     {
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
@@ -291,8 +288,7 @@ public class DialogDefinitionTests
             .With(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithDefaultNextPartId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
@@ -313,8 +309,7 @@ public class DialogDefinitionTests
             .With(x => x.Parts.Insert(1, new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder()).WithNavigateToId(x.Parts.OfType<MessageDialogPartBuilder>().First().Id)))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
@@ -335,8 +330,7 @@ public class DialogDefinitionTests
             .With(x => x.Parts.RemoveAt(1))
             .Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
-        var partResult = new DialogPartResultBuilder()
-            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+        var partResult = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
 
