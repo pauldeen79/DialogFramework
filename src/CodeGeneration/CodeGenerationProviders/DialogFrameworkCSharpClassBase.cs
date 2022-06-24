@@ -74,14 +74,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     {
         FixTypeName(property);
 
-        if (property.TypeName.GetClassName() == "ResultValueType"
-            || property.TypeName.GetClassName() == "DialogState"
+        if (property.TypeName.GetClassName() == nameof(ResultValueType)
+            || property.TypeName.GetClassName() == nameof(DialogState)
             || property.TypeName == typeof(string).FullName)
         {
             property.WithConstructorNullCheck(false);
         }
 
-        if (property.TypeName.GetClassName() == "IDialogPartResultValueAnswer")
+        if (property.TypeName.GetClassName() == nameof(IDialogPartResultValueAnswer))
         {
             property.SetDefaultValueForBuilderClassConstructor(new Literal("new DialogFramework.Domain.Builders.DialogPartResultValueAnswerBuilder()"));
         }
@@ -106,7 +106,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         }
         else if (typeName.Contains("Collection<DialogFramework."))
         {
-            var isDialogPart = typeName.Contains("DialogFramework.Abstractions.IDialogPart>");
+            var isDialogPart = typeName.Contains($"{typeof(IDialogPart).FullName}>");
             property.ConvertCollectionPropertyToBuilderOnBuilder
             (
                 false,
@@ -130,14 +130,10 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .ReplaceSuffix(">", "Builder>", StringComparison.InvariantCulture)
             );
         }
-        else if (typeName.Contains("Collection<System.String"))
-        {
-            property.AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"new {typeof(ReadOnlyValueCollection<string>).FullName?.FixTypeName()}({{0}})");
-        }
         else if (typeName.IsBooleanTypeName() || typeName.IsNullableBooleanTypeName())
         {
             property.SetDefaultArgumentValueForWithMethod(true);
-            if (property.Name == "CanStart")
+            if (property.Name == nameof(IDialogMetadata.CanStart))
             {
                 property.SetDefaultValueForBuilderClassConstructor(new Literal("true"));
             }
@@ -150,7 +146,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         {
             yield return new ClassPropertyBuilder()
                 .WithName("Results")
-                .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<IDialogPartResult>")
+                .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IDialogPartResult)}>")
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
                     argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
@@ -162,7 +158,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             yield return
                 new ClassPropertyBuilder()
                     .WithName("NavigateToId")
-                    .WithTypeName("DialogFramework.Abstractions.IDialogPartIdentifier")
+                    .WithType(typeof(IDialogPartIdentifier))
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"NavigateToId?.Build()")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderConstructorInitializeExpression, "_navigateToIdDelegate = new (() => new DialogPartIdentifierBuilder())"); //HACK
@@ -180,7 +176,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             yield return
                 new ClassPropertyBuilder()
                     .WithName("DefaultNextPartId")
-                    .WithTypeName("DialogFramework.Abstractions.IDialogPartIdentifier")
+                    .WithType(typeof(IDialogPartIdentifier))
                     .WithIsNullable()
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderArgumentType, $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder")
                     .AddMetadata(ModelFramework.Objects.MetadataNames.CustomBuilderMethodParameterExpression, $"DefaultNextPartId?.Build()")
