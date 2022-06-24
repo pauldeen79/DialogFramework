@@ -120,4 +120,7 @@ public partial record Dialog
         Results = new ReadOnlyValueCollection<IDialogPartResult>(canResetResult.Value!);
         return Result.Success();
     }
+
+    public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
+        => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 }

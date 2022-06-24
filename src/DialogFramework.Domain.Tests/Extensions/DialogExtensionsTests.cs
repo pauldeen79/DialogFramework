@@ -17,7 +17,7 @@ public class DialogExtensionsTests
         var result = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id);
 
         // Assert
-        result.Should().BeEmpty();
+        result.GetValueOrThrow().Should().BeEmpty();
     }
 
     [Fact]

@@ -50,7 +50,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.CurrentState.Should().Be(DialogState.Completed);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -61,7 +61,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
@@ -118,7 +118,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.CurrentState.Should().Be(DialogState.Completed);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
@@ -131,7 +131,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Newsletter"))
@@ -149,8 +149,9 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act step 1: Start a session, submit first question
-        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
-        dialog1.CurrentPartId.Value.Should().Be("ContactInfo");
+        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed") as Dialog;
+        dialog1.Should().NotBeNull(because: "DialogApplicationService is supposed to return a Dialog instance");
+        dialog1!.CurrentPartId.Value.Should().Be("ContactInfo");
         dialog1 = sut.Continue
         (
             dialog1,
@@ -162,10 +163,11 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
-        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+        ).GetValueOrThrow("ContactInfo failed") as Dialog; // ContactInfo -> Newsletter
+        dialog1.Should().NotBeNull(because: "DialogApplicationService is supposed to return a Dialog instance");
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1!));
 
         // Act step 2: Re-create the dialog in a new session (simulating that the dialog is saved to a store, and reconstructed again)
         var dialog2 = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
@@ -182,7 +184,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPartId.Value.Should().Be("Completed");
-        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -193,7 +195,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))

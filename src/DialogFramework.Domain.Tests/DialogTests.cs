@@ -80,6 +80,7 @@ public class DialogTests
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().First();
         var sut = DialogFixture.Create
         (
             Id,
@@ -88,8 +89,8 @@ public class DialogTests
             new[]
             {
                 new DialogPartResultBuilder()
-                    .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
-                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
+                    .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
+                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
                     .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
                     .Build()
             }
@@ -102,7 +103,7 @@ public class DialogTests
             new[]
             {
                 new DialogPartResultAnswerBuilder()
-                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
+                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
                     .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
                     .Build()
             }, _conditionEvaluatorMock.Object);
@@ -114,8 +115,9 @@ public class DialogTests
         sut.CurrentGroupId.Should().Be(nextPart.GetGroupId());
         sut.CurrentState.Should().Be(nextPart.GetState());
         //first result value (true) is replaced with second (false)
-        sut.Results.Should().ContainSingle();
-        sut.Results.Single().Value.Value.Should().BeEquivalentTo(false);
+        var results = sut.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
+        results.Should().ContainSingle();
+        results.Single().Value.Value.Should().BeEquivalentTo(false);
     }
 
     [Fact]
@@ -317,18 +319,19 @@ public class DialogTests
         dialog.Start(dialogDefinition, _conditionEvaluatorMock.Object);
         dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Results.First().Id, new DialogPartResultValueAnswer(true)) }, conditionEvaluatorMock.Object);
         dialog.NavigateTo(dialogDefinition, questionPart.Id);
-        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().ContainSingle();
-        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Single().ResultId.Should().Be(questionPart.Results.First().Id);
+        var results = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
+        results.Should().ContainSingle();
+        results.Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
         dialog.ResetCurrentState(dialogDefinition);
         // Assert 1
-        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
         dialog.ResetCurrentState(dialogDefinition);
         // Assert 2
-        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).Should().BeEmpty();
+        dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
     }
 
     [Fact]

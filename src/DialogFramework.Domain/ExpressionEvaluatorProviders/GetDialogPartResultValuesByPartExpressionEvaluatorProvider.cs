@@ -14,6 +14,7 @@ public class GetDialogPartResultValuesByPartExpressionEvaluatorProvider : IExpre
             else
             {
                 result = dialog.GetDialogPartResultsByPartIdentifier(partValuesByPart.DialogPartId)
+                    .GetValueOrThrow()
                     .Where(x => x.Value.Value != null)
                     .Select(x => x.Value.Value);
             }

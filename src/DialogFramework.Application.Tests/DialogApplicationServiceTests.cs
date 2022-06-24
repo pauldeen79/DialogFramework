@@ -719,9 +719,8 @@ public class DialogApplicationServiceTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Status.Should().Be(ResultStatus.Ok);
-        var dialogPartResults = result.Value!.Results;
-        dialogPartResults.Should().ContainSingle();
-        dialogPartResults.Single().DialogPartId.Value.Should().Be("Other part");
+        var dialogPartResults = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
+        dialogPartResults.Should().BeEmpty();
     }
 
     [Fact]

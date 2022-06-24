@@ -3,14 +3,14 @@
 [ExcludeFromCodeCoverage]
 public static class DialogFixture
 {
-    public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier)
+    public static Dialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
-    public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
+    public static Dialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
                                  IDialogPartIdentifier currentPartIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
@@ -18,7 +18,7 @@ public static class DialogFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
             .Build();
 
-    public static IDialog Create(string id,
+    public static Dialog Create(string id,
                                  IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
                                  IDialogPart currentPart)
         => new DialogBuilder()
@@ -28,7 +28,7 @@ public static class DialogFixture
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
 
-    public static IDialog Create(string id,
+    public static Dialog Create(string id,
                                  IDialogDefinitionIdentifier currentDialogDefinitionIdentifier,
                                  IDialogPart currentPart,
                                  IEnumerable<IDialogPartResult> results)
@@ -40,7 +40,7 @@ public static class DialogFixture
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
             .Build();
 
-    public static IDialog Create(IDialog source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
+    public static Dialog Create(Dialog source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
         => new DialogBuilder(source)
             .AddResults(additionalAnswers.Select(x => new DialogPartResultBuilder(x)))
             .Build();
