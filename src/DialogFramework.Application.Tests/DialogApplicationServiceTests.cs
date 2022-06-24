@@ -700,7 +700,7 @@ public class DialogApplicationServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var questionPart = dialogDefinition.Parts.OfType<IQuestionDialogPart>().Single();
         var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
-        dialog = DialogFixture.Create(dialog, new[]
+        dialog = DialogFixture.Create(dialog, dialogDefinition, new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))

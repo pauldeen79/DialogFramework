@@ -149,9 +149,8 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act step 1: Start a session, submit first question
-        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed") as Dialog;
-        dialog1.Should().NotBeNull(because: "DialogApplicationService is supposed to return a Dialog instance");
-        dialog1!.CurrentPartId.Value.Should().Be("ContactInfo");
+        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
+        dialog1.CurrentPartId.Value.Should().Be("ContactInfo");
         dialog1 = sut.Continue
         (
             dialog1,
@@ -163,11 +162,10 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
-        ).GetValueOrThrow("ContactInfo failed") as Dialog; // ContactInfo -> Newsletter
-        dialog1.Should().NotBeNull(because: "DialogApplicationService is supposed to return a Dialog instance");
+        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1!));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1, dialogDefinition));
 
         // Act step 2: Re-create the dialog in a new session (simulating that the dialog is saved to a store, and reconstructed again)
         var dialog2 = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();

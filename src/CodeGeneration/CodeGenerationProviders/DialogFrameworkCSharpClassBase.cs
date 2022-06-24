@@ -20,7 +20,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
         if (instance.Namespace == "DialogFramework.Domain")
         {
-            return forCreate || instance.Name == "Dialog" // Note that the IDialog type is converted to Dialog instead of IDialog on builder, in order to get access to the results! (this is an added property)
+            return forCreate
                 ? "DialogFramework.Domain." + instance.Name
                 : "DialogFramework.Abstractions.I" + instance.Name;
         }
@@ -61,6 +61,15 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override void FixImmutableClassProperties(InterfaceBuilder interfaceBuilder)
         => FixImmutableBuilderProperties(interfaceBuilder);
 
+    protected override void PostProcessImmutableBuilderClass(ClassBuilder classBuilder)
+    {
+        if (classBuilder.Name == "DialogBuilder")
+        {
+            classBuilder.Constructors
+                .Single(x => x.Parameters.Any())
+                .AddParameter(name: "definition", typeName: "DialogFramework.Abstractions.IDialogDefinition");
+        }
+    }
     private static void FixProperty(ClassPropertyBuilder property)
     {
         FixTypeName(property);
@@ -145,10 +154,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
                     argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
-                    //customBuilderConstructorInitializeExpression: "Results.AddRange(definition.Parts.SelectMany(x => source.GetDialogPartResultsByPartIdentifier(x.Id).GetValueOrThrow()).Select(x => new DialogPartResultBuilder(x)))"
-                    //customBuilderConstructorInitializeExpression: @"Results.AddRange(((source as Dialog) ?? throw new ArgumentException(""This builder only supports the Dialog type"")).Results.Select(x => new DialogPartResultBuilder(x)))"
-                    customBuilderConstructorInitializeExpression: @"Results.AddRange(source.Results.Select(x => new DialogPartResultBuilder(x)))"
-                    );
+                    customBuilderConstructorInitializeExpression: "Results.AddRange(definition.Parts.SelectMany(x => source.GetDialogPartResultsByPartIdentifier(x.Id).GetValueOrThrow()).Select(x => new DialogPartResultBuilder(x)))");
         }
 
         if (className == "NavigationDialogPart")

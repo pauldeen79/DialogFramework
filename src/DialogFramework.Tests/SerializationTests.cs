@@ -38,11 +38,11 @@ public class SerializationTests
     public void Can_Serialize_And_Deserialize_Dialog()
     {
         // Arrange
-        var dialogToSerialize = new DialogFactory().Create(SimpleFormFlowDialog.Create()) as Dialog;
-        dialogToSerialize.Should().NotBeNull(because: "DialogFactory is supposed to create a Dialog instance");
+        var definition = SimpleFormFlowDialog.Create();
+        var dialogToSerialize = new DialogFactory().Create(definition);
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize!));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize, definition!));
 
         // Deserialize
         var deserializedDialog = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();

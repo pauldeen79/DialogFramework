@@ -4,9 +4,7 @@
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Domain/Builders";
-
     public override string DefaultFileName => "Builders.template.generated.cs";
-
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
