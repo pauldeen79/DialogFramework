@@ -13,7 +13,7 @@ public sealed class ApplicationEntrypoint
         _loggerMock = new Mock<ILogger>();
         _provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddScoped<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
+            .AddScoped<IDialogDefinitionProvider, TestDialogDefinitionProvider>()
             .AddScoped(_ => _loggerMock.Object)
             .BuildServiceProvider();
     }

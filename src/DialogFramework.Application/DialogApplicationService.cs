@@ -3,17 +3,17 @@
 public class DialogApplicationService : IDialogApplicationService
 {
     private readonly IDialogFactory _dialogFactory;
-    private readonly IDialogDefinitionRepository _dialogDefinitionRepository;
+    private readonly IDialogDefinitionProvider _dialogDefinitionProvider;
     private readonly IConditionEvaluator _conditionEvaluator;
     private readonly ILogger _logger;
 
     public DialogApplicationService(IDialogFactory dialogFactory,
-                                    IDialogDefinitionRepository dialogDefinitionRepository,
+                                    IDialogDefinitionProvider dialogDefinitionProvider,
                                     IConditionEvaluator conditionEvaluator,
                                     ILogger logger)
     {
         _dialogFactory = dialogFactory;
-        _dialogDefinitionRepository = dialogDefinitionRepository;
+        _dialogDefinitionProvider = dialogDefinitionProvider;
         _conditionEvaluator = conditionEvaluator;
         _logger = logger;
     }
@@ -80,10 +80,10 @@ public class DialogApplicationService : IDialogApplicationService
 
     private Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
     {
-        IDialogDefinition? dialog = null;
+        Result<IDialogDefinition>? definitionResult = null;
         try
         {
-            dialog = _dialogDefinitionRepository.GetDialogDefinition(dialogDefinitionIdentifier);
+            definitionResult = _dialogDefinitionProvider.GetDialogDefinition(dialogDefinitionIdentifier);
         }
         catch (Exception ex)
         {
@@ -91,13 +91,13 @@ public class DialogApplicationService : IDialogApplicationService
             _logger.LogError(ex, msg);
             return Result<IDialogDefinition>.Error("Could not retrieve dialog definition");
         }
-        if (dialog == null)
+        if (definitionResult.Status == ResultStatus.NotFound)
         {
             var msg = $"Unknown dialog definition: Id [{dialogDefinitionIdentifier.Id}], Version [{dialogDefinitionIdentifier.Version}]";
             _logger.LogError(msg);
             return Result<IDialogDefinition>.NotFound(msg);
         }
-        return Result<IDialogDefinition>.Success(dialog);
+        return definitionResult;
     }
 
     private Result<(IDialog dialog, IDialogDefinition definition)> CreateDialogAndDefinition(IDialogDefinitionIdentifier dialogDefinitionIdentifier)
