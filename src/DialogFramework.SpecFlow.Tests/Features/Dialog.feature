@@ -10,4 +10,6 @@ Scenario: Complete simple form flow from beginning to end
     And I answer the following results
         | Result              | Value          |
         | SignUpForNewsletter | [boolean:true] |
-    Then the current state should be Completed
+    Then the dialog should contain the content
+        | Field        | Value     |
+        | CurrentState | Completed |

@@ -13,9 +13,9 @@ public sealed class DialogStepDefinitions
     public void WhenIAnswerTheFollowingResults(IDialogPartResultAnswer[] answers)
         => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers);
 
-    [Then("the current state should be (.*)")]
-    public void ThenTheCurrentStateShouldBe(DialogState state)
-        => GetCurrentDialog().CurrentState.Should().Be(state);
+    [Then(@"the dialog should contain the content")]
+    public void ValidateResponseContent(Table table)
+        => table.CompareToInstance(GetCurrentDialog());
 
     private IDialog GetCurrentDialog()
     {
