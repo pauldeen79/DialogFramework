@@ -69,7 +69,7 @@ public partial record Dialog
         var firstPartResult = definition.GetFirstPart(this, evaluator);
         if (!firstPartResult.IsSuccessful())
         {
-            return Result.Error(firstPartResult.ErrorMessage);
+            return Result.Error(firstPartResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
         }
         CurrentPartId = firstPartResult.Value!.Id;
         CurrentGroupId = firstPartResult.Value!.GetGroupId();
@@ -120,4 +120,7 @@ public partial record Dialog
         Results = new ReadOnlyValueCollection<IDialogPartResult>(canResetResult.Value!);
         return Result.Success();
     }
+
+    public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
+        => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 }

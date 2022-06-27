@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.4.0" />
+    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.4.2" />
   </ItemGroup>
 
   <ItemGroup>

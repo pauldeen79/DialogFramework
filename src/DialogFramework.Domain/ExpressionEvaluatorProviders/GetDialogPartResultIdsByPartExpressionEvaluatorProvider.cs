@@ -13,7 +13,9 @@ public class GetDialogPartResultIdsByPartExpressionEvaluatorProvider : IExpressi
             }
             else
             {
-                result = dialog.GetDialogPartResultsByPartIdentifier(partIdsByPart.DialogPartId).Select(x => x.ResultId.Value);
+                result = dialog.GetDialogPartResultsByPartIdentifier(partIdsByPart.DialogPartId)
+                    .GetValueOrThrow()
+                    .Select(x => x.ResultId.Value);
             }
             return true;
         }

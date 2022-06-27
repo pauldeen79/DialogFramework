@@ -40,8 +40,10 @@ public static class DialogFixture
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))
             .Build();
 
-    public static IDialog Create(IDialog source, IReadOnlyCollection<IDialogPartResult> additionalAnswers)
-        => new DialogBuilder(source)
+    public static IDialog Create(IDialog source,
+                                 IDialogDefinition definition,
+                                 IReadOnlyCollection<IDialogPartResult> additionalAnswers)
+        => new DialogBuilder(source, definition)
             .AddResults(additionalAnswers.Select(x => new DialogPartResultBuilder(x)))
             .Build();
 }

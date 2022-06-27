@@ -7,7 +7,6 @@ public interface IDialog
     IDialogPartIdentifier CurrentPartId { get; }
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
-    IReadOnlyCollection<IDialogPartResult> Results { get; }
     string? ErrorMessage { get; }
 
     Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
@@ -16,4 +15,5 @@ public interface IDialog
     Result Error(IDialogDefinition definition, IError? error);
     Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId);
     Result ResetCurrentState(IDialogDefinition definition);
+    Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier);
 }

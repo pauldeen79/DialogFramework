@@ -10,7 +10,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         _loggerMock = new Mock<ILogger>();
         _provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddSingleton<IDialogDefinitionRepository, TestDialogDefinitionRepository>()
+            .AddSingleton<IDialogDefinitionProvider, TestDialogDefinitionProvider>()
             .AddSingleton(_loggerMock.Object)
             .BuildServiceProvider();
     }
@@ -19,7 +19,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
@@ -50,7 +50,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.CurrentState.Should().Be(DialogState.Completed);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -61,7 +61,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
@@ -74,7 +74,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
@@ -118,7 +118,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.CurrentState.Should().Be(DialogState.Completed);
         dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
@@ -131,7 +131,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Newsletter"))
@@ -145,7 +145,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Can_Complete_SimpleFormFlow_In_Different_Session()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act step 1: Start a session, submit first question
@@ -165,7 +165,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1, dialogDefinition));
 
         // Act step 2: Re-create the dialog in a new session (simulating that the dialog is saved to a store, and reconstructed again)
         var dialog2 = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
@@ -182,7 +182,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         result.CurrentState.Should().Be(DialogState.Completed);
         result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPartId.Value.Should().Be("Completed");
-        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -193,7 +193,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
                 .Build()
         });
-        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).Should().BeEquivalentTo(new[]
+        result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
@@ -206,7 +206,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
@@ -240,7 +240,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
@@ -274,7 +274,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionRepository>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"))!;
+        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var sut = _provider.GetRequiredService<IDialogApplicationService>();
 
         // Act
@@ -297,10 +297,10 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
         // Arrange
-        var dialogDefinition = new TestDialogDefinitionRepository().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0"));
+        var dialogDefinition = new TestDialogDefinitionProvider().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
         var factory = new DialogFactory();
-        var repository = new TestDialogDefinitionRepository();
-        var sut = new DialogApplicationService(factory, repository, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
+        var provider = new TestDialogDefinitionProvider();
+        var sut = new DialogApplicationService(factory, provider, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
 
         // Act
         var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
