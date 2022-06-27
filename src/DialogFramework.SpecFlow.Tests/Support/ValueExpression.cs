@@ -3,7 +3,7 @@
 public static class ValueExpression
 {
     /// <summary>
-    /// Replaces values speified from a table that need conversion, for example because the target type is object.
+    /// Replaces values specified from a table that need conversion, for example because the target type is object.
     /// </summary>
     /// <remarks>You can use expressions like [null], [boolean:true], [boolean:false] and [today]</remarks>
     /// <param name="value">input value (automatically mapped table value)</param>
@@ -12,7 +12,7 @@ public static class ValueExpression
     {
         if (value is string s)
         {
-            switch (s?.ToLowerInvariant())
+            switch (s.ToLowerInvariant())
             {
                 case "[null]":
                     return null;

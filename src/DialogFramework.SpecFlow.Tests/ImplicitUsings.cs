@@ -1,12 +1,10 @@
-﻿global using CrossCutting.Common.Extensions;
-global using CrossCutting.Common.Results;
+﻿global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Application;
 global using DialogFramework.Application.TestData;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.SpecFlow.Tests.Support;
-global using FluentAssertions;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Moq;
