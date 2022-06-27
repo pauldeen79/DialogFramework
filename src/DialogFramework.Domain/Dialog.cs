@@ -69,9 +69,7 @@ public partial record Dialog
         var firstPartResult = definition.GetFirstPart(this, evaluator);
         if (!firstPartResult.IsSuccessful())
         {
-            return firstPartResult.ErrorMessage == null
-                ? Result.Error("There was an error getting the first part")
-                : Result.Error(firstPartResult.ErrorMessage);
+            return Result.Error(firstPartResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
         }
         CurrentPartId = firstPartResult.Value!.Id;
         CurrentGroupId = firstPartResult.Value!.GetGroupId();
