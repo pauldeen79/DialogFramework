@@ -209,6 +209,57 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
+    public void Continue_Uses_Result_From_RedirectPart()
+    {
+        // Arrange
+        var welcomePart = new MessageDialogPartBuilder()
+            .WithMessage("Welcome! I would like to answer a question")
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+            .WithHeading("Welcome");
+        var dialogDefinition2 = DialogDefinitionFixture.CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Dialog 2")
+                .WithId("Dialog2")
+                .WithVersion("1.0.0"))
+            .AddParts(welcomePart)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
+        var redirectPart = new RedirectDialogPartBuilder()
+            .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialogDefinition2.Metadata))
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect"));
+        var dialogDefinition1 = DialogDefinitionFixture.CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Dialog 1")
+                .WithId("Dialog1")
+                .WithVersion("1.0.0"))
+            .AddParts(welcomePart, redirectPart)
+            .Build();
+        var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition1.Metadata.Id) || Equals(d.Metadata.Id, dialogDefinition2.Metadata.Id),
+                                               dialog => Equals(dialog.Metadata.Id, dialogDefinition1.Metadata.Id)
+                                                   ? DialogFixture.Create(dialogDefinition1.Metadata)
+                                                   : DialogFixture.Create(dialogDefinition2.Metadata));
+        _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
+        {
+            if (Equals(identifier.Id, dialogDefinition1.Metadata.Id) && Equals(identifier.Version, dialogDefinition1.Metadata.Version)) return Result<IDialogDefinition>.Success(dialogDefinition1);
+            if (Equals(identifier.Id, dialogDefinition2.Metadata.Id) && Equals(identifier.Version, dialogDefinition2.Metadata.Version)) return Result<IDialogDefinition>.Success(dialogDefinition2);
+            return Result<IDialogDefinition>.NotFound();
+        });
+        var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = sut.Start(dialogDefinition1.Metadata).GetValueOrThrow("Start failed");
+
+        // Act
+        var result = sut.Continue(dialog);
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
+        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition2.Metadata.Id);
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id.Build());
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id.Build());
+    }
+
+    [Fact]
     public void Start_Returns_Error_When_ContextFactory_CanCreate_Returns_False()
     {
         // Arrange
@@ -284,7 +335,7 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
-    public void Start_Can_Return_RedirectPart()
+    public void Start_Uses_Result_From_RedirectPart()
     {
         // Arrange
         var welcomePart = new MessageDialogPartBuilder()
@@ -327,10 +378,10 @@ public class DialogApplicationServiceTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Status.Should().Be(ResultStatus.Ok);
-        result.Value!.CurrentState.Should().Be(DialogState.Completed);
-        result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition1.Metadata.Id);
-        result.Value!.CurrentGroupId.Should().BeNull();
-        result.Value!.CurrentPartId.Value.Should().Be("Redirect");
+        result.Value!.CurrentState.Should().Be(DialogState.InProgress);
+        result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition2.Metadata.Id);
+        result.Value!.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id.Build());
+        result.Value!.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id.Build());
     }
 
     [Fact]

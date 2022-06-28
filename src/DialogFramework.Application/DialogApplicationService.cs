@@ -67,6 +67,12 @@ public class DialogApplicationService : IDialogApplicationService
             {
                 return Result<IDialog>.FromExistingResult(result);
             }
+
+            if (result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
+            {
+                return Start(dialogDefinitionIdentifierResult.GetValueOrThrow());
+            }
+
             return Result<IDialog>.Success(dialog);
         }
         catch (Exception ex)
