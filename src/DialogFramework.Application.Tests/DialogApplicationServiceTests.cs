@@ -62,9 +62,10 @@ public class DialogApplicationServiceTests
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
                      .Returns(Result<IDialogDefinition>.NotFound());
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.Abort(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.Abort(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -83,9 +84,10 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.Abort(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.Abort(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -176,9 +178,10 @@ public class DialogApplicationServiceTests
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
                      .Returns(Result<IDialogDefinition>.NotFound());
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.Continue(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.Continue(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -197,9 +200,10 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.Continue(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.Continue(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -730,9 +734,10 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.NavigateTo(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()), dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(dialog, dialogDefinition.Parts.First().Id);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -817,9 +822,10 @@ public class DialogApplicationServiceTests
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
                      .Returns(Result<IDialogDefinition>.NotFound());
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.ResetCurrentState(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -838,9 +844,10 @@ public class DialogApplicationServiceTests
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
+        var result = sut.ResetCurrentState(dialog);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();

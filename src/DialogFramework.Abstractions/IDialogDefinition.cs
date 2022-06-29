@@ -22,7 +22,9 @@ public interface IDialogDefinition
 
     Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator);
 
-    Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResultAnswer> results);
+    Result<IDialogPart> GetNextPart(IDialog dialog,
+                                    IConditionEvaluator evaluator,
+                                    IEnumerable<IDialogPartResultAnswer> results);
 
     Result<IDialogPart> GetPartById(IDialogPartIdentifier id);
 }
