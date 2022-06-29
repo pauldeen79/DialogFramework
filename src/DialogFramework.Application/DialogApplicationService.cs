@@ -63,14 +63,15 @@ public class DialogApplicationService : IDialogApplicationService
         try
         {
             var result = action.Invoke(definition);
+            if (result.Status == ResultStatus.Redirect
+                && result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
+            {
+                return Start(dialogDefinitionIdentifierResult.GetValueOrThrow());
+            }
+
             if (!result.IsSuccessful())
             {
                 return Result<IDialog>.FromExistingResult(result);
-            }
-
-            if (result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
-            {
-                return Start(dialogDefinitionIdentifierResult.GetValueOrThrow());
             }
 
             return Result<IDialog>.Success(dialog);

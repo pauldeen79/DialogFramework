@@ -37,7 +37,7 @@ public partial record Dialog
         }
         else if (nextPartResult.Value is IRedirectDialogPart redirectDialogPart)
         {
-            return Result<IDialogDefinitionIdentifier>.Success(redirectDialogPart.RedirectDialogMetadata);
+            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
         }
 
         var nextPart = nextPartResult.Value!;
@@ -78,7 +78,7 @@ public partial record Dialog
         }
         else if (firstPartResult.Value is IRedirectDialogPart redirectDialogPart)
         {
-            return Result<IDialogDefinitionIdentifier>.Success(redirectDialogPart.RedirectDialogMetadata);
+            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
         }
 
         var firstPart = firstPartResult.Value!;
