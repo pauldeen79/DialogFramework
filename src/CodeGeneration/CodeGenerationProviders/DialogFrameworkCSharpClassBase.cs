@@ -150,7 +150,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
                     argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
-                    customBuilderConstructorInitializeExpression: "Results.AddRange(definition.Parts.SelectMany(x => source.GetDialogPartResultsByPartIdentifier(x.Id).GetValueOrThrow()).Select(x => new DialogPartResultBuilder(x)))");
+                    customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))");
         }
 
         if (className == "NavigationDialogPart")

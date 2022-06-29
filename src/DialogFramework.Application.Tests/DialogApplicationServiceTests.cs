@@ -64,7 +64,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.Abort(factory.Create(dialogDefinition));
+        var result = sut.Abort(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -85,7 +85,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.Abort(factory.Create(dialogDefinition));
+        var result = sut.Abort(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -178,7 +178,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.Continue(factory.Create(dialogDefinition));
+        var result = sut.Continue(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -199,7 +199,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.Continue(factory.Create(dialogDefinition));
+        var result = sut.Continue(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -558,6 +558,27 @@ public class DialogApplicationServiceTests
     }
 
     [Fact]
+    public void Start_Fills_Results_From_Previous_Session_On_Dialog_When_Present()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var sut = CreateSut();
+        var partResult = new DialogPartResultBuilder()
+            .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var result = sut.Start(dialogDefinition.Metadata, new[] { partResult });
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
+        result.Value.Should().NotBeNull();
+        result.GetValueOrThrow().GetAllResults(dialogDefinition).Should().ContainSingle();
+    }
+
+    [Fact]
     public void NavigateTo_Returns_Invalid_When_Parts_Does_Not_Contain_Current_Part()
     {
         // Arrange
@@ -688,7 +709,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()), dialogDefinition.Parts.First().Id);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -709,7 +730,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.NavigateTo(factory.Create(dialogDefinition), dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()), dialogDefinition.Parts.First().Id);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -794,7 +815,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -815,7 +836,7 @@ public class DialogApplicationServiceTests
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
 
         // Act
-        var result = sut.ResetCurrentState(factory.Create(dialogDefinition));
+        var result = sut.ResetCurrentState(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()));
 
         // Assert
         result.IsSuccessful().Should().BeFalse();

@@ -13,9 +13,9 @@ public class DialogFactoryFixture : IDialogFactory
         _createDelegate = createDelegate;
     }
 
-    public bool CanCreate(IDialogDefinition dialogDefinition)
+    public bool CanCreate(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> dialogPartResults)
         => _canCreateDelegate(dialogDefinition);
 
-    public IDialog Create(IDialogDefinition dialogDefinition)
+    public IDialog Create(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> dialogPartResults)
         => _createDelegate(dialogDefinition);
 }

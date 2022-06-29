@@ -2,7 +2,7 @@
 
 public interface IDialogApplicationService
 {
-    Result<IDialog> Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier);
+    Result<IDialog> Start(IDialogDefinitionIdentifier dialogDefinitionIdentifier, IEnumerable<IDialogPartResult> dialogPartResults);
     Result<IDialog> Continue(IDialog dialog, IEnumerable<IDialogPartResultAnswer> dialogPartResults);
     Result<IDialog> Abort(IDialog dialog);
     Result<IDialog> NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId);
