@@ -20,7 +20,8 @@ public interface IDialogDefinition
                          IDialogPartIdentifier navigateToPartId,
                          IEnumerable<IDialogPartResult> existingPartResults);
 
-    Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator);
+    Result<IDialogPart> GetFirstPart(IDialog dialog,
+                                     IConditionEvaluator evaluator);
 
     Result<IDialogPart> GetNextPart(IDialog dialog,
                                     IConditionEvaluator evaluator,

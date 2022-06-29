@@ -2,6 +2,9 @@
 
 public interface IDialogFactory
 {
-    bool CanCreate(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> dialogPartResults);
-    IDialog Create(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> dialogPartResults);
+    bool CanCreate(IDialogDefinition dialogDefinition,
+                   IEnumerable<IDialogPartResult> dialogPartResults);
+
+    IDialog Create(IDialogDefinition dialogDefinition,
+                   IEnumerable<IDialogPartResult> dialogPartResults);
 }
