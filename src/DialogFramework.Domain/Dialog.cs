@@ -41,7 +41,7 @@ public partial record Dialog
         }
 
         var nextPart = nextPartResult.Value!;
-        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentPartId));
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
         CurrentPartId = nextPart.Id;
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
@@ -110,6 +110,7 @@ public partial record Dialog
         }
 
         var navigateToPart = navigateToPartResult.Value!;
+        CurrentDialogIdentifier = definition.Metadata;
         CurrentPartId = navigateToPartId;
         CurrentGroupId = navigateToPart.GetGroupId();
         CurrentState = navigateToPart.GetState();

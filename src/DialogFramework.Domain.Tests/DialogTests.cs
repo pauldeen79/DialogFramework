@@ -89,6 +89,7 @@ public class DialogTests
             new[]
             {
                 new DialogPartResultBuilder()
+                    .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                     .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
                     .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
                     .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
@@ -235,6 +236,7 @@ public class DialogTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var partIdBuilder = new DialogPartIdentifierBuilder().WithValue("NonExisting");
         var partResult = new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
             .WithDialogPartId(partIdBuilder)
             .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Something"))
             .Build();
@@ -261,6 +263,7 @@ public class DialogTests
             new[]
             {
                 new DialogPartResultBuilder()
+                    .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                     .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id))
                     .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
                     .Build()

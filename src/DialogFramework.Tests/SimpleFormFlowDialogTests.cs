@@ -121,11 +121,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
                 .Build(),
             new DialogPartResultBuilder()
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
@@ -134,6 +136,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Newsletter"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))

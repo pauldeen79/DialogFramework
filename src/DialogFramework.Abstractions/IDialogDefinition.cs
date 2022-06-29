@@ -11,6 +11,7 @@ public interface IDialogDefinition
 
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                   IEnumerable<IDialogPartResultAnswer> newPartResults,
+                                                  IDialogDefinitionIdentifier dialogId,
                                                   IDialogPartIdentifier dialogPartId);
 
     Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,

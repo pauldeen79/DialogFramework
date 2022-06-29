@@ -4,13 +4,14 @@ public partial record DialogDefinition : IValidatableObject
 {
     public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                          IEnumerable<IDialogPartResultAnswer> newPartResults,
+                                                         IDialogDefinitionIdentifier dialogId,
                                                          IDialogPartIdentifier dialogPartId)
     {
         // Decision: By default, only the results from the requested part are replaced.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
         return existingPartResults
-            .Where(x => !Equals(dialogPartId, x.DialogPartId))
-            .Concat(newPartResults.Select(x => new DialogPartResult(dialogPartId, x.ResultId, x.Value)));
+            .Where(x => !DialogIdEquals(dialogId, x.DialogId) || !Equals(dialogPartId, x.DialogPartId))
+            .Concat(newPartResults.Select(x => new DialogPartResult(dialogId, dialogPartId, x.ResultId, x.Value)));
     }
 
     public Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
@@ -29,7 +30,7 @@ public partial record DialogDefinition : IValidatableObject
 
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return Result<IEnumerable<IDialogPartResult>>.Success(existingPartResults.Where(x => !Equals(x.DialogPartId, partId)));
+        return Result<IEnumerable<IDialogPartResult>>.Success(existingPartResults.Where(x => !DialogIdEquals(x.DialogId, Metadata) || !Equals(x.DialogPartId, partId)));
     }
 
     public Result CanNavigateTo(IDialogPartIdentifier currentPartId,
@@ -38,7 +39,7 @@ public partial record DialogDefinition : IValidatableObject
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => Equals(x.DialogPartId, navigateToPartId))))
+        if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => DialogIdEquals(x.DialogId, Metadata) && Equals(x.DialogPartId, navigateToPartId))))
         {
             // Part has not been visited yet
             return Result.Invalid("Cannot navigate to the specified part");
@@ -139,5 +140,13 @@ public partial record DialogDefinition : IValidatableObject
         {
             yield return new ValidationResult($"Dialog part ids should be unique. Duplicate ids: {string.Join(", ", duplicateIds.Select(x => x.ToString()))}");
         }
+    }
+
+    private bool DialogIdEquals(IDialogDefinitionIdentifier dialogId1, IDialogDefinitionIdentifier dialogId2)
+    {
+        // Cast both id's to same type. Needed if one of the two is metadata and other is definition identifier.
+        var id1 = new DialogDefinitionIdentifierBuilder(dialogId1).Build();
+        var id2 = new DialogDefinitionIdentifierBuilder(dialogId2).Build();
+        return Equals(id1, id2);
     }
 }

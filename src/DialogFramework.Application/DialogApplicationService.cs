@@ -36,11 +36,11 @@ public class DialogApplicationService : IDialogApplicationService
     public Result<IDialog> Abort(IDialog dialog)
         => PerformAction(dialog, nameof(Abort), dialogDefinition => dialog.Abort(dialogDefinition));
 
-    public Result<IDialog> NavigateTo(IDialog dialog, IDialogPartIdentifier navigateToPartId)
-        => PerformAction(dialog, nameof(NavigateTo), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId));
+    public Result<IDialog> NavigateTo(IDialog dialog, IDialogDefinitionIdentifier dialogDefinitionIdentifier, IDialogPartIdentifier navigateToPartId)
+        => PerformAction(dialog, nameof(NavigateTo), dialogDefinition => dialog.NavigateTo(dialogDefinition, navigateToPartId), GetDialogDefinition(dialogDefinitionIdentifier).Value);
 
-    public Result<IDialog> ResetCurrentState(IDialog dialog)
-        => PerformAction(dialog, nameof(ResetCurrentState), dialogDefinition => dialog.ResetCurrentState(dialogDefinition));
+    public Result<IDialog> ResetCurrentState(IDialog dialog, IDialogDefinitionIdentifier dialogDefinitionIdentifier)
+        => PerformAction(dialog, nameof(ResetCurrentState), dialogDefinition => dialog.ResetCurrentState(dialogDefinition), GetDialogDefinition(dialogDefinitionIdentifier).Value);
 
     private Result<IDialog> PerformAction(IDialog dialog,
                                           string operationName,
@@ -58,8 +58,13 @@ public class DialogApplicationService : IDialogApplicationService
     private Result<IDialog> PerformAction(IDialog dialog,
                                           string operationName,
                                           Func<IDialogDefinition, Result> action,
-                                          IDialogDefinition definition)
+                                          IDialogDefinition? definition)
     {
+        if (definition == null)
+        {
+            return PerformAction(dialog, operationName, action);
+        }
+
         try
         {
             var result = action.Invoke(definition);

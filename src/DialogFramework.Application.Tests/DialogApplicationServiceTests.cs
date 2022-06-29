@@ -564,6 +564,7 @@ public class DialogApplicationServiceTests
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = CreateSut();
         var partResult = new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
             .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
@@ -707,9 +708,10 @@ public class DialogApplicationServiceTests
         _providerMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
                      .Returns(Result<IDialogDefinition>.NotFound());
         var sut = new DialogApplicationService(factory, _providerMock.Object, _conditionEvaluatorMock.Object, _loggerMock.Object);
+        var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>());
 
         // Act
-        var result = sut.NavigateTo(factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()), dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(dialog, dialogDefinition.Metadata, dialogDefinition.Parts.First().Id);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -783,10 +785,12 @@ public class DialogApplicationServiceTests
         dialog = DialogFixture.Create(dialog, dialogDefinition, new[]
         {
             new DialogPartResultBuilder()
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Terrible"))
                 .Build(),
             new DialogPartResultBuilder()
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Other part"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("Other value"))
                 .Build()
@@ -862,7 +866,7 @@ public class DialogApplicationServiceTests
                     It.Is<It.IsAnyType>((@object, @type) => @object != null && @object.ToString() == title && @type != null && @type.Name == "FormattedLogValues"),
                     It.Is<InvalidOperationException>(ex => ex.Message == exceptionMessage),
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                Times.Once);
+                Times.AtLeastOnce());
         }
         else
         {
@@ -872,7 +876,7 @@ public class DialogApplicationServiceTests
                     It.Is<It.IsAnyType>((@object, @type) => @object != null && @object.ToString() == title && @type != null && @type.Name == "FormattedLogValues"),
                     null,
                     It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
-                Times.Once);
+                Times.AtLeastOnce());
         }
     }
 }
