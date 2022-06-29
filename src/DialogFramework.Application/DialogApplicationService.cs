@@ -130,14 +130,11 @@ public class DialogApplicationService : IDialogApplicationService
         }
 
         var dialogDefinition = dialogDefinitionResult.Value!;
-        if (!_dialogFactory.CanCreate(dialogDefinition, dialogPartResults))
-        {
-            return Result<(IDialog dialog, IDialogDefinition definition)>.Error("Could not create dialog");
-        }
 
         try
         {
-            return Result<(IDialog dialog, IDialogDefinition definition)>.Success((_dialogFactory.Create(dialogDefinition, dialogPartResults), dialogDefinition));
+            var createResult = _dialogFactory.Create(dialogDefinition, dialogPartResults);
+            return Result<(IDialog dialog, IDialogDefinition definition)>.Success((createResult.GetValueOrThrow(), dialogDefinition));
         }
         catch (Exception ex)
         {
