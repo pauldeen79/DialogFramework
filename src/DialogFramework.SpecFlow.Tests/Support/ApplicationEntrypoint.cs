@@ -31,9 +31,7 @@ public sealed class ApplicationEntrypoint
 
     [BeforeScenario]
     public void SetupScenario()
-    {
-        _scope = Provider.CreateScope();
-    }
+        => _scope = Provider.CreateScope();
 
     [AfterScenario]
     public void CleanUpScenario()
@@ -46,16 +44,9 @@ public sealed class ApplicationEntrypoint
     }
 
     private static IServiceProvider Provider
-    {
-        get
-        {
-            if (_provider == null)
-            {
-                throw new InvalidOperationException("Something bad happened, application has not been initialized!");
-            }
-            return _provider;
-        }
-    }
+        => _provider == null
+            ? throw new InvalidOperationException("Something bad happened, application has not been initialized!")
+            : (IServiceProvider)_provider;
 
     public static StartRequestHandler StartHandler
         => Provider.GetRequiredService<StartRequestHandler>();

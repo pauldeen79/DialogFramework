@@ -11,3 +11,4 @@ global using Microsoft.Extensions.Logging;
 global using Moq;
 global using TechTalk.SpecFlow;
 global using TechTalk.SpecFlow.Assist;
+global using TechTalk.SpecFlow.Assist.Attributes;

@@ -1,7 +1,7 @@
 ﻿namespace DialogFramework.SpecFlow.Tests.Support;
 
 [Binding]
-public static class DialogTransformations
+public static partial class DialogTransformations
 {
     [StepArgumentTransformation]
     public static IDialogDefinitionIdentifier DialogDefinitionIdentifierTransform(string value)
@@ -17,10 +17,5 @@ public static class DialogTransformations
 
     [StepArgumentTransformation]
     public static IDialogPartResultAnswer[] DialogPartResultAnswerTransform(Table table)
-        => table.CreateSet
-        (
-            row => new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue(row["Result"]))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(ValueExpression.Evaluate(row["Value"])))
-        ).Select(x => x.Build()).ToArray();
+        => table.CreateSet<TableDialogPartResultAnswer>().ToArray();
 }
