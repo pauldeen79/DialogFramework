@@ -117,7 +117,7 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result ResetCurrentState(IDialogDefinition definition)
+    public Result ResetCurrentState(IDialogDefinition definition, IDialogPartIdentifier partId)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -125,7 +125,7 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        var canResetResult = definition.ResetPartResultsByPartId(Results, CurrentPartId);
+        var canResetResult = definition.ResetPartResultsByPartId(Results, partId);
         if (!canResetResult.IsSuccessful())
         {
             return canResetResult;

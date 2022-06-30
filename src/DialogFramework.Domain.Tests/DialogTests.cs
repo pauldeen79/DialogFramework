@@ -280,7 +280,7 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -296,7 +296,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.OfType<IMessageDialogPart>().First());
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -319,12 +319,12 @@ public class DialogTests
         results.Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
-        dialog.ResetCurrentState(dialogDefinition);
+        dialog.ResetCurrentState(dialogDefinition, dialog.CurrentPartId);
         // Assert 1
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
-        dialog.ResetCurrentState(dialogDefinition);
+        dialog.ResetCurrentState(dialogDefinition, dialog.CurrentPartId);
         // Assert 2
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
     }
@@ -343,7 +343,7 @@ public class DialogTests
         );
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetCurrentState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
