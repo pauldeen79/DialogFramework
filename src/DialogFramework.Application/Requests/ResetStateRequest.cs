@@ -7,12 +7,7 @@ public record ResetStateRequest
     public IDialogPartIdentifier DialogPartIdentifier { get; }
 
     public ResetStateRequest(IDialog dialog)
-        : this(dialog, dialog.CurrentDialogIdentifier, dialog.CurrentPartId)
-    {
-    }
-
-    public ResetStateRequest(IDialog dialog, IDialogPartIdentifier dialogPartIdentifier)
-        : this(dialog, dialog.CurrentDialogIdentifier, dialogPartIdentifier)
+        : this(dialog, dialog?.CurrentDialogIdentifier!, dialog?.CurrentPartId!)
     {
     }
 

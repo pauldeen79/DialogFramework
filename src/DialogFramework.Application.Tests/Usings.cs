@@ -1,4 +1,5 @@
 ﻿global using CrossCutting.Common.Results;
+global using CrossCutting.Common.Testing;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DialogParts;
 global using DialogFramework.Application.RequestHandlers;
