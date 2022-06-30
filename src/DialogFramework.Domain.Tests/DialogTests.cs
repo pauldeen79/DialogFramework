@@ -86,15 +86,7 @@ public class DialogTests
             Id,
             dialogDefinition.Metadata,
             dialogDefinition.Parts.First(),
-            new[]
-            {
-                new DialogPartResultBuilder()
-                    .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
-                    .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
-                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
-                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
-                    .Build()
-            }
+            new[] { CreatePartResult(dialogDefinition, questionPart) }
         );
 
         // Act
@@ -392,4 +384,12 @@ public class DialogTests
         sut.CurrentPartId.Should().Be(dialogDefinition.ErrorPart.Id);
         sut.ErrorMessage.Should().BeNull();
     }
+
+    private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)
+        => new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
+            .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
+            .Build();
 }

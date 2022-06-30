@@ -7,11 +7,11 @@ public sealed class DialogStepDefinitions
 
     [Given(@"I start the '([^']*)' dialog")]
     public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
-        => _lastResult = ApplicationEntrypoint.Instance.Start(id);
+        => _lastResult = ApplicationEntrypoint.StartHandler.Handle(new StartRequest(id));
 
     [When(@"I answer the following results")]
     public void WhenIAnswerTheFollowingResults(IDialogPartResultAnswer[] answers)
-        => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers);
+        => _lastResult = ApplicationEntrypoint.ContinueHandler.Handle(new ContinueRequest(GetCurrentDialog(), answers));
 
     [Then(@"the dialog should contain the content")]
     public void ValidateResponseContent(Table table)

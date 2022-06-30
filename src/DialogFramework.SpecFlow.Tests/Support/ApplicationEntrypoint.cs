@@ -57,6 +57,18 @@ public sealed class ApplicationEntrypoint
         }
     }
 
-    public static IDialogApplicationService Instance
-        => Provider.GetRequiredService<IDialogApplicationService>();
+    public static StartRequestHandler StartHandler
+        => Provider.GetRequiredService<StartRequestHandler>();
+
+    public static ContinueRequestHandler ContinueHandler
+        => Provider.GetRequiredService<ContinueRequestHandler>();
+
+    public static AbortRequestHandler AbortHandler
+        => Provider.GetRequiredService<AbortRequestHandler>();
+
+    public static NavigateRequestHandler NavigateHandler
+        => Provider.GetRequiredService<NavigateRequestHandler>();
+
+    public static ResetStateRequestHandler ResetStateHandler
+        => Provider.GetRequiredService<ResetStateRequestHandler>();
 }
