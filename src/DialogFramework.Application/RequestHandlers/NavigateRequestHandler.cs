@@ -20,6 +20,7 @@ public class NavigateRequestHandler : RequestHandlerBase
             request.Dialog,
             nameof(request.Dialog.Continue),
             _startRequestHandler,
-            dialogDefinition => request.Dialog.NavigateTo(dialogDefinition, request.NavigateToPartId)
+            dialogDefinition => request.Dialog.NavigateTo(dialogDefinition, request.NavigateToPartId),
+            GetDialogDefinition(request.DialogDefinitionIdentifier).Value
         );
 }

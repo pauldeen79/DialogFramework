@@ -20,6 +20,7 @@ public class ResetStateRequestHandler : RequestHandlerBase
             request.Dialog,
             nameof(request.Dialog.Continue),
             _startRequestHandler,
-            dialogDefinition => request.Dialog.ResetCurrentState(dialogDefinition, request.DialogPartIdentifier)
+            dialogDefinition => request.Dialog.ResetCurrentState(dialogDefinition, request.DialogPartIdentifier),
+            GetDialogDefinition(request.DialogDefinitionIdentifier).Value
         );
 }
