@@ -35,8 +35,13 @@ public partial record Dialog
         {
             return nextPartResult;
         }
+        else if (nextPartResult.Value is IRedirectDialogPart redirectDialogPart)
+        {
+            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
+        }
+
         var nextPart = nextPartResult.Value!;
-        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentPartId));
+        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
         CurrentPartId = nextPart.Id;
         CurrentGroupId = nextPart.GetGroupId();
         CurrentState = nextPart.GetState();
@@ -71,9 +76,15 @@ public partial record Dialog
         {
             return Result.Error(firstPartResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
         }
-        CurrentPartId = firstPartResult.Value!.Id;
-        CurrentGroupId = firstPartResult.Value!.GetGroupId();
-        CurrentState = firstPartResult.Value!.GetState();
+        else if (firstPartResult.Value is IRedirectDialogPart redirectDialogPart)
+        {
+            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
+        }
+
+        var firstPart = firstPartResult.Value!;
+        CurrentPartId = firstPart.Id;
+        CurrentGroupId = firstPart.GetGroupId();
+        CurrentState = firstPart.GetState();
         return Result.Success();
     }
 
@@ -97,7 +108,9 @@ public partial record Dialog
         {
             return navigateToPartResult;
         }
+
         var navigateToPart = navigateToPartResult.Value!;
+        CurrentDialogIdentifier = definition.Metadata;
         CurrentPartId = navigateToPartId;
         CurrentGroupId = navigateToPart.GetGroupId();
         CurrentState = navigateToPart.GetState();
@@ -117,6 +130,7 @@ public partial record Dialog
         {
             return canResetResult;
         }
+
         Results = new ReadOnlyValueCollection<IDialogPartResult>(canResetResult.Value!);
         return Result.Success();
     }

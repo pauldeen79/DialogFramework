@@ -15,15 +15,22 @@ public class DialogDefinitionTests
         // Arrange
         var dialogPartId1 = new DialogPartIdentifierBuilder().WithValue("1");
         var dialogPartId2 = new DialogPartIdentifierBuilder().WithValue("2");
-        var result11 = new DialogPartResultBuilder().WithDialogPartId(dialogPartId1).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("old")).Build();
-        var result12 = new DialogPartResultBuilder().WithDialogPartId(dialogPartId1).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("new")).Build();
-        var result21 = new DialogPartResultBuilder().WithDialogPartId(dialogPartId2).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("unchanged")).Build();
+        var dialogId = new DialogDefinitionIdentifierBuilder().WithId("Dialog1").WithVersion("1.0.0");
+        var result11 = new DialogPartResultBuilder().WithDialogId(dialogId).WithDialogPartId(dialogPartId1).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("old")).Build();
+        var result12 = new DialogPartResultBuilder().WithDialogId(dialogId).WithDialogPartId(dialogPartId1).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("new")).Build();
+        var result21 = new DialogPartResultBuilder().WithDialogId(dialogId).WithDialogPartId(dialogPartId2).WithResultId(new DialogPartResultIdentifierBuilder().WithValue("unchanged")).Build();
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
         var oldResults = new[] { result11, result21 };
         var expectedResults = new[] { result21, result12 }; //note that as this time, the values are appended at the end. so order is not preserved (which is probably not a problem)
 
         // Act
-        var actual = sut.ReplaceAnswers(oldResults, new[] { new DialogPartResultAnswer(result12.ResultId, result12.Value) }, dialogPartId1.Build());
+        var actual = sut.ReplaceAnswers
+        (
+            oldResults,
+            new[] { new DialogPartResultAnswer(result12.ResultId, result12.Value) },
+            dialogId.Build(),
+            dialogPartId1.Build()
+        );
 
         // Assert
         actual.Should().BeEquivalentTo(expectedResults, options => options.WithStrictOrdering());
@@ -63,13 +70,19 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
+        var partResult = new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(sut.Metadata))
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
         var otherResult = new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(sut.Metadata))
             .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Other"))
             .WithResultId(new DialogPartResultIdentifierBuilder())
             .Build();
         var results = new[]
         {
-            new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id)).WithResultId(new DialogPartResultIdentifierBuilder()).Build(),
+            partResult,
             otherResult
         };
 
@@ -99,9 +112,14 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
+        var partResult = new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(sut.Metadata))
+            .WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
 
         // Act
-        var actual = sut.CanNavigateTo(sut.CompletedPart.Id, sut.Parts.First().Id, new[] { new DialogPartResultBuilder().WithDialogPartId(new DialogPartIdentifierBuilder(sut.Parts.First().Id)).WithResultId(new DialogPartResultIdentifierBuilder()).Build() } );
+        var actual = sut.CanNavigateTo(sut.CompletedPart.Id, sut.Parts.First().Id, new[] { partResult } );
 
         // Assert
         actual.IsSuccessful().Should().BeTrue();

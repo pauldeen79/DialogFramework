@@ -11,6 +11,7 @@ public interface IDialogDefinition
 
     IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
                                                   IEnumerable<IDialogPartResultAnswer> newPartResults,
+                                                  IDialogDefinitionIdentifier dialogId,
                                                   IDialogPartIdentifier dialogPartId);
 
     Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
@@ -19,9 +20,12 @@ public interface IDialogDefinition
                          IDialogPartIdentifier navigateToPartId,
                          IEnumerable<IDialogPartResult> existingPartResults);
 
-    Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator);
+    Result<IDialogPart> GetFirstPart(IDialog dialog,
+                                     IConditionEvaluator evaluator);
 
-    Result<IDialogPart> GetNextPart(IDialog dialog, IConditionEvaluator evaluator, IEnumerable<IDialogPartResultAnswer> results);
+    Result<IDialogPart> GetNextPart(IDialog dialog,
+                                    IConditionEvaluator evaluator,
+                                    IEnumerable<IDialogPartResultAnswer> results);
 
     Result<IDialogPart> GetPartById(IDialogPartIdentifier id);
 }
