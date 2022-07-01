@@ -18,9 +18,9 @@ public class ResetStateRequestHandler : RequestHandlerBase, IRequestHandler<Rese
         => PerformAction
         (
             request.Dialog,
-            nameof(request.Dialog.Continue),
+            nameof(request.Dialog.ResetState),
             _startRequestHandler,
-            dialogDefinition => request.Dialog.ResetCurrentState(dialogDefinition, request.DialogPartIdentifier),
+            dialogDefinition => request.Dialog.ResetState(dialogDefinition, request.DialogPartIdentifier),
             GetDialogDefinition(request.DialogDefinitionIdentifier).Value
         );
 }

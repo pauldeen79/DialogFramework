@@ -18,7 +18,7 @@ public class NavigateRequestHandler : RequestHandlerBase, IRequestHandler<Naviga
         => PerformAction
         (
             request.Dialog,
-            nameof(request.Dialog.Continue),
+            nameof(request.Dialog.NavigateTo),
             _startRequestHandler,
             dialogDefinition => request.Dialog.NavigateTo(dialogDefinition, request.NavigateToPartId),
             GetDialogDefinition(request.DialogDefinitionIdentifier).Value

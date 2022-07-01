@@ -18,7 +18,7 @@ public class AbortRequestHandler : RequestHandlerBase, IRequestHandler<AbortRequ
         => PerformAction
         (
             request.Dialog,
-            nameof(request.Dialog.Continue),
+            nameof(request.Dialog.Abort),
             _startRequestHandler,
             dialogDefinition => request.Dialog.Abort(dialogDefinition)
         );

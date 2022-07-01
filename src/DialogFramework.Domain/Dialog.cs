@@ -117,7 +117,7 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result ResetCurrentState(IDialogDefinition definition, IDialogPartIdentifier partId)
+    public Result ResetState(IDialogDefinition definition, IDialogPartIdentifier partId)
     {
         if (CurrentState != DialogState.InProgress)
         {
