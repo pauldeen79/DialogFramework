@@ -1,20 +1,20 @@
 ﻿namespace DialogFramework.Application.RequestHandlers;
 
-public class AbortRequestHandler : RequestHandlerBase
+public class AbortRequestHandler : RequestHandlerBase, IRequestHandler<AbortRequest, Result<IDialog>>
 {
-    private readonly StartRequestHandler _startRequestHandler;
+    private readonly IRequestHandler<StartRequest, Result<IDialog>> _startRequestHandler;
 
     public AbortRequestHandler(IDialogFactory dialogFactory,
                                IDialogDefinitionProvider dialogDefinitionProvider,
                                IConditionEvaluator conditionEvaluator,
                                ILogger logger,
-                               StartRequestHandler startRequestHandler)
+                               IRequestHandler<StartRequest, Result<IDialog>> startRequestHandler)
         : base(dialogFactory, dialogDefinitionProvider, conditionEvaluator, logger)
     {
         _startRequestHandler = startRequestHandler;
     }
 
-    public Result<IDialog> Handle(AbortRequest request)
+    public Task<Result<IDialog>> Handle(AbortRequest request, CancellationToken cancellationToken)
         => PerformAction
         (
             request.Dialog,

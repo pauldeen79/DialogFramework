@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.Requests;
 
-public record ResetStateRequest
+public record ResetStateRequest : IRequest<Result<IDialog>>
 {
     public IDialog Dialog { get; }
     public IDialogDefinitionIdentifier DialogDefinitionIdentifier { get; }

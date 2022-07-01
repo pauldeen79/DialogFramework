@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.Requests;
 
-public record ContinueRequest
+public record ContinueRequest : IRequest<Result<IDialog>>
 {
     public IDialog Dialog { get; }
     public IReadOnlyCollection<IDialogPartResultAnswer> DialogPartResults { get; }

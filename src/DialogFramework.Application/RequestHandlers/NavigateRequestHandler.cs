@@ -1,20 +1,20 @@
 ﻿namespace DialogFramework.Application.RequestHandlers;
 
-public class NavigateRequestHandler : RequestHandlerBase
+public class NavigateRequestHandler : RequestHandlerBase, IRequestHandler<NavigateRequest, Result<IDialog>>
 {
-    private readonly StartRequestHandler _startRequestHandler;
+    private readonly IRequestHandler<StartRequest, Result<IDialog>> _startRequestHandler;
 
     public NavigateRequestHandler(IDialogFactory dialogFactory,
                                   IDialogDefinitionProvider dialogDefinitionProvider,
                                   IConditionEvaluator conditionEvaluator,
                                   ILogger logger,
-                                  StartRequestHandler startRequestHandler)
+                                  IRequestHandler<StartRequest, Result<IDialog>> startRequestHandler)
         : base(dialogFactory, dialogDefinitionProvider, conditionEvaluator, logger)
     {
         _startRequestHandler = startRequestHandler;
     }
 
-    public Result<IDialog> Handle(NavigateRequest request)
+    public Task<Result<IDialog>> Handle(NavigateRequest request, CancellationToken cancellationToken)
         => PerformAction
         (
             request.Dialog,

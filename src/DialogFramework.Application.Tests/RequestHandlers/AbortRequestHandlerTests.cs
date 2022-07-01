@@ -5,7 +5,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
     public AbortRequestHandlerTests() : base() { }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_Validation_Fails()
+    public async Task Handle_Returns_Invalid_When_Validation_Fails()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -14,7 +14,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new AbortRequest(dialog));
+        var result = await sut.Handle(new AbortRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -22,7 +22,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_AbortDialogPart_Dialog_When_Validation_Succeeds()
+    public async Task Handle_Returns_AbortDialogPart_Dialog_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -32,7 +32,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new AbortRequest(dialog));
+        var result = await sut.Handle(new AbortRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -42,7 +42,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_NotFound_When_Dialog_Could_Not_Be_Found()
+    public async Task Handle_Returns_NotFound_When_Dialog_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -54,7 +54,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new AbortRequest(dialog));
+        var result = await sut.Handle(new AbortRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -65,7 +65,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_Dialog_Retrieval_Throws()
+    public async Task Handle_Returns_Error_When_Dialog_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -76,7 +76,7 @@ public class AbortRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new AbortRequest(dialog));
+        var result = await sut.Handle(new AbortRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();

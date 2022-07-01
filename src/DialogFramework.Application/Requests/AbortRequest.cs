@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.Requests;
 
-public record AbortRequest
+public record AbortRequest : IRequest<Result<IDialog>>
 {
     public IDialog Dialog { get; }
 

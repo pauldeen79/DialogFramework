@@ -18,10 +18,10 @@ public abstract class RequestHandlerBase
         Logger = logger;
     }
 
-    protected Result<IDialog> PerformAction(IDialog dialog,
-                                            string operationName,
-                                            StartRequestHandler startRequestHandler,
-                                            Func<IDialogDefinition, Result> action)
+    protected async Task<Result<IDialog>> PerformAction(IDialog dialog,
+                                                        string operationName,
+                                                        IRequestHandler<StartRequest, Result<IDialog>> startRequestHandler,
+                                                        Func<IDialogDefinition, Result> action)
     {
         var dialogDefinitionResult = GetDialogDefinition(dialog.CurrentDialogIdentifier);
         if (!dialogDefinitionResult.IsSuccessful())
@@ -29,18 +29,18 @@ public abstract class RequestHandlerBase
             return Result<IDialog>.FromExistingResult(dialogDefinitionResult);
         }
         var definition = dialogDefinitionResult.Value!;
-        return PerformAction(dialog, operationName, startRequestHandler, action, definition);
+        return await PerformAction(dialog, operationName, startRequestHandler, action, definition);
     }
 
-    protected Result<IDialog> PerformAction(IDialog dialog,
-                                            string operationName,
-                                            StartRequestHandler startRequestHandler,
-                                            Func<IDialogDefinition, Result> action,
-                                            IDialogDefinition? definition)
+    protected async Task<Result<IDialog>> PerformAction(IDialog dialog,
+                                                        string operationName,
+                                                        IRequestHandler<StartRequest, Result<IDialog>> startRequestHandler,
+                                                        Func<IDialogDefinition, Result> action,
+                                                        IDialogDefinition? definition)
     {
         if (definition == null)
         {
-            return PerformAction(dialog, operationName, startRequestHandler, action);
+            return await PerformAction(dialog, operationName, startRequestHandler, action);
         }
 
         try
@@ -49,7 +49,7 @@ public abstract class RequestHandlerBase
             if (result.Status == ResultStatus.Redirect
                 && result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
             {
-                return startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.GetValueOrThrow(), dialog.GetAllResults(definition)));
+                return await startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.GetValueOrThrow(), dialog.GetAllResults(definition)), CancellationToken.None);
             }
 
             if (!result.IsSuccessful())

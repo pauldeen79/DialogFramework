@@ -9,6 +9,7 @@ global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Abstractions;
 global using FluentAssertions;
+global using MediatR;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Moq;

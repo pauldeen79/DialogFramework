@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.Requests;
 
-public record NavigateRequest
+public record NavigateRequest : IRequest<Result<IDialog>>
 {
     public IDialog Dialog { get; }
     public IDialogDefinitionIdentifier DialogDefinitionIdentifier { get; }

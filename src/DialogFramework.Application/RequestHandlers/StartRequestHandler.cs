@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.RequestHandlers;
 
-public class StartRequestHandler : RequestHandlerBase
+public class StartRequestHandler : RequestHandlerBase, IRequestHandler<StartRequest, Result<IDialog>>
 {
     public StartRequestHandler(IDialogFactory dialogFactory,
                                IDialogDefinitionProvider dialogDefinitionProvider,
@@ -10,7 +10,7 @@ public class StartRequestHandler : RequestHandlerBase
     {
     }
 
-    public Result<IDialog> Handle(StartRequest request)
+    public async Task<Result<IDialog>> Handle(StartRequest request, CancellationToken cancellationToken)
     {
         var dialogResult = CreateDialogAndDefinition(request);
         if (!dialogResult.IsSuccessful())
@@ -21,7 +21,7 @@ public class StartRequestHandler : RequestHandlerBase
         var dialog = dialogResult.Value!.Dialog;
         var definition = dialogResult.Value!.Definition;
 
-        return PerformAction
+        return await PerformAction
         (
             dialog,
             nameof(dialog.Start),

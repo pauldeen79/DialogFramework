@@ -5,7 +5,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
     public ResetStateRequestHandlerTests() : base() { }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
+    public async Task Handle_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -13,7 +13,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new ResetStateRequest(dialog));
+        var result = await sut.Handle(new ResetStateRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -22,7 +22,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_Current_DialogPart_Is_Not_QuestionDialogPart()
+    public async Task Handle_Returns_Invalid_When_Current_DialogPart_Is_Not_QuestionDialogPart()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -30,7 +30,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new ResetStateRequest(dialog));
+        var result = await sut.Handle(new ResetStateRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -39,7 +39,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Resets_Answers_From_Current_Question_When_Possible()
+    public async Task Handle_Resets_Answers_From_Current_Question_When_Possible()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -61,7 +61,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new ResetStateRequest(dialog));
+        var result = await sut.Handle(new ResetStateRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -71,7 +71,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
+    public async Task Handle_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -83,7 +83,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new ResetStateRequest(dialog));
+        var result = await sut.Handle(new ResetStateRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -94,7 +94,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
+    public async Task Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -105,7 +105,7 @@ public class ResetStateRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new ResetStateRequest(dialog));
+        var result = await sut.Handle(new ResetStateRequest(dialog), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();

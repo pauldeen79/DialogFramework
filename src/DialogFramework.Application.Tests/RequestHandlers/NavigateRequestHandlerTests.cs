@@ -5,7 +5,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     public NavigateRequestHandlerTests() : base() { }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_Parts_Does_Not_Contain_Current_Part()
+    public async Task Handle_Returns_Invalid_When_Parts_Does_Not_Contain_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -15,7 +15,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, completedPart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, completedPart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -24,7 +24,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
+    public async Task Handle_Returns_Invalid_When_Requested_Part_Is_Not_Part_Of_Current_Dialog()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -34,7 +34,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, completedPart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, completedPart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -43,7 +43,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_Requested_Part_Is_After_Current_Part()
+    public async Task Handle_Returns_Invalid_When_Requested_Part_Is_After_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -53,7 +53,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, questionPart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, questionPart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -62,7 +62,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Success_When_Requested_Part_Is_Current_Part()
+    public async Task Handle_Returns_Success_When_Requested_Part_Is_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -71,7 +71,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, questionPart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, questionPart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -79,7 +79,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Success_When_Requested_Part_Is_Before_Current_Part()
+    public async Task Handle_Returns_Success_When_Requested_Part_Is_Before_Current_Part()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
@@ -92,7 +92,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, messagePart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, messagePart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -100,7 +100,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
+    public async Task Handle_Navigates_To_Requested_Part_When_CanNavigate_Is_True()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateHowDoYouFeelBuilder().Build();
@@ -113,7 +113,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var sut = CreateSut();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, messagePart.Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, messagePart.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -124,7 +124,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
+    public async Task Handle_Returns_Error_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -136,7 +136,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, dialogDefinition.Metadata, dialogDefinition.Parts.First().Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, dialogDefinition.Metadata, dialogDefinition.Parts.First().Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -147,7 +147,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
+    public async Task Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -158,7 +158,7 @@ public class NavigateRequestHandlerTests : RequestHandlerTestBase
         var dialog = factory.Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
 
         // Act
-        var result = sut.Handle(new NavigateRequest(dialog, dialogDefinition.Parts.First().Id));
+        var result = await sut.Handle(new NavigateRequest(dialog, dialogDefinition.Parts.First().Id), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();

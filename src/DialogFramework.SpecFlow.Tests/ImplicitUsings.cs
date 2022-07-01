@@ -6,6 +6,7 @@ global using DialogFramework.Application.TestData;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.SpecFlow.Tests.Support;
+global using MediatR;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Logging;
 global using Moq;

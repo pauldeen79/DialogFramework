@@ -5,7 +5,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     public StartRequestHandlerTests() : base() { }
 
     [Fact]
-    public void Handle_Returns_Error_When_ContextFactory_Returns_NonSuccess()
+    public async Task Handle_Returns_Error_When_ContextFactory_Returns_NonSuccess()
     {
         // Arrange
         var factory = new DialogFactoryFixture(_ => false,
@@ -15,7 +15,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -24,7 +24,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Invalid_When_CanHandle_Is_False()
+    public async Task Handle_Returns_Invalid_When_CanHandle_Is_False()
     {
         // Arrange
         var dialogMetadataMock = new Mock<IDialogMetadata>();
@@ -46,7 +46,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialog = dialogDefinitionMock.Object;
 
         // Act
-        var result = sut.Handle(new StartRequest(dialog.Metadata));
+        var result = await sut.Handle(new StartRequest(dialog.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -55,7 +55,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Ok_And_Puts_Dialog_In_ErrorState_When_Dialog_Handle_Throws()
+    public async Task Handle_Returns_Ok_And_Puts_Dialog_In_ErrorState_When_Dialog_Handle_Throws()
     {
         // Arrange
         var definition = DialogDefinitionFixture.CreateBuilderBase()
@@ -68,7 +68,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(definition.Metadata));
+        var result = await sut.Handle(new StartRequest(definition.Metadata), CancellationToken.None);
 
         // Assert
         result.Status.Should().Be(ResultStatus.Ok);
@@ -80,11 +80,11 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Uses_Result_From_RedirectPart()
+    public async Task Handle_Uses_Result_From_RedirectPart()
     {
         // Arrange
-        var dialogDefinition2 = CreateSecondDialogDefinition();
-        var dialogDefinition1 = CreateFirstDialogDefinition(dialogDefinition2);
+        var dialogDefinition2 = DialogDefinitionFixture.CreateSecondDialogDefinition();
+        var dialogDefinition1 = DialogDefinitionFixture.CreateFirstDialogDefinition(dialogDefinition2, false);
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition1.Metadata.Id) || Equals(d.Metadata.Id, dialogDefinition2.Metadata.Id),
                                                dialog => Equals(dialog.Metadata.Id, dialogDefinition1.Metadata.Id)
                                                    ? DialogFixture.Create(dialogDefinition1.Metadata)
@@ -98,7 +98,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition1.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition1.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -106,44 +106,30 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
         result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition2.Metadata.Id);
         result.Value!.CurrentPartId.Should().BeEquivalentTo(dialogDefinition2.Parts.First().Id);
-        result.Value!.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition2.Parts.First().GetGroup()!.Id);
     }
 
     [Fact]
-    public void Handle_Uses_Result_From_NavigationPart()
+    public async Task Handle_Uses_Result_From_NavigationPart()
     {
         // Arrange
-        var welcomePart = new MessageDialogPartBuilder()
-            .WithMessage("Welcome! I would like to answer a question")
-            .WithGroup(DialogPartGroupFixture.CreateBuilder())
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
-            .WithHeading("Welcome");
-        var navigationPart = new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Navigate")).WithNavigateToId(welcomePart.Id);
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
-            .WithMetadata(new DialogMetadataBuilder()
-                .WithFriendlyName("Test dialog")
-                .WithId("Test")
-                .WithVersion("1.0.0"))
-            .AddParts(navigationPart, welcomePart)
-            .Build();
+        var dialogDefinition = DialogDefinitionFixture.CreateSingleStepDefinitionBuilder();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
-        result.Value!.CurrentGroupId.Should().BeEquivalentTo(welcomePart.Group.Id);
-        result.Value!.CurrentPartId.Should().BeEquivalentTo(welcomePart.Id);
+        result.Value!.CurrentPartId.Value.Should().Be("Welcome");
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_Dialog_Could_Not_Be_Created()
+    public async Task Handle_Returns_Error_When_Dialog_Could_Not_Be_Created()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -153,7 +139,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, provider, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -163,7 +149,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_NotFound_When_DialogDefinition_Could_Not_Be_Found()
+    public async Task Handle_Returns_NotFound_When_DialogDefinition_Could_Not_Be_Found()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -174,7 +160,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -185,7 +171,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
+    public async Task Handle_Returns_Error_When_DialogDefinition_Retrieval_Throws()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -195,7 +181,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -205,7 +191,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_First_DialogPart_When_It_Could_Be_Determined()
+    public async Task Handle_Returns_First_DialogPart_When_It_Could_Be_Determined()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -216,7 +202,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
             LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -226,27 +212,17 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_ErrorDialogPart_When_DecisionPart_Returns_ErrorDialogPart()
+    public async Task Handle_Returns_ErrorDialogPart_When_DecisionPart_Returns_ErrorDialogPart()
     {
         // Arrange
-        var decisionPart = new DecisionDialogPartBuilder()
-            .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
-            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Error"));
-        var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
-            .WithMetadata(new DialogMetadataBuilder()
-                .WithFriendlyName("Test dialog")
-                .WithId("Test")
-                .WithVersion("1.0.0"))
-            .AddParts(decisionPart)
-            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
-            .Build();
+        var dialogDefinition = DialogDefinitionFixture.CreateDialogDefinitionWithDecisionPartThatReturnsErrorDialogPart();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -257,7 +233,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Returns_AbortDialogPart_When_DecisionPart_Returns_AbortDialogPart()
+    public async Task Handle_Returns_AbortDialogPart_When_DecisionPart_Returns_AbortDialogPart()
     {
         // Arrange
         var decisionPart = new DecisionDialogPartBuilder()
@@ -277,7 +253,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -287,7 +263,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     }
 
     [Fact]
-    public void Handle_Fills_Results_From_Previous_Session_On_Dialog_When_Present()
+    public async Task Handle_Fills_Results_From_Previous_Session_On_Dialog_When_Present()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -303,7 +279,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
             .Build();
 
         // Act
-        var result = sut.Handle(new StartRequest(dialogDefinition.Metadata, new[] { partResult }));
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata, new[] { partResult }), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -311,28 +287,4 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         result.Value.Should().NotBeNull();
         result.GetValueOrThrow().GetAllResults(dialogDefinition).Should().ContainSingle();
     }
-
-    private static IDialogDefinition CreateFirstDialogDefinition(IDialogDefinition dialogDefinition2)
-        => DialogDefinitionFixture.CreateBuilderBase()
-            .WithMetadata(new DialogMetadataBuilder()
-                .WithFriendlyName("Dialog 1")
-                .WithId("Dialog1")
-                .WithVersion("1.0.0"))
-            .AddParts(new RedirectDialogPartBuilder()
-                .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialogDefinition2.Metadata))
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect")))
-            .Build();
-
-    private static IDialogDefinition CreateSecondDialogDefinition()
-        => DialogDefinitionFixture.CreateBuilderBase()
-            .WithMetadata(new DialogMetadataBuilder()
-                .WithFriendlyName("Dialog 2")
-                .WithId("Dialog2")
-                .WithVersion("1.0.0"))
-            .AddParts(new MessageDialogPartBuilder()
-                .WithMessage("Welcome! I would like to answer a question")
-                .WithGroup(DialogPartGroupFixture.CreateBuilder())
-                .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
-                .WithHeading("Welcome"))
-            .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
 }

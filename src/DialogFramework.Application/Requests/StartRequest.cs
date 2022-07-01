@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Application.Requests;
 
-public record StartRequest
+public record StartRequest : IRequest<Result<IDialog>>
 {
     public IDialogDefinitionIdentifier DialogDefinitionIdentifier { get; }
     public IReadOnlyCollection<IDialogPartResult> DialogPartResults { get; }
