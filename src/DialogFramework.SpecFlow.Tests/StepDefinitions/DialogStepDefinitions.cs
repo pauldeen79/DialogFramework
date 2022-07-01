@@ -6,12 +6,12 @@ public sealed class DialogStepDefinitions
     private Result<IDialog>? _lastResult;
 
     [Given(@"I start the '([^']*)' dialog")]
-    public void GivenIStartTheDialog(IDialogDefinitionIdentifier id)
-        => _lastResult = ApplicationEntrypoint.Instance.Start(id);
+    public async Task GivenIStartTheDialog(IDialogDefinitionIdentifier id)
+        => _lastResult = await ApplicationEntrypoint.StartHandler.Handle(new StartRequest(id), CancellationToken.None);
 
     [When(@"I answer the following results")]
-    public void WhenIAnswerTheFollowingResults(IDialogPartResultAnswer[] answers)
-        => _lastResult = ApplicationEntrypoint.Instance.Continue(GetCurrentDialog(), answers);
+    public async Task WhenIAnswerTheFollowingResults(IDialogPartResultAnswer[] answers)
+        => _lastResult = await ApplicationEntrypoint.ContinueHandler.Handle(new ContinueRequest(GetCurrentDialog(), answers), CancellationToken.None);
 
     [Then(@"the dialog should contain the content")]
     public void ValidateResponseContent(Table table)

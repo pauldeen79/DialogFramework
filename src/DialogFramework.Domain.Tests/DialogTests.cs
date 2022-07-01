@@ -86,15 +86,7 @@ public class DialogTests
             Id,
             dialogDefinition.Metadata,
             dialogDefinition.Parts.First(),
-            new[]
-            {
-                new DialogPartResultBuilder()
-                    .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
-                    .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
-                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
-                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
-                    .Build()
-            }
+            new[] { CreatePartResult(dialogDefinition, questionPart) }
         );
 
         // Act
@@ -281,14 +273,14 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
+    public void ResetState_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -297,14 +289,14 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Invalid_When_Dialog_CanResetResultsByPartId_Is_False()
+    public void ResetState_Returns_Invalid_When_Dialog_CanResetResultsByPartId_Is_False()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.OfType<IMessageDialogPart>().First());
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -312,7 +304,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Success_And_Updates_Results_Correctly_When_Validation_Succeeds()
+    public void ResetState_Returns_Success_And_Updates_Results_Correctly_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -327,18 +319,18 @@ public class DialogTests
         results.Single().ResultId.Should().Be(questionPart.Results.First().Id);
 
         // Act 1 - Call reset while there is an answer
-        dialog.ResetCurrentState(dialogDefinition);
+        dialog.ResetState(dialogDefinition, dialog.CurrentPartId);
         // Assert 1
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
 
         // Act 2 - Call reset while there is no answer
-        dialog.ResetCurrentState(dialogDefinition);
+        dialog.ResetState(dialogDefinition, dialog.CurrentPartId);
         // Assert 2
         dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow().Should().BeEmpty();
     }
 
     [Fact]
-    public void ResetCurrentState_Returns_Success_When_Validation_Succeeds()
+    public void ResetState_Returns_Success_When_Validation_Succeeds()
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
@@ -351,7 +343,7 @@ public class DialogTests
         );
 
         // Act
-        var result = sut.ResetCurrentState(dialogDefinition);
+        var result = sut.ResetState(dialogDefinition, sut.CurrentPartId);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -392,4 +384,12 @@ public class DialogTests
         sut.CurrentPartId.Should().Be(dialogDefinition.ErrorPart.Id);
         sut.ErrorMessage.Should().BeNull();
     }
+
+    private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)
+        => new DialogPartResultBuilder()
+            .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
+            .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
+            .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
+            .Build();
 }

@@ -1,50 +1,34 @@
-﻿namespace DialogFramework.Core.Tests;
+﻿namespace DialogFramework.Tests;
 
-public sealed class SimpleFormFlowDialogTests : IDisposable
+public sealed class SimpleFormFlowDialogTests : TestBase
 {
-    private readonly Mock<ILogger> _loggerMock;
-    private readonly ServiceProvider _provider;
-
-    public SimpleFormFlowDialogTests()
-    {
-        _loggerMock = new Mock<ILogger>();
-        _provider = new ServiceCollection()
-            .AddDialogFramework()
-            .AddSingleton<IDialogDefinitionProvider, TestDialogDefinitionProvider>()
-            .AddSingleton(_loggerMock.Object)
-            .BuildServiceProvider();
-    }
-
     [Fact]
-    public void Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
+    public async Task Can_Complete_SimpleFormFlow_Dialog_In_One_Step()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act
-        var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue
-        (
+        dialog = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
-                .Build()
-        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
-        dialog = sut.Continue
-        (
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+        dialog = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
+            new[] { new DialogPartResultAnswerBuilder()
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
-                .Build()
-        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
+                .Build() }
+        ), CancellationToken.None)).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
@@ -71,48 +55,50 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
+    public async Task Can_Complete_SimpleFormFlow_Dialog_With_NavigateBack()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act
-        var dialog = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog = sut.Continue
-        (
+        dialog = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("wrong@address.com"))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
-                .Build()
-        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
-        dialog = sut.NavigateTo(dialog, new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow("Navigate back to ContactInfo failed"); // navigate back: Completed -> ContactInfo
-        dialog = sut.Continue
-        (
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("wrong@address.com"))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+        dialog = (await NavigateHandler.Handle(new NavigateRequest(dialog, new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()), CancellationToken.None)).GetValueOrThrow("Navigate back to ContactInfo failed"); // navigate back: Completed -> ContactInfo
+        dialog = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
-                .Build()
-        ).GetValueOrThrow("ContactInfo second time failed"); // ContactInfo -> Newsletter
-        dialog = sut.Continue
-        (
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("ContactInfo second time failed"); // ContactInfo -> Newsletter
+        dialog = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
-                .Build()
-        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
@@ -121,13 +107,13 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
-                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(SimpleFormFlowDialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
                 .Build(),
             new DialogPartResultBuilder()
-                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(SimpleFormFlowDialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("ContactInfo"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
@@ -136,7 +122,7 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("Newsletter").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
             new DialogPartResultBuilder()
-                .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
+                .WithDialogId(new DialogDefinitionIdentifierBuilder(SimpleFormFlowDialogDefinition.Metadata))
                 .WithDialogPartId(new DialogPartIdentifierBuilder().WithValue("Newsletter"))
                 .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                 .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
@@ -145,41 +131,41 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Can_Complete_SimpleFormFlow_In_Different_Session()
+    public async Task Can_Complete_SimpleFormFlow_In_Different_Session()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act step 1: Start a session, submit first question
-        var dialog1 = sut.Start(dialogDefinition.Metadata).GetValueOrThrow("Start failed");
+        var dialog1 = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog1.CurrentPartId.Value.Should().Be("ContactInfo");
-        dialog1 = sut.Continue
-        (
+        dialog1 = (await ContinueHandler.Handle(new ContinueRequest(
             dialog1,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
-                .Build()
-        ).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("email@address.com"))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("ContactInfo failed"); // ContactInfo -> Newsletter
 
         // Serialize
-        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1, dialogDefinition));
+        var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialog1, SimpleFormFlowDialogDefinition));
 
         // Act step 2: Re-create the dialog in a new session (simulating that the dialog is saved to a store, and reconstructed again)
         var dialog2 = JsonSerializerFixture.Deserialize<DialogBuilder>(json)!.Build();
-        var result = sut.Continue
-        (
+        var result = (await ContinueHandler.Handle(new ContinueRequest(
             dialog2,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
-                .Build()
-        ).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
+                    .Build()
+            }
+        ), CancellationToken.None)).GetValueOrThrow("Newsletter failed"); // Newsletter -> Completed
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
@@ -206,27 +192,25 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
+    public async Task Providing_Wrong_ValueTypes_Leads_To_ValidationErrors()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition!.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        var result = sut.Continue
-        (
+        var result = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(911))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
-                .Build()
-        ); // Current part remains ContactInfo because of validation errors
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(911))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
+                    .Build()
+            }
+        ), CancellationToken.None)); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
@@ -240,27 +224,25 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
+    public async Task Providing_Results_With_Empty_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition!.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        var result = sut.Continue
-        (
+        var result = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(string.Empty))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue((object?)null))
-                .Build()
-        ); // Current part remains ContactInfo because of validation errors
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(string.Empty))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue((object?)null))
+                    .Build()
+            }
+        ), CancellationToken.None)); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
@@ -274,16 +256,12 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
+    public async Task Providing_Results_With_No_Values_On_Required_Values_Leads_To_ValidationErrors()
     {
-        // Arrange
-        var dialogDefinition = _provider.GetRequiredService<IDialogDefinitionProvider>().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var sut = _provider.GetRequiredService<IDialogApplicationService>();
-
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition!.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        var result = sut.Continue(dialog); // Current part remains ContactInfo because of validation errors
+        var result = (await ContinueHandler.Handle(new ContinueRequest(dialog), CancellationToken.None)); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
@@ -297,29 +275,25 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
     }
 
     [Fact]
-    public void Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
+    public async Task Providing_Results_With_Wrong_ValueType_Leads_To_ValidationErrors()
     {
-        // Arrange
-        var dialogDefinition = new TestDialogDefinitionProvider().GetDialogDefinition(new DialogDefinitionIdentifier(nameof(SimpleFormFlowDialog), "1.0.0")).GetValueOrThrow();
-        var factory = new DialogFactory();
-        var provider = new TestDialogDefinitionProvider();
-        var sut = new DialogApplicationService(factory, provider, new Mock<IConditionEvaluator>().Object, new Mock<ILogger>().Object);
-
         // Act
-        var dialog = sut.Start(dialogDefinition!.Metadata).GetValueOrThrow("Start failed");
+        var dialog = (await StartHandler.Handle(new StartRequest(SimpleFormFlowDialogDefinition!.Metadata), CancellationToken.None)).GetValueOrThrow("Start failed");
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
-        var result = sut.Continue
-        (
+        var result = (await ContinueHandler.Handle(new ContinueRequest(
             dialog,
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(1))
-                .Build(),
-            new DialogPartResultAnswerBuilder()
-                .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
-                .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
-                .Build()
-        ); // Current part remains ContactInfo because of validation errors
+            new[]
+            {
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(1))
+                    .Build(),
+                new DialogPartResultAnswerBuilder()
+                    .WithResultId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
+                    .WithValue(new DialogPartResultValueAnswerBuilder().WithValue("911"))
+                    .Build()
+            }
+        ), CancellationToken.None)); // Current part remains ContactInfo because of validation errors
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
@@ -330,6 +304,4 @@ public sealed class SimpleFormFlowDialogTests : IDisposable
             "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]"
         });
     }
-
-    public void Dispose() => _provider.Dispose();
 }

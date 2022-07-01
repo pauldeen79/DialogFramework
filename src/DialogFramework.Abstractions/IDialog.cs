@@ -24,7 +24,8 @@ public interface IDialog
     Result NavigateTo(IDialogDefinition definition,
                       IDialogPartIdentifier navigateToPartId);
 
-    Result ResetCurrentState(IDialogDefinition definition);
+    Result ResetState(IDialogDefinition definition,
+                      IDialogPartIdentifier partId);
 
     Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier);
 }

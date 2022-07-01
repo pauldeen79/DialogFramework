@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Domain.DialogParts;
+﻿using System.Linq;
+
+namespace DialogFramework.Domain.DialogParts;
 
 public partial record QuestionDialogPart : IValidatableObject
 {
@@ -45,13 +47,14 @@ public partial record QuestionDialogPart : IValidatableObject
                                                                           IDialogDefinition definition,
                                                                           IEnumerable<IDialogPartResultAnswer> results)
     {
-        foreach (var dialogPartResultId in results.Select(x => x.ResultId).Where(x => !string.IsNullOrEmpty(x.Value)))
+        var unknownResultIds = results
+            .Select(x => x.ResultId)
+            .Where(dialogPartResultId => !string.IsNullOrEmpty(dialogPartResultId.Value)
+                && !Results.Any(x => Equals(x.Id, dialogPartResultId)));
+
+        foreach (var dialogPartResultId in unknownResultIds)
         {
-            var currentPartResults = Results.Where(x => Equals(x.Id, dialogPartResultId)).ToArray();
-            if (currentPartResults.Length == 0)
-            {
-                yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
-            }
+            yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
         }
 
         foreach (var dialogPartResultDefinition in Results)

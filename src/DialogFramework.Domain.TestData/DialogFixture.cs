@@ -16,6 +16,7 @@ public static class DialogFixture
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
             .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
+            .WithCurrentState(DialogState.InProgress)
             .Build();
 
     public static IDialog Create(string id,

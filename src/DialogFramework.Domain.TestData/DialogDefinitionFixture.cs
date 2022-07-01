@@ -73,4 +73,72 @@ public static class DialogDefinitionFixture
                 .WithHeading("Completed")
                 .WithMessage("Thank you for using this application. Please come back soon!")
                 .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder()));
+
+    public static IDialogDefinition CreateSingleStepDefinitionBuilder()
+    {
+        var welcomePart = new MessageDialogPartBuilder()
+            .WithMessage("Welcome! I would like to answer a question")
+            .WithGroup(DialogPartGroupFixture.CreateBuilder())
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+            .WithHeading("Welcome");
+        var navigationPart = new NavigationDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Navigate")).WithNavigateToId(welcomePart.Id);
+        var dialogDefinition = CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Test dialog")
+                .WithId("Test")
+                .WithVersion("1.0.0"))
+            .AddParts(navigationPart, welcomePart)
+            .Build();
+        return dialogDefinition;
+    }
+
+    public static IDialogDefinition CreateDialogDefinitionWithDecisionPartThatReturnsErrorDialogPart()
+    {
+        var decisionPart = new DecisionDialogPartBuilder()
+            .WithId(new DialogPartIdentifierBuilder().WithValue("Decision"))
+            .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("Error"));
+        var dialogDefinition = CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Test dialog")
+                .WithId("Test")
+                .WithVersion("1.0.0"))
+            .AddParts(decisionPart)
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder())
+            .Build();
+        return dialogDefinition;
+    }
+
+    public static IDialogDefinition CreateFirstDialogDefinition(IDialogDefinition dialogDefinition2, bool addWelcomePart)
+        => CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Dialog 1")
+                .WithId("Dialog1")
+                .WithVersion("1.0.0"))
+            .AddParts(addWelcomePart
+                ? new[]
+                {
+                    new MessageDialogPartBuilder()
+                        .WithMessage("Welcome! I would like to answer a question")
+                        .WithGroup(DialogPartGroupFixture.CreateBuilder())
+                        .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+                        .WithHeading("Welcome")
+                }
+                : Enumerable.Empty<IDialogPartBuilder>())
+            .AddParts(new RedirectDialogPartBuilder()
+                .WithRedirectDialogMetadata(new DialogMetadataBuilder(dialogDefinition2.Metadata))
+                .WithId(new DialogPartIdentifierBuilder().WithValue("Redirect")))
+            .Build();
+
+    public static IDialogDefinition CreateSecondDialogDefinition()
+        => CreateBuilderBase()
+            .WithMetadata(new DialogMetadataBuilder()
+                .WithFriendlyName("Dialog 2")
+                .WithId("Dialog2")
+                .WithVersion("1.0.0"))
+            .AddParts(new MessageDialogPartBuilder()
+                .WithMessage("Welcome! I would like to answer a question")
+                .WithGroup(DialogPartGroupFixture.CreateBuilder())
+                .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
+                .WithHeading("Welcome"))
+            .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
 }
