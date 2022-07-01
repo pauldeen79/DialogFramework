@@ -39,7 +39,7 @@ public class SerializationTests
     {
         // Arrange
         var definition = SimpleFormFlowDialog.Create();
-        var dialogToSerialize = new DialogFactory().Create(definition, Enumerable.Empty<IDialogPartResult>()).GetValueOrThrow();
+        var dialogToSerialize = new DialogFactory().Create(definition, Enumerable.Empty<IDialogPartResult>(), Enumerable.Empty<IProperty>()).GetValueOrThrow();
 
         // Serialize
         var json = JsonSerializerFixture.Serialize(new DialogBuilder(dialogToSerialize, definition!));

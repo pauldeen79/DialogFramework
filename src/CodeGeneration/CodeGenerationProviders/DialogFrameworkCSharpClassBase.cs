@@ -70,6 +70,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .AddParameter(name: "definition", typeName: "DialogFramework.Abstractions.IDialogDefinition");
         }
     }
+
     private static void FixProperty(ClassPropertyBuilder property)
     {
         FixTypeName(property);
@@ -151,6 +152,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     addNullChecks: true,
                     argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
                     customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))");
+
+            yield return new ClassPropertyBuilder()
+                .WithName("Properties")
+                .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IProperty)}>")
+                .ConvertCollectionPropertyToBuilderOnBuilder(
+                    addNullChecks: true,
+                    argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.PropertyBuilder>",
+                    customBuilderConstructorInitializeExpression: "Properties.AddRange(source.GetProperties().Select(x => new PropertyBuilder(x)))");
         }
 
         if (className == "NavigationDialogPart")
@@ -211,6 +220,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         typeof(IDialogPartResultValueAnswer),
         typeof(IDialogValidationResult),
         typeof(IError),
+        typeof(IProperty),
     };
 
     protected static Type[] DialogPartModels => new[]

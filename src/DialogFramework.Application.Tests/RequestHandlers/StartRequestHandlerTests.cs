@@ -195,11 +195,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = new StartRequestHandler(
-            new DialogFactory(),
-            new TestDialogDefinitionProvider(),
-            ConditionEvaluatorMock.Object,
-            LoggerMock.Object);
+        var sut = CreateSut();
 
         // Act
         var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata), CancellationToken.None);
@@ -267,11 +263,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
     {
         // Arrange
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
-        var sut = new StartRequestHandler(
-            new DialogFactory(),
-            new TestDialogDefinitionProvider(),
-            ConditionEvaluatorMock.Object,
-            LoggerMock.Object);
+        var sut = CreateSut();
         var partResult = new DialogPartResultBuilder()
             .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
             .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.First().Id))
@@ -279,7 +271,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
             .Build();
 
         // Act
-        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata, new[] { partResult }), CancellationToken.None);
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata, new[] { partResult }, Enumerable.Empty<IProperty>()), CancellationToken.None);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -287,4 +279,31 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         result.Value.Should().NotBeNull();
         result.GetValueOrThrow().GetAllResults(dialogDefinition).Should().ContainSingle();
     }
+
+    [Fact]
+    public async Task Handle_Fills_Properties_From_Rquest_On_Dialog_When_Present()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
+        var sut = CreateSut();
+        var properties = new[]
+        {
+            new PropertyBuilder().WithName("Test").WithValue("Value").Build()
+        };
+
+        // Act
+        var result = await sut.Handle(new StartRequest(dialogDefinition.Metadata, Enumerable.Empty<IDialogPartResult>(), properties), CancellationToken.None);
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        result.Status.Should().Be(ResultStatus.Ok);
+        result.Value.Should().NotBeNull();
+        result.GetValueOrThrow().GetProperties().Should().ContainSingle();
+    }
+
+    private StartRequestHandler CreateSut()
+        => new StartRequestHandler(new DialogFactory(),
+                                   new TestDialogDefinitionProvider(),
+                                   ConditionEvaluatorMock.Object,
+                                   LoggerMock.Object);
 }

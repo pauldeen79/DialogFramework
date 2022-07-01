@@ -13,7 +13,16 @@ public class DialogFactoryFixture : IDialogFactory
         _createDelegate = createDelegate;
     }
 
-    public Result<IDialog> Create(IDialogDefinition dialogDefinition, IEnumerable<IDialogPartResult> dialogPartResults)
+    public Result<IDialog> Create(IDialogDefinition dialogDefinition)
+        => Create(dialogDefinition, Enumerable.Empty<IDialogPartResult>(), Enumerable.Empty<IProperty>());
+
+    public Result<IDialog> Create(IDialogDefinition dialogDefinition,
+                                  IEnumerable<IDialogPartResult> dialogPartResults)
+        => Create(dialogDefinition, dialogPartResults, Enumerable.Empty<IProperty>());
+
+    public Result<IDialog> Create(IDialogDefinition dialogDefinition,
+                                  IEnumerable<IDialogPartResult> dialogPartResults,
+                                  IEnumerable<IProperty> properties)
     {
         if (!_canCreateDelegate(dialogDefinition))
         {
