@@ -60,6 +60,34 @@ public class DialogTests
     }
 
     [Fact]
+    public void Abort_Calls_AfterNavigate_On_Previous_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Abort(data.DialogMock.Object);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
+    }
+
+    [Fact]
+    public void Abort_Calls_BeforeNavigate_On_Current_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Abort(data.DialogMock.Object);
+
+        // Assert
+        data.AbortPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
+    }
+
+    [Fact]
     public void Continue_Returns_Invalid_When_CurrentState_Is_Not_InProgress()
     {
         // Arrange
@@ -111,6 +139,34 @@ public class DialogTests
         var results = sut.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
         results.Should().ContainSingle();
         results.Single().Value.Value.Should().BeEquivalentTo(false);
+    }
+
+    [Fact]
+    public void Continue_Calls_AfterNavigate_On_Previous_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Continue(data.DialogMock.Object, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
+    }
+
+    [Fact]
+    public void Continue_Calls_BeforeNavigate_On_Current_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Continue(data.DialogMock.Object, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
+
+        // Assert
+        data.CompletedPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
     }
 
     [Fact]
@@ -188,6 +244,20 @@ public class DialogTests
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.First().Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.First().GetGroupId());
         sut.CurrentState.Should().Be(dialogDefinition.Parts.First().GetState());
+    }
+
+    [Fact]
+    public void Start_Calls_BeforeNavigate_On_Current_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(data.DialogMock.Object.Metadata);
+
+        // Act
+        _ = sut.Start(data.DialogMock.Object, _conditionEvaluatorMock.Object);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
     }
 
     [Fact]
@@ -270,6 +340,34 @@ public class DialogTests
         sut.CurrentPartId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
         sut.CurrentGroupId.Should().BeEquivalentTo(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetGroupId());
         sut.CurrentState.Should().Be(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().GetState());
+    }
+
+    [Fact]
+    public void NavigateTo_Calls_AfterNavigate_On_Previous_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
+    }
+
+    [Fact]
+    public void NavigateTo_Calls_BeforeNavigate_On_Current_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
     }
 
     [Fact]
@@ -383,6 +481,34 @@ public class DialogTests
         result.IsSuccessful().Should().BeTrue();
         sut.CurrentPartId.Should().Be(dialogDefinition.ErrorPart.Id);
         sut.ErrorMessage.Should().BeNull();
+    }
+
+    [Fact]
+    public void Error_Calls_AfterNavigate_On_Previous_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Error(data.DialogMock.Object, default);
+
+        // Assert
+        data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
+    }
+
+    [Fact]
+    public void Error_Calls_BeforeNavigate_On_Current_Part()
+    {
+        // Arrange
+        var data = DialogDefinitionFixture.CreateNavigatableDialogDefinition();
+        var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
+
+        // Act
+        _ = sut.Error(data.DialogMock.Object, default);
+
+        // Assert
+        data.ErrorPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
     }
 
     private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)

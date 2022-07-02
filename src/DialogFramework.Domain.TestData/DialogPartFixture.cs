@@ -19,6 +19,16 @@ public static class DialogPartFixture
     {
         public IDialogPartIdentifier Id => new DialogPartIdentifier(nameof(ThrowingDialogPart));
 
+        public void AfterNavigate(IAfterNavigateArguments args)
+        {
+            // Method intentionally left empty.
+        }
+
+        public void BeforeNavigate(IBeforeNavigateArguments args)
+        {
+            // Method intentionally left empty.
+        }
+
         public IDialogPartBuilder CreateBuilder() => new ThrowingDialogPartBuilder(this);
 
         public IDialogPartIdentifier GetNextPartId(IDialog dialog)

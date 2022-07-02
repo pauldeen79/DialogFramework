@@ -203,6 +203,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     protected static Type[] CoreModels => new[]
     {
+        typeof(IAfterNavigateArguments),
+        typeof(IBeforeNavigateArguments),
         typeof(IDecision),
         typeof(IDialogDefinition),
         typeof(IDialog),
