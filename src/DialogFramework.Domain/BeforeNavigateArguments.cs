@@ -2,6 +2,11 @@
 
 public partial record BeforeNavigateArguments
 {
+    public Result? Result { get; private set; }
+    public bool UpdateState { get; private set; } = true;
+
+    private readonly IDialog _dialog;
+
     public BeforeNavigateArguments(IDialog dialog, DialogAction action)
     {
         if (dialog == null)
@@ -16,5 +21,15 @@ public partial record BeforeNavigateArguments
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
         Action = action;
+        _dialog = dialog;
     }
+
+    public void SetResult(Result result)
+        => Result = result;
+
+    public void AddProperty(IProperty property)
+        => _dialog.AddProperty(property);
+
+    public void CancelStateUpdate()
+        => UpdateState = false;
 }

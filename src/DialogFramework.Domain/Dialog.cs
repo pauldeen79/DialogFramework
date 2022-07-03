@@ -2,6 +2,8 @@
 
 public partial record Dialog
 {
+    public List<IProperty> AddedProperties { get; } = new();
+
     public Result Abort(IDialogDefinition definition)
     {
         if (Equals(CurrentPartId, definition.AbortedPart.Id))
@@ -201,6 +203,9 @@ public partial record Dialog
     public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
         => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 
+    public void AddProperty(IProperty property)
+        => AddedProperties.Add(property);
+
     private Result HandleNavigate(
         IDialogPart? previousPart,
         IDialogPart? nextPart,
@@ -210,9 +215,34 @@ public partial record Dialog
     {
         var afterArgs = new AfterNavigateArguments(this, action);
         previousPart?.AfterNavigate(afterArgs);
+        ProcessAddedProperties();
+        if (afterArgs.Result != null)
+        {
+            return afterArgs.Result;
+        }
+
         var beforeArgs = new BeforeNavigateArguments(this, action);
         nextPart?.BeforeNavigate(beforeArgs);
-        callback.Invoke();
+        if (beforeArgs.UpdateState)
+        {
+            callback.Invoke();
+        }
+
+        ProcessAddedProperties();
+        if (beforeArgs.Result != null)
+        {
+            return beforeArgs.Result;
+        }
+
         return returnDelegate();
+    }
+
+    private void ProcessAddedProperties()
+    {
+        if (AddedProperties.Any())
+        {
+            Properties = new ReadOnlyValueCollection<IProperty>(Properties.Concat(AddedProperties));
+            AddedProperties.Clear();
+        }
     }
 }

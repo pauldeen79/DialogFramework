@@ -28,4 +28,6 @@ public interface IDialog
                       IDialogPartIdentifier partId);
 
     Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier);
+
+    void AddProperty(IProperty property);
 }

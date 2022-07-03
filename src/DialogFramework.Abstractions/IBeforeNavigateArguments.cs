@@ -1,12 +1,6 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IBeforeNavigateArguments
+public interface IBeforeNavigateArguments : INavigateArguments
 {
-    IDialogIdentifier CurrentDialogId { get; }
-    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
-    IDialogPartIdentifier CurrentPartId { get; }
-    IDialogPartGroupIdentifier? CurrentGroupId { get; }
-    DialogState CurrentState { get; }
-    string? ErrorMessage { get; }
-    DialogAction Action { get; }
+    void CancelStateUpdate();
 }
