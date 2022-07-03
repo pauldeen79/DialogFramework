@@ -157,7 +157,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IDialogPartResult)}>")
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
-                    argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
+                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
+                    collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
                     customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))");
 
             yield return new ClassPropertyBuilder()
@@ -165,7 +166,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IProperty)}>")
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
-                    argumentType: $"{typeof(List<>).WithoutGenerics()}<DialogFramework.Domain.Builders.PropertyBuilder>",
+                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.PropertyBuilder>",
+                    collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
                     customBuilderConstructorInitializeExpression: "Properties.AddRange(source.GetProperties().Select(x => new PropertyBuilder(x)))");
         }
 
