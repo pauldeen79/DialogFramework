@@ -2,6 +2,9 @@
 
 public partial record Dialog
 {
+    private ValueCollection<IDialogPartResult> _results = new();
+    private ValueCollection<IProperty> _properties = new();
+
     public List<IProperty> AddedProperties { get; } = new();
 
     public Result Abort(IDialogDefinition definition, IConditionEvaluator evaluator)
@@ -56,7 +59,7 @@ public partial record Dialog
                 {
                     var nextPart = nextPartResult.Value!;
 
-                    Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
+                    _results = new ValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
                     CurrentPartId = nextPart.Id;
                     CurrentGroupId = nextPart.GetGroupId();
                     CurrentState = nextPart.GetState();
@@ -247,7 +250,7 @@ public partial record Dialog
     {
         if (AddedProperties.Any())
         {
-            Properties = new ReadOnlyValueCollection<IProperty>(Properties.Concat(AddedProperties));
+            _properties.AddRange(AddedProperties);
             AddedProperties.Clear();
         }
     }

@@ -9,6 +9,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override string FileNameSuffix => ".template.generated";
     protected override Type RecordCollectionType => typeof(IReadOnlyCollection<>);
     protected override bool AddPrivateSetters => true;
+    protected override bool CopyPropertyCode => false;
 
     protected override string FormatInstanceTypeName(ITypeBase instance, bool forCreate)
     {
@@ -159,7 +160,9 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     addNullChecks: true,
                     argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
                     collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
-                    customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))");
+                    customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))")
+                .AddGetterLiteralCodeStatements("return _results;")
+                .AddSetterLiteralCodeStatements("_results = new CrossCutting.Common.ValueCollection<IDialogPartResult>(value);");
 
             yield return new ClassPropertyBuilder()
                 .WithName("Properties")
@@ -168,7 +171,9 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     addNullChecks: true,
                     argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.PropertyBuilder>",
                     collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
-                    customBuilderConstructorInitializeExpression: "Properties.AddRange(source.GetProperties().Select(x => new PropertyBuilder(x)))");
+                    customBuilderConstructorInitializeExpression: "Properties.AddRange(source.GetProperties().Select(x => new PropertyBuilder(x)))")
+                .AddGetterLiteralCodeStatements("return _properties;")
+                .AddSetterLiteralCodeStatements("_properties = new CrossCutting.Common.ValueCollection<IProperty>(value);");
         }
 
         if (className == "NavigationDialogPart")
