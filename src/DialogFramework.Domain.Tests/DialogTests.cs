@@ -18,7 +18,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.AbortedPart);
 
         // Act
-        var result = sut.Abort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -34,7 +34,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.CompletedPart);
 
         // Act
-        var result = sut.Abort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -50,7 +50,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
 
         // Act
-        var result = sut.Abort(dialogDefinition);
+        var result = sut.Abort(dialogDefinition, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -67,7 +67,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.Abort(data.DialogMock.Object);
+        _ = sut.Abort(data.DialogMock.Object, _conditionEvaluatorMock.Object);
 
         // Assert
         data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
@@ -81,7 +81,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.Abort(data.DialogMock.Object);
+        _ = sut.Abort(data.DialogMock.Object, _conditionEvaluatorMock.Object);
 
         // Assert
         data.AbortPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
@@ -268,7 +268,7 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
 
         // Act
-        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.First().Id, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -284,7 +284,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First());
 
         // Act
-        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.Skip(1).First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.Skip(1).First().Id, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -305,7 +305,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, dialogDefinition.Metadata, dialogDefinition.Parts.First(), new[] { partResult });
 
         // Act
-        var result = sut.NavigateTo(dialogDefinition, partIdBuilder.Build());
+        var result = sut.NavigateTo(dialogDefinition, partIdBuilder.Build(), _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -333,7 +333,7 @@ public class DialogTests
         );
 
         // Act
-        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id);
+        var result = sut.NavigateTo(dialogDefinition, dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id, _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -350,7 +350,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id);
+        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id, _conditionEvaluatorMock.Object);
 
         // Assert
         data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
@@ -364,7 +364,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id);
+        _ = sut.NavigateTo(data.DialogMock.Object, data.MessagePartMock.Object.Id, _conditionEvaluatorMock.Object);
 
         // Assert
         data.MessagePartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
@@ -411,7 +411,7 @@ public class DialogTests
         var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         dialog.Start(dialogDefinition, _conditionEvaluatorMock.Object);
         dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Results.First().Id, new DialogPartResultValueAnswer(true)) }, conditionEvaluatorMock.Object);
-        dialog.NavigateTo(dialogDefinition, questionPart.Id);
+        dialog.NavigateTo(dialogDefinition, questionPart.Id, _conditionEvaluatorMock.Object);
         var results = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
         results.Should().ContainSingle();
         results.Single().ResultId.Should().Be(questionPart.Results.First().Id);
@@ -455,7 +455,7 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
 
         // Act
-        var result = sut.Error(dialogDefinition, new Error("message"));
+        var result = sut.Error(dialogDefinition, _conditionEvaluatorMock.Object, new Error("message"));
 
         // Assert
         result.Status.Should().Be(ResultStatus.Ok);
@@ -473,7 +473,7 @@ public class DialogTests
         var sut = DialogFixture.Create(dialogDefinition.Metadata); //state initial
 
         // Act
-        var result = sut.Error(dialogDefinition, null);
+        var result = sut.Error(dialogDefinition, _conditionEvaluatorMock.Object, null);
 
         // Assert
         result.Status.Should().Be(ResultStatus.Ok);
@@ -491,7 +491,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.Error(data.DialogMock.Object, default);
+        _ = sut.Error(data.DialogMock.Object, _conditionEvaluatorMock.Object, default);
 
         // Assert
         data.MessagePartMock.Verify(x => x.AfterNavigate(It.IsAny<IAfterNavigateArguments>()), Times.Once);
@@ -505,7 +505,7 @@ public class DialogTests
         var sut = DialogFixture.Create(Id, data.DialogMock.Object.Metadata, data.MessagePartMock.Object);
 
         // Act
-        _ = sut.Error(data.DialogMock.Object, default);
+        _ = sut.Error(data.DialogMock.Object, _conditionEvaluatorMock.Object, default);
 
         // Assert
         data.ErrorPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);

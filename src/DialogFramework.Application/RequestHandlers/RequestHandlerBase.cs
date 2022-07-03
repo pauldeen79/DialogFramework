@@ -63,7 +63,7 @@ public abstract class RequestHandlerBase
         {
             var msg = $"{operationName} failed";
             Logger.LogError(ex, msg);
-            dialog.Error(definition!, new Error(msg));
+            dialog.Error(definition!, ConditionEvaluator, new Error(msg));
             return Result<IDialog>.Success(dialog);
         }
     }

@@ -6,11 +6,15 @@ public partial record AfterNavigateArguments
 
     private readonly IDialog _dialog;
 
-    public AfterNavigateArguments(IDialog dialog, DialogAction action)
+    public AfterNavigateArguments(IDialog dialog, IConditionEvaluator evaluator, DialogAction action)
     {
         if (dialog == null)
         {
             throw new ArgumentNullException(nameof(dialog));
+        }
+        if (evaluator == null)
+        {
+            throw new ArgumentNullException(nameof(evaluator));
         }
 
         CurrentDialogId = dialog.Id;
@@ -19,6 +23,7 @@ public partial record AfterNavigateArguments
         CurrentPartId = dialog.CurrentPartId;
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
+        ConditionEvaluator = evaluator;
         Action = action;
         _dialog = dialog;
     }

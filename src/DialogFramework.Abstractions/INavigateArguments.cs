@@ -9,6 +9,7 @@ public interface INavigateArguments
     DialogState CurrentState { get; }
     string? ErrorMessage { get; }
     DialogAction Action { get; }
+    IConditionEvaluator ConditionEvaluator { get; }
 
     void SetResult(Result result);
     void AddProperty(IProperty property);
