@@ -16,11 +16,12 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.AbortedPart, DialogAction.Abort);
-
-        CurrentPartId = definition.AbortedPart.Id;
-        CurrentGroupId = definition.AbortedPart.GetGroupId();
-        CurrentState = DialogState.Aborted;
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.AbortedPart, DialogAction.Abort, () =>
+        {
+            CurrentPartId = definition.AbortedPart.Id;
+            CurrentGroupId = definition.AbortedPart.GetGroupId();
+            CurrentState = DialogState.Aborted;
+        });
         
         return Result.Success();
     }
@@ -35,7 +36,18 @@ public partial record Dialog
 
         var nextPartResult = definition.GetNextPart(this, evaluator, results);
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, nextPartResult.Value, DialogAction.Continue);
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, nextPartResult.Value, DialogAction.Continue, () =>
+        {
+            if (nextPartResult.IsSuccessful())
+            {
+                var nextPart = nextPartResult.Value!;
+
+                Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
+                CurrentPartId = nextPart.Id;
+                CurrentGroupId = nextPart.GetGroupId();
+                CurrentState = nextPart.GetState();
+            }
+        });
 
         if (!nextPartResult.IsSuccessful())
         {
@@ -46,24 +58,18 @@ public partial record Dialog
             return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
         }
 
-        var nextPart = nextPartResult.Value!;
-        
-        Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
-        CurrentPartId = nextPart.Id;
-        CurrentGroupId = nextPart.GetGroupId();
-        CurrentState = nextPart.GetState();
-        
         return Result.Success();
     }
 
     public Result Error(IDialogDefinition definition, IError? error)
     {
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.ErrorPart, DialogAction.Error);
-
-        CurrentPartId = definition.ErrorPart.Id;
-        CurrentGroupId = definition.ErrorPart.GetGroupId();
-        CurrentState = definition.ErrorPart.GetState();
-        ErrorMessage = error?.Message;
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.ErrorPart, DialogAction.Error, () =>
+        {
+            CurrentPartId = definition.ErrorPart.Id;
+            CurrentGroupId = definition.ErrorPart.GetGroupId();
+            CurrentState = definition.ErrorPart.GetState();
+            ErrorMessage = error?.Message;
+        });
         
         return Result.Success();
     }
@@ -84,7 +90,16 @@ public partial record Dialog
 
         var firstPartResult = definition.GetFirstPart(this, evaluator);
 
-        HandleNavigate(null, firstPartResult.Value, DialogAction.Start);
+        HandleNavigate(null, firstPartResult.Value, DialogAction.Start, () =>
+        {
+            if (firstPartResult.IsSuccessful())
+            {
+                var firstPart = firstPartResult.Value!;
+                CurrentPartId = firstPart.Id;
+                CurrentGroupId = firstPart.GetGroupId();
+                CurrentState = firstPart.GetState();
+            }
+        });
 
         if (!firstPartResult.IsSuccessful())
         {
@@ -95,11 +110,6 @@ public partial record Dialog
             return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
         }
 
-        var firstPart = firstPartResult.Value!;
-        CurrentPartId = firstPart.Id;
-        CurrentGroupId = firstPart.GetGroupId();
-        CurrentState = firstPart.GetState();
-        
         return Result.Success();
     }
 
@@ -119,19 +129,23 @@ public partial record Dialog
         }
 
         var navigateToPartResult = definition.GetPartById(navigateToPartId);
-        
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, navigateToPartResult.Value, DialogAction.NavigateTo);
+
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, navigateToPartResult.Value, DialogAction.NavigateTo, () =>
+        {
+            var navigateToPart = navigateToPartResult.Value!;
+            if (navigateToPartResult.IsSuccessful())
+            {
+                CurrentDialogIdentifier = definition.Metadata;
+                CurrentPartId = navigateToPartId;
+                CurrentGroupId = navigateToPart.GetGroupId();
+                CurrentState = navigateToPart.GetState();
+            }
+        });
 
         if (!navigateToPartResult.IsSuccessful())
         {
             return navigateToPartResult;
         }
-
-        var navigateToPart = navigateToPartResult.Value!;
-        CurrentDialogIdentifier = definition.Metadata;
-        CurrentPartId = navigateToPartId;
-        CurrentGroupId = navigateToPart.GetGroupId();
-        CurrentState = navigateToPart.GetState();
 
         return Result.Success();
     }
@@ -158,12 +172,16 @@ public partial record Dialog
     public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
         => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 
-    private (AfterNavigateArguments AfterNavigateArguments, BeforeNavigateArguments BeforeNavigateArguments) HandleNavigate(IDialogPart? previousPart, IDialogPart? nextPart, DialogAction action)
+    private void HandleNavigate(
+        IDialogPart? previousPart,
+        IDialogPart? nextPart,
+        DialogAction action,
+        Action callback)
     {
         var afterArgs = new AfterNavigateArguments(this, action);
         previousPart?.AfterNavigate(afterArgs);
         var beforeArgs = new BeforeNavigateArguments(this, action);
         nextPart?.BeforeNavigate(beforeArgs);
-        return (afterArgs, beforeArgs);
+        callback.Invoke();
     }
 }
