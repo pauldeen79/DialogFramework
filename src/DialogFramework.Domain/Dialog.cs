@@ -16,7 +16,7 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.AbortedPart);
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.AbortedPart, DialogAction.Abort);
 
         CurrentPartId = definition.AbortedPart.Id;
         CurrentGroupId = definition.AbortedPart.GetGroupId();
@@ -35,7 +35,7 @@ public partial record Dialog
 
         var nextPartResult = definition.GetNextPart(this, evaluator, results);
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, nextPartResult.Value);
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, nextPartResult.Value, DialogAction.Continue);
 
         if (!nextPartResult.IsSuccessful())
         {
@@ -58,7 +58,7 @@ public partial record Dialog
 
     public Result Error(IDialogDefinition definition, IError? error)
     {
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.ErrorPart);
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.ErrorPart, DialogAction.Error);
 
         CurrentPartId = definition.ErrorPart.Id;
         CurrentGroupId = definition.ErrorPart.GetGroupId();
@@ -84,7 +84,7 @@ public partial record Dialog
 
         var firstPartResult = definition.GetFirstPart(this, evaluator);
 
-        HandleNavigate(null, firstPartResult.Value);
+        HandleNavigate(null, firstPartResult.Value, DialogAction.Start);
 
         if (!firstPartResult.IsSuccessful())
         {
@@ -120,7 +120,7 @@ public partial record Dialog
 
         var navigateToPartResult = definition.GetPartById(navigateToPartId);
         
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, navigateToPartResult.Value);
+        HandleNavigate(definition.GetPartById(CurrentPartId).Value, navigateToPartResult.Value, DialogAction.NavigateTo);
 
         if (!navigateToPartResult.IsSuccessful())
         {
@@ -158,9 +158,12 @@ public partial record Dialog
     public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
         => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 
-    private void HandleNavigate(IDialogPart? previousPart, IDialogPart? nextPart)
+    private (AfterNavigateArguments AfterNavigateArguments, BeforeNavigateArguments BeforeNavigateArguments) HandleNavigate(IDialogPart? previousPart, IDialogPart? nextPart, DialogAction action)
     {
-        previousPart?.AfterNavigate(new AfterNavigateArguments(this));
-        nextPart?.BeforeNavigate(new BeforeNavigateArguments(this));
+        var afterArgs = new AfterNavigateArguments(this, action);
+        previousPart?.AfterNavigate(afterArgs);
+        var beforeArgs = new BeforeNavigateArguments(this, action);
+        nextPart?.BeforeNavigate(beforeArgs);
+        return (afterArgs, beforeArgs);
     }
 }

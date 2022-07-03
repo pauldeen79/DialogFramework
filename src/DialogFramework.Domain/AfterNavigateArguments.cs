@@ -2,7 +2,7 @@
 
 public partial record AfterNavigateArguments
 {
-    public AfterNavigateArguments(IDialog dialog)
+    public AfterNavigateArguments(IDialog dialog, DialogAction action)
     {
         if (dialog == null)
         {
@@ -15,5 +15,6 @@ public partial record AfterNavigateArguments
         CurrentPartId = dialog.CurrentPartId;
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
+        Action = action;
     }
 }

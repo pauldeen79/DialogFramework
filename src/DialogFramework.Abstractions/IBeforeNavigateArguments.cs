@@ -8,4 +8,5 @@ public interface IBeforeNavigateArguments
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
     string? ErrorMessage { get; }
+    DialogAction Action { get; }
 }

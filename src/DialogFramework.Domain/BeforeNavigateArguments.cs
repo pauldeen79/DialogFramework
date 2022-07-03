@@ -2,7 +2,7 @@
 
 public partial record BeforeNavigateArguments
 {
-    public BeforeNavigateArguments(IDialog dialog)
+    public BeforeNavigateArguments(IDialog dialog, DialogAction action)
     {
         if (dialog == null)
         {
@@ -15,5 +15,6 @@ public partial record BeforeNavigateArguments
         CurrentPartId = dialog.CurrentPartId;
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
+        Action = action;
     }
 }
