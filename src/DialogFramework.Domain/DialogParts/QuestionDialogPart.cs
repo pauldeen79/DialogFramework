@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record QuestionDialogPart : IValidatableObject
+public partial record QuestionDialogPart : DialogPartBase, IValidatableObject
 {
     public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results)
     {
@@ -40,16 +40,6 @@ public partial record QuestionDialogPart : IValidatableObject
     public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
 
     public bool SupportsReset() => true;
-
-    public void AfterNavigate(IAfterNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
-
-    public void BeforeNavigate(IBeforeNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
 
     protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
                                                                           IDialogDefinition definition,

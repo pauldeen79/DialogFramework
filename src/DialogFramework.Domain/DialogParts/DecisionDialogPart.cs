@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record DecisionDialogPart
+public partial record DecisionDialogPart : DialogPartBase
 {
     public IDialogPartIdentifier GetNextPartId(IDialog dialog,
                                                IDialogDefinition dialogDefinition,
@@ -11,14 +11,4 @@ public partial record DecisionDialogPart
     public DialogState GetState() => DialogState.InProgress;
     public IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
     public bool SupportsReset() => false;
-
-    public void AfterNavigate(IAfterNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
-
-    public void BeforeNavigate(IBeforeNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
 }
