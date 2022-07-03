@@ -16,14 +16,19 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.AbortedPart, DialogAction.Abort, () =>
-        {
-            CurrentPartId = definition.AbortedPart.Id;
-            CurrentGroupId = definition.AbortedPart.GetGroupId();
-            CurrentState = DialogState.Aborted;
-        });
-        
-        return Result.Success();
+        return HandleNavigate
+        (
+            definition.GetPartById(CurrentPartId).Value,
+            definition.AbortedPart,
+            DialogAction.Abort,
+            () =>
+            {
+                CurrentPartId = definition.AbortedPart.Id;
+                CurrentGroupId = definition.AbortedPart.GetGroupId();
+                CurrentState = DialogState.Aborted;
+            },
+            () => Result.Success()
+        );
     }
 
     public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results, IConditionEvaluator evaluator)
@@ -36,43 +41,52 @@ public partial record Dialog
 
         var nextPartResult = definition.GetNextPart(this, evaluator, results);
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, nextPartResult.Value, DialogAction.Continue, () =>
-        {
-            if (nextPartResult.IsSuccessful())
+        return HandleNavigate
+        (
+            definition.GetPartById(CurrentPartId).Value,
+            nextPartResult.Value,
+            DialogAction.Continue,
+            () =>
             {
-                var nextPart = nextPartResult.Value!;
+                if (nextPartResult.IsSuccessful())
+                {
+                    var nextPart = nextPartResult.Value!;
 
-                Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
-                CurrentPartId = nextPart.Id;
-                CurrentGroupId = nextPart.GetGroupId();
-                CurrentState = nextPart.GetState();
-            }
-        });
+                    Results = new ReadOnlyValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
+                    CurrentPartId = nextPart.Id;
+                    CurrentGroupId = nextPart.GetGroupId();
+                    CurrentState = nextPart.GetState();
+                }
+            },
+            () =>
+            {
+                if (!nextPartResult.IsSuccessful())
+                {
+                    return nextPartResult;
+                }
+                else if (nextPartResult.Value is IRedirectDialogPart redirectDialogPart)
+                {
+                    return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
+                }
 
-        if (!nextPartResult.IsSuccessful())
-        {
-            return nextPartResult;
-        }
-        else if (nextPartResult.Value is IRedirectDialogPart redirectDialogPart)
-        {
-            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
-        }
-
-        return Result.Success();
+                return Result.Success();
+            });
     }
 
     public Result Error(IDialogDefinition definition, IError? error)
-    {
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, definition.ErrorPart, DialogAction.Error, () =>
-        {
-            CurrentPartId = definition.ErrorPart.Id;
-            CurrentGroupId = definition.ErrorPart.GetGroupId();
-            CurrentState = definition.ErrorPart.GetState();
-            ErrorMessage = error?.Message;
-        });
-        
-        return Result.Success();
-    }
+        => HandleNavigate
+        (
+            definition.GetPartById(CurrentPartId).Value,
+            definition.ErrorPart,
+            DialogAction.Error,
+            () =>
+            {
+                CurrentPartId = definition.ErrorPart.Id;
+                CurrentGroupId = definition.ErrorPart.GetGroupId();
+                CurrentState = definition.ErrorPart.GetState();
+                ErrorMessage = error?.Message;
+            },
+            () => Result.Success());
 
     public Result Start(IDialogDefinition definition, IConditionEvaluator evaluator)
     {
@@ -90,27 +104,34 @@ public partial record Dialog
 
         var firstPartResult = definition.GetFirstPart(this, evaluator);
 
-        HandleNavigate(null, firstPartResult.Value, DialogAction.Start, () =>
-        {
-            if (firstPartResult.IsSuccessful())
+        return HandleNavigate
+        (
+            null,
+            firstPartResult.Value,
+            DialogAction.Start,
+            () =>
             {
-                var firstPart = firstPartResult.Value!;
-                CurrentPartId = firstPart.Id;
-                CurrentGroupId = firstPart.GetGroupId();
-                CurrentState = firstPart.GetState();
-            }
-        });
+                if (firstPartResult.IsSuccessful())
+                {
+                    var firstPart = firstPartResult.Value!;
+                    CurrentPartId = firstPart.Id;
+                    CurrentGroupId = firstPart.GetGroupId();
+                    CurrentState = firstPart.GetState();
+                }
+            },
+            () =>
+            {
+                if (!firstPartResult.IsSuccessful())
+                {
+                    return Result.Error(firstPartResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
+                }
+                else if (firstPartResult.Value is IRedirectDialogPart redirectDialogPart)
+                {
+                    return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
+                }
 
-        if (!firstPartResult.IsSuccessful())
-        {
-            return Result.Error(firstPartResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
-        }
-        else if (firstPartResult.Value is IRedirectDialogPart redirectDialogPart)
-        {
-            return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
-        }
-
-        return Result.Success();
+                return Result.Success();
+            });
     }
 
     public Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId)
@@ -130,24 +151,32 @@ public partial record Dialog
 
         var navigateToPartResult = definition.GetPartById(navigateToPartId);
 
-        HandleNavigate(definition.GetPartById(CurrentPartId).Value, navigateToPartResult.Value, DialogAction.NavigateTo, () =>
-        {
-            var navigateToPart = navigateToPartResult.Value!;
-            if (navigateToPartResult.IsSuccessful())
+        return HandleNavigate
+        (
+            definition.GetPartById(CurrentPartId).Value,
+            navigateToPartResult.Value,
+            DialogAction.NavigateTo,
+            () =>
             {
-                CurrentDialogIdentifier = definition.Metadata;
-                CurrentPartId = navigateToPartId;
-                CurrentGroupId = navigateToPart.GetGroupId();
-                CurrentState = navigateToPart.GetState();
+                var navigateToPart = navigateToPartResult.Value!;
+                if (navigateToPartResult.IsSuccessful())
+                {
+                    CurrentDialogIdentifier = definition.Metadata;
+                    CurrentPartId = navigateToPartId;
+                    CurrentGroupId = navigateToPart.GetGroupId();
+                    CurrentState = navigateToPart.GetState();
+                }
+            },
+            () =>
+            {
+                if (!navigateToPartResult.IsSuccessful())
+                {
+                    return navigateToPartResult;
+                }
+
+                return Result.Success();
             }
-        });
-
-        if (!navigateToPartResult.IsSuccessful())
-        {
-            return navigateToPartResult;
-        }
-
-        return Result.Success();
+        );
     }
 
     public Result ResetState(IDialogDefinition definition, IDialogPartIdentifier partId)
@@ -172,16 +201,18 @@ public partial record Dialog
     public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
         => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
 
-    private void HandleNavigate(
+    private Result HandleNavigate(
         IDialogPart? previousPart,
         IDialogPart? nextPart,
         DialogAction action,
-        Action callback)
+        Action callback,
+        Func<Result> returnDelegate)
     {
         var afterArgs = new AfterNavigateArguments(this, action);
         previousPart?.AfterNavigate(afterArgs);
         var beforeArgs = new BeforeNavigateArguments(this, action);
         nextPart?.BeforeNavigate(beforeArgs);
         callback.Invoke();
+        return returnDelegate();
     }
 }
