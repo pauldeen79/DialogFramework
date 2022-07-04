@@ -11,11 +11,12 @@ public abstract record NavigateArgumentsBase : INavigateArguments
     public Result? Result { get; set; }
 
     public DialogAction Action { get; }
+    public IDialogDefinition DialogDefinition { get; }
     public IConditionEvaluator ConditionEvaluator { get; }
 
     protected IDialog Dialog { get; }
 
-    protected NavigateArgumentsBase(IDialog dialog, IConditionEvaluator evaluator, DialogAction action)
+    protected NavigateArgumentsBase(IDialog dialog, IDialogDefinition definition, IConditionEvaluator evaluator, DialogAction action)
     {
         if (dialog == null)
         {
@@ -25,6 +26,10 @@ public abstract record NavigateArgumentsBase : INavigateArguments
         {
             throw new ArgumentNullException(nameof(evaluator));
         }
+        if (definition == null)
+        {
+            throw new ArgumentNullException(nameof(definition));
+        }
 
         CurrentDialogId = dialog.Id;
         CurrentDialogIdentifier = dialog.CurrentDialogIdentifier;
@@ -32,6 +37,7 @@ public abstract record NavigateArgumentsBase : INavigateArguments
         CurrentPartId = dialog.CurrentPartId;
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
+        DialogDefinition = definition;
         ConditionEvaluator = evaluator;
         Action = action;
         Dialog = dialog;

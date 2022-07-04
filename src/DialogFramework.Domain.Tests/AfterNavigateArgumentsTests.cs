@@ -13,8 +13,9 @@ public class AfterNavigateArgumentsTests
     {
         // Arrange
         var dialogMock = new Mock<IDialog>();
+        var definitionMock = new Mock<IDialogDefinition>();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        var sut = new AfterNavigateArguments(dialogMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
+        var sut = new AfterNavigateArguments(dialogMock.Object, definitionMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
         var result = Result.Error("Kaboom");
 
         // Act
@@ -29,8 +30,9 @@ public class AfterNavigateArgumentsTests
     {
         // Arrange
         var dialogMock = new Mock<IDialog>();
+        var definitionMock = new Mock<IDialogDefinition>();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        var sut = new AfterNavigateArguments(dialogMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
+        var sut = new AfterNavigateArguments(dialogMock.Object, definitionMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
         var prop = new PropertyBuilder().WithName("MyName").WithValue("MyValue").Build();
 
         // Act

@@ -11,6 +11,7 @@ public interface INavigateArguments
     Result? Result { get; set; }
 
     DialogAction Action { get; }
+    IDialogDefinition DialogDefinition { get; }
     IConditionEvaluator ConditionEvaluator { get; }
 
     void AddProperty(IProperty property);

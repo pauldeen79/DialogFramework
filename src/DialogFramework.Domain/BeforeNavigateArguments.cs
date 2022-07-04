@@ -4,8 +4,8 @@ public partial record BeforeNavigateArguments : NavigateArgumentsBase, IBeforeNa
 {
     public bool UpdateState { get; private set; } = true;
 
-    public BeforeNavigateArguments(IDialog dialog, IConditionEvaluator evaluator, DialogAction action)
-        : base(dialog, evaluator, action)
+    public BeforeNavigateArguments(IDialog dialog, IDialogDefinition definition, IConditionEvaluator evaluator, DialogAction action)
+        : base(dialog, definition, evaluator, action)
     {
     }
 

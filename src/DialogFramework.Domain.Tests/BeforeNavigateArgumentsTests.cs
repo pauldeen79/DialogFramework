@@ -13,8 +13,9 @@ public class BeforeNavigateArgumentsTests
     {
         // Arrange
         var dialogMock = new Mock<IDialog>();
+        var definitionMock = new Mock<IDialogDefinition>();
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        var sut = new BeforeNavigateArguments(dialogMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
+        var sut = new BeforeNavigateArguments(dialogMock.Object, definitionMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
 
         // Act
         sut.CancelStateUpdate();

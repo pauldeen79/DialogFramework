@@ -23,6 +23,7 @@ public partial record Dialog
 
         return HandleNavigate
         (
+            definition,
             evaluator,
             definition.GetPartById(CurrentPartId).Value,
             definition.AbortedPart,
@@ -49,6 +50,7 @@ public partial record Dialog
 
         return HandleNavigate
         (
+            definition,
             evaluator,
             definition.GetPartById(CurrentPartId).Value,
             nextPartResult.Value,
@@ -83,6 +85,7 @@ public partial record Dialog
     public Result Error(IDialogDefinition definition, IConditionEvaluator evaluator, IError? error)
         => HandleNavigate
         (
+            definition,
             evaluator,
             definition.GetPartById(CurrentPartId).Value,
             definition.ErrorPart,
@@ -114,6 +117,7 @@ public partial record Dialog
 
         return HandleNavigate
         (
+            definition,
             evaluator,
             null,
             firstPartResult.Value,
@@ -162,6 +166,7 @@ public partial record Dialog
 
         return HandleNavigate
         (
+            definition,
             evaluator,
             definition.GetPartById(CurrentPartId).Value,
             navigateToPartResult.Value,
@@ -215,6 +220,7 @@ public partial record Dialog
         => AddedProperties.Add(property);
 
     private Result HandleNavigate(
+        IDialogDefinition definition,
         IConditionEvaluator evaluator,
         IDialogPart? previousPart,
         IDialogPart? nextPart,
@@ -222,7 +228,7 @@ public partial record Dialog
         Action callback,
         Func<Result> returnDelegate)
     {
-        var afterArgs = new AfterNavigateArguments(this, evaluator, action);
+        var afterArgs = new AfterNavigateArguments(this, definition, evaluator, action);
         previousPart?.AfterNavigate(afterArgs);
         ProcessAddedProperties();
         if (afterArgs.Result != null)
@@ -230,7 +236,7 @@ public partial record Dialog
             return afterArgs.Result;
         }
 
-        var beforeArgs = new BeforeNavigateArguments(this, evaluator, action);
+        var beforeArgs = new BeforeNavigateArguments(this, definition, evaluator, action);
         nextPart?.BeforeNavigate(beforeArgs);
         if (beforeArgs.UpdateState)
         {
