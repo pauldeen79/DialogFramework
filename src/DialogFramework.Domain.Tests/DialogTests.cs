@@ -511,6 +511,61 @@ public class DialogTests
         data.ErrorPartMock.Verify(x => x.BeforeNavigate(It.IsAny<IBeforeNavigateArguments>()), Times.Once);
     }
 
+    [Fact]
+    public void Can_Add_Properties_From_DialogPart()
+    {
+        // Arrange
+        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.AddProperty(new Property("Added", "Value")));
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+
+        // Act
+        _ = dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        dialog.GetProperties().Should().ContainSingle();
+    }
+
+    [Fact]
+    public void Can_Set_Result_From_DialogPart()
+    {
+        // Arrange
+        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.SetResult(Result.Error()));
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+
+        // Act
+        var result = dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.Should().BeEquivalentTo(Result.Error());
+    }
+
+    [Fact]
+    public void Can_Cancel_Update_Of_State_From_DialogPart()
+    {
+        // Arrange
+        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.CancelStateUpdate());
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+
+        // Act
+        var result = dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        dialog.CurrentState.Should().Be(DialogState.Initial);
+    }
+
     private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)
         => new DialogPartResultBuilder()
             .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
