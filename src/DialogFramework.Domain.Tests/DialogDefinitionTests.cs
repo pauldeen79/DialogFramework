@@ -299,7 +299,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetNextPart_Returns_Processed_Decision_From_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_DecisionDialogPart()
+    public void GetNextPart_Returns_Processed_Decision_From_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_DecisionDialogPart_That_Returns_Success()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder()
@@ -317,6 +317,27 @@ public class DialogDefinitionTests
         result.IsSuccessful().Should().BeTrue();
         result.Value!.Id.Should().BeEquivalentTo(sut.Parts.OfType<IMessageDialogPart>().First().Id); //second part
         result.ValidationErrors.Should().BeEmpty();
+    }
+
+    [Fact]
+    public void GetNextPart_Returns_Error_When_Validation_Succeeds_And_Next_Part_Is_A_DecisionDialogPart_That_Returns_An_Error()
+    {
+        // Arrange
+        var sut = DialogDefinitionFixture.CreateBuilder()
+            .With(x => x.Parts.Insert(1, new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder())))
+            .Build();
+        var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
+        var partResult = new DialogPartResultAnswerBuilder()
+            .WithResultId(new DialogPartResultIdentifierBuilder())
+            .Build();
+
+        // Act
+        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult });
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.Error);
+        result.ErrorMessage.Should().Be("No next dialog part supplied");
     }
 
     [Fact]
