@@ -52,7 +52,7 @@ public static class DialogPartFixture
 
         public AddPropertiesDialogPart(Action<IAfterNavigateArguments> afterNavigateCallback, Action<IBeforeNavigateArguments> beforeNavigateCallback, DialogState state)
         {
-            Id = new DialogPartIdentifier(nameof(AddPropertiesDialogPart));
+            Id = new DialogPartIdentifier(string.Concat(nameof(AddPropertiesDialogPart), DateTime.Now.Ticks.ToString()));
             State = state;
             AfterNavigateCallback = afterNavigateCallback;
             BeforeNavigateCallback = beforeNavigateCallback;

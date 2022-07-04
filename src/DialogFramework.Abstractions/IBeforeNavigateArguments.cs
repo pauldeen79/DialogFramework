@@ -2,5 +2,4 @@
 
 public interface IBeforeNavigateArguments : INavigateArguments
 {
-    void CancelStateUpdate();
 }

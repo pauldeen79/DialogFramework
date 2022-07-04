@@ -15,4 +15,5 @@ public interface INavigateArguments
     IConditionEvaluator ConditionEvaluator { get; }
 
     void AddProperty(IProperty property);
+    void CancelStateUpdate();
 }

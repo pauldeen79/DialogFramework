@@ -231,6 +231,7 @@ public partial record Dialog
         var afterArgs = new AfterNavigateArguments(this, definition, evaluator, action);
         previousPart?.AfterNavigate(afterArgs);
         ProcessAddedProperties();
+        UpdateState(afterArgs);
         if (afterArgs.Result != null)
         {
             return afterArgs.Result;
@@ -244,11 +245,7 @@ public partial record Dialog
         }
         else
         {
-            CurrentDialogIdentifier = beforeArgs.CurrentDialogIdentifier;
-            CurrentPartId = beforeArgs.CurrentPartId;
-            CurrentGroupId = beforeArgs.CurrentGroupId;
-            CurrentState = beforeArgs.CurrentState;
-            ErrorMessage = beforeArgs.ErrorMessage;
+            UpdateState(beforeArgs);
         }
 
         ProcessAddedProperties();
@@ -258,6 +255,15 @@ public partial record Dialog
         }
 
         return returnDelegate();
+    }
+
+    private void UpdateState(INavigateArguments args)
+    {
+        CurrentDialogIdentifier = args.CurrentDialogIdentifier;
+        CurrentPartId = args.CurrentPartId;
+        CurrentGroupId = args.CurrentGroupId;
+        CurrentState = args.CurrentState;
+        ErrorMessage = args.ErrorMessage;
     }
 
     private void ProcessAddedProperties()

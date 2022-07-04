@@ -9,6 +9,7 @@ public abstract record NavigateArgumentsBase : INavigateArguments
     public DialogState CurrentState { get; set; }
     public string? ErrorMessage { get; set; }
     public Result? Result { get; set; }
+    public bool UpdateState { get; private set; } = true;
 
     public DialogAction Action { get; }
     public IDialogDefinition DialogDefinition { get; }
@@ -45,4 +46,7 @@ public abstract record NavigateArgumentsBase : INavigateArguments
 
     public void AddProperty(IProperty property)
         => Dialog.AddProperty(property);
+
+    public void CancelStateUpdate()
+        => UpdateState = false;
 }

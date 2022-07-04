@@ -567,7 +567,7 @@ public class DialogTests
     }
 
     [Fact]
-    public void Can_Update_State_With_Custom_Values_From_DialogPart()
+    public void Can_Update_State_With_Custom_Values_From_DialogPart_In_BeforeNavigate()
     {
         // Arrange
         var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
@@ -590,6 +590,46 @@ public class DialogTests
 
         // Act
         var result = dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        dialog.CurrentState.Should().Be(DialogState.Aborted);
+        dialog.CurrentDialogIdentifier.Should().BeEquivalentTo(new DialogDefinitionIdentifier("CustomDialog", "2.0.0"));
+        dialog.CurrentGroupId.Should().BeEquivalentTo(new DialogPartGroupIdentifier("CustomGroup"));
+        dialog.CurrentPartId.Should().BeEquivalentTo(new DialogPartIdentifier("CustomPart"));
+        dialog.ErrorMessage.Should().Be("Custom error message");
+    }
+
+    [Fact]
+    public void Can_Update_State_With_Custom_Values_From_DialogPart_In_AfterNavigate()
+    {
+        // Arrange
+        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args =>
+        {
+            // Note that for the AfterNavigate, we don't have to cancel the state update.
+            // This is only necessary for BeforeNavigate. (as this is the place where the state update takes place)
+            args.CurrentState = DialogState.Aborted;
+            args.CurrentDialogIdentifier = new DialogDefinitionIdentifier("CustomDialog", "2.0.0");
+            args.CurrentGroupId = new DialogPartGroupIdentifier("CustomGroup");
+            args.CurrentPartId = new DialogPartIdentifier("CustomPart");
+            args.ErrorMessage = "Custom error message";
+
+            // Note that we DO have to set a result, because the code of the BeforeNavigate will get executed otherwise...
+            args.Result = Result.Success();
+        });
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => { });
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts
+            (
+                DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback),
+                DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback)
+            )
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+        dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Act
+        var result = dialog.Continue(definition, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
