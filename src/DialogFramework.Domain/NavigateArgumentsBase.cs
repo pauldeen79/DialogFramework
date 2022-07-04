@@ -11,7 +11,7 @@ public abstract record NavigateArgumentsBase : INavigateArguments
     public DialogAction Action { get; }
     public IConditionEvaluator ConditionEvaluator { get; }
 
-    public Result? Result { get; private set; }
+    public Result? Result { get; set; }
     protected IDialog Dialog { get; }
 
     protected NavigateArgumentsBase(IDialog dialog, IConditionEvaluator evaluator, DialogAction action)
@@ -35,9 +35,6 @@ public abstract record NavigateArgumentsBase : INavigateArguments
         Action = action;
         Dialog = dialog;
     }
-
-    public void SetResult(Result result)
-        => Result = result;
 
     public void AddProperty(IProperty property)
         => Dialog.AddProperty(property);

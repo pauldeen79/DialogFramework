@@ -18,7 +18,7 @@ public class AfterNavigateArgumentsTests
         var result = Result.Error("Kaboom");
 
         // Act
-        sut.SetResult(result);
+        sut.Result = result;
 
         // Assert
         sut.Result.Should().BeEquivalentTo(result);

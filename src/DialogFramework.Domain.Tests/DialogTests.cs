@@ -534,7 +534,7 @@ public class DialogTests
     {
         // Arrange
         var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.SetResult(Result.Error()));
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.Result = Result.Error());
         var definition = DialogDefinitionFixture.CreateBuilderBase()
             .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
             .Build();
