@@ -236,6 +236,14 @@ public partial record Dialog
         {
             callback.Invoke();
         }
+        else
+        {
+            CurrentDialogIdentifier = beforeArgs.CurrentDialogIdentifier;
+            CurrentPartId = beforeArgs.CurrentPartId;
+            CurrentGroupId = beforeArgs.CurrentGroupId;
+            CurrentState = beforeArgs.CurrentState;
+            ErrorMessage = beforeArgs.ErrorMessage;
+        }
 
         ProcessAddedProperties();
         if (beforeArgs.Result != null)

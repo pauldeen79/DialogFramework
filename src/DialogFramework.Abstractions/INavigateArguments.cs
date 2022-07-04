@@ -3,15 +3,15 @@
 public interface INavigateArguments
 {
     IDialogIdentifier CurrentDialogId { get; }
-    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
-    IDialogPartIdentifier CurrentPartId { get; }
-    IDialogPartGroupIdentifier? CurrentGroupId { get; }
-    DialogState CurrentState { get; }
-    string? ErrorMessage { get; }
+    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; set; }
+    IDialogPartIdentifier CurrentPartId { get; set; }
+    IDialogPartGroupIdentifier? CurrentGroupId { get; set; }
+    DialogState CurrentState { get; set; }
+    string? ErrorMessage { get; set; }
+    Result? Result { get; set; }
+
     DialogAction Action { get; }
     IConditionEvaluator ConditionEvaluator { get; }
-
-    Result? Result { get; set; }
 
     void AddProperty(IProperty property);
 }

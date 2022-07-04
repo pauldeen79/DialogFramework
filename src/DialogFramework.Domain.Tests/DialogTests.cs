@@ -566,6 +566,40 @@ public class DialogTests
         dialog.CurrentState.Should().Be(DialogState.Initial);
     }
 
+    [Fact]
+    public void Can_Update_State_With_Custom_Values_From_DialogPart()
+    {
+        // Arrange
+        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
+        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args =>
+        {
+            // First, Cancel the default update
+            args.CancelStateUpdate();
+
+            // Then, update the state with custom values
+            args.CurrentState = DialogState.Aborted;
+            args.CurrentDialogIdentifier = new DialogDefinitionIdentifier("CustomDialog", "2.0.0");
+            args.CurrentGroupId = new DialogPartGroupIdentifier("CustomGroup");
+            args.CurrentPartId = new DialogPartIdentifier("CustomPart");
+            args.ErrorMessage = "Custom error message";
+        });
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+
+        // Act
+        var result = dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeTrue();
+        dialog.CurrentState.Should().Be(DialogState.Aborted);
+        dialog.CurrentDialogIdentifier.Should().BeEquivalentTo(new DialogDefinitionIdentifier("CustomDialog", "2.0.0"));
+        dialog.CurrentGroupId.Should().BeEquivalentTo(new DialogPartGroupIdentifier("CustomGroup"));
+        dialog.CurrentPartId.Should().BeEquivalentTo(new DialogPartIdentifier("CustomPart"));
+        dialog.ErrorMessage.Should().Be("Custom error message");
+    }
+
     private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)
         => new DialogPartResultBuilder()
             .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
