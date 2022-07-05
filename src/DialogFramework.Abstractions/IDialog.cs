@@ -9,23 +9,19 @@ public interface IDialog
     DialogState CurrentState { get; }
     string? ErrorMessage { get; }
 
-    Result Start(IDialogDefinition definition,
-                 IConditionEvaluator evaluator);
+    Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
 
-    Result Continue(IDialogDefinition definition,
-                    IEnumerable<IDialogPartResultAnswer> results,
-                    IConditionEvaluator evaluator);
+    Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results, IConditionEvaluator evaluator);
 
-    Result Abort(IDialogDefinition definition);
+    Result Abort(IDialogDefinition definition, IConditionEvaluator evaluator);
 
-    Result Error(IDialogDefinition definition,
-                 IError? error);
+    Result Error(IDialogDefinition definition, IConditionEvaluator evaluator, IError? error);
 
-    Result NavigateTo(IDialogDefinition definition,
-                      IDialogPartIdentifier navigateToPartId);
+    Result NavigateTo(IDialogDefinition definition, IDialogPartIdentifier navigateToPartId, IConditionEvaluator evaluator);
 
-    Result ResetState(IDialogDefinition definition,
-                      IDialogPartIdentifier partId);
+    Result ResetState(IDialogDefinition definition, IDialogPartIdentifier partId);
 
     Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier);
+
+    void AddProperty(IProperty property);
 }

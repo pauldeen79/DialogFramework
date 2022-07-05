@@ -3,5 +3,6 @@
 public interface IDialogFactory
 {
     Result<IDialog> Create(IDialogDefinition dialogDefinition,
-                           IEnumerable<IDialogPartResult> dialogPartResults);
+                           IEnumerable<IDialogPartResult> dialogPartResults,
+                           IEnumerable<IProperty> properties);
 }

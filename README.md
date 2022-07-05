@@ -73,6 +73,7 @@ The solution consists of the following projects:
 
 # TODOs
 
-- Allow a model to be sent in the start (and transferrerd through the dialog), used in operations (like decisions), appended by operations and read by the consumer
+- Allow interception from outside the dialog and dialogparts, through the AfterNavigate and BeforeNavigate methods
+- Try to refactor INavigationDialogPart and IDecisionDialogPart to use BeforeNavigate to accomplish this
 - Try to move interfaces from Abstractions to CodeGeneration, and remove references to Abstractions project. Use Domain implementations in signatures instead (inclusing enums, which need to be generated from Abstractions/CodeGeneration).
 - Create a minimal web api as a demo project, using some sort of state store (local in-memory cache?) for persisting state.

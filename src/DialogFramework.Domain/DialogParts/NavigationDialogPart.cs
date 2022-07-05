@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record NavigationDialogPart
+public partial record NavigationDialogPart : DialogPartBase
 {
     public IDialogPartIdentifier GetNextPartId(IDialog dialog) => NavigateToId;
     public DialogState GetState() => DialogState.InProgress;

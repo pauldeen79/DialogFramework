@@ -8,7 +8,7 @@ public class CoreBuilders : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableBuilderClasses(CoreModels,
+        => GetImmutableBuilderClasses(CoreModels.Where(x => !x.Name.EndsWith("Arguments")).ToArray(),
                                       "DialogFramework.Domain",
                                       "DialogFramework.Domain.Builders");
 }

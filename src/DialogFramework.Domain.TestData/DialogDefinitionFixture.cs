@@ -141,4 +141,48 @@ public static class DialogDefinitionFixture
                 .WithId(new DialogPartIdentifierBuilder().WithValue("Welcome"))
                 .WithHeading("Welcome"))
             .AddPartGroups(DialogPartGroupFixture.CreateBuilder()).Build();
+
+    public static (Mock<IDialogDefinition> DialogMock,
+                   Mock<IAbortedDialogPart> AbortPartMock,
+                   Mock<ICompletedDialogPart> CompletedPartMock,
+                   Mock<IErrorDialogPart> ErrorPartMock,
+                   Mock<IMessageDialogPart> MessagePartMock) CreateNavigatableDialogDefinition()
+    {
+        var mock = new Mock<IDialogDefinition>();
+        var abortedPartMock = new Mock<IAbortedDialogPart>();
+        var completedPartMock = new Mock<ICompletedDialogPart>();
+        var errorPartMock = new Mock<IErrorDialogPart>();
+        var messagePartMock = new Mock<IMessageDialogPart>();
+        abortedPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().WithValue("Abort").Build());
+        abortedPartMock.Setup(x => x.GetState()).Returns(DialogState.Aborted);
+        completedPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().WithValue("Completed").Build());
+        completedPartMock.Setup(x => x.GetState()).Returns(DialogState.Completed);
+        errorPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().WithValue("Error").Build());
+        errorPartMock.Setup(x => x.GetState()).Returns(DialogState.ErrorOccured);
+        messagePartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifierBuilder().WithValue("Message").Build());
+        messagePartMock.Setup(x => x.GetState()).Returns(DialogState.InProgress);
+        mock.SetupGet(x => x.AbortedPart).Returns(abortedPartMock.Object);
+        mock.SetupGet(x => x.CompletedPart).Returns(completedPartMock.Object);
+        mock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
+        mock.SetupGet(x => x.Metadata).Returns(new DialogMetadataBuilder().WithFriendlyName("test").WithId("test").WithVersion("1.0.0").Build());
+        mock.SetupGet(x => x.PartGroups).Returns(new List<IDialogPartGroup>());
+        mock.SetupGet(x => x.Parts).Returns(new List<IDialogPart>(new[] { messagePartMock.Object }));
+        mock.Setup(x => x.GetPartById(It.IsAny<IDialogPartIdentifier>()))
+            .Returns<IDialogPartIdentifier>(id => id.Value switch
+            {
+                "Abort" => Result<IDialogPart>.Success(abortedPartMock.Object),
+                "Completed" => Result<IDialogPart>.Success(completedPartMock.Object),
+                "Error" => Result<IDialogPart>.Success(errorPartMock.Object),
+                "Message" => Result<IDialogPart>.Success(messagePartMock.Object),
+                _ => Result<IDialogPart>.NotFound()
+            });
+        mock.Setup(x => x.GetNextPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>(), It.IsAny<IEnumerable<IDialogPartResultAnswer>>()))
+            .Returns(Result<IDialogPart>.Success(completedPartMock.Object));
+        mock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>()))
+            .Returns(Result<IDialogPart>.Success(messagePartMock.Object));
+        mock.Setup(x => x.CanNavigateTo(It.IsAny<IDialogPartIdentifier>(), It.IsAny<IDialogPartIdentifier>(), It.IsAny<IEnumerable<IDialogPartResult>>()))
+            .Returns(Result.Success());
+
+        return (mock, abortedPartMock, completedPartMock, errorPartMock, messagePartMock);
+    }
 }

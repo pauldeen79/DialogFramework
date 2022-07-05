@@ -43,7 +43,7 @@ public class StartRequestHandler : RequestHandlerBase, IRequestHandler<StartRequ
 
         try
         {
-            var createResult = DialogFactory.Create(dialogDefinition, request.DialogPartResults);
+            var createResult = DialogFactory.Create(dialogDefinition, request.DialogPartResults, request.Properties);
             return Result<(IDialog Dialog, IDialogDefinition Definition)>.Success((createResult.GetValueOrThrow(), dialogDefinition));
         }
         catch (Exception ex)

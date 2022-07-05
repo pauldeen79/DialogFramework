@@ -20,7 +20,7 @@ public class NavigateRequestHandler : RequestHandlerBase, IRequestHandler<Naviga
             request.Dialog,
             nameof(request.Dialog.NavigateTo),
             _startRequestHandler,
-            dialogDefinition => request.Dialog.NavigateTo(dialogDefinition, request.NavigateToPartId),
+            dialogDefinition => request.Dialog.NavigateTo(dialogDefinition, request.NavigateToPartId, ConditionEvaluator),
             GetDialogDefinition(request.DialogDefinitionIdentifier).Value
         );
 }

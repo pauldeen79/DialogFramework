@@ -20,6 +20,6 @@ public class AbortRequestHandler : RequestHandlerBase, IRequestHandler<AbortRequ
             request.Dialog,
             nameof(request.Dialog.Abort),
             _startRequestHandler,
-            dialogDefinition => request.Dialog.Abort(dialogDefinition)
+            dialogDefinition => request.Dialog.Abort(dialogDefinition, ConditionEvaluator)
         );
 }

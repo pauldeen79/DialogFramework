@@ -1,8 +1,6 @@
-﻿using System.Linq;
+﻿namespace DialogFramework.Domain.DialogParts;
 
-namespace DialogFramework.Domain.DialogParts;
-
-public partial record QuestionDialogPart : IValidatableObject
+public partial record QuestionDialogPart : DialogPartBase, IValidatableObject
 {
     public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results)
     {

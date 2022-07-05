@@ -101,8 +101,12 @@ public partial record DialogDefinition : IValidatableObject
         {
             if (dialogPart is IDecisionDialogPart decisionDialogPart)
             {
-                var nextPartId = decisionDialogPart.GetNextPartId(dialog, this, evaluator);
-                var partByIdResult = GetPartById(nextPartId);
+                var nextPartIdResult = decisionDialogPart.GetNextPartId(dialog, this, evaluator);
+                if (!nextPartIdResult.IsSuccessful())
+                {
+                    return Result<IDialogPart>.FromExistingResult(nextPartIdResult);
+                }
+                var partByIdResult = GetPartById(nextPartIdResult.GetValueOrThrow());
                 if (!partByIdResult.IsSuccessful())
                 {
                     return partByIdResult;

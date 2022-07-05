@@ -49,7 +49,7 @@ public abstract class RequestHandlerBase
             if (result.Status == ResultStatus.Redirect
                 && result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
             {
-                return await startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.GetValueOrThrow(), dialog.GetAllResults(definition)), CancellationToken.None);
+                return await startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.GetValueOrThrow(), dialog.GetAllResults(definition), dialog.GetProperties()), CancellationToken.None);
             }
 
             if (!result.IsSuccessful())
@@ -63,7 +63,7 @@ public abstract class RequestHandlerBase
         {
             var msg = $"{operationName} failed";
             Logger.LogError(ex, msg);
-            dialog.Error(definition!, new Error(msg));
+            dialog.Error(definition!, ConditionEvaluator, new Error(msg));
             return Result<IDialog>.Success(dialog);
         }
     }
