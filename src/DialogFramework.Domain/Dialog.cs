@@ -25,7 +25,6 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetPartById(CurrentPartId).Value,
             definition.AbortedPart,
             DialogAction.Abort,
             () =>
@@ -52,7 +51,6 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetPartById(CurrentPartId).Value,
             nextPartResult.Value,
             DialogAction.Continue,
             () =>
@@ -87,7 +85,6 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetPartById(CurrentPartId).Value,
             definition.ErrorPart,
             DialogAction.Error,
             () =>
@@ -119,7 +116,6 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            null,
             firstPartResult.Value,
             DialogAction.Start,
             () =>
@@ -168,7 +164,6 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetPartById(CurrentPartId).Value,
             navigateToPartResult.Value,
             DialogAction.NavigateTo,
             () =>
@@ -222,13 +217,15 @@ public partial record Dialog
     private Result HandleNavigate(
         IDialogDefinition definition,
         IConditionEvaluator evaluator,
-        IDialogPart? previousPart,
         IDialogPart? nextPart,
         DialogAction action,
         Action callback,
         Func<Result> returnDelegate)
     {
         var afterArgs = new AfterNavigateArguments(this, definition, evaluator, action);
+        var previousPart = CurrentState == DialogState.Initial
+            ? null
+            : definition.GetPartById(CurrentPartId).Value;
         previousPart?.AfterNavigate(afterArgs);
         ProcessAddedProperties();
         UpdateState(afterArgs);
