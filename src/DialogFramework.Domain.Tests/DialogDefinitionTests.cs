@@ -2,13 +2,6 @@
 
 public class DialogDefinitionTests
 {
-    private readonly Mock<IConditionEvaluator> _conditionEvaluatorMock;
-
-    public DialogDefinitionTests()
-    {
-        _conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-    }
-
     [Fact]
     public void ReplaceAnswers_Replaces_Previous_Anwers_From_Same_Question()
     {
@@ -119,7 +112,7 @@ public class DialogDefinitionTests
             .Build();
 
         // Act
-        var actual = sut.CanNavigateTo(sut.CompletedPart.Id, sut.Parts.First().Id, new[] { partResult } );
+        var actual = sut.CanNavigateTo(sut.CompletedPart.Id, sut.Parts.First().Id, new[] { partResult });
 
         // Assert
         actual.IsSuccessful().Should().BeTrue();
@@ -143,24 +136,22 @@ public class DialogDefinitionTests
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilderBase().Build();
-        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var result = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
+        var result = sut.GetFirstPart();
 
         // Assert
         result.Value.Should().BeSameAs(sut.CompletedPart);
     }
 
     [Fact]
-    public void GetFirstPart_Returns_First_Part_When_It_Is_A_Static_DialogPart()
+    public void GetFirstPart_Returns_First_Part_When_It_Is_Available()
     {
         // Arrange
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
-        var dialog = DialogFixture.Create(sut.Metadata);
 
         // Act
-        var actual = sut.GetFirstPart(dialog, _conditionEvaluatorMock.Object);
+        var actual = sut.GetFirstPart();
 
         // Assert
         actual.IsSuccessful().Should().BeTrue();
@@ -178,7 +169,7 @@ public class DialogDefinitionTests
             .Build();
 
         // Act
-        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult } );
+        var result = sut.GetNextPart(dialog, new[] { partResult });
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -198,7 +189,7 @@ public class DialogDefinitionTests
             .Build();
 
         // Act
-        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult });
+        var result = sut.GetNextPart(dialog, new[] { partResult });
 
         // Assert
         result.IsSuccessful().Should().BeFalse();
@@ -207,7 +198,7 @@ public class DialogDefinitionTests
     }
 
     [Fact]
-    public void GetNextPart_Returns_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_A_Static_DialogPart()
+    public void GetNextPart_Returns_Next_Part_When_Validation_Succeeds_And_Next_Part_Is_Available()
     {
         var sut = DialogDefinitionFixture.CreateBuilder().Build();
         var dialog = DialogFixture.Create(sut.Metadata, sut.Parts.First().Id);
@@ -216,7 +207,7 @@ public class DialogDefinitionTests
             .Build();
 
         // Act
-        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult } );
+        var result = sut.GetNextPart(dialog, new[] { partResult });
 
         // Assert
         result.IsSuccessful().Should().BeTrue();
@@ -237,7 +228,7 @@ public class DialogDefinitionTests
             .Build();
 
         // Act
-        var result = sut.GetNextPart(dialog, _conditionEvaluatorMock.Object, new[] { partResult });
+        var result = sut.GetNextPart(dialog, new[] { partResult });
 
         // Assert
         result.IsSuccessful().Should().BeTrue();

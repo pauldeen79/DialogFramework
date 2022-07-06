@@ -48,12 +48,10 @@ public partial record DialogDefinition : IValidatableObject
         return Result.Success();
     }
 
-    public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator)
+    public Result<IDialogPart> GetFirstPart()
         => Result<IDialogPart>.Success(Parts.FirstOrDefault() ?? CompletedPart);
 
-    public Result<IDialogPart> GetNextPart(IDialog dialog,
-                                           IConditionEvaluator evaluator,
-                                           IEnumerable<IDialogPartResultAnswer> results)
+    public Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> results)
     {
         // first perform validation
         var currentPartResult = GetPartById(dialog.CurrentPartId);

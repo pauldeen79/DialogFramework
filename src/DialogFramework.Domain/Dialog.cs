@@ -54,7 +54,7 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetNextPart(this, evaluator, results),
+            definition.GetNextPart(this, results),
             DialogAction.Continue,
             partResult =>
             {
@@ -117,7 +117,7 @@ public partial record Dialog
         (
             definition,
             evaluator,
-            definition.GetFirstPart(this, evaluator),
+            definition.GetFirstPart(),
             DialogAction.Start,
             partResult =>
             {
@@ -130,11 +130,7 @@ public partial record Dialog
             },
             partResult =>
             {
-                if (!partResult.IsSuccessful())
-                {
-                    return Result.Error(partResult.ErrorMessage.WhenNullOrEmpty("There was an error getting the first part"));
-                }
-                else if (partResult.Value is IRedirectDialogPart redirectDialogPart)
+                if (partResult.Value is IRedirectDialogPart redirectDialogPart)
                 {
                     return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
                 }

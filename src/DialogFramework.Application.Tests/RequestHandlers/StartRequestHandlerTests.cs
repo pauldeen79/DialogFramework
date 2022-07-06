@@ -38,7 +38,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinitionMock = new Mock<IDialogDefinition>();
         dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
         dialogDefinitionMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
-        dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(Result<IDialogPart>.Success(dialogPartMock.Object));
+        dialogDefinitionMock.Setup(x => x.GetFirstPart()).Returns(Result<IDialogPart>.Success(dialogPartMock.Object));
         var factory = new DialogFactoryFixture(_ => true,
                                                _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object));
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinitionMock.Object));
