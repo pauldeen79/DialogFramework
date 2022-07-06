@@ -207,16 +207,11 @@ public class DialogTests
     }
 
     [Fact]
-    public void Start_Returns_Error_When_First_Part_Is_Dynamic_And_Gives_Error()
+    public void Start_Returns_Error_When_First_Part_Is_DecisionPart_And_DecisionPart_Returns_Error()
     {
         // Arrange
-        var dialogDefinition = DialogDefinitionFixture
-            .CreateBuilderBase()
-            .AddParts(new NavigationDialogPartBuilder()
-                .WithNavigateToId(new DialogPartIdentifierBuilder().WithValue("Non existing id"))
-                .WithId(new DialogPartIdentifierBuilder()))
-            .WithMetadata(new DialogMetadataBuilder()
-                .WithId("Id"))
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(new DecisionDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Id")))
             .Build();
         var sut = DialogFixture.Create(dialogDefinition.Metadata);
 
@@ -226,7 +221,47 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = Non existing id }]");
+        result.ErrorMessage.Should().Be("No next dialog part supplied");
+    }
+
+    [Fact]
+    public void Start_Returns_Error_When_First_Part_Is_DecisionPart_And_DecisionPart_Returns_NonExisting_Part()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(new DecisionDialogPartBuilder()
+                .WithId(new DialogPartIdentifierBuilder().WithValue("Id"))
+                .WithDefaultNextPartId(new DialogPartIdentifierBuilder().WithValue("NonExistingId")))
+            .Build();
+        var sut = DialogFixture.Create(dialogDefinition.Metadata);
+
+        // Act
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = NonExistingId }]");
+    }
+
+    [Fact]
+    public void Start_Returns_Error_When_First_Part_Is_NavigationPart_And_NavigationPart_Returns_NonExisting_Part()
+    {
+        // Arrange
+        var dialogDefinition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(new NavigationDialogPartBuilder()
+                .WithId(new DialogPartIdentifierBuilder().WithValue("Id"))
+                .WithNavigateToId(new DialogPartIdentifierBuilder().WithValue("NonExistingId")))
+            .Build();
+        var sut = DialogFixture.Create(dialogDefinition.Metadata);
+
+        // Act
+        var result = sut.Start(dialogDefinition, _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.IsSuccessful().Should().BeFalse();
+        result.Status.Should().Be(ResultStatus.NotFound);
+        result.ErrorMessage.Should().Be("Dialog does not have a part with id [DialogPartIdentifier { Value = NonExistingId }]");
     }
 
     [Fact]
