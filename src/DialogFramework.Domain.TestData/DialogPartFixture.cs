@@ -29,14 +29,10 @@ public static class DialogPartFixture
         public void BeforeNavigate(IBeforeNavigateArguments args)
         {
             // Method intentionally left empty.
+            throw new NotImplementedException();
         }
 
         public IDialogPartBuilder CreateBuilder() => new ThrowingDialogPartBuilder(this);
-
-        public IDialogPartIdentifier GetNextPartId(IDialog dialog)
-        {
-            throw new NotImplementedException();
-        }
 
         public DialogState GetState() => DialogState.InProgress;
 

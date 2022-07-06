@@ -227,15 +227,6 @@ public partial record Dialog
             return afterArgs.Result;
         }
 
-        if (nextPartResult.IsSuccessful())
-        {
-            var dynamicResult = GetDynamicResult(nextPartResult.Value!, definition, evaluator);
-            if (!dynamicResult.IsSuccessful())
-            {
-                return dynamicResult;
-            }
-            nextPartResult = dynamicResult;
-        }
         var beforeArgs = new BeforeNavigateArguments(this, definition, evaluator, action);
         nextPartResult.Value?.BeforeNavigate(beforeArgs);
         if (beforeArgs.UpdateState)
@@ -272,41 +263,5 @@ public partial record Dialog
             _properties.AddRange(AddedProperties);
             AddedProperties.Clear();
         }
-    }
-
-    private Result<IDialogPart> GetDynamicResult(IDialogPart dialogPart, IDialogDefinition definition, IConditionEvaluator evaluator)
-    {
-        while (true)
-        {
-            if (dialogPart is IDecisionDialogPart decisionDialogPart)
-            {
-                var nextPartIdResult = decisionDialogPart.GetNextPartId(this, definition, evaluator);
-                if (!nextPartIdResult.IsSuccessful())
-                {
-                    return Result<IDialogPart>.FromExistingResult(nextPartIdResult);
-                }
-                var partByIdResult = definition.GetPartById(nextPartIdResult.GetValueOrThrow());
-                if (!partByIdResult.IsSuccessful())
-                {
-                    return partByIdResult;
-                }
-                dialogPart = partByIdResult.GetValueOrThrow();
-            }
-            else if (dialogPart is INavigationDialogPart navigationDialogPart)
-            {
-                var partByIdResult = definition.GetPartById(navigationDialogPart.GetNextPartId(this));
-                if (!partByIdResult.IsSuccessful())
-                {
-                    return partByIdResult;
-                }
-                dialogPart = partByIdResult.GetValueOrThrow();
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return Result<IDialogPart>.Success(dialogPart);
     }
 }
