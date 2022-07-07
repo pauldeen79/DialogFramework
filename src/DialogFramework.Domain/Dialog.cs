@@ -135,6 +135,11 @@ public partial record Dialog
                     return Result<IDialogDefinitionIdentifier>.Redirect(redirectDialogPart.RedirectDialogMetadata);
                 }
 
+                if (!partResult.IsSuccessful())
+                {
+                    return partResult;
+                }
+
                 return Result.Success();
             });
     }
@@ -219,41 +224,43 @@ public partial record Dialog
         var previousPart = CurrentState == DialogState.Initial
             ? null
             : definition.GetPartById(CurrentPartId).Value;
-        previousPart?.AfterNavigate(afterArgs);
+        var afterPartResult = previousPart?.AfterNavigate(afterArgs);
         ProcessAddedProperties();
-        UpdateState(afterArgs);
-        if (afterArgs.Result != null)
+        if (afterPartResult != null)
         {
-            return afterArgs.Result;
+            UpdateState(afterPartResult);
+            return returnDelegate(afterPartResult);
         }
 
         var beforeArgs = new BeforeNavigateArguments(this, definition, evaluator, action);
-        nextPartResult.Value?.BeforeNavigate(beforeArgs);
-        if (beforeArgs.UpdateState)
+        var beforePartResult = nextPartResult.Value?.BeforeNavigate(beforeArgs);
+        if (beforePartResult == null)
         {
             callback.Invoke(nextPartResult);
         }
         else
         {
-            UpdateState(beforeArgs);
+            UpdateState(beforePartResult);
         }
 
         ProcessAddedProperties();
-        if (beforeArgs.Result != null)
+        if (beforePartResult != null)
         {
-            return beforeArgs.Result;
+            return returnDelegate(beforePartResult);
         }
 
         return returnDelegate(nextPartResult);
     }
 
-    private void UpdateState(INavigateArguments args)
+    private void UpdateState(Result<IDialogPart> beforePartResult)
     {
-        CurrentDialogIdentifier = args.CurrentDialogIdentifier;
-        CurrentPartId = args.CurrentPartId;
-        CurrentGroupId = args.CurrentGroupId;
-        CurrentState = args.CurrentState;
-        ErrorMessage = args.ErrorMessage;
+        if (beforePartResult.IsSuccessful())
+        {
+            var part = beforePartResult.GetValueOrThrow();
+            CurrentPartId = part.Id;
+            CurrentGroupId = part.GetGroupId();
+            CurrentState = part.GetState();
+        }
     }
 
     private void ProcessAddedProperties()

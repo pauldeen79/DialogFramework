@@ -3,13 +3,11 @@
 public abstract record NavigateArgumentsBase : INavigateArguments
 {
     public IDialogIdentifier CurrentDialogId { get; }
-    public IDialogDefinitionIdentifier CurrentDialogIdentifier { get; set; }
-    public IDialogPartIdentifier CurrentPartId { get; set; }
-    public IDialogPartGroupIdentifier? CurrentGroupId { get; set; }
-    public DialogState CurrentState { get; set; }
-    public string? ErrorMessage { get; set; }
-    public Result? Result { get; set; }
-    public bool UpdateState { get; private set; } = true;
+    public IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
+    public IDialogPartIdentifier CurrentPartId { get; }
+    public IDialogPartGroupIdentifier? CurrentGroupId { get; }
+    public DialogState CurrentState { get; }
+    public string? ErrorMessage { get; }
 
     public DialogAction Action { get; }
     public IDialogDefinition DialogDefinition { get; }
@@ -46,7 +44,4 @@ public abstract record NavigateArgumentsBase : INavigateArguments
 
     public void AddProperty(IProperty property)
         => Dialog.AddProperty(property);
-
-    public void CancelStateUpdate()
-        => UpdateState = false;
 }

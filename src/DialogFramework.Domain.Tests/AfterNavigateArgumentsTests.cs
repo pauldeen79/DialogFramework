@@ -9,23 +9,6 @@ public class AfterNavigateArgumentsTests
     }
 
     [Fact]
-    public void Can_Set_Result()
-    {
-        // Arrange
-        var dialogMock = new Mock<IDialog>();
-        var definitionMock = new Mock<IDialogDefinition>();
-        var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
-        var sut = new AfterNavigateArguments(dialogMock.Object, definitionMock.Object, conditionEvaluatorMock.Object, DialogAction.Continue);
-        var result = Result.Error("Kaboom");
-
-        // Act
-        sut.Result = result;
-
-        // Assert
-        sut.Result.Should().BeEquivalentTo(result);
-    }
-
-    [Fact]
     public void Can_Add_Property()
     {
         // Arrange

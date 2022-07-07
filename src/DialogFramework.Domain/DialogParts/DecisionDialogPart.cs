@@ -2,31 +2,18 @@
 
 public partial record DecisionDialogPart : DialogPartBase
 {
-    public override void BeforeNavigate(IBeforeNavigateArguments args)
+    public override Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
     {
-        args.CancelStateUpdate();
-
         var partId = Decisions.FirstOrDefault(x => args.ConditionEvaluator.Evaluate(args, x.Conditions))?.NextPartId
             ?? DefaultNextPartId;
 
         if (partId == null)
         {
-            args.Result = Result<IDialogPart>.Error("No next dialog part supplied");
+            return Result<IDialogPart>.Error("No next dialog part supplied");
         }
         else
         {
-            var partByIdResult = args.DialogDefinition.GetPartById(partId);
-            if (!partByIdResult.IsSuccessful())
-            {
-                args.Result = partByIdResult;
-            }
-            else
-            {
-                var part = partByIdResult.GetValueOrThrow();
-                args.CurrentPartId = part.Id;
-                args.CurrentGroupId = part.GetGroupId();
-                args.CurrentState = part.GetState();
-            }
+            return args.DialogDefinition.GetPartById(partId);
         }
     }
 

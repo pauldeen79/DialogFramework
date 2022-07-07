@@ -550,8 +550,8 @@ public class DialogTests
     public void Can_Add_Properties_From_DialogPart()
     {
         // Arrange
-        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.AddProperty(new Property("Added", "Value")));
+        var afterNavigateCallback = new Func<IAfterNavigateArguments, Result<IDialogPart>?>(args => default);
+        var beforeNavigateCallback = new Func<IBeforeNavigateArguments, Result<IDialogPart>?>(args => { args.AddProperty(new Property("Added", "Value")); return default; });
         var definition = DialogDefinitionFixture.CreateBuilderBase()
             .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
             .Build();
@@ -565,11 +565,11 @@ public class DialogTests
     }
 
     [Fact]
-    public void Can_Set_Result_From_DialogPart()
+    public void Can_Set_Result_From_DialogPart_In_BeforeNavigate()
     {
         // Arrange
-        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.Result = Result.Error());
+        var afterNavigateCallback = new Func<IAfterNavigateArguments, Result<IDialogPart>?>(args => default);
+        var beforeNavigateCallback = new Func<IBeforeNavigateArguments, Result<IDialogPart>?>(args => Result<IDialogPart>.Error());
         var definition = DialogDefinitionFixture.CreateBuilderBase()
             .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
             .Build();
@@ -583,11 +583,30 @@ public class DialogTests
     }
 
     [Fact]
+    public void Can_Set_Result_From_DialogPart_In_AfterNavigate()
+    {
+        // Arrange
+        var afterNavigateCallback = new Func<IAfterNavigateArguments, Result<IDialogPart>?>(args => Result<IDialogPart>.Error());
+        var beforeNavigateCallback = new Func<IBeforeNavigateArguments, Result<IDialogPart>?>(args => default);
+        var definition = DialogDefinitionFixture.CreateBuilderBase()
+            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
+            .Build();
+        var dialog = DialogFixture.Create(definition.Metadata);
+        dialog.Start(definition, _conditionEvaluatorMock.Object);
+
+        // Act
+        var result = dialog.Continue(definition, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
+
+        // Assert
+        result.Should().BeEquivalentTo(Result.Error());
+    }
+
+    [Fact]
     public void Can_Cancel_Update_Of_State_From_DialogPart()
     {
         // Arrange
-        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => args.CancelStateUpdate());
+        var afterNavigateCallback = new Func<IAfterNavigateArguments, Result<IDialogPart>?>(args => default);
+        var beforeNavigateCallback = new Func<IBeforeNavigateArguments, Result<IDialogPart>?>(args => Result<IDialogPart>.Success(new Mock<IDialogPart>().Object));
         var definition = DialogDefinitionFixture.CreateBuilderBase()
             .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
             .Build();
@@ -599,80 +618,6 @@ public class DialogTests
         // Assert
         result.IsSuccessful().Should().BeTrue();
         dialog.CurrentState.Should().Be(DialogState.Initial);
-    }
-
-    [Fact]
-    public void Can_Update_State_With_Custom_Values_From_DialogPart_In_BeforeNavigate()
-    {
-        // Arrange
-        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args => { });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args =>
-        {
-            // First, Cancel the default update
-            args.CancelStateUpdate();
-
-            // Then, update the state with custom values
-            args.CurrentState = DialogState.Aborted;
-            args.CurrentDialogIdentifier = new DialogDefinitionIdentifier("CustomDialog", "2.0.0");
-            args.CurrentGroupId = new DialogPartGroupIdentifier("CustomGroup");
-            args.CurrentPartId = new DialogPartIdentifier("CustomPart");
-            args.ErrorMessage = "Custom error message";
-        });
-        var definition = DialogDefinitionFixture.CreateBuilderBase()
-            .AddParts(DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback))
-            .Build();
-        var dialog = DialogFixture.Create(definition.Metadata);
-
-        // Act
-        var result = dialog.Start(definition, _conditionEvaluatorMock.Object);
-
-        // Assert
-        result.IsSuccessful().Should().BeTrue();
-        dialog.CurrentState.Should().Be(DialogState.Aborted);
-        dialog.CurrentDialogIdentifier.Should().BeEquivalentTo(new DialogDefinitionIdentifier("CustomDialog", "2.0.0"));
-        dialog.CurrentGroupId.Should().BeEquivalentTo(new DialogPartGroupIdentifier("CustomGroup"));
-        dialog.CurrentPartId.Should().BeEquivalentTo(new DialogPartIdentifier("CustomPart"));
-        dialog.ErrorMessage.Should().Be("Custom error message");
-    }
-
-    [Fact]
-    public void Can_Update_State_With_Custom_Values_From_DialogPart_In_AfterNavigate()
-    {
-        // Arrange
-        var afterNavigateCallback = new Action<IAfterNavigateArguments>(args =>
-        {
-            // Note that for the AfterNavigate, we don't have to cancel the state update.
-            // This is only necessary for BeforeNavigate. (as this is the place where the state update takes place)
-            args.CurrentState = DialogState.Aborted;
-            args.CurrentDialogIdentifier = new DialogDefinitionIdentifier("CustomDialog", "2.0.0");
-            args.CurrentGroupId = new DialogPartGroupIdentifier("CustomGroup");
-            args.CurrentPartId = new DialogPartIdentifier("CustomPart");
-            args.ErrorMessage = "Custom error message";
-
-            // Note that we DO have to set a result, because the code of the BeforeNavigate will get executed otherwise...
-            args.Result = Result.Success();
-        });
-        var beforeNavigateCallback = new Action<IBeforeNavigateArguments>(args => { });
-        var definition = DialogDefinitionFixture.CreateBuilderBase()
-            .AddParts
-            (
-                DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback),
-                DialogPartFixture.CreateAddPropertiesDialogPartBuilder(afterNavigateCallback, beforeNavigateCallback)
-            )
-            .Build();
-        var dialog = DialogFixture.Create(definition.Metadata);
-        dialog.Start(definition, _conditionEvaluatorMock.Object);
-
-        // Act
-        var result = dialog.Continue(definition, Enumerable.Empty<IDialogPartResultAnswer>(), _conditionEvaluatorMock.Object);
-
-        // Assert
-        result.IsSuccessful().Should().BeTrue();
-        dialog.CurrentState.Should().Be(DialogState.Aborted);
-        dialog.CurrentDialogIdentifier.Should().BeEquivalentTo(new DialogDefinitionIdentifier("CustomDialog", "2.0.0"));
-        dialog.CurrentGroupId.Should().BeEquivalentTo(new DialogPartGroupIdentifier("CustomGroup"));
-        dialog.CurrentPartId.Should().BeEquivalentTo(new DialogPartIdentifier("CustomPart"));
-        dialog.ErrorMessage.Should().Be("Custom error message");
     }
 
     private static IDialogPartResult CreatePartResult(IDialogDefinition dialogDefinition, IQuestionDialogPart questionPart)
