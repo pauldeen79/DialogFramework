@@ -6,6 +6,6 @@ public interface IDialogPart
     DialogState GetState();
     IDialogPartBuilder CreateBuilder();
     bool SupportsReset();
-    void BeforeNavigate(IBeforeNavigateArguments args);
-    void AfterNavigate(IAfterNavigateArguments args);
+    Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args);
+    Result<IDialogPart>? AfterNavigate(IAfterNavigateArguments args);
 }

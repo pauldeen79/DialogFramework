@@ -176,9 +176,9 @@ public static class DialogDefinitionFixture
                 "Message" => Result<IDialogPart>.Success(messagePartMock.Object),
                 _ => Result<IDialogPart>.NotFound()
             });
-        mock.Setup(x => x.GetNextPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>(), It.IsAny<IEnumerable<IDialogPartResultAnswer>>()))
+        mock.Setup(x => x.GetNextPart(It.IsAny<IDialog>(), It.IsAny<IEnumerable<IDialogPartResultAnswer>>()))
             .Returns(Result<IDialogPart>.Success(completedPartMock.Object));
-        mock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>()))
+        mock.Setup(x => x.GetFirstPart())
             .Returns(Result<IDialogPart>.Success(messagePartMock.Object));
         mock.Setup(x => x.CanNavigateTo(It.IsAny<IDialogPartIdentifier>(), It.IsAny<IDialogPartIdentifier>(), It.IsAny<IEnumerable<IDialogPartResult>>()))
             .Returns(Result.Success());

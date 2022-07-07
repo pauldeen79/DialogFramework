@@ -38,7 +38,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinitionMock = new Mock<IDialogDefinition>();
         dialogDefinitionMock.SetupGet(x => x.Metadata).Returns(dialogMetadataMock.Object);
         dialogDefinitionMock.SetupGet(x => x.ErrorPart).Returns(errorPartMock.Object);
-        dialogDefinitionMock.Setup(x => x.GetFirstPart(It.IsAny<IDialog>(), It.IsAny<IConditionEvaluator>())).Returns(Result<IDialogPart>.Success(dialogPartMock.Object));
+        dialogDefinitionMock.Setup(x => x.GetFirstPart()).Returns(Result<IDialogPart>.Success(dialogPartMock.Object));
         var factory = new DialogFactoryFixture(_ => true,
                                                _ => DialogFixture.Create("Id", dialogDefinitionMock.Object.Metadata, dialogPartMock.Object));
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinitionMock.Object));
@@ -64,7 +64,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialog = DialogFixture.Create(definition.Metadata);
         var factory = new DialogFactoryFixture(_ => true, _ => dialog);
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
-                       .Returns(Result<IDialogDefinition>.Success(definition));
+                    .Returns(Result<IDialogDefinition>.Success(definition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
@@ -89,7 +89,8 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
                                                dialog => Equals(dialog.Metadata.Id, dialogDefinition1.Metadata.Id)
                                                    ? DialogFixture.Create(dialogDefinition1.Metadata)
                                                    : DialogFixture.Create(dialogDefinition2.Metadata));
-        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns<IDialogDefinitionIdentifier>(identifier =>
+        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                    .Returns<IDialogDefinitionIdentifier>(identifier =>
         {
             if (Equals(identifier.Id, dialogDefinition1.Metadata.Id) && Equals(identifier.Version, dialogDefinition1.Metadata.Version)) return Result<IDialogDefinition>.Success(dialogDefinition1);
             if (Equals(identifier.Id, dialogDefinition2.Metadata.Id) && Equals(identifier.Version, dialogDefinition2.Metadata.Version)) return Result<IDialogDefinition>.Success(dialogDefinition2);
@@ -115,7 +116,8 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinition = DialogDefinitionFixture.CreateSingleStepDefinitionBuilder();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinition));
+        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                    .Returns(Result<IDialogDefinition>.Success(dialogDefinition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
@@ -156,7 +158,7 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
         ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
-                     .Returns(Result<IDialogDefinition>.NotFound());
+                    .Returns(Result<IDialogDefinition>.NotFound());
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
@@ -177,7 +179,8 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinition = DialogDefinitionFixture.CreateBuilder().Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Throws(new InvalidOperationException("Kaboom"));
+        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                    .Throws(new InvalidOperationException("Kaboom"));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
@@ -214,7 +217,8 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
         var dialogDefinition = DialogDefinitionFixture.CreateDialogDefinitionWithDecisionPartThatReturnsErrorDialogPart();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinition));
+        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                    .Returns(Result<IDialogDefinition>.Success(dialogDefinition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act
@@ -245,7 +249,8 @@ public class StartRequestHandlerTests : RequestHandlerTestBase
             .Build();
         var factory = new DialogFactoryFixture(d => Equals(d.Metadata.Id, dialogDefinition.Metadata.Id),
                                                _ => DialogFixture.Create(dialogDefinition.Metadata));
-        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>())).Returns(Result<IDialogDefinition>.Success(dialogDefinition));
+        ProviderMock.Setup(x => x.GetDialogDefinition(It.IsAny<IDialogDefinitionIdentifier>()))
+                    .Returns(Result<IDialogDefinition>.Success(dialogDefinition));
         var sut = new StartRequestHandler(factory, ProviderMock.Object, ConditionEvaluatorMock.Object, LoggerMock.Object);
 
         // Act

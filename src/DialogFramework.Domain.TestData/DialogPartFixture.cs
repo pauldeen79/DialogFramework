@@ -5,8 +5,8 @@ public static class DialogPartFixture
 {
     public static IDialogPart CreateErrorThrowingDialogPart() => new ThrowingDialogPart();
     public static IDialogPartBuilder CreateErrorThrowingDialogPartBuilder() => new ThrowingDialogPartBuilder(CreateErrorThrowingDialogPart());
-    public static AddPropertiesDialogPart CreateAddPropertiesDialogPart(Action<IAfterNavigateArguments> afterNavigateCallback, Action<IBeforeNavigateArguments> beforeNavigateCallback, DialogState state = DialogState.InProgress) => new AddPropertiesDialogPart(afterNavigateCallback, beforeNavigateCallback, state);
-    public static AddPropertiesDialogPartBuilder CreateAddPropertiesDialogPartBuilder(Action<IAfterNavigateArguments> afterNavigateCallback, Action<IBeforeNavigateArguments> beforeNavigateCallback) => new AddPropertiesDialogPartBuilder(CreateAddPropertiesDialogPart(afterNavigateCallback, beforeNavigateCallback));
+    public static AddPropertiesDialogPart CreateAddPropertiesDialogPart(Func<IAfterNavigateArguments, Result<IDialogPart>?> afterNavigateCallback, Func<IBeforeNavigateArguments, Result<IDialogPart>?> beforeNavigateCallback, DialogState state = DialogState.InProgress) => new AddPropertiesDialogPart(afterNavigateCallback, beforeNavigateCallback, state);
+    public static AddPropertiesDialogPartBuilder CreateAddPropertiesDialogPartBuilder(Func<IAfterNavigateArguments, Result<IDialogPart>?> afterNavigateCallback, Func<IBeforeNavigateArguments, Result<IDialogPart>?> beforeNavigateCallback) => new AddPropertiesDialogPartBuilder(CreateAddPropertiesDialogPart(afterNavigateCallback, beforeNavigateCallback));
 
     [ExcludeFromCodeCoverage]
     private sealed class ThrowingDialogPartBuilder : IDialogPartBuilder
@@ -21,22 +21,13 @@ public static class DialogPartFixture
     {
         public IDialogPartIdentifier Id => new DialogPartIdentifier(nameof(ThrowingDialogPart));
 
-        public void AfterNavigate(IAfterNavigateArguments args)
-        {
-            // Method intentionally left empty.
-        }
+        public Result<IDialogPart>? AfterNavigate(IAfterNavigateArguments args)
+            => default;
 
-        public void BeforeNavigate(IBeforeNavigateArguments args)
-        {
-            // Method intentionally left empty.
-        }
+        public Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
+            => throw new NotImplementedException();
 
         public IDialogPartBuilder CreateBuilder() => new ThrowingDialogPartBuilder(this);
-
-        public IDialogPartIdentifier GetNextPartId(IDialog dialog)
-        {
-            throw new NotImplementedException();
-        }
 
         public DialogState GetState() => DialogState.InProgress;
 
@@ -47,10 +38,10 @@ public static class DialogPartFixture
     {
         public IDialogPartIdentifier Id { get; }
         private DialogState State { get; }
-        private readonly Action<IAfterNavigateArguments> AfterNavigateCallback;
-        private readonly Action<IBeforeNavigateArguments> BeforeNavigateCallback;
+        private readonly Func<IAfterNavigateArguments, Result<IDialogPart>?> AfterNavigateCallback;
+        private readonly Func<IBeforeNavigateArguments, Result<IDialogPart>?> BeforeNavigateCallback;
 
-        public AddPropertiesDialogPart(Action<IAfterNavigateArguments> afterNavigateCallback, Action<IBeforeNavigateArguments> beforeNavigateCallback, DialogState state)
+        public AddPropertiesDialogPart(Func<IAfterNavigateArguments, Result<IDialogPart>?> afterNavigateCallback, Func<IBeforeNavigateArguments, Result<IDialogPart>?> beforeNavigateCallback, DialogState state)
         {
             Id = new DialogPartIdentifier(string.Concat(nameof(AddPropertiesDialogPart), DateTime.Now.Ticks.ToString()));
             State = state;
@@ -58,9 +49,9 @@ public static class DialogPartFixture
             BeforeNavigateCallback = beforeNavigateCallback;
         }
 
-        public void AfterNavigate(IAfterNavigateArguments args) => AfterNavigateCallback(args);
+        public Result<IDialogPart>? AfterNavigate(IAfterNavigateArguments args) => AfterNavigateCallback(args);
 
-        public void BeforeNavigate(IBeforeNavigateArguments args) => BeforeNavigateCallback(args);
+        public Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args) => BeforeNavigateCallback(args);
 
         public IDialogPartBuilder CreateBuilder() => new AddPropertiesDialogPartBuilder(this);
 

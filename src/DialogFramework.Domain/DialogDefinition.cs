@@ -48,12 +48,10 @@ public partial record DialogDefinition : IValidatableObject
         return Result.Success();
     }
 
-    public Result<IDialogPart> GetFirstPart(IDialog dialog, IConditionEvaluator evaluator)
-        => GetDynamicResult(Parts.FirstOrDefault() ?? CompletedPart, dialog, evaluator);
+    public Result<IDialogPart> GetFirstPart()
+        => Result<IDialogPart>.Success(Parts.FirstOrDefault() ?? CompletedPart);
 
-    public Result<IDialogPart> GetNextPart(IDialog dialog,
-                                           IConditionEvaluator evaluator,
-                                           IEnumerable<IDialogPartResultAnswer> results)
+    public Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> results)
     {
         // first perform validation
         var currentPartResult = GetPartById(dialog.CurrentPartId);
@@ -79,10 +77,10 @@ public partial record DialogDefinition : IValidatableObject
         if (nextPartWithIndex == null)
         {
             // there is no next part, so get the completed part
-            return GetDynamicResult(CompletedPart, dialog, evaluator);
+            return Result<IDialogPart>.Success(CompletedPart);
         }
 
-        return GetDynamicResult(nextPartWithIndex.Part, dialog, evaluator);
+        return Result<IDialogPart>.Success(nextPartWithIndex.Part);
     }
 
     public Result<IDialogPart> GetPartById(IDialogPartIdentifier id)
@@ -93,42 +91,6 @@ public partial record DialogDefinition : IValidatableObject
             return Result<IDialogPart>.NotFound($"Dialog does not have a part with id [{id}]");
         }
         return Result<IDialogPart>.Success(part);
-    }
-
-    private Result<IDialogPart> GetDynamicResult(IDialogPart dialogPart, IDialog dialog, IConditionEvaluator evaluator)
-    {
-        while (true)
-        {
-            if (dialogPart is IDecisionDialogPart decisionDialogPart)
-            {
-                var nextPartIdResult = decisionDialogPart.GetNextPartId(dialog, this, evaluator);
-                if (!nextPartIdResult.IsSuccessful())
-                {
-                    return Result<IDialogPart>.FromExistingResult(nextPartIdResult);
-                }
-                var partByIdResult = GetPartById(nextPartIdResult.GetValueOrThrow());
-                if (!partByIdResult.IsSuccessful())
-                {
-                    return partByIdResult;
-                }
-                dialogPart = partByIdResult.Value!;
-            }
-            else if (dialogPart is INavigationDialogPart navigationDialogPart)
-            {
-                var partByIdResult = GetPartById(navigationDialogPart.GetNextPartId(dialog));
-                if (!partByIdResult.IsSuccessful())
-                {
-                    return partByIdResult;
-                }
-                dialogPart = partByIdResult.Value!;
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return Result<IDialogPart>.Success(dialogPart);
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

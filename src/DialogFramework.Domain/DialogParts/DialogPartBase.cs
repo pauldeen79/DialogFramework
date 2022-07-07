@@ -2,13 +2,9 @@
 
 public abstract record DialogPartBase
 {
-    public virtual void AfterNavigate(IAfterNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
+    public virtual Result<IDialogPart>? AfterNavigate(IAfterNavigateArguments args)
+        => default;
 
-    public virtual void BeforeNavigate(IBeforeNavigateArguments args)
-    {
-        // Method intentionally left empty.
-    }
+    public virtual Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
+        => default;
 }
