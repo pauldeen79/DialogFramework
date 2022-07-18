@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record AbortedDialogPart : DialogPartBase
+public partial record AbortedDialogPart
 {
-    public DialogState GetState() => DialogState.Aborted;
-    public IDialogPartBuilder CreateBuilder() => new AbortedDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.Aborted;
+    public override IDialogPartBuilder CreateBuilder() => new AbortedDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 }

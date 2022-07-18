@@ -18,6 +18,8 @@ internal static class Program
         // Generate code
         GenerateCode.For<CoreBuilders>(settings, multipleContentBuilder);
         GenerateCode.For<CoreRecords>(settings, multipleContentBuilder);
+        GenerateCode.For<DialogPartBaseBuilders>(settings, multipleContentBuilder);
+        GenerateCode.For<DialogPartBaseRecords>(settings, multipleContentBuilder);
         GenerateCode.For<DialogPartBuilders>(settings, multipleContentBuilder);
         GenerateCode.For<DialogPartRecords>(settings, multipleContentBuilder);
 

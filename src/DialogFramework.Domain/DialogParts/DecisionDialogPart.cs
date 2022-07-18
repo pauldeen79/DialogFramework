@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record DecisionDialogPart : DialogPartBase
+public partial record DecisionDialogPart : DialogPart
 {
     public override Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
     {
@@ -17,7 +17,7 @@ public partial record DecisionDialogPart : DialogPartBase
         }
     }
 
-    public DialogState GetState() => DialogState.InProgress;
-    public IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.InProgress;
+    public override IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 }

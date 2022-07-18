@@ -153,7 +153,7 @@ public partial record Dialog
         }
 
         var canNavigateToResult = definition.CanNavigateTo(CurrentPartId, navigateToPartId, Results);
-        if(!canNavigateToResult.IsSuccessful())
+        if (!canNavigateToResult.IsSuccessful())
         {
             // Not possible to navigate to the requested part
             return canNavigateToResult;

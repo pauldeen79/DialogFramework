@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record QuestionDialogPart : DialogPartBase, IValidatableObject
+public partial record QuestionDialogPart : IValidatableObject
 {
     public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results)
     {
@@ -35,11 +35,9 @@ public partial record QuestionDialogPart : DialogPartBase, IValidatableObject
         }
     }
 
-    public DialogState GetState() => DialogState.InProgress;
-
-    public IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
-
-    public bool SupportsReset() => true;
+    public override DialogState GetState() => DialogState.InProgress;
+    public override IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
+    public override bool SupportsReset() => true;
 
     protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
                                                                           IDialogDefinition definition,

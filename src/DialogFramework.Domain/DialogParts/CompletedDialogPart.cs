@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record CompletedDialogPart : DialogPartBase
+public partial record CompletedDialogPart : DialogPart
 {
-    public DialogState GetState() => DialogState.Completed;
-    public IDialogPartBuilder CreateBuilder() => new CompletedDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.Completed;
+    public override IDialogPartBuilder CreateBuilder() => new CompletedDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 }

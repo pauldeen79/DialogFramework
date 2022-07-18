@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record MessageDialogPart : DialogPartBase
+public partial record MessageDialogPart
 {
-    public DialogState GetState() => DialogState.InProgress;
-    public IDialogPartBuilder CreateBuilder() => new MessageDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.InProgress;
+    public override IDialogPartBuilder CreateBuilder() => new MessageDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 }

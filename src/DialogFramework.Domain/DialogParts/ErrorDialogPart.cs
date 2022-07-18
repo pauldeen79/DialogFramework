@@ -1,8 +1,8 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record ErrorDialogPart : DialogPartBase
+public partial record ErrorDialogPart
 {
-    public DialogState GetState() => DialogState.ErrorOccured;
-    public IDialogPartBuilder CreateBuilder() => new ErrorDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.ErrorOccured;
+    public override IDialogPartBuilder CreateBuilder() => new ErrorDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 }

@@ -1,10 +1,10 @@
 ﻿namespace DialogFramework.Domain.DialogParts;
 
-public partial record NavigationDialogPart : DialogPartBase
+public partial record NavigationDialogPart
 {
-    public DialogState GetState() => DialogState.InProgress;
-    public IDialogPartBuilder CreateBuilder() => new NavigationDialogPartBuilder(this);
-    public bool SupportsReset() => false;
+    public override DialogState GetState() => DialogState.InProgress;
+    public override IDialogPartBuilder CreateBuilder() => new NavigationDialogPartBuilder(this);
+    public override bool SupportsReset() => false;
 
     public override Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
         => args.DialogDefinition.GetPartById(NavigateToId);
