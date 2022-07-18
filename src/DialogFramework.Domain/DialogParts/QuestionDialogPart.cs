@@ -35,7 +35,6 @@ public partial record QuestionDialogPart : IValidatableObject
         }
     }
 
-    public override DialogState GetState() => DialogState.InProgress;
     public override IDialogPartBuilder CreateBuilder() => new QuestionDialogPartBuilder(this);
     public override bool SupportsReset() => true;
 

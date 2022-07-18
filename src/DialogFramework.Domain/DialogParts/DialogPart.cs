@@ -8,7 +8,7 @@ public abstract partial record DialogPart
     public virtual Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
         => default;
 
-    public abstract DialogState GetState();
     public abstract IDialogPartBuilder CreateBuilder();
-    public abstract bool SupportsReset();
+    public virtual DialogState GetState() => DialogState.InProgress;
+    public virtual bool SupportsReset() => false;
 }

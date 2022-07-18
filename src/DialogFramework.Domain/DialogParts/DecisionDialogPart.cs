@@ -17,7 +17,5 @@ public partial record DecisionDialogPart : DialogPart
         }
     }
 
-    public override DialogState GetState() => DialogState.InProgress;
     public override IDialogPartBuilder CreateBuilder() => new DecisionDialogPartBuilder(this);
-    public override bool SupportsReset() => false;
 }
