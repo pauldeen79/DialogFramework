@@ -65,7 +65,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         {
             classBuilder.Constructors
                 .Single(x => x.Parameters.Any())
-                .AddParameter(name: "definition", typeName: typeof(IDialogDefinition).FullName!);
+                .AddParameter(name: "definition", type: typeof(IDialogDefinition));
         }
 
         if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts.Builders")
