@@ -8,16 +8,7 @@ public class DialogPartRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     protected override bool EnableInheritance => true;
-    protected override IClass? BaseClass => typeof(IDialogPart).ToClass(new ClassSettings()).ToImmutableClassBuilder(new ImmutableClassSettings
-        (
-            newCollectionTypeName: RecordCollectionType.WithoutGenerics(),
-            constructorSettings: new ImmutableClassConstructorSettings(
-                validateArguments: ValidateArgumentsInConstructor,
-                addNullChecks: AddNullChecks),
-            addPrivateSetters: AddPrivateSetters)
-        ).WithNamespace("DialogFramework.Domain.DialogParts").WithName("DialogPart")
-        .With(x => FixImmutableClassProperties(x))
-        .Build();
+    protected override IClass? BaseClass => GetDialogPartBaseClass();
 
     public override object CreateModel()
         => GetImmutableClasses(DialogPartModels, "DialogFramework.Domain.DialogParts");

@@ -10,6 +10,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override Type RecordCollectionType => typeof(IReadOnlyCollection<>);
     protected override bool AddPrivateSetters => true;
     protected override bool CopyPropertyCode => false;
+
     protected override bool IsMemberValid(IParentTypeContainer parent, ITypeBase typeBase)
         => string.IsNullOrEmpty(parent.ParentTypeFullName)
         || parent.ParentTypeFullName.GetClassName() == $"I{typeBase.Name}"
@@ -71,12 +72,13 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         {
             if (classBuilder.Name == "DialogPartBuilder")
             {
-                //HACK
+                // HACK
                 classBuilder.Constructors.Single(x => x.Parameters.Count == 1).Parameters.Single().TypeName = "DialogFramework.Abstractions.IDialogPart";
                 classBuilder.GenericTypeArgumentConstraints[0] = "where TEntity : DialogFramework.Abstractions.IDialogPart";
             }
             else
             {
+                // HACK
                 classBuilder.BaseClass = $"DialogPartBuilder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.Replace("Builder", "")}>";
             }
         }
@@ -87,6 +89,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts"
             && classBuilder.Name != "DialogPart")
         {
+            // HACK
             classBuilder.Constructors.Single().WithChainCall("base(id)");
             classBuilder.BaseClass = "DialogPart";
         }
@@ -134,9 +137,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 customBuilderConstructorInitializeExpression: property.IsNullable
                     ? $"_{property.Name.ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
                     : $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))" //HACK
-                //customBuilderMethodParameterExpression: property.TypeName.EndsWith("DialogPart")
-                //    ? "{0}{2}.BuildTyped()"
-                //    : null
             );
         }
         else if (typeName.Contains("Collection<DialogFramework."))
@@ -240,6 +240,18 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             ? $"DialogFramework.Domain.DialogParts.Builders.{name}"
             : $"DialogFramework.Domain.Builders.{name}";
     }
+
+    protected IClass GetDialogPartBaseClass()
+        => typeof(IDialogPart).ToClass(new ClassSettings()).ToImmutableClassBuilder(new ImmutableClassSettings
+            (
+                newCollectionTypeName: RecordCollectionType.WithoutGenerics(),
+                constructorSettings: new ImmutableClassConstructorSettings(
+                    validateArguments: ValidateArgumentsInConstructor,
+                    addNullChecks: AddNullChecks),
+                addPrivateSetters: AddPrivateSetters)
+            ).WithNamespace("DialogFramework.Domain.DialogParts").WithName("DialogPart")
+            .With(x => FixImmutableClassProperties(x))
+            .Build();
 
     protected static Type[] CoreModels => new[]
     {
