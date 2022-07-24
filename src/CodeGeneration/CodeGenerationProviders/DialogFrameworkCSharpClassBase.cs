@@ -41,27 +41,18 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         return string.Empty;
     }
 
-    protected override void FixImmutableBuilderProperties(ClassBuilder classBuilder)
+    protected override void FixImmutableBuilderProperties<TBuilder, TEntity>(TypeBaseBuilder<TBuilder, TEntity> typeBaseBuilder)
     {
-        FixProperties(classBuilder.Properties);
-        classBuilder.AddProperties(GetAdditionalProperties(classBuilder.Name));
+        FixProperties(typeBaseBuilder.Properties);
+        typeBaseBuilder.AddProperties(GetAdditionalProperties(typeBaseBuilder.Name));
     }
 
-    protected override void FixImmutableBuilderProperties(InterfaceBuilder interfaceBuilder)
-    {
-        FixProperties(interfaceBuilder.Properties);
-        interfaceBuilder.AddProperties(GetAdditionalProperties(interfaceBuilder.Name));
-    }
-
-    protected override void FixImmutableClassProperties(ClassBuilder classBuilder)
-        => FixImmutableBuilderProperties(classBuilder);
-
-    protected override void FixImmutableClassProperties(InterfaceBuilder interfaceBuilder)
-        => FixImmutableBuilderProperties(interfaceBuilder);
+    protected override void FixImmutableClassProperties<TBuilder, TEntity>(TypeBaseBuilder<TBuilder, TEntity> typeBaseBuilder)
+        => FixImmutableBuilderProperties(typeBaseBuilder);
 
     protected override void PostProcessImmutableBuilderClass(ClassBuilder classBuilder)
     {
-        if (classBuilder.Name == "DialogBuilder")
+        if (classBuilder.Name == $"{typeof(IDialog).GetEntityClassName()}Builder")
         {
             classBuilder.Constructors
                 .Single(x => x.Parameters.Any())
@@ -70,7 +61,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
         if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts.Builders")
         {
-            if (classBuilder.Name == "DialogPartBuilder")
+            if (classBuilder.Name == $"{typeof(IDialogPart).GetEntityClassName()}Builder")
             {
                 // HACK
                 classBuilder.Constructors.Single(x => x.Parameters.Count == 1).Parameters.Single().TypeName = typeof(IDialogPart).FullName!;
@@ -79,7 +70,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             else
             {
                 // HACK
-                classBuilder.BaseClass = $"DialogPartBuilder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.Replace("Builder", "")}>";
+                classBuilder.BaseClass = $"{typeof(IDialogPart).GetEntityClassName()}Builder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.Replace("Builder", "")}>";
             }
         }
     }
@@ -87,11 +78,11 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override void PostProcessImmutableEntityClass(ClassBuilder classBuilder)
     {
         if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts"
-            && classBuilder.Name != "DialogPart")
+            && classBuilder.Name != typeof(IDialogPart).GetEntityClassName())
         {
             // HACK
             classBuilder.Constructors.Single().WithChainCall("base(id)");
-            classBuilder.BaseClass = "DialogPart";
+            classBuilder.BaseClass = typeof(IDialogPart).GetEntityClassName();
         }
     }
 
@@ -111,7 +102,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
         if (property.TypeName.GetClassName() == nameof(IDialogPartResultValueAnswer))
         {
-            property.SetDefaultValueForBuilderClassConstructor(new Literal("new DialogFramework.Domain.Builders.DialogPartResultValueAnswerBuilder()"));
+            property.SetDefaultValueForBuilderClassConstructor(new Literal($"new DialogFramework.Domain.Builders.{typeof(IDialogPartResultValueAnswer).GetEntityClassName()}Builder()"));
         }
 
         if (property.Name == nameof(IBeforeNavigateArguments.Action)
@@ -177,16 +168,16 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     private static IEnumerable<ClassPropertyBuilder> GetAdditionalProperties(string className)
     {
-        if (className == "Dialog")
+        if (className == typeof(IDialog).GetEntityClassName())
         {
             yield return new ClassPropertyBuilder()
                 .WithName("Results")
                 .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IDialogPartResult)}>")
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
-                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DialogPartResultBuilder>",
+                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.{typeof(IDialogPartResult).GetEntityClassName()}Builder>",
                     collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
-                    customBuilderConstructorInitializeExpression: "Results.AddRange(source.GetAllResults(definition).Select(x => new DialogPartResultBuilder(x)))")
+                    customBuilderConstructorInitializeExpression: $"Results.AddRange(source.GetAllResults(definition).Select(x => new {typeof(IDialogPartResult).GetEntityClassName()}Builder(x)))")
                 .AddGetterLiteralCodeStatements("return _results;")
                 .AddSetterLiteralCodeStatements($"_results = new {typeof(ValueCollection<>).WithoutGenerics()}<{nameof(IDialogPartResult)}>(value);");
 
@@ -195,14 +186,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                 .WithTypeName($"{typeof(IReadOnlyCollection<>).WithoutGenerics()}<{nameof(IProperty)}>")
                 .ConvertCollectionPropertyToBuilderOnBuilder(
                     addNullChecks: true,
-                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.PropertyBuilder>",
+                    argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.{typeof(IProperty).GetEntityClassName()}Builder>",
                     collectionType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}",
-                    customBuilderConstructorInitializeExpression: "Properties.AddRange(source.GetProperties().Select(x => new PropertyBuilder(x)))")
+                    customBuilderConstructorInitializeExpression: $"Properties.AddRange(source.GetProperties().Select(x => new {typeof(IProperty).GetEntityClassName()}Builder(x)))")
                 .AddGetterLiteralCodeStatements("return _properties;")
                 .AddSetterLiteralCodeStatements($"_properties = new {typeof(ValueCollection<>).WithoutGenerics()}<{nameof(IProperty)}>(value);");
         }
 
-        if (className == "NavigationDialogPart")
+        if (className == typeof(INavigationDialogPart).GetEntityClassName())
         {
             yield return
                 new ClassPropertyBuilder()
@@ -210,13 +201,13 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .WithType(typeof(IDialogPartIdentifier))
                     .ConvertSinglePropertyToBuilderOnBuilder
                     (
-                        argumentType: $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder",
+                        argumentType: $"DialogFramework.Domain.Builders.{typeof(IDialogPartIdentifier).GetEntityClassName()}Builder",
                         customBuilderMethodParameterExpression: $"NavigateToId?.Build()",
-                        customBuilderConstructorInitializeExpression: "_navigateToIdDelegate = new (() => new DialogPartIdentifierBuilder())"
+                        customBuilderConstructorInitializeExpression: $"_navigateToIdDelegate = new (() => new {typeof(IDialogPartIdentifier).GetEntityClassName()}Builder())"
                     );
         }
 
-        if (className == "DecisionDialogPart")
+        if (className == typeof(IDecisionDialogPart).GetEntityClassName())
         {
             yield return
                 new ClassPropertyBuilder()
@@ -226,8 +217,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     (
                         addNullChecks: true,
                         collectionType: typeof(ReadOnlyValueCollection<>).WithoutGenerics(),
-                        argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.DecisionBuilder>",
-                        customBuilderConstructorInitializeExpression: "Decisions.AddRange(source.GetDecisionBuilders())"
+                        argumentType: $"{typeof(ReadOnlyValueCollection<>).WithoutGenerics()}<DialogFramework.Domain.Builders.{typeof(IDecision).GetEntityClassName()}Builder >",
+                        customBuilderConstructorInitializeExpression: $"Decisions.AddRange(source.Get{typeof(IDecision).GetEntityClassName()}Builders())"
                     );
             yield return
                 new ClassPropertyBuilder()
@@ -236,7 +227,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .WithIsNullable()
                     .ConvertSinglePropertyToBuilderOnBuilder
                     (
-                        argumentType: $"DialogFramework.Domain.Builders.DialogPartIdentifierBuilder",
+                        argumentType: $"DialogFramework.Domain.Builders.{typeof(IDialogPartIdentifier).GetEntityClassName()}Builder",
                         customBuilderMethodParameterExpression: $"DefaultNextPartId?.Build()",
                         customBuilderConstructorInitializeExpression: "_defaultNextPartIdDelegate = new (() => source.GetDefaultNextPartIdBuilder())"
                     );
@@ -259,7 +250,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     validateArguments: ValidateArgumentsInConstructor,
                     addNullChecks: AddNullChecks),
                 addPrivateSetters: AddPrivateSetters)
-            ).WithNamespace("DialogFramework.Domain.DialogParts").WithName("DialogPart")
+            ).WithNamespace("DialogFramework.Domain.DialogParts").WithName(typeof(IDialogPart).GetEntityClassName())
             .With(x => FixImmutableClassProperties(x))
             .Build();
 
