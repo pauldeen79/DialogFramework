@@ -12,9 +12,13 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool CopyPropertyCode => false;
 
     protected override bool IsMemberValid(IParentTypeContainer parent, ITypeBase typeBase)
-        => string.IsNullOrEmpty(parent.ParentTypeFullName)
-        || parent.ParentTypeFullName.GetClassName() == $"I{typeBase.Name}"
-        || parent.ParentTypeFullName.GetClassName() == nameof(IGroupedDialogPart) && typeBase.Name != nameof(IDialogPart);
+        =>
+        (
+            string.IsNullOrEmpty(parent.ParentTypeFullName)
+            || parent.ParentTypeFullName.GetClassName() == $"I{typeBase.Name}"
+            || parent.ParentTypeFullName.GetClassName() == nameof(IGroupedDialogPart)
+        )
+        && typeBase.Name != nameof(IDialogPart);
 
     protected override string FormatInstanceTypeName(ITypeBase instance, bool forCreate)
     {
