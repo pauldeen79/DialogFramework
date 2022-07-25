@@ -105,13 +105,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         {
             property.SetDefaultValueForBuilderClassConstructor(new Literal($"new DialogFramework.Domain.Builders.{typeof(IDialogPartResultValueAnswer).GetEntityClassName()}Builder()"));
         }
-
-        if (property.Name == nameof(IBeforeNavigateArguments.Action)
-            || property.Name == nameof(IAfterNavigateArguments.Action))
-        {
-            //HACK: Do not add null check for this value type...
-            property.WithConstructorNullCheck(false);
-        }
     }
 
     private static void FixTypeName(ClassPropertyBuilder property)

@@ -8,9 +8,5 @@ public class CoreRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(CoreModels, "DialogFramework.Domain")
-        //HACK: Remove c'tors on Before/After navigate arguments
-        .OfType<IClass>()
-        .Select(x => new ClassBuilder(x).With(y => y.Constructors.RemoveAll(_ => x.Name.EndsWith("Arguments"))).Build())
-        .ToArray();
+        => GetImmutableClasses(CoreModels, "DialogFramework.Domain");
 }
