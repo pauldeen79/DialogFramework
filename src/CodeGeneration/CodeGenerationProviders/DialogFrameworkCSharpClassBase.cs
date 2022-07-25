@@ -43,7 +43,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     protected override void FixImmutableBuilderProperties<TBuilder, TEntity>(TypeBaseBuilder<TBuilder, TEntity> typeBaseBuilder)
     {
-        FixProperties(typeBaseBuilder.Properties);
+        typeBaseBuilder.Properties.ForEach(FixProperty);
         typeBaseBuilder.AddProperties(GetAdditionalProperties(typeBaseBuilder.Name));
     }
 
@@ -85,9 +85,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             classBuilder.BaseClass = typeof(IDialogPart).GetEntityClassName();
         }
     }
-
-    private static void FixProperties(List<ClassPropertyBuilder> properties)
-        => properties.ForEach(FixProperty);
 
     private static void FixProperty(ClassPropertyBuilder property)
     {
