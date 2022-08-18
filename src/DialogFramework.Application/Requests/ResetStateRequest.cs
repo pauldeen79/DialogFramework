@@ -7,7 +7,7 @@ public record ResetStateRequest : IRequest<Result<IDialog>>
     public IDialogPartIdentifier DialogPartIdentifier { get; }
 
     public ResetStateRequest(IDialog dialog)
-        : this(dialog, dialog?.CurrentDialogIdentifier!, dialog?.CurrentPartId!)
+        : this(dialog, dialog?.CurrentDialogId!, dialog?.CurrentPartId!)
     {
     }
 

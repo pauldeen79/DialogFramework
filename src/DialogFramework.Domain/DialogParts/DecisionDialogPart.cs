@@ -4,7 +4,7 @@ public partial record DecisionDialogPart : DialogPart
 {
     public override Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
     {
-        var partId = Decisions.FirstOrDefault(x => args.ConditionEvaluator.Evaluate(args, x.Conditions))?.NextPartId
+        var partId = Decisions.FirstOrDefault(x => args.Evaluator.Evaluate(args, x.Conditions))?.NextPartId
             ?? DefaultNextPartId;
 
         if (partId == null)
@@ -13,7 +13,7 @@ public partial record DecisionDialogPart : DialogPart
         }
         else
         {
-            return args.DialogDefinition.GetPartById(partId);
+            return args.Definition.GetPartById(partId);
         }
     }
 

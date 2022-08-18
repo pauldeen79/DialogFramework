@@ -2,19 +2,19 @@
 
 public partial record DialogDefinition : IValidatableObject
 {
-    public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                                         IEnumerable<IDialogPartResultAnswer> newPartResults,
+    public IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingAnswers,
+                                                         IEnumerable<IDialogPartResultAnswer> newAnswers,
                                                          IDialogDefinitionIdentifier dialogId,
-                                                         IDialogPartIdentifier dialogPartId)
+                                                         IDialogPartIdentifier partId)
     {
         // Decision: By default, only the results from the requested part are replaced.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return existingPartResults
-            .Where(x => !DialogIdEquals(dialogId, x.DialogId) || !Equals(dialogPartId, x.DialogPartId))
-            .Concat(newPartResults.Select(x => new DialogPartResult(dialogId, dialogPartId, x.ResultId, x.Value)));
+        return existingAnswers
+            .Where(x => !DialogIdEquals(dialogId, x.DialogId) || !Equals(partId, x.DialogPartId))
+            .Concat(newAnswers.Select(x => new DialogPartResult(dialogId, partId, x.ResultId, x.Value)));
     }
 
-    public Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+    public Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingAnswers,
                                                                            IDialogPartIdentifier partId)
     {
         var partByIdResult = GetPartById(partId);
@@ -30,16 +30,16 @@ public partial record DialogDefinition : IValidatableObject
 
         // Decision: By default, only remove the results from the requested part.
         // In case this you need to remove other results as well (for example because a decision or navigation outcome is different), then you need to override this method.
-        return Result<IEnumerable<IDialogPartResult>>.Success(existingPartResults.Where(x => !DialogIdEquals(x.DialogId, Metadata) || !Equals(x.DialogPartId, partId)));
+        return Result<IEnumerable<IDialogPartResult>>.Success(existingAnswers.Where(x => !DialogIdEquals(x.DialogId, Metadata) || !Equals(x.DialogPartId, partId)));
     }
 
     public Result CanNavigateTo(IDialogPartIdentifier currentPartId,
                                 IDialogPartIdentifier navigateToPartId,
-                                IEnumerable<IDialogPartResult> existingPartResults)
+                                IEnumerable<IDialogPartResult> existingAnswers)
     {
         // Decision: By default, you can navigate to either the current part, or any part you have already visited.
         // In case you want to allow navigate forward to parts that are not visited yet, then you need to override this method.
-        if (!(Equals(currentPartId, navigateToPartId) || existingPartResults.Any(x => DialogIdEquals(x.DialogId, Metadata) && Equals(x.DialogPartId, navigateToPartId))))
+        if (!(Equals(currentPartId, navigateToPartId) || existingAnswers.Any(x => DialogIdEquals(x.DialogId, Metadata) && Equals(x.DialogPartId, navigateToPartId))))
         {
             // Part has not been visited yet
             return Result.Invalid("Cannot navigate to the specified part");
@@ -51,7 +51,7 @@ public partial record DialogDefinition : IValidatableObject
     public Result<IDialogPart> GetFirstPart()
         => Result<IDialogPart>.Success(Parts.FirstOrDefault() ?? CompletedPart);
 
-    public Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> results)
+    public Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> answers)
     {
         // first perform validation
         var currentPartResult = GetPartById(dialog.CurrentPartId);
@@ -59,7 +59,7 @@ public partial record DialogDefinition : IValidatableObject
         {
             return currentPartResult;
         }
-        var validationResult = currentPartResult.Value!.Validate(dialog, this, results);
+        var validationResult = currentPartResult.Value!.Validate(dialog, this, answers);
         if (!validationResult.IsSuccessful())
         {
             return Result<IDialogPart>.FromExistingResult(validationResult);

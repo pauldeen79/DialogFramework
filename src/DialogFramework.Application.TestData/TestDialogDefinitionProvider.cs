@@ -11,7 +11,7 @@ public class TestDialogDefinitionProvider : IDialogDefinitionProvider
         SimpleFormFlowDialog.Create(),
     };
 
-    public Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier identifier)
-        => Result.FromInstance(_dialogDefinitions.SingleOrDefault(x => Equals(x.Metadata.Id, identifier.Id)
-                               && Equals(x.Metadata.Version, identifier.Version)));
+    public Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier id)
+        => Result.FromInstance(_dialogDefinitions.SingleOrDefault(x => Equals(x.Metadata.Id, id.Id)
+                               && Equals(x.Metadata.Version, id.Version)));
 }

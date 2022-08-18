@@ -23,7 +23,7 @@ public abstract class RequestHandlerBase
                                                         IRequestHandler<StartRequest, Result<IDialog>> startRequestHandler,
                                                         Func<IDialogDefinition, Result> action)
     {
-        var dialogDefinitionResult = GetDialogDefinition(dialog.CurrentDialogIdentifier);
+        var dialogDefinitionResult = GetDialogDefinition(dialog.CurrentDialogId);
         if (!dialogDefinitionResult.IsSuccessful())
         {
             return Result<IDialog>.FromExistingResult(dialogDefinitionResult);

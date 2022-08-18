@@ -5,5 +5,5 @@ public partial record NavigationDialogPart
     public override IDialogPartBuilder CreateBuilder() => new NavigationDialogPartBuilder(this);
 
     public override Result<IDialogPart>? BeforeNavigate(IBeforeNavigateArguments args)
-        => args.DialogDefinition.GetPartById(NavigateToId);
+        => args.Definition.GetPartById(NavigateToId);
 }

@@ -3,15 +3,15 @@
 public abstract record NavigateArgumentsBase : INavigateArguments
 {
     public IDialogIdentifier CurrentDialogId { get; }
-    public IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
+    public IDialogDefinitionIdentifier DefinitionId { get; }
     public IDialogPartIdentifier CurrentPartId { get; }
     public IDialogPartGroupIdentifier? CurrentGroupId { get; }
     public DialogState CurrentState { get; }
     public string? ErrorMessage { get; }
 
     public DialogAction Action { get; }
-    public IDialogDefinition DialogDefinition { get; }
-    public IConditionEvaluator ConditionEvaluator { get; }
+    public IDialogDefinition Definition { get; }
+    public IConditionEvaluator Evaluator { get; }
 
     protected IDialog Dialog { get; }
 
@@ -31,13 +31,13 @@ public abstract record NavigateArgumentsBase : INavigateArguments
         }
 
         CurrentDialogId = dialog.Id;
-        CurrentDialogIdentifier = dialog.CurrentDialogIdentifier;
+        DefinitionId = dialog.CurrentDialogId;
         CurrentGroupId = dialog.CurrentGroupId;
         CurrentPartId = dialog.CurrentPartId;
         CurrentState = dialog.CurrentState;
         ErrorMessage = dialog.ErrorMessage;
-        DialogDefinition = definition;
-        ConditionEvaluator = evaluator;
+        Definition = definition;
+        Evaluator = evaluator;
         Action = action;
         Dialog = dialog;
     }

@@ -2,5 +2,5 @@
 
 public interface IDialogDefinitionProvider
 {
-    Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier identifier);
+    Result<IDialogDefinition> GetDialogDefinition(IDialogDefinitionIdentifier id);
 }

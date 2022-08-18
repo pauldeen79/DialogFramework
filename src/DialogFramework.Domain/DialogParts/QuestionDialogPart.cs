@@ -2,31 +2,31 @@
 
 public partial record QuestionDialogPart : IValidatableObject
 {
-    public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results)
+    public Result Validate(IDialog dialog, IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> answers)
     {
-        var errors = new List<IDialogValidationResult>(HandleValidate(dialog, definition, results));
+        var errors = new List<IDialogValidationResult>(HandleValidate(dialog, definition, answers));
 
         foreach (var validator in Validators)
         {
-            errors.AddRange(validator.Validate(dialog, definition, results));
+            errors.AddRange(validator.Validate(dialog, definition, answers));
         }
 
         return errors.Count > 0
-            ? Result.Invalid("Validation failed, see ValidationErrors for more details", errors.Select(x => new ValidationError(x.ErrorMessage, x.DialogPartResultIds.Select(y => y.Value))))
+            ? Result.Invalid("Validation failed, see ValidationErrors for more details", errors.Select(x => new ValidationError(x.ErrorMessage, x.PartResultIds.Select(y => y.Value))))
             : Result.Success();
     }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        var duplicateIds = Results
+        var duplicateIds = Answers
             .GroupBy(x => x.Id)
             .Where(x => x.Count() > 1)
             .Select(x => x.Key)
             .ToArray();
 
-        if (!Results.Any())
+        if (!Answers.Any())
         {
-            yield return new ValidationResult("At least one result is required for a question dialog part", new[] { nameof(Results) });
+            yield return new ValidationResult("At least one result is required for a question dialog part", new[] { nameof(Answers) });
         }
 
         if (duplicateIds.Any())
@@ -40,21 +40,21 @@ public partial record QuestionDialogPart : IValidatableObject
 
     protected virtual IEnumerable<IDialogValidationResult> HandleValidate(IDialog dialog,
                                                                           IDialogDefinition definition,
-                                                                          IEnumerable<IDialogPartResultAnswer> results)
+                                                                          IEnumerable<IDialogPartResultAnswer> answers)
     {
-        var unknownResultIds = results
+        var unknownResultIds = answers
             .Select(x => x.ResultId)
             .Where(dialogPartResultId => !string.IsNullOrEmpty(dialogPartResultId.Value)
-                && !Results.Any(x => Equals(x.Id, dialogPartResultId)));
+                && !Answers.Any(x => Equals(x.Id, dialogPartResultId)));
 
         foreach (var dialogPartResultId in unknownResultIds)
         {
             yield return new DialogValidationResult($"Unknown Result Id: [{dialogPartResultId}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());
         }
 
-        foreach (var dialogPartResultDefinition in Results)
+        foreach (var dialogPartResultDefinition in Answers)
         {
-            var dialogPartResultsByPart = results
+            var dialogPartResultsByPart = answers
                 .Where(x => Equals(x.ResultId, dialogPartResultDefinition.Id))
                 .ToArray();
             var errors = dialogPartResultDefinition.Validate(dialog, definition, this, dialogPartResultsByPart)

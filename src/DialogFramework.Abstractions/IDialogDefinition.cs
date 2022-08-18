@@ -9,20 +9,20 @@ public interface IDialogDefinition
     ICompletedDialogPart CompletedPart { get; }
     IReadOnlyCollection<IDialogPartGroup> PartGroups { get; }
 
-    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingPartResults,
-                                                  IEnumerable<IDialogPartResultAnswer> newPartResults,
+    IEnumerable<IDialogPartResult> ReplaceAnswers(IEnumerable<IDialogPartResult> existingAnswers,
+                                                  IEnumerable<IDialogPartResultAnswer> newAnswers,
                                                   IDialogDefinitionIdentifier dialogId,
-                                                  IDialogPartIdentifier dialogPartId);
+                                                  IDialogPartIdentifier partId);
 
-    Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingPartResults,
+    Result<IEnumerable<IDialogPartResult>> ResetPartResultsByPartId(IEnumerable<IDialogPartResult> existingAnswers,
                                                                     IDialogPartIdentifier partId);
     Result CanNavigateTo(IDialogPartIdentifier currentPartId,
                          IDialogPartIdentifier navigateToPartId,
-                         IEnumerable<IDialogPartResult> existingPartResults);
+                         IEnumerable<IDialogPartResult> existingAnswers);
 
     Result<IDialogPart> GetFirstPart();
 
-    Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> results);
+    Result<IDialogPart> GetNextPart(IDialog dialog, IEnumerable<IDialogPartResultAnswer> answers);
 
     Result<IDialogPart> GetPartById(IDialogPartIdentifier id);
 }

@@ -124,7 +124,7 @@ public class DialogTests
             new[]
             {
                 new DialogPartResultAnswerBuilder()
-                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
+                    .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Answers.First().Id))
                     .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(false))
                     .Build()
             }, _conditionEvaluatorMock.Object);
@@ -362,7 +362,7 @@ public class DialogTests
                 new DialogPartResultBuilder()
                     .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
                     .WithDialogPartId(new DialogPartIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Id))
-                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Results.First().Id))
+                    .WithResultId(new DialogPartResultIdentifierBuilder(dialogDefinition.Parts.OfType<IQuestionDialogPart>().First().Answers.First().Id))
                     .Build()
             }
         );
@@ -445,11 +445,11 @@ public class DialogTests
         var conditionEvaluatorMock = new Mock<IConditionEvaluator>();
         var dialog = DialogFixture.Create(Id, dialogDefinition.Metadata, questionPart);
         dialog.Start(dialogDefinition, _conditionEvaluatorMock.Object);
-        dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Results.First().Id, new DialogPartResultValueAnswer(true)) }, conditionEvaluatorMock.Object);
+        dialog.Continue(dialogDefinition, new[] { new DialogPartResultAnswer(questionPart.Answers.First().Id, new DialogPartResultValueAnswer(true)) }, conditionEvaluatorMock.Object);
         dialog.NavigateTo(dialogDefinition, questionPart.Id, _conditionEvaluatorMock.Object);
         var results = dialog.GetDialogPartResultsByPartIdentifier(questionPart.Id).GetValueOrThrow();
         results.Should().ContainSingle();
-        results.Single().ResultId.Should().Be(questionPart.Results.First().Id);
+        results.Single().ResultId.Should().Be(questionPart.Answers.First().Id);
 
         // Act 1 - Call reset while there is an answer
         dialog.ResetState(dialogDefinition, dialog.CurrentPartId);
@@ -624,7 +624,7 @@ public class DialogTests
         => new DialogPartResultBuilder()
             .WithDialogId(new DialogDefinitionIdentifierBuilder(dialogDefinition.Metadata))
             .WithDialogPartId(new DialogPartIdentifierBuilder(questionPart.Id))
-            .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Results.First().Id))
+            .WithResultId(new DialogPartResultIdentifierBuilder(questionPart.Answers.First().Id))
             .WithValue(new DialogPartResultValueAnswerBuilder().WithValue(true))
             .Build();
 }

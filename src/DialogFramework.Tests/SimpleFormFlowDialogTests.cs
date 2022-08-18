@@ -32,7 +32,7 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
@@ -102,7 +102,7 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.Completed);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("Completed");
         dialog.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
@@ -169,7 +169,7 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         result.CurrentState.Should().Be(DialogState.Completed);
-        result.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        result.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         result.CurrentPartId.Value.Should().Be("Completed");
         result.GetDialogPartResultsByPartIdentifier(new DialogPartIdentifierBuilder().WithValue("ContactInfo").Build()).GetValueOrThrow().Should().BeEquivalentTo(new[]
         {
@@ -214,12 +214,12 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]",
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is not of type [System.String]"
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]",
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is not of type [System.String]"
         });
     }
 
@@ -246,12 +246,12 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
         });
     }
 
@@ -265,12 +265,12 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is required",
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = TelephoneNumber }] is required"
         });
     }
 
@@ -297,11 +297,11 @@ public sealed class SimpleFormFlowDialogTests : TestBase
 
         // Assert
         dialog.CurrentState.Should().Be(DialogState.InProgress);
-        dialog.CurrentDialogIdentifier.Id.Should().Be(nameof(SimpleFormFlowDialog));
+        dialog.CurrentDialogId.Id.Should().Be(nameof(SimpleFormFlowDialog));
         dialog.CurrentPartId.Value.Should().Be("ContactInfo");
         result.ValidationErrors.Select(x => x.ErrorMessage).Should().BeEquivalentTo(new[]
         {
-            "Result value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]"
+            "Answer value of [DialogPartIdentifier { Value = ContactInfo }.DialogPartResultIdentifier { Value = EmailAddress }] is not of type [System.String]"
         });
     }
 }

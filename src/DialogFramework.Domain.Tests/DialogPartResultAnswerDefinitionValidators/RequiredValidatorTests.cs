@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.DialogPartResultDefinitionValidators;
+﻿namespace DialogFramework.Domain.Tests.DialogPartResultAnswerDefinitionValidators;
 
 public class RequiredValidatorTests
 {
@@ -12,7 +12,7 @@ public class RequiredValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -32,7 +32,7 @@ public class RequiredValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -56,7 +56,7 @@ public class RequiredValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -68,7 +68,7 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is only allowed one time");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is only allowed one time");
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public class RequiredValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -89,7 +89,7 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public class RequiredValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
         var result = new DialogPartResultAnswerBuilder()
             .WithResultId(new DialogPartResultIdentifierBuilder())
@@ -113,6 +113,6 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
 }

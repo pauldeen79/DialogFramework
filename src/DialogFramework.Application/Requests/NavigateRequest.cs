@@ -8,7 +8,7 @@ public record NavigateRequest : IRequest<Result<IDialog>>
 
     public NavigateRequest(IDialog dialog,
                            IDialogPartIdentifier navigateToPartId)
-        : this(dialog, dialog?.CurrentDialogIdentifier!, navigateToPartId)
+        : this(dialog, dialog?.CurrentDialogId!, navigateToPartId)
     {
     }
 

@@ -6,7 +6,7 @@ public static class DialogFixture
     public static IDialog Create(IDialogDefinitionIdentifier currentDialogDefinitionIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
+            .WithCurrentDialogId(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .Build();
 
@@ -14,7 +14,7 @@ public static class DialogFixture
                                  IDialogPartIdentifier currentPartIdentifier)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
+            .WithCurrentDialogId(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPartIdentifier))
             .WithCurrentState(DialogState.InProgress)
             .Build();
@@ -24,7 +24,7 @@ public static class DialogFixture
                                  IDialogPart currentPart)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
+            .WithCurrentDialogId(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentState(currentPart.GetState())
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .Build();
@@ -35,7 +35,7 @@ public static class DialogFixture
                                  IEnumerable<IDialogPartResult> results)
         => new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(id))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
+            .WithCurrentDialogId(new DialogDefinitionIdentifierBuilder(currentDialogDefinitionIdentifier))
             .WithCurrentState(currentPart.GetState())
             .WithCurrentPartId(new DialogPartIdentifierBuilder(currentPart.Id))
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))

@@ -20,15 +20,15 @@ public class DialogFactoryFixture : IDialogFactory
                                   IEnumerable<IDialogPartResult> dialogPartResults)
         => Create(dialogDefinition, dialogPartResults, Enumerable.Empty<IProperty>());
 
-    public Result<IDialog> Create(IDialogDefinition dialogDefinition,
-                                  IEnumerable<IDialogPartResult> dialogPartResults,
+    public Result<IDialog> Create(IDialogDefinition definition,
+                                  IEnumerable<IDialogPartResult> results,
                                   IEnumerable<IProperty> properties)
     {
-        if (!_canCreateDelegate(dialogDefinition))
+        if (!_canCreateDelegate(definition))
         {
             return Result<IDialog>.Error("This error was created by DialogFactoryFixture");
         }
 
-        return Result<IDialog>.Success(_createDelegate(dialogDefinition));
+        return Result<IDialog>.Success(_createDelegate(definition));
     }
 }

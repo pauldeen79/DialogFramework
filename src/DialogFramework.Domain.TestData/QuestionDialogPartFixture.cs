@@ -9,13 +9,13 @@ public static class QuestionDialogPartFixture
             .WithTitle("Give me an answer!")
             .WithHeading("Title")
             .WithGroup(DialogPartGroupFixture.CreateBuilder())
-            .AddResults
+            .AddAnswers
             (
-                new DialogPartResultDefinitionBuilder()
+                new DialogPartResultAnswerDefinitionBuilder()
                     .WithId(new DialogPartResultIdentifierBuilder().WithValue("A"))
                     .WithTitle("First")
                     .WithValueType(ResultValueType.YesNo),
-                new DialogPartResultDefinitionBuilder()
+                new DialogPartResultAnswerDefinitionBuilder()
                     .WithId(new DialogPartResultIdentifierBuilder().WithValue("B"))
                     .WithTitle("Second")
                     .WithValueType(ResultValueType.YesNo)
