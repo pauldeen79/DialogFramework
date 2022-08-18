@@ -21,7 +21,7 @@ public static class TestFlowDialog
                     .WithHeading("Age")
                     .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                     .WithTitle("How old are you?")
-                    .AddResults
+                    .AddAnswers
                     (
                         new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("<10"))
@@ -74,7 +74,7 @@ public static class TestFlowDialog
                     .WithHeading("Sports types")
                     .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                     .WithTitle("What type of sports do you do?")
-                    .AddResults
+                    .AddAnswers
                     (
                         new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Bicycle")).WithTitle("Bicycle riding"),
                         new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Soccer")).WithTitle("Soccer"),
@@ -124,7 +124,7 @@ public static class TestFlowDialog
                     .WithHeading("E-mail address")
                     .WithGroup(DialogPartGroupFixture.CreateCompletedGroupBuilder())
                     .WithTitle("Thank you for using this application. You can leave your e-mail address in case you have comments or questions.")
-                    .AddResults
+                    .AddAnswers
                     (
                         new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))

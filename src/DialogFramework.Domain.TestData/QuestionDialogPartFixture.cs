@@ -9,7 +9,7 @@ public static class QuestionDialogPartFixture
             .WithTitle("Give me an answer!")
             .WithHeading("Title")
             .WithGroup(DialogPartGroupFixture.CreateBuilder())
-            .AddResults
+            .AddAnswers
             (
                 new DialogPartResultAnswerDefinitionBuilder()
                     .WithId(new DialogPartResultIdentifierBuilder().WithValue("A"))

@@ -7,7 +7,7 @@ public class DialogFactory : IDialogFactory
                            IEnumerable<IProperty> properties)
         => Result<IDialog>.Success(new DialogBuilder()
             .WithId(new DialogIdentifierBuilder().WithValue(Guid.NewGuid().ToString()))
-            .WithCurrentDialogIdentifier(new DialogDefinitionIdentifierBuilder(definition.Metadata))
+            .WithCurrentDialogId(new DialogDefinitionIdentifierBuilder(definition.Metadata))
             .WithCurrentPartId(new DialogPartIdentifierBuilder().WithValue("Empty"))
             .WithCurrentState(DialogState.Initial)
             .AddResults(results.Select(x => new DialogPartResultBuilder(x)))

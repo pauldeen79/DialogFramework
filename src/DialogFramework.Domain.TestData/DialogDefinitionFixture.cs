@@ -31,7 +31,7 @@ public static class DialogDefinitionFixture
             .WithHeading("How do you feel")
             .WithTitle("Please tell us how you feel")
             .WithGroup(group1)
-            .AddResults(answerGreat, answerOkay, answerTerrible)
+            .AddAnswers(answerGreat, answerOkay, answerTerrible)
             .AddValidators(new QuestionDialogPartValidatorBuilder(new SingleRequiredQuestionDialogPartValidator()));
         var messagePart = new MessageDialogPartBuilder().WithId(new DialogPartIdentifierBuilder().WithValue("Message")).WithHeading("Message").WithMessage("I'm sorry to hear that. Let us know if we can do something to help you.").WithGroup(group1);
         var decisionPart = new DecisionDialogPartBuilder()

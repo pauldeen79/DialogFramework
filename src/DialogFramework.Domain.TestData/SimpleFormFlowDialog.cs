@@ -16,7 +16,7 @@ public static class SimpleFormFlowDialog
                     .WithHeading("Contact information")
                     .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                     .WithTitle("Please provide your e-mail address and telephone number, so we can contact you.")
-                    .AddResults
+                    .AddAnswers
                     (
                         new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
@@ -42,7 +42,7 @@ public static class SimpleFormFlowDialog
                     .WithHeading("Newsletter")
                     .WithGroup(DialogPartGroupFixture.CreateGetInformationGroupBuider())
                     .WithTitle("Would you like to receive our newsletter?")
-                    .AddResults
+                    .AddAnswers
                     (
                         new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))

@@ -50,7 +50,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPart)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-            .AddResults(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
+            .AddAnswers(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
             .Build();
 
         // Act
@@ -67,7 +67,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPartBuilder)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-            .AddResults(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
+            .AddAnswers(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
 
         // Act
         var result = input.Build();
@@ -85,7 +85,7 @@ public class QuestionDialogPartTests
         var builder = new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder())
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-            .AddResults(result, result);
+            .AddAnswers(result, result);
 
         // Act
         var act = new Action(() => _ = builder.Build());
