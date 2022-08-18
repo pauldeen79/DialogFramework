@@ -12,20 +12,20 @@ public class RequiredValidator : IDialogPartResultAnswerDefinitionValidator
         => _checkForSingleOccurence = checkForSingleOccurence;
 
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IDialogPart dialogPart,
-                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IDialogPart part,
+                                                         IDialogPartResultAnswerDefinition answerDefinition,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
     {
-        var dialogPartResultsArray = dialogPartResults.ToArray();
-        if (!dialogPartResultsArray.Any()
-            || dialogPartResultsArray.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
+        var answersArray = answers.ToArray();
+        if (!answersArray.Any()
+            || answersArray.Any(x => x.Value.Value == null || x.Value.Value is string s && string.IsNullOrEmpty(s)))
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Answer value of [{part.Id}.{answerDefinition.Id}] is required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { answerDefinition.Id }));
         }
-        else if (_checkForSingleOccurence && dialogPartResultsArray.Count() > 1)
+        else if (_checkForSingleOccurence && answersArray.Count() > 1)
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is only allowed one time", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Answer value of [{part.Id}.{answerDefinition.Id}] is only allowed one time", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { answerDefinition.Id }));
         }
     }
 }

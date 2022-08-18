@@ -8,7 +8,7 @@ public interface IDialogPartResultAnswerDefinition
     IReadOnlyCollection<IDialogPartResultAnswerDefinitionValidator> Validators { get; }
 
     IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                  IDialogDefinition dialogDefinition,
-                                                  IDialogPart dialogPart,
-                                                  IEnumerable<IDialogPartResultAnswer> dialogPartResults);
+                                                  IDialogDefinition definition,
+                                                  IDialogPart part,
+                                                  IEnumerable<IDialogPartResultAnswer> answers);
 }

@@ -146,7 +146,7 @@ public class ContinueRequestHandlerTests : RequestHandlerTestBase
         result.IsSuccessful().Should().BeTrue();
         result.Status.Should().Be(ResultStatus.Ok);
         result.Value!.CurrentState.Should().Be(DialogState.InProgress);
-        result.Value!.CurrentDialogIdentifier.Id.Should().BeEquivalentTo(dialogDefinition2.Metadata.Id);
+        result.Value!.CurrentDialogId.Id.Should().BeEquivalentTo(dialogDefinition2.Metadata.Id);
         result.Value!.CurrentPartId.Value.Should().Be("Welcome");
     }
 

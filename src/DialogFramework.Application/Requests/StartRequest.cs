@@ -12,11 +12,11 @@ public record StartRequest : IRequest<Result<IDialog>>
     }
 
     public StartRequest(IDialogDefinitionIdentifier dialogDefinitionIdentifier,
-                        IEnumerable<IDialogPartResult> dialogPartResults,
+                        IEnumerable<IDialogPartResult> answers,
                         IEnumerable<IProperty> properties)
     {
         DialogDefinitionIdentifier = dialogDefinitionIdentifier ?? throw new ArgumentNullException(nameof(dialogDefinitionIdentifier));
-        DialogPartResults = new ReadOnlyValueCollection<IDialogPartResult>(dialogPartResults ?? throw new ArgumentNullException(nameof(dialogPartResults)));
+        DialogPartResults = new ReadOnlyValueCollection<IDialogPartResult>(answers ?? throw new ArgumentNullException(nameof(answers)));
         Properties = new ReadOnlyValueCollection<IProperty>(properties ?? throw new ArgumentNullException(nameof(properties)));
     }
 }

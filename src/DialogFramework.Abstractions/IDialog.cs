@@ -3,7 +3,7 @@
 public interface IDialog
 {
     IDialogIdentifier Id { get; }
-    IDialogDefinitionIdentifier CurrentDialogIdentifier { get; }
+    IDialogDefinitionIdentifier CurrentDialogId { get; }
     IDialogPartIdentifier CurrentPartId { get; }
     IDialogPartGroupIdentifier? CurrentGroupId { get; }
     DialogState CurrentState { get; }
@@ -11,7 +11,7 @@ public interface IDialog
 
     Result Start(IDialogDefinition definition, IConditionEvaluator evaluator);
 
-    Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results, IConditionEvaluator evaluator);
+    Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> answers, IConditionEvaluator evaluator);
 
     Result Abort(IDialogDefinition definition, IConditionEvaluator evaluator);
 
@@ -21,7 +21,7 @@ public interface IDialog
 
     Result ResetState(IDialogDefinition definition, IDialogPartIdentifier partId);
 
-    Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier);
+    Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartId);
 
     void AddProperty(IProperty property);
 }

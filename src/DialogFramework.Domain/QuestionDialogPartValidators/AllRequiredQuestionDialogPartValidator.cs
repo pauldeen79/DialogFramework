@@ -3,14 +3,14 @@
 public class AllRequiredQuestionDialogPartValidator : IQuestionDialogPartValidator
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
     {
-        var submittedPartCount = dialogPartResults
+        var submittedPartCount = answers
             .Where(x => !string.IsNullOrEmpty(x.ResultId.Value))
             .GroupBy(x => x.ResultId)
             .Count();
-        var definedResultCount = (dialogDefinition.GetPartById(dialog.CurrentPartId).Value as IQuestionDialogPart)?.Results?.Count ?? 0;
+        var definedResultCount = (definition.GetPartById(dialog.CurrentPartId).Value as IQuestionDialogPart)?.Answers?.Count ?? 0;
         if (submittedPartCount != definedResultCount)
         {
             yield return new DialogValidationResult($"All {definedResultCount} answers are required", new ReadOnlyValueCollection<IDialogPartResultIdentifier>());

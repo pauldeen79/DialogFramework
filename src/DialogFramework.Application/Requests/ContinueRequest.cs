@@ -11,9 +11,9 @@ public record ContinueRequest : IRequest<Result<IDialog>>
     }
 
     public ContinueRequest(IDialog dialog,
-                           IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                           IEnumerable<IDialogPartResultAnswer> answers)
     {
         Dialog = dialog ?? throw new ArgumentNullException(nameof(dialog));
-        DialogPartResults = new ReadOnlyValueCollection<IDialogPartResultAnswer>(dialogPartResults ?? throw new ArgumentNullException(nameof(dialogPartResults)));
+        DialogPartResults = new ReadOnlyValueCollection<IDialogPartResultAnswer>(answers ?? throw new ArgumentNullException(nameof(answers)));
     }
 }

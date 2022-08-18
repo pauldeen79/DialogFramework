@@ -3,6 +3,6 @@
 public interface IQuestionDialogPartValidator
 {
     IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                  IDialogDefinition dialogDefinition,
-                                                  IEnumerable<IDialogPartResultAnswer> dialogPartResults);
+                                                  IDialogDefinition definition,
+                                                  IEnumerable<IDialogPartResultAnswer> answers);
 }

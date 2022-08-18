@@ -40,7 +40,7 @@ public partial record Dialog
         );
     }
 
-    public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> results, IConditionEvaluator evaluator)
+    public Result Continue(IDialogDefinition definition, IEnumerable<IDialogPartResultAnswer> answers, IConditionEvaluator evaluator)
     {
         if (CurrentState != DialogState.InProgress)
         {
@@ -48,13 +48,13 @@ public partial record Dialog
             return Result.Invalid("Current state is invalid");
         }
 
-        _results = new ValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, results, CurrentDialogIdentifier, CurrentPartId));
+        _results = new ValueCollection<IDialogPartResult>(definition.ReplaceAnswers(Results, answers, CurrentDialogId, CurrentPartId));
 
         return HandleNavigate
         (
             definition,
             evaluator,
-            definition.GetNextPart(this, results),
+            definition.GetNextPart(this, answers),
             DialogAction.Continue,
             partResult =>
             {
@@ -169,7 +169,7 @@ public partial record Dialog
             {
                 if (partResult.IsSuccessful())
                 {
-                    CurrentDialogIdentifier = definition.Metadata;
+                    CurrentDialogId = definition.Metadata;
                     CurrentPartId = partResult.Value!.Id;
                     CurrentGroupId = partResult.Value!.GetGroupId();
                     CurrentState = partResult.Value!.GetState();
@@ -206,8 +206,8 @@ public partial record Dialog
         return Result.Success();
     }
 
-    public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartIdentifier)
-        => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartIdentifier)));
+    public Result<IEnumerable<IDialogPartResult>> GetDialogPartResultsByPartIdentifier(IDialogPartIdentifier dialogPartId)
+        => Result<IEnumerable<IDialogPartResult>>.Success(Results.Where(x => Equals(x.DialogPartId, dialogPartId)));
 
     public void AddProperty(IProperty property)
         => AddedProperties.Add(property);

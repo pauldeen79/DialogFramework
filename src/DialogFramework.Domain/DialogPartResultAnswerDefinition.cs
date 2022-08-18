@@ -3,13 +3,13 @@
 public partial record DialogPartResultAnswerDefinition
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IDialogPart dialogPart,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IDialogPart part,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
     {
         foreach (var validator in Validators)
         {
-            foreach (var validationError in validator.Validate(dialog, dialogDefinition, dialogPart, this, dialogPartResults))
+            foreach (var validationError in validator.Validate(dialog, definition, part, this, answers))
             {
                 yield return validationError;
             }

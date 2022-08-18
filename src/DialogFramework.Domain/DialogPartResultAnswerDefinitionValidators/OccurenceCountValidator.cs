@@ -16,12 +16,12 @@ public class OccurenceCountValidator : IDialogPartResultAnswerDefinitionValidato
     }
 
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IDialogPart dialogPart,
-                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IDialogPart part,
+                                                         IDialogPartResultAnswerDefinition answerDefinition,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
     {
-        var actualCount = dialogPartResults.Count();
+        var actualCount = answers.Count();
         if (actualCount < _minimumOccurenceCount || actualCount > _maximumOccurenceCount)
         {
             var timesName = _minimumOccurenceCount == _maximumOccurenceCount
@@ -30,7 +30,7 @@ public class OccurenceCountValidator : IDialogPartResultAnswerDefinitionValidato
             var messageSuffix = _minimumOccurenceCount == 1 && _maximumOccurenceCount == 1
                 ? "is required"
                 : $"should be supplied {timesName} times";
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] {messageSuffix}", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id }));
+            yield return new DialogValidationResult($"Answer value of [{part.Id}.{answerDefinition.Id}] {messageSuffix}", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { answerDefinition.Id }));
         }
     }
 }

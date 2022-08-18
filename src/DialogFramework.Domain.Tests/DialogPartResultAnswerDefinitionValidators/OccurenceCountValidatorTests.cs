@@ -40,7 +40,7 @@ public class OccurenceCountValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class OccurenceCountValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] should be supplied between 1 and 2 times");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] should be supplied between 1 and 2 times");
     }
 
     [Fact]
@@ -82,6 +82,6 @@ public class OccurenceCountValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] should be supplied 2 times");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] should be supplied 2 times");
     }
 }

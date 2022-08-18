@@ -10,8 +10,8 @@ public record EmptyDialogPartResultAnswerDefinition : IDialogPartResultAnswerDef
         => new ReadOnlyValueCollection<IDialogPartResultAnswerDefinitionValidator>();
 
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IDialogPart dialogPart,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IDialogPart part,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
         => Enumerable.Empty<IDialogValidationResult>();
 }

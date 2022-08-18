@@ -38,13 +38,13 @@ public class AfterNavigateArgumentsTests
 
         // Assert
         sut.Action.Should().Be(DialogAction.NavigateTo);
-        sut.ConditionEvaluator.Should().BeSameAs(conditionEvaluatorMock.Object);
+        sut.Evaluator.Should().BeSameAs(conditionEvaluatorMock.Object);
         sut.CurrentDialogId.Should().BeEquivalentTo(new DialogIdentifier("Id"));
-        sut.CurrentDialogIdentifier.Should().BeEquivalentTo(new DialogDefinitionIdentifierBuilder(definition.Metadata).Build());
+        sut.DefinitionId.Should().BeEquivalentTo(new DialogDefinitionIdentifierBuilder(definition.Metadata).Build());
         sut.CurrentGroupId.Should().BeEquivalentTo(dialog.CurrentGroupId);
         sut.CurrentPartId.Should().BeEquivalentTo(dialog.CurrentPartId);
         sut.CurrentState.Should().Be(dialog.CurrentState);
-        sut.DialogDefinition.Should().BeSameAs(definition);
+        sut.Definition.Should().BeSameAs(definition);
         sut.ErrorMessage.Should().Be(dialog.ErrorMessage);
     }
 }

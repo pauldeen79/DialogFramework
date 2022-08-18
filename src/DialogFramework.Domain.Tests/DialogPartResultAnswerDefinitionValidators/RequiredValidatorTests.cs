@@ -68,7 +68,7 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is only allowed one time");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is only allowed one time");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
 
     [Fact]
@@ -113,6 +113,6 @@ public class RequiredValidatorTests
 
         // Assert
         actual.Should().ContainSingle();
-        actual.First().ErrorMessage.Should().Be("Result value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
+        actual.First().ErrorMessage.Should().Be("Answer value of [DialogPartIdentifier { Value = PartId }.DialogPartResultIdentifier { Value = PartResultId }] is required");
     }
 }

@@ -6,14 +6,14 @@ public class ValueTypeValidator : IDialogPartResultAnswerDefinitionValidator
     public ValueTypeValidator(Type type) => Type = type;
 
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
-                                                         IDialogDefinition dialogDefinition,
-                                                         IDialogPart dialogPart,
-                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
-                                                         IEnumerable<IDialogPartResultAnswer> dialogPartResults)
+                                                         IDialogDefinition definition,
+                                                         IDialogPart part,
+                                                         IDialogPartResultAnswerDefinition answerDefinition,
+                                                         IEnumerable<IDialogPartResultAnswer> answers)
     {
-        if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
+        if (answers.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))
         {
-            yield return new DialogValidationResult($"Result value of [{dialogPart.Id}.{dialogPartResultDefinition.Id}] is not of type [{Type.FullName}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { dialogPartResultDefinition.Id  }));
+            yield return new DialogValidationResult($"Answer value of [{part.Id}.{answerDefinition.Id}] is not of type [{Type.FullName}]", new ReadOnlyValueCollection<IDialogPartResultIdentifier>(new[] { answerDefinition.Id  }));
         }
     }
 }
