@@ -3,7 +3,7 @@ global using CrossCutting.Common.Results;
 global using DialogFramework.Abstractions;
 global using DialogFramework.Abstractions.DialogParts;
 global using DialogFramework.Domain.Builders;
-global using DialogFramework.Domain.DialogPartResultDefinitionValidators;
+global using DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
 global using DialogFramework.Domain.DialogParts.Builders;
 global using DialogFramework.Domain.Expressions;
 global using DialogFramework.Domain.QuestionDialogPartValidators;

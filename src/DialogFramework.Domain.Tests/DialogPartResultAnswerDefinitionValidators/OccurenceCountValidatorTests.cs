@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.DialogPartResultDefinitionValidators;
+﻿namespace DialogFramework.Domain.Tests.DialogPartResultAnswerDefinitionValidators;
 
 public class OccurenceCountValidatorTests
 {
@@ -12,11 +12,11 @@ public class OccurenceCountValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
-        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResultAnswer(new EmptyDialogPartResultDefinition().Id, new DialogPartResultValueBuilder().Build()) });
+        var actual = sut.Validate(dialog, dialogDefinitionMock.Object, dialogPartMock.Object, dialogPartResultDefinitionMock.Object, new[] { new DialogPartResultAnswer(new EmptyDialogPartResultAnswerDefinition().Id, new DialogPartResultValueBuilder().Build()) });
 
         // Assert
         actual.Should().BeEmpty();
@@ -32,7 +32,7 @@ public class OccurenceCountValidatorTests
         var definition = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -53,7 +53,7 @@ public class OccurenceCountValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act
@@ -74,7 +74,7 @@ public class OccurenceCountValidatorTests
         var dialog = DialogFixture.Create(dialogDefinitionMock.Object.Metadata);
         var dialogPartMock = new Mock<IDialogPart>();
         dialogPartMock.SetupGet(x => x.Id).Returns(new DialogPartIdentifier("PartId"));
-        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultDefinition>();
+        var dialogPartResultDefinitionMock = new Mock<IDialogPartResultAnswerDefinition>();
         dialogPartResultDefinitionMock.SetupGet(x => x.Id).Returns(new DialogPartResultIdentifier("PartResultId"));
 
         // Act

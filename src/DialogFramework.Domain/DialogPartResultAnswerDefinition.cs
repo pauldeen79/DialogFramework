@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record DialogPartResultDefinition
+public partial record DialogPartResultAnswerDefinition
 {
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,

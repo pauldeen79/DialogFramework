@@ -1,13 +1,13 @@
-﻿namespace DialogFramework.Domain.DialogPartResultDefinitions;
+﻿namespace DialogFramework.Domain.DialogPartResultAnswerDefinitions;
 
-public record EmptyDialogPartResultDefinition : IDialogPartResultDefinition
+public record EmptyDialogPartResultAnswerDefinition : IDialogPartResultAnswerDefinition
 {
     public IDialogPartResultIdentifier Id => new DialogPartResultIdentifier(string.Empty);
     public string Title => string.Empty;
     public ResultValueType ValueType => ResultValueType.None;
 
-    public IReadOnlyCollection<IDialogPartResultDefinitionValidator> Validators
-        => new ReadOnlyValueCollection<IDialogPartResultDefinitionValidator>();
+    public IReadOnlyCollection<IDialogPartResultAnswerDefinitionValidator> Validators
+        => new ReadOnlyValueCollection<IDialogPartResultAnswerDefinitionValidator>();
 
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,

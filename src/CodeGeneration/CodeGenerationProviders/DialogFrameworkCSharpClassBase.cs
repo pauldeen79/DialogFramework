@@ -261,7 +261,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         typeof(IDialogPartIdentifier),
         typeof(IDialogPartResult),
         typeof(IDialogPartResultAnswer),
-        typeof(IDialogPartResultDefinition),
+        typeof(IDialogPartResultAnswerDefinition),
         typeof(IDialogPartResultIdentifier),
         typeof(IDialogPartResultValue),
         typeof(IDialogPartResultValueAnswer),

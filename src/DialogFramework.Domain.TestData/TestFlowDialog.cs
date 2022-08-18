@@ -23,22 +23,22 @@ public static class TestFlowDialog
                     .WithTitle("How old are you?")
                     .AddResults
                     (
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("<10"))
                             .WithTitle("0 to 9 years old"),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("10-19"))
                             .WithTitle("10 to 19 years old"),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("20-29"))
                             .WithTitle("20 to 29 years old"),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("30-39"))
                             .WithTitle("30 to 39 years old"),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("40-49"))
                             .WithTitle("40 to 49 years old"),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("50+"))
                             .WithTitle("Older than 50 years")
                     )
@@ -76,14 +76,14 @@ public static class TestFlowDialog
                     .WithTitle("What type of sports do you do?")
                     .AddResults
                     (
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Bicycle")).WithTitle("Bicycle riding"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Soccer")).WithTitle("Soccer"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Swimming")).WithTitle("Swimming"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Aerobics")).WithTitle("Aerobics"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Tennis")).WithTitle("Tennis"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Baseball")).WithTitle("Baseball"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Hockey")).WithTitle("Hockey"),
-                        new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Other")).WithTitle("Other sports (please specify)").WithValueType(ResultValueType.Text)
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Bicycle")).WithTitle("Bicycle riding"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Soccer")).WithTitle("Soccer"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Swimming")).WithTitle("Swimming"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Aerobics")).WithTitle("Aerobics"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Tennis")).WithTitle("Tennis"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Baseball")).WithTitle("Baseball"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Hockey")).WithTitle("Hockey"),
+                        new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Other")).WithTitle("Other sports (please specify)").WithValueType(ResultValueType.Text)
                     ),
                 new DecisionDialogPartBuilder()
                     .WithId(new DialogPartIdentifierBuilder().WithValue("SportsTypeDecision"))
@@ -126,7 +126,7 @@ public static class TestFlowDialog
                     .WithTitle("Thank you for using this application. You can leave your e-mail address in case you have comments or questions.")
                     .AddResults
                     (
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
                             .WithTitle("E-mail address")
                             .WithValueType(ResultValueType.Text)

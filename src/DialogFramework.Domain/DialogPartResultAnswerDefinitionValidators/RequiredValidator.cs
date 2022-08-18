@@ -1,6 +1,6 @@
-﻿namespace DialogFramework.Domain.DialogPartResultDefinitionValidators;
+﻿namespace DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
 
-public class RequiredValidator : IDialogPartResultDefinitionValidator
+public class RequiredValidator : IDialogPartResultAnswerDefinitionValidator
 {
     private readonly bool _checkForSingleOccurence;
 
@@ -14,7 +14,7 @@ public class RequiredValidator : IDialogPartResultDefinitionValidator
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
-                                                         IDialogPartResultDefinition dialogPartResultDefinition,
+                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
         var dialogPartResultsArray = dialogPartResults.ToArray();

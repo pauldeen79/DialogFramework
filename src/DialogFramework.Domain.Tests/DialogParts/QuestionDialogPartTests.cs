@@ -50,7 +50,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPart)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
+            .AddResults(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()))
             .Build();
 
         // Act
@@ -67,7 +67,7 @@ public class QuestionDialogPartTests
         var input = (IDialogPartBuilder)new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Test"))
             .WithGroup(new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder()))
-            .AddResults(new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
+            .AddResults(new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder()));
 
         // Act
         var result = input.Build();
@@ -80,7 +80,7 @@ public class QuestionDialogPartTests
     public void Constructing_QuestionDialogPart_With_Duplicate_Ids_Throws_ValidationException()
     {
         // Arrange
-        var result = new DialogPartResultDefinitionBuilder()
+        var result = new DialogPartResultAnswerDefinitionBuilder()
             .WithId(new DialogPartResultIdentifierBuilder().WithValue("Test"));
         var builder = new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder())

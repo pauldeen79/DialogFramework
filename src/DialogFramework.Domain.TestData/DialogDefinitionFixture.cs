@@ -23,9 +23,9 @@ public static class DialogDefinitionFixture
         var group1 = new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part1")).WithTitle("Give information").WithNumber(1);
         var group2 = new DialogPartGroupBuilder().WithId(new DialogPartGroupIdentifierBuilder().WithValue("Part2")).WithTitle("Completed").WithNumber(2);
         var welcomePart = new MessageDialogPartBuilder().WithHeading("Welcome").WithId(new DialogPartIdentifierBuilder().WithValue("Welcome")).WithMessage("Welcome! I would like to answer a question").WithGroup(group1);
-        var answerGreat = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Great")).WithTitle("I feel great, thank you!");
-        var answerOkay = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Okay")).WithTitle("I feel kind of okay");
-        var answerTerrible = new DialogPartResultDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Terrible")).WithTitle("I feel terrible, don't want to talk about it");
+        var answerGreat = new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Great")).WithTitle("I feel great, thank you!");
+        var answerOkay = new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Okay")).WithTitle("I feel kind of okay");
+        var answerTerrible = new DialogPartResultAnswerDefinitionBuilder().WithId(new DialogPartResultIdentifierBuilder().WithValue("Terrible")).WithTitle("I feel terrible, don't want to talk about it");
         var questionPart = new QuestionDialogPartBuilder()
             .WithId(new DialogPartIdentifierBuilder().WithValue("Question1"))
             .WithHeading("How do you feel")

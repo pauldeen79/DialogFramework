@@ -1,11 +1,11 @@
 ﻿namespace DialogFramework.Abstractions;
 
-public interface IDialogPartResultDefinition
+public interface IDialogPartResultAnswerDefinition
 {
     IDialogPartResultIdentifier Id { get; }
     string Title { get; }
     ResultValueType ValueType { get; }
-    IReadOnlyCollection<IDialogPartResultDefinitionValidator> Validators { get; }
+    IReadOnlyCollection<IDialogPartResultAnswerDefinitionValidator> Validators { get; }
 
     IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                   IDialogDefinition dialogDefinition,

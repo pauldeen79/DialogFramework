@@ -1,6 +1,6 @@
-﻿namespace DialogFramework.Domain.DialogPartResultDefinitionValidators;
+﻿namespace DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
 
-public class ValueTypeValidator : IDialogPartResultDefinitionValidator
+public class ValueTypeValidator : IDialogPartResultAnswerDefinitionValidator
 {
     public Type Type { get; }
     public ValueTypeValidator(Type type) => Type = type;
@@ -8,7 +8,7 @@ public class ValueTypeValidator : IDialogPartResultDefinitionValidator
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
-                                                         IDialogPartResultDefinition dialogPartResultDefinition,
+                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
         if (dialogPartResults.Any(x => x.Value.Value != null && !Type.IsInstanceOfType(x.Value.Value)))

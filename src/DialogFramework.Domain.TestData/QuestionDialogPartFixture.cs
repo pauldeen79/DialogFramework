@@ -11,11 +11,11 @@ public static class QuestionDialogPartFixture
             .WithGroup(DialogPartGroupFixture.CreateBuilder())
             .AddResults
             (
-                new DialogPartResultDefinitionBuilder()
+                new DialogPartResultAnswerDefinitionBuilder()
                     .WithId(new DialogPartResultIdentifierBuilder().WithValue("A"))
                     .WithTitle("First")
                     .WithValueType(ResultValueType.YesNo),
-                new DialogPartResultDefinitionBuilder()
+                new DialogPartResultAnswerDefinitionBuilder()
                     .WithId(new DialogPartResultIdentifierBuilder().WithValue("B"))
                     .WithTitle("Second")
                     .WithValueType(ResultValueType.YesNo)

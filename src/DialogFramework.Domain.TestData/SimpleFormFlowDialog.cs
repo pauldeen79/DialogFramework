@@ -18,23 +18,23 @@ public static class SimpleFormFlowDialog
                     .WithTitle("Please provide your e-mail address and telephone number, so we can contact you.")
                     .AddResults
                     (
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("EmailAddress"))
                             .WithTitle("E-mail address")
                             .WithValueType(ResultValueType.Text)
                             .AddValidators
                             (
-                                new DialogPartResultDefinitionValidatorBuilder(new ValueTypeValidator(typeof(string))),
-                                new DialogPartResultDefinitionValidatorBuilder(new RequiredValidator(true))
+                                new DialogPartResultAnswerDefinitionValidatorBuilder(new ValueTypeValidator(typeof(string))),
+                                new DialogPartResultAnswerDefinitionValidatorBuilder(new RequiredValidator(true))
                             ),
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("TelephoneNumber"))
                             .WithTitle("Telephone number")
                             .WithValueType(ResultValueType.Text)
                             .AddValidators
                             (
-                                new DialogPartResultDefinitionValidatorBuilder(new ValueTypeValidator(typeof(string))),
-                                new DialogPartResultDefinitionValidatorBuilder(new RequiredValidator(true))
+                                new DialogPartResultAnswerDefinitionValidatorBuilder(new ValueTypeValidator(typeof(string))),
+                                new DialogPartResultAnswerDefinitionValidatorBuilder(new RequiredValidator(true))
                             )
                     ),
                 new QuestionDialogPartBuilder()
@@ -44,13 +44,13 @@ public static class SimpleFormFlowDialog
                     .WithTitle("Would you like to receive our newsletter?")
                     .AddResults
                     (
-                        new DialogPartResultDefinitionBuilder()
+                        new DialogPartResultAnswerDefinitionBuilder()
                             .WithId(new DialogPartResultIdentifierBuilder().WithValue("SignUpForNewsletter"))
                             .WithTitle("Subscribe to newsletter (optional)")
                             .WithValueType(ResultValueType.YesNo)
                             .AddValidators
                             (
-                                new DialogPartResultDefinitionValidatorBuilder(new ValueTypeValidator(typeof(bool)))
+                                new DialogPartResultAnswerDefinitionValidatorBuilder(new ValueTypeValidator(typeof(bool)))
                             )
                     )
             )

@@ -6,7 +6,7 @@ public record ContinueRequest : IRequest<Result<IDialog>>
     public IReadOnlyCollection<IDialogPartResultAnswer> DialogPartResults { get; }
 
     public ContinueRequest(IDialog dialog)
-        : this(dialog, new[] { new DialogPartResultAnswer(new EmptyDialogPartResultDefinition().Id, new DialogPartResultValueAnswer(null)) })
+        : this(dialog, new[] { new DialogPartResultAnswer(new EmptyDialogPartResultAnswerDefinition().Id, new DialogPartResultValueAnswer(null)) })
     {
     }
 

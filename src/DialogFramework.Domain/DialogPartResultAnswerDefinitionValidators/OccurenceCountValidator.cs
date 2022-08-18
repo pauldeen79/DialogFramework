@@ -1,6 +1,6 @@
-﻿namespace DialogFramework.Domain.DialogPartResultDefinitionValidators;
+﻿namespace DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
 
-public class OccurenceCountValidator : IDialogPartResultDefinitionValidator 
+public class OccurenceCountValidator : IDialogPartResultAnswerDefinitionValidator 
 {
     private readonly int _minimumOccurenceCount;
     private readonly int _maximumOccurenceCount;
@@ -18,7 +18,7 @@ public class OccurenceCountValidator : IDialogPartResultDefinitionValidator
     public IEnumerable<IDialogValidationResult> Validate(IDialog dialog,
                                                          IDialogDefinition dialogDefinition,
                                                          IDialogPart dialogPart,
-                                                         IDialogPartResultDefinition dialogPartResultDefinition,
+                                                         IDialogPartResultAnswerDefinition dialogPartResultDefinition,
                                                          IEnumerable<IDialogPartResultAnswer> dialogPartResults)
     {
         var actualCount = dialogPartResults.Count();
