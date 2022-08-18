@@ -7,7 +7,6 @@ global using DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
 global using DialogFramework.Domain.DialogParts.Builders;
 global using DialogFramework.Domain.Expressions;
 global using DialogFramework.Domain.QuestionDialogPartValidators;
-global using ExpressionFramework.Abstractions;
 global using ExpressionFramework.Abstractions.DomainModel.Domains;
 global using ExpressionFramework.Abstractions.DomainModel.Extensions;
 global using ExpressionFramework.Core.DomainModel.Builders;
