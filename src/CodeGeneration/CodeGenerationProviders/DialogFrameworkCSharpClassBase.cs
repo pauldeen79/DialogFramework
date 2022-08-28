@@ -54,42 +54,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override void FixImmutableClassProperties<TBuilder, TEntity>(TypeBaseBuilder<TBuilder, TEntity> typeBaseBuilder)
         => FixImmutableBuilderProperties(typeBaseBuilder);
 
-    protected override void PostProcessImmutableBuilderClass(ClassBuilder classBuilder)
-    {
-        if (classBuilder.Name == $"{typeof(IDialog).GetEntityClassName()}Builder")
-        {
-            classBuilder.Constructors
-                .Single(x => x.Parameters.Any())
-                .AddParameter(name: "definition", type: typeof(IDialogDefinition));
-        }
-
-        if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts.Builders")
-        {
-            if (classBuilder.Name == $"{typeof(IDialogPart).GetEntityClassName()}Builder")
-            {
-                // HACK
-                classBuilder.Constructors.Single(x => x.Parameters.Count == 1).Parameters.Single().TypeName = typeof(IDialogPart).FullName!;
-                classBuilder.GenericTypeArgumentConstraints[0] = $"where TEntity : {typeof(IDialogPart).FullName}";
-            }
-            else
-            {
-                // HACK
-                classBuilder.BaseClass = $"{typeof(IDialogPart).GetEntityClassName()}Builder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.Replace("Builder", "")}>";
-            }
-        }
-    }
-
-    protected override void PostProcessImmutableEntityClass(ClassBuilder classBuilder)
-    {
-        if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts"
-            && classBuilder.Name != typeof(IDialogPart).GetEntityClassName())
-        {
-            // HACK
-            classBuilder.Constructors.Single().WithChainCall("base(id)");
-            classBuilder.BaseClass = typeof(IDialogPart).GetEntityClassName();
-        }
-    }
-
     private static void FixProperty(ClassPropertyBuilder property)
     {
         FixTypeName(property);
