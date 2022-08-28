@@ -7,7 +7,7 @@ public class DialogPartRecords : DialogFrameworkCSharpClassBase
     public override string DefaultFileName => "Entities.template.generated.cs";
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
-    protected override bool EnableBuilderInhericance => true;
+    protected override bool EnableInheritance => true;
     protected override IClass? BaseClass => GetDialogPartBaseClass();
 
     public override object CreateModel()
