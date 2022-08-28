@@ -49,7 +49,7 @@ public abstract class RequestHandlerBase
             if (result.Status == ResultStatus.Redirect
                 && result is Result<IDialogDefinitionIdentifier> dialogDefinitionIdentifierResult)
             {
-                return await startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.GetValueOrThrow(), dialog.GetAllResults(definition), dialog.GetProperties()), CancellationToken.None);
+                return await startRequestHandler.Handle(new StartRequest(dialogDefinitionIdentifierResult.Value ?? throw new InvalidOperationException("No dialog definition identifier found"), dialog.GetAllResults(definition), dialog.GetProperties()), CancellationToken.None);
             }
 
             if (!result.IsSuccessful())

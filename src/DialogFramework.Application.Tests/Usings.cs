@@ -11,6 +11,7 @@ global using DialogFramework.Domain.DialogParts.Builders;
 global using DialogFramework.Domain.Extensions;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Abstractions;
+global using ExpressionFramework.Abstractions.DomainModel;
 global using FluentAssertions;
 global using Microsoft.Extensions.Logging;
 global using Moq;

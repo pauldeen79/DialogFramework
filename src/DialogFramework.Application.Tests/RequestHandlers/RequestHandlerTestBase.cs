@@ -11,6 +11,9 @@ public abstract class RequestHandlerTestBase
         LoggerMock = new Mock<ILogger>();
         ProviderMock = new Mock<IDialogDefinitionProvider>();
         ConditionEvaluatorMock = new Mock<IConditionEvaluator>();
+
+        ConditionEvaluatorMock.Setup(x => x.Evaluate(It.IsAny<object?>(), It.IsAny<IEnumerable<ICondition>>()))
+                              .Returns(Result<bool>.Success(false));
     }
 
     protected static string Id => Guid.NewGuid().ToString();
