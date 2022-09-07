@@ -8,5 +8,8 @@ public class CoreRecords : DialogFrameworkCSharpClassBase
     public override bool RecurseOnDeleteGeneratedFiles => false;
 
     public override object CreateModel()
-        => GetImmutableClasses(CoreModels, "DialogFramework.Domain");
+        => GetImmutableClasses(CoreModels, "DialogFramework.Domain")
+        .OfType<IClass>()
+        .Select(x => new ClassBuilder(x).With(y => PostProcessImmutableEntityClass(y)).Build())
+        .ToArray();
 }

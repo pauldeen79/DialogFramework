@@ -21,6 +21,7 @@ internal static class Program
         GenerateCode.For<DialogPartBaseBuilders>(settings, multipleContentBuilder);
         GenerateCode.For<DialogPartBaseRecords>(settings, multipleContentBuilder);
         GenerateCode.For<DialogPartBuilders>(settings, multipleContentBuilder);
+        GenerateCode.For<DialogPartNonGenericBaseBuilders>(settings, multipleContentBuilder);
         GenerateCode.For<DialogPartRecords>(settings, multipleContentBuilder);
 
         // Log output to console

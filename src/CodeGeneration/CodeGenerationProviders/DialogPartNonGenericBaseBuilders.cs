@@ -1,7 +1,7 @@
 ﻿namespace CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public class DialogPartBaseBuilders : DialogFrameworkCSharpClassBase
+public class DialogPartNonGenericBaseBuilders : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Domain/DialogParts/Builders";
     public override string DefaultFileName => "Builders.template.generated.cs";
@@ -9,11 +9,12 @@ public class DialogPartBaseBuilders : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
+    protected override string FileNameSuffix => ".nongeneric.template.generated";
 
     public override object CreateModel()
-        => GetImmutableBuilderClasses(DialogPartBaseModels,
-                                      "DialogFramework.Domain.DialogParts",
-                                      "DialogFramework.Domain.DialogParts.Builders")
+        => GetImmutableNonGenericBuilderClasses(DialogPartBaseModels,
+                                                "DialogFramework.Domain.DialogParts",
+                                                "DialogFramework.Domain.DialogParts.Builders")
         .OfType<IClass>()
         .Select(x => new ClassBuilder(x).With(y => PostProcessImmutableBuilderClass(y)).Build())
         .ToArray();

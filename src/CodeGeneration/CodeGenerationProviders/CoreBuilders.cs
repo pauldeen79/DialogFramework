@@ -10,5 +10,8 @@ public class CoreBuilders : DialogFrameworkCSharpClassBase
     public override object CreateModel()
         => GetImmutableBuilderClasses(CoreModels.Where(x => !x.Name.EndsWith("Arguments")).ToArray(),
                                       "DialogFramework.Domain",
-                                      "DialogFramework.Domain.Builders");
+                                      "DialogFramework.Domain.Builders")
+        .OfType<IClass>()
+        .Select(x => new ClassBuilder(x).With(y => PostProcessImmutableBuilderClass(y)).Build())
+        .ToArray();
 }
