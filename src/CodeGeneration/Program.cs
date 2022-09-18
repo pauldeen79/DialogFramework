@@ -13,7 +13,7 @@ internal static class Program
         var generateMultipleFiles = true;
         var dryRun = false;
         var multipleContentBuilder = new MultipleContentBuilder { BasePath = basePath };
-        var settings = new CodeGenerationSettings(basePath, generateMultipleFiles, dryRun);
+        var settings = new CodeGenerationSettings(basePath, generateMultipleFiles, false, dryRun);
 
         // Generate code
         GenerateCode.For<CoreBuilders>(settings, multipleContentBuilder);

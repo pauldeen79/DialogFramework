@@ -8,8 +8,16 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool AddNullChecks => true;
     protected override string FileNameSuffix => ".template.generated";
     protected override Type RecordCollectionType => typeof(IReadOnlyCollection<>);
+    protected override Type RecordConcreteCollectionType => typeof(ReadOnlyValueCollection<>);
     protected override bool AddPrivateSetters => true;
     protected override bool CopyPropertyCode => false;
+    protected override string RootNamespace => "DialogFramework.Domain";
+    //protected override Type BuilderClassCollectionType => typeof(IEnumerable<>);
+
+    protected override string GetFullBasePath()
+        => Directory.GetCurrentDirectory().EndsWith("DialogFramework")
+            ? System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"src/")
+            : System.IO.Path.Combine(Directory.GetCurrentDirectory(), @"../../../../");
 
     protected override bool IsMemberValid(IParentTypeContainer parent, ITypeBase typeBase)
         =>
@@ -53,24 +61,24 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override void FixImmutableBuilderProperties<TBuilder, TEntity>(TypeBaseBuilder<TBuilder, TEntity> typeBaseBuilder)
     {
         typeBaseBuilder.Properties.ForEach(FixProperty);
-        typeBaseBuilder.AddProperties(GetAdditionalProperties(typeBaseBuilder.Name));
+        typeBaseBuilder.AddProperties(GetAdditionalProperties(typeBaseBuilder.Name.ToString()));
     }
 
     protected static void PostProcessImmutableBuilderClass(ClassBuilder classBuilder)
     {
-        if (classBuilder.Name == $"{typeof(IDialog).GetEntityClassName()}Builder")
+        if (classBuilder.Name.ToString() == $"{typeof(IDialog).GetEntityClassName()}Builder")
         {
             classBuilder.Constructors
                 .Single(x => x.Parameters.Any())
                 .AddParameter(name: "definition", type: typeof(IDialogDefinition));
         }
 
-        if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts.Builders")
+        if (classBuilder.Namespace.ToString() == "DialogFramework.Domain.DialogParts.Builders")
         {
-            if (classBuilder.Name == $"{typeof(IDialogPart).GetEntityClassName()}Builder")
+            if (classBuilder.Name.ToString() == $"{typeof(IDialogPart).GetEntityClassName()}Builder")
             {
                 // HACK
-                classBuilder.Constructors.Single(x => x.Parameters.Count == 1).Parameters.Single().TypeName = typeof(IDialogPart).FullName!;
+                classBuilder.Constructors.Single(x => x.Parameters.Count == 1).Parameters.Single().WithTypeName(typeof(IDialogPart).FullName!);
                 if (classBuilder.GenericTypeArgumentConstraints.Count == 1)
                 {
                     classBuilder.GenericTypeArgumentConstraints[0] = $"where TEntity : {typeof(IDialogPart).FullName}";
@@ -79,19 +87,19 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
             else
             {
                 // HACK
-                classBuilder.BaseClass = $"{typeof(IDialogPart).GetEntityClassName()}Builder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.Replace("Builder", "")}>";
+                classBuilder.WithBaseClass($"{typeof(IDialogPart).GetEntityClassName()}Builder<{classBuilder.Name}, DialogFramework.Abstractions.DialogParts.I{classBuilder.Name.ToString().Replace("Builder", "")}>");
             }
         }
     }
 
     protected static void PostProcessImmutableEntityClass(ClassBuilder classBuilder)
     {
-        if (classBuilder.Namespace == "DialogFramework.Domain.DialogParts"
-            && classBuilder.Name != typeof(IDialogPart).GetEntityClassName())
+        if (classBuilder.Namespace.ToString() == "DialogFramework.Domain.DialogParts"
+            && classBuilder.Name.ToString() != typeof(IDialogPart).GetEntityClassName())
         {
             // HACK
             classBuilder.Constructors.Single().WithChainCall("base(id)");
-            classBuilder.BaseClass = typeof(IDialogPart).GetEntityClassName();
+            classBuilder.WithBaseClass(typeof(IDialogPart).GetEntityClassName());
         }
     }
 
@@ -99,14 +107,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     {
         FixTypeName(property);
 
-        if (property.TypeName.GetClassName() == nameof(ResultValueType)
-            || property.TypeName.GetClassName() == nameof(DialogState)
-            || property.TypeName == typeof(string).FullName)
+        if (property.TypeName.ToString().GetClassName() == nameof(ResultValueType)
+            || property.TypeName.ToString().GetClassName() == nameof(DialogState)
+            || property.TypeName.ToString() == typeof(string).FullName)
         {
             property.WithConstructorNullCheck(false);
         }
 
-        if (property.TypeName.GetClassName() == nameof(IDialogPartResultValueAnswer))
+        if (property.TypeName.ToString().GetClassName() == nameof(IDialogPartResultValueAnswer))
         {
             property.SetDefaultValueForBuilderClassConstructor(new Literal($"new DialogFramework.Domain.Builders.{typeof(IDialogPartResultValueAnswer).GetEntityClassName()}Builder()"));
         }
@@ -114,7 +122,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
 
     private static void FixTypeName(ClassPropertyBuilder property)
     {
-        var typeName = property.TypeName.FixTypeName();
+        var typeName = property.TypeName.ToString();
         if (typeName.StartsWithAny(StringComparison.InvariantCulture, "DialogFramework.Abstractions.I",
                                                                       "DialogFramework.Abstractions.DialogParts.I"))
         {
@@ -125,8 +133,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
                     .Replace("Abstractions.DialogParts.I", "Domain.DialogParts.Builders.", StringComparison.InvariantCulture)
                     + "Builder",
                 customBuilderConstructorInitializeExpression: property.IsNullable
-                    ? $"_{property.Name.ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
-                    : $"_{property.Name.ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))", //HACK
+                    ? $"_{property.Name.ToString().ToPascalCase()}Delegate = new(() => source.{property.Name} == null ? default : new {GetClassName(typeName)}Builder(source.{property.Name}))"
+                    : $"_{property.Name.ToString().ToPascalCase()}Delegate = new(() => new {GetClassName(typeName)}Builder(source.{property.Name}))", //HACK
                 customBuilderMethodParameterExpression: TypeNameIsDerivedDialogPart(property) ? "{0}{2}.BuildTyped()" : null
             );
         }
@@ -159,7 +167,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
         else if (typeName.IsBooleanTypeName() || typeName.IsNullableBooleanTypeName())
         {
             property.SetDefaultArgumentValueForWithMethod(true);
-            if (property.Name == nameof(IDialogMetadata.CanStart))
+            if (property.Name.ToString() == nameof(IDialogMetadata.CanStart))
             {
                 property.SetDefaultValueForBuilderClassConstructor(new Literal("true"));
             }
@@ -167,10 +175,8 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     }
 
     private static bool TypeNameIsDerivedDialogPart(ClassPropertyBuilder property)
-    {
-        return property.TypeName.EndsWith("DialogPart", StringComparison.InvariantCulture)
-                        && !property.TypeName.EndsWith("IDialogPart", StringComparison.InvariantCulture);
-    }
+        => property.TypeName.ToString().EndsWith("DialogPart", StringComparison.InvariantCulture)
+            && !property.TypeName.ToString().EndsWith("IDialogPart", StringComparison.InvariantCulture);
 
     private static IEnumerable<ClassPropertyBuilder> GetAdditionalProperties(string className)
     {
