@@ -12,7 +12,6 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool AddPrivateSetters => true;
     protected override bool CopyPropertyCode => false;
     protected override string RootNamespace => "DialogFramework.Domain";
-    //protected override Type BuilderClassCollectionType => typeof(IEnumerable<>);
 
     protected override string GetFullBasePath()
         => Directory.GetCurrentDirectory().EndsWith("DialogFramework")
