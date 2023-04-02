@@ -1,4 +1,4 @@
-﻿namespace CodeGeneration;
+﻿namespace DialogFramework.CodeGeneration;
 
 [ExcludeFromCodeCoverage]
 internal static class Program
@@ -16,29 +16,26 @@ internal static class Program
         var settings = new CodeGenerationSettings(basePath, generateMultipleFiles, false, dryRun);
 
         // Generate code
-        GenerateCode.For<CoreBuilders>(settings, multipleContentBuilder);
-        GenerateCode.For<CoreRecords>(settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartBaseBuilders>(settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartBaseRecords>(settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartBuilders>(settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartNonGenericBaseBuilders>(settings, multipleContentBuilder);
-        GenerateCode.For<DialogPartRecords>(settings, multipleContentBuilder);
+        var generationTypeNames = new[] { "Entities", "Builders", "BuilderFactory" };
+        var generators = typeof(DialogFrameworkCSharpClassBase).Assembly.GetExportedTypes().Where(x => x.BaseType == typeof(DialogFrameworkCSharpClassBase)).ToArray();
+        var generationTypes = generators.Where(x => x.Name.EndsWithAny(generationTypeNames));
+        var scaffoldingTypes = generators.Where(x => !x.Name.EndsWithAny(generationTypeNames));
+        _ = generationTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(settings.ForGeneration(), multipleContentBuilder, x)).ToArray();
+        _ = scaffoldingTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(settings.ForScaffolding(), multipleContentBuilder, x)).ToArray();
 
         // Log output to console
-#pragma warning disable S2589 // Boolean expressions should not be gratuitous
-        if (dryRun || string.IsNullOrEmpty(basePath))
+        if (string.IsNullOrEmpty(basePath))
         {
             Console.WriteLine(multipleContentBuilder.ToString());
         }
         else
         {
             Console.WriteLine($"Code generation completed, check the output in {basePath}");
-            Console.WriteLine("Generated files:");
+            Console.WriteLine($"Generated files: {multipleContentBuilder.Contents.Count()}");
             foreach (var content in multipleContentBuilder.Contents)
             {
                 Console.WriteLine(content.FileName);
             }
         }
-#pragma warning restore S2589 // Boolean expressions should not be gratuitous
     }
 }

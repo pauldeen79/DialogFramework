@@ -1,14 +1,17 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public class CoreBuilders : DialogFrameworkCSharpClassBase
+public class AbstractBuilders : DialogFrameworkCSharpClassBase
 {
     public override string Path => "DialogFramework.Domain.Builders";
-    public override string DefaultFileName => "Builders.template.generated.cs";
+    public override string DefaultFileName => "Builders.generated.cs";
+
+    protected override bool EnableEntityInheritance => true;
+    protected override bool EnableBuilderInhericance => true;
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(
-            GetCoreModels(),
+            GetAbstractModels(),
             "DialogFramework.Domain",
             "DialogFramework.Domain.Builders");
 }

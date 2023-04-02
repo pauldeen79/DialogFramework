@@ -17,11 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="pauldeen79.CrossCutting.Common" Version="2.7.25" />
-    <PackageReference Include="pauldeen79.ExpressionFramework.Core" Version="0.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.4.1" />
   </ItemGroup>
 
 </Project>

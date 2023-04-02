@@ -2,16 +2,6 @@
 global using CrossCutting.Common.Extensions;
 global using CrossCutting.Common.Results;
 global using CrossCutting.Common.Testing;
-global using DialogFramework.Abstractions;
-global using DialogFramework.Abstractions.DialogParts;
-global using DialogFramework.Domain.Builders;
-global using DialogFramework.Domain.DialogPartResultAnswerDefinitions;
-global using DialogFramework.Domain.DialogPartResultAnswerDefinitionValidators;
-global using DialogFramework.Domain.DialogParts.Builders;
-global using DialogFramework.Domain.Extensions;
-global using DialogFramework.Domain.QuestionDialogPartValidators;
-global using DialogFramework.Domain.TestData;
-global using ExpressionFramework.Abstractions;
 global using FluentAssertions;
 global using Moq;
 global using Xunit;
