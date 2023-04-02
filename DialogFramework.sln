@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TestFlow.txt = TestFlow.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.CodeGeneration", "src\CodeGeneration\DialogFramework.CodeGeneration.csproj", "{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.CodeGeneration", "src\DialogFramework.CodeGeneration\DialogFramework.CodeGeneration.csproj", "{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application", "src\DialogFramework.Application\DialogFramework.Application.csproj", "{8CC2A534-76E7-4299-97FD-3BA0F58E4C95}"
 EndProject
