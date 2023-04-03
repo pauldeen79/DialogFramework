@@ -8,5 +8,9 @@ public interface IDialogDefinition
     [Required]
     string Id { get; }
     [Required]
+    string Name { get; }
+    [Required]
+    string Version { get; }
+    [Required]
     IReadOnlyCollection<IDialogPartSection> Sections { get; }
 }

@@ -8,6 +8,7 @@ global using DialogFramework.CodeGeneration.CodeGenerationProviders;
 global using DialogFramework.CodeGeneration.Models;
 global using ExpressionFramework.Domain;
 global using ModelFramework.CodeGeneration.CodeGenerationProviders;
+global using ModelFramework.Common.Extensions;
 global using ModelFramework.Objects.Builders;
 global using ModelFramework.Objects.Contracts;
 global using TextTemplateTransformationFramework.Runtime;

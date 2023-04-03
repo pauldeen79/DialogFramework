@@ -8,5 +8,7 @@ public interface IDialog
     [Required]
     string Id { get; }
     [Required]
+    string DefinitionId { get; }
+    [Required]
     IReadOnlyCollection<IDialogPartResult> Results { get; }
 }

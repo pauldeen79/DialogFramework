@@ -3,8 +3,7 @@
 public interface IDialogPartResult
 {
     [Required]
-    string DialogPartId { get; }
+    string DefinitionId { get; }
     [Required]
-    string ResultId { get; }
-    object? Value { get; }
+    string PartId { get; }
 }

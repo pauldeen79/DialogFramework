@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.4.1" />
-    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.6.30" />
+    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.6.31" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DialogFramework.Domain.DialogParts
 {
-    public partial record ClosedQuestionDialogPart
+    public partial record SingleClosedQuestionDialogPart
     {
     }
 }
