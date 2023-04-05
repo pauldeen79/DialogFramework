@@ -13,7 +13,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
     }
 
     [Fact]
-    public void Validate_Returns_Success_When_Condition_Is_False()
+    public void Validate_Returns_Success_When_Condition_Is_False_And_Value_Is_Null()
     {
         // Arrange
         var sut = new ConditionalRequiredValidationRuleBuilder()
@@ -28,6 +28,27 @@ public class ConditionalRequiredValidationRuleBuilderTests
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
+
+        // Assert
+        actual.Status.Should().Be(ResultStatus.Ok);
+    }
+
+    [Fact]
+    public void Validate_Returns_Success_When_Condition_Is_False_And_Value_Is_Not_Null()
+    {
+        // Arrange
+        var sut = new ConditionalRequiredValidationRuleBuilder()
+            .WithCondition(
+                new SingleEvaluatableBuilder()
+                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
+                    .WithOperator(new EqualsOperatorBuilder())
+                    .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
+            )
+            .BuildTyped();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithId("Wrong").Build();
+
+        // Act
+        var actual = sut.Validate("MyId", string.Empty, dialog);
 
         // Assert
         actual.Status.Should().Be(ResultStatus.Ok);
