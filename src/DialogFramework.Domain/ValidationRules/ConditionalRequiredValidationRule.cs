@@ -4,7 +4,7 @@ public partial record ConditionalRequiredValidationRule
 {
     public override Result Validate<T>(string id, T value, Dialog dialog)
     {
-        if (Condition == null || !typeof(T).IsEmptyValue(value))
+        if (!typeof(T).IsEmptyValue(value))
         {
             return Result.Success();
         }
