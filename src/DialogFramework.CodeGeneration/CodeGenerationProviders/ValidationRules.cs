@@ -13,7 +13,7 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
     public override object CreateModel()
         => GetOverrideModels(typeof(IValidationRule))
             .Select(x => new ClassBuilder()
-                .WithNamespace("DialogFramework.Domain.ValidationRules")
+                .WithNamespace(CurrentNamespace)
                 .WithName(x.Name)
                 .WithPartial()
                 .WithRecord()
@@ -24,7 +24,7 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
                     .AddParameters(
                         new ParameterBuilder().WithName("id").WithType(typeof(string)),
                         new ParameterBuilder().WithName("value").WithTypeName("T"),
-                        new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog), GetCoreModels())!)
+                        new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
                     )
                     .WithType(typeof(Result))
                     .AddNotImplementedException()
