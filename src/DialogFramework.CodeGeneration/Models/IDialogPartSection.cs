@@ -4,6 +4,7 @@ public interface IDialogPartSection
 {
     [Required]
     string Id { get; }
+    Evaluatable? Condition { get; }
     [Required]
     string Name { get; }
     [Required]

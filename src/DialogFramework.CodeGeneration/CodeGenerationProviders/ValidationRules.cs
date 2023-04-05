@@ -17,14 +17,17 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
                 .WithName(x.Name)
                 .WithPartial()
                 .WithRecord()
-                //.AddMethods(new ClassMethodBuilder()
-                //    .WithName("ValidationRule")
-                //    .WithOverride()
-                //    .AddParameters(new ParameterBuilder().WithName("context").WithType(typeof(object)).WithIsNullable())
-                //    .AddParameters(new ParameterBuilder().WithName("secondExpression").WithTypeName("DialogFramework.Domain.Expression"))
-                //    .WithTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
-                //    .AddLiteralCodeStatements("throw new NotImplementedException();")
-                //)
+                .AddGenericTypeArguments("T")
+                .AddMethods(new ClassMethodBuilder()
+                    .WithName("Validate")
+                    .WithOverride()
+                    .AddParameters(
+                        new ParameterBuilder().WithName("id").WithType(typeof(string)),
+                        new ParameterBuilder().WithName("value").WithTypeName("T"),
+                        new ParameterBuilder().WithName("dialog").WithTypeName(nameof(IDialog).Substring(1)) //TODO: Make a little easier to use. We want to transform CodeGeneration model into the domain model type
+                    )
+                    .WithType(typeof(Result))
+                    .AddLiteralCodeStatements("throw new NotImplementedException();")
+                )
                 .Build());
-
 }
