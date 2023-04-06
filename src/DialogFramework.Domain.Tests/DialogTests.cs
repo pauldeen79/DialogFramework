@@ -10,7 +10,7 @@ public class DialogTests
         // Arrange
         var builder = new DialogBuilder().WithId(default(string)!);
 
-        // Act
+        // Act & Assert
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
     }
 
@@ -20,8 +20,21 @@ public class DialogTests
         // Arrange
         var builder = new DialogBuilder().WithId(string.Empty);
 
-        // Act
+        // Act & Assert
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+    }
+
+    [Fact]
+    public void Can_Validate_Builder_Before_Building_Entity()
+    {
+        // Arrange
+        var builder = new DialogBuilder().WithId(string.Empty);
+
+        // Act
+        var validationResults = builder.Validate(new ValidationContext(builder));
+
+        // Assert
+        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.", "The DefinitionVersion field is required.");
     }
 
     [Fact]
