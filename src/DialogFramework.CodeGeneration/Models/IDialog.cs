@@ -10,5 +10,7 @@ public interface IDialog
     [Required]
     string DefinitionId { get; }
     [Required]
+    string DefinitionVersion { get; }
+    [Required]
     IReadOnlyCollection<IDialogPartResult> Results { get; }
 }

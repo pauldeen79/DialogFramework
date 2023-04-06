@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Domain.Tests;
+﻿using DialogFramework.Domain.Builders.DialogPartResults;
+
+namespace DialogFramework.Domain.Tests;
 
 public class DialogTests
 {
@@ -20,5 +22,20 @@ public class DialogTests
 
         // Act
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+    }
+
+    [Fact]
+    public void Can_Keep_State_Of_Dialog()
+    {
+        // Act
+        var sut = new DialogBuilder()
+            .WithId(Guid.NewGuid().ToString())
+            .WithDefinitionId("MyDialog")
+            .WithDefinitionVersion("1.0.0")
+            .AddResults(new SingleQuestionDialogPartResultBuilder<string>().WithPartId("MyPart").WithValue("Paul Deen"))
+            .Build();
+
+        // Assert
+        sut.Should().NotBeNull();
     }
 }

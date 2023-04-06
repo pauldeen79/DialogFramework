@@ -7,7 +7,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithId("Correct").Build();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
 
         // Act
         var actual = sut.Validate("MyId", "filled", dialog);
@@ -21,7 +21,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithId("Correct").Build();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -38,7 +38,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithId("Correct").Build();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
 
         // Act
         var actual = sut.Validate("MyId", string.Empty, dialog);
@@ -55,7 +55,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithId("Correct").Build();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
 
         // Act
         var actual = sut.Validate("MyId", default(int), dialog);

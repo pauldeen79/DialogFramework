@@ -68,4 +68,43 @@ public class DialogDefinitionTests
         sut.Sections.First().Parts.First().Condition.Should().NotBeNull();
         sut.Sections.First().Parts.First().Condition!.Evaluate(new { PropertyName = propertyValue }).Value.Should().Be(conditionResult);
     }
+
+    [Fact]
+    public void Ctor_Throws_On_Duplicate_SectionIds()
+    {
+        // Arrange
+        var builder = new DialogDefinitionBuilder()
+            .WithId("Test")
+            .WithVersion("1.0.0")
+            .WithName("Test dialog definition")
+            .AddSections(
+                new DialogPartSectionBuilder().WithId("Id1").WithName("Name1"),
+                new DialogPartSectionBuilder().WithId("Id1").WithName("Name2")
+            );
+
+        // Act
+        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate section ids: Id1");
+    }
+
+    [Fact]
+    public void Ctor_Throws_On_Duplicate_PartIds()
+    {
+        // Arrange
+        var builder = new DialogDefinitionBuilder()
+            .WithId("Test")
+            .WithVersion("1.0.0")
+            .WithName("Test dialog definition")
+            .AddSections(
+                new DialogPartSectionBuilder()
+                    .WithId("Id")
+                    .WithName("Name")
+                    .AddParts(
+                        new LabelDialogPartBuilder().WithId("Id1").WithTitle("Title1"),
+                        new LabelDialogPartBuilder().WithId("Id1").WithTitle("Title2")
+                    )
+            );
+
+        // Act
+        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate part ids: Id1");
+    }
 }
