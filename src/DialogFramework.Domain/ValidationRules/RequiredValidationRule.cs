@@ -9,7 +9,7 @@ public partial record RequiredValidationRule
             return Result.Success();
         }
 
-        return Result.Invalid(new[] { new ValidationError($"{id} is required", new[] { id }) });
+        return Result.Invalid(new[] { new ValidationError($"The {id} field is required.", new[] { id }) });
     }
 }
 

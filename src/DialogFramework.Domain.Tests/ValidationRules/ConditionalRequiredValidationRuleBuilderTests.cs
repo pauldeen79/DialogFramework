@@ -74,7 +74,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         // Assert
         actual.Status.Should().Be(ResultStatus.Invalid);
         actual.ValidationErrors.Should().ContainSingle();
-        actual.ValidationErrors.First().ErrorMessage.Should().Be("MyId is required");
+        actual.ValidationErrors.First().ErrorMessage.Should().Be("The MyId field is required.");
         actual.ValidationErrors.First().MemberNames.Should().BeEquivalentTo("MyId");
     }
 

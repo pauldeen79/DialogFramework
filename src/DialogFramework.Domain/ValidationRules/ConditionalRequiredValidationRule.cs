@@ -17,7 +17,7 @@ public partial record ConditionalRequiredValidationRule
 
         return !result.Value
             ? Result.Success()
-            : Result.Invalid(new[] { new ValidationError($"{id} is required", new[] { id }) });
+            : Result.Invalid(new[] { new ValidationError($"The {id} field is required.", new[] { id }) });
     }
 }
 
