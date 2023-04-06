@@ -13,4 +13,5 @@ public interface IDialog
     string DefinitionVersion { get; }
     [Required]
     IReadOnlyCollection<IDialogPartResult> Results { get; }
+    object? Context { get; }
 }

@@ -3,6 +3,7 @@ global using System.Diagnostics.CodeAnalysis;
 global using CrossCutting.Common.Extensions;
 global using CrossCutting.Common.Results;
 global using DialogFramework.Domain.Builders;
+global using DialogFramework.Domain.Builders.DialogPartResults;
 global using DialogFramework.Domain.Builders.DialogParts;
 global using DialogFramework.Domain.Builders.ValidationRules;
 global using DialogFramework.Domain.Tests.Mocks;

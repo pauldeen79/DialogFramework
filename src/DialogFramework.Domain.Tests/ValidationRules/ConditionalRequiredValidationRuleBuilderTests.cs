@@ -8,7 +8,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         // Arrange
         var builder = new ConditionalRequiredValidationRuleBuilder().WithCondition(default(EvaluatableBuilder)!);
 
-        // Act
+        // Act & Assert
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
     }
 

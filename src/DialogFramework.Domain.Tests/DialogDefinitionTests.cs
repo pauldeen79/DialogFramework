@@ -12,27 +12,32 @@ public class DialogDefinitionTests
             .WithId("MyNamespace.MyId")
             .WithName("MyDialog")
             .WithVersion("1.0.0")
-            .AddSections(
+            .AddSections
+            (
                 new DialogPartSectionBuilder()
                     .WithId("PersonalDetails")
                     .WithName("Personal details")
-                    .WithCondition(
+                    .WithCondition
+                    (
                         new SingleEvaluatableBuilder()
-                            .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("PropertyName")).WithExpression(new ContextExpressionBuilder()))
+                            .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
                             .WithOperator(new EqualsOperatorBuilder())
                             .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
                     )
-                    .AddParts(
+                    .AddParts
+                    (
                         new LabelDialogPartBuilder()
                             .WithId("Welcome")
                             .WithTitle("Welcome to this great app!")
                     )
             ).Build();
+        var dialog = Dialog.Create(sut, Enumerable.Empty<DialogPartResult>(), new { PropertyName = propertyValue });
 
         // Act
-        sut.Sections.Should().ContainSingle();
-        sut.Sections.First().Condition.Should().NotBeNull();
-        sut.Sections.First().Condition!.Evaluate(new { PropertyName = propertyValue }).Value.Should().Be(conditionResult);
+        var evaluationResult = sut.Sections.First().Condition!.Evaluate(dialog);
+
+        // Assert
+        evaluationResult.Value.Should().Be(conditionResult);
     }
 
     [Theory,
@@ -45,28 +50,32 @@ public class DialogDefinitionTests
             .WithId("MyNamespace.MyId")
             .WithName("MyDialog")
             .WithVersion("1.0.0")
-            .AddSections(
+            .AddSections
+            (
                 new DialogPartSectionBuilder()
                     .WithId("PersonalDetails")
                     .WithName("Personal details")
-                    .AddParts(
+                    .AddParts
+                    (
                         new LabelDialogPartBuilder()
                             .WithId("Welcome")
                             .WithTitle("Welcome to this great app!")
-                            .WithCondition(
+                            .WithCondition
+                            (
                                 new SingleEvaluatableBuilder()
-                                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("PropertyName")).WithExpression(new ContextExpressionBuilder()))
+                                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
                                     .WithOperator(new EqualsOperatorBuilder())
                                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
                             )
                     )
             ).Build();
+        var dialog = Dialog.Create(sut, Enumerable.Empty<DialogPartResult>(), new { PropertyName = propertyValue });
 
         // Act
-        sut.Sections.Should().ContainSingle();
-        sut.Sections.First().Parts.Should().ContainSingle();
-        sut.Sections.First().Parts.First().Condition.Should().NotBeNull();
-        sut.Sections.First().Parts.First().Condition!.Evaluate(new { PropertyName = propertyValue }).Value.Should().Be(conditionResult);
+        var evaluationResult = sut.Sections.First().Parts.First().Condition!.Evaluate(dialog);
+
+        // Assert
+        evaluationResult.Value.Should().Be(conditionResult);
     }
 
     [Fact]
@@ -82,7 +91,7 @@ public class DialogDefinitionTests
                 new DialogPartSectionBuilder().WithId("Id1").WithName("Name2")
             );
 
-        // Act
+        // Act & Assert
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate section ids: Id1");
     }
 
@@ -104,7 +113,7 @@ public class DialogDefinitionTests
                     )
             );
 
-        // Act
+        // Act & Assert
         builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate part ids: Id1");
     }
 }

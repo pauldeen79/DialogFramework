@@ -1,6 +1,4 @@
-﻿using DialogFramework.Domain.Builders.DialogPartResults;
-
-namespace DialogFramework.Domain.Tests;
+﻿namespace DialogFramework.Domain.Tests;
 
 public class DialogTests
 {
@@ -46,9 +44,13 @@ public class DialogTests
             .WithDefinitionId("MyDialog")
             .WithDefinitionVersion("1.0.0")
             .AddResults(new SingleQuestionDialogPartResultBuilder<string>().WithPartId("MyPart").WithValue("Paul Deen"))
+            .WithContext(new { PropertyName = "Some Value" })
             .Build();
 
         // Assert
         sut.Should().NotBeNull();
+        sut.Results.Should().ContainSingle();
+        sut.Context.Should().NotBeNull();
+        sut.Context!.GetType().GetProperty("PropertyName").Should().NotBeNull();
     }
 }
