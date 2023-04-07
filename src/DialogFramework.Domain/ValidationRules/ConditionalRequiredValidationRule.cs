@@ -23,5 +23,5 @@ public partial record ConditionalRequiredValidationRule
 
 public partial record ConditionalRequiredValidationRuleBase
 {
-    public override Result Validate<T>(string id, T value, Dialog dialog) => throw new NotImplementedException();
+    public override Result Validate<T>(string id, T value, Dialog dialog) => Result.NotSupported();
 }

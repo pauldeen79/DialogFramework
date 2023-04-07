@@ -2,6 +2,17 @@
 
 public partial record Dialog
 {
-    public static Dialog Create(DialogDefinition definition, IEnumerable<DialogPartResult> results, object? context = null, string? id = null)
-        => new(id ?? Guid.NewGuid().ToString(), definition.Id, definition.Version, results, context);
+    public Dialog(
+        DialogDefinition definition,
+        IEnumerable<DialogPartResult>? results = null,
+        object? context = null,
+        string? id = null)
+        : this(
+              id ?? Guid.NewGuid().ToString(),
+              definition.Id,
+              definition.Version,
+              results ?? Enumerable.Empty<DialogPartResult>(),
+              context)
+    {
+    }
 }

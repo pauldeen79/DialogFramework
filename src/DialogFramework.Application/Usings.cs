@@ -1,3 +1,5 @@
-﻿global using CrossCutting.Common;
+﻿global using CrossCutting.Common.Extensions;
 global using CrossCutting.Common.Results;
-global using Microsoft.Extensions.Logging;
+global using DialogFramework.Domain;
+global using DialogFramework.Domain.Contracts;
+global using Microsoft.Extensions.DependencyInjection;

@@ -31,7 +31,7 @@ public class DialogDefinitionTests
                             .WithTitle("Welcome to this great app!")
                     )
             ).Build();
-        var dialog = Dialog.Create(sut, Enumerable.Empty<DialogPartResult>(), new { PropertyName = propertyValue });
+        var dialog = new Dialog(sut, Enumerable.Empty<DialogPartResult>(), context: new { PropertyName = propertyValue });
 
         // Act
         var evaluationResult = sut.Sections.First().Condition!.Evaluate(dialog);
@@ -69,7 +69,7 @@ public class DialogDefinitionTests
                             )
                     )
             ).Build();
-        var dialog = Dialog.Create(sut, Enumerable.Empty<DialogPartResult>(), new { PropertyName = propertyValue });
+        var dialog = new Dialog(sut, Enumerable.Empty<DialogPartResult>(), context: new { PropertyName = propertyValue });
 
         // Act
         var evaluationResult = sut.Sections.First().Parts.First().Condition!.Evaluate(dialog);

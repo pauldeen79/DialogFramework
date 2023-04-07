@@ -45,7 +45,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", "filled", dialog);
@@ -66,7 +66,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -90,7 +90,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -107,7 +107,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(new MyEvaluatableWithEmptyErrorMessageBuilder())
             .BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -129,7 +129,10 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBase(condition);
         var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
 
-        // Act & Assert
-        sut.Invoking(x => x.Validate("Id", false, dialog)).Should().Throw<NotImplementedException>();
+        // Act
+        var result = sut.Validate("Id", false, dialog);
+
+        // Assert
+        result.Status.Should().Be(ResultStatus.NotSupported);
     }
 }

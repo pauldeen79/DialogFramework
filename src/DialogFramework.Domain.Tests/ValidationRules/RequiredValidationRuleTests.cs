@@ -7,7 +7,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", "filled", dialog);
@@ -21,7 +21,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -38,7 +38,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", string.Empty, dialog);
@@ -55,7 +55,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+        var dialog = TestDialogFactory.Create();
 
         // Act
         var actual = sut.Validate("MyId", default(int), dialog);
@@ -71,7 +71,10 @@ public class RequiredValidationRuleTests
         var sut = new RequiredValidationRuleBase();
         var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
 
-        // Act & Assert
-        sut.Invoking(x => x.Validate("Id", false, dialog)).Should().Throw<NotImplementedException>();
+        // Act
+        var result = sut.Validate("Id", false, dialog);
+
+        // Assert
+        result.Status.Should().Be(ResultStatus.NotSupported);
     }
 }

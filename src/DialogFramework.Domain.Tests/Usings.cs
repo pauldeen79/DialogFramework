@@ -7,6 +7,7 @@ global using DialogFramework.Domain.Builders.DialogPartResults;
 global using DialogFramework.Domain.Builders.DialogParts;
 global using DialogFramework.Domain.Builders.ValidationRules;
 global using DialogFramework.Domain.Tests.Mocks;
+global using DialogFramework.Domain.Tests.TestData;
 global using DialogFramework.Domain.ValidationRules;
 global using ExpressionFramework.Domain;
 global using ExpressionFramework.Domain.Builders;
