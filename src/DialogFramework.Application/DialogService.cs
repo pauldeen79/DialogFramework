@@ -13,39 +13,10 @@ public class DialogService : IDialogService
 
     public Result<Dialog> Submit(Dialog dialog)
     {
-        // First validate all submitted data
-        var definitionResult = _dialogRepository.Get(dialog.DefinitionId, dialog.DefinitionVersion);
-        if (!definitionResult.IsSuccessful())
+        var validationResult = Validate(dialog);
+        if (!validationResult.IsSuccessful())
         {
-            return Result<Dialog>.FromExistingResult(definitionResult);
-        }
-        var definition = definitionResult.GetValueOrThrow();
-
-        var validationErrors = new List<ValidationError>();
-        foreach (var dialogPartResult in dialog.Results)
-        {
-            var partResult = definition.GetPartById(dialogPartResult.PartId);
-            if (!partResult.IsSuccessful())
-            {
-                return Result<Dialog>.FromExistingResult(partResult);
-            }
-            var part = partResult.GetValueOrThrow();
-            if (part is IValidatableDialogPart validatableDialogPart)
-            {
-                var validationResult = validatableDialogPart.Validate(dialogPartResult.GetValue(), dialog);
-                if (validationResult.Status == ResultStatus.Invalid)
-                {
-                    validationErrors.AddRange(validationResult.ValidationErrors);
-                }
-                if (!validationResult.IsSuccessful())
-                {
-                    return Result<Dialog>.FromExistingResult(validationResult);
-                }
-            }
-        }
-        if (validationErrors.Any())
-        {
-            return Result<Dialog>.Invalid("Validation failed", validationErrors);
+            return Result<Dialog>.FromExistingResult(validationResult, dialog);
         }
 
         var supportedSubmitters = _submitters.Where(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).ToArray();
@@ -59,5 +30,63 @@ public class DialogService : IDialogService
         var submitter = supportedSubmitters.Last();
 
         return submitter.Submit(dialog);
+    }
+
+    public Result Validate(Dialog dialog)
+    {
+        var definitionResult = _dialogRepository.Get(dialog.DefinitionId, dialog.DefinitionVersion);
+        if (!definitionResult.IsSuccessful())
+        {
+            return definitionResult;
+        }
+
+        var definition = definitionResult.GetValueOrThrow();
+        var validationErrors = new List<ValidationError>();
+
+        var allPartsResult = definition.GetAllParts();
+        if (!allPartsResult.IsSuccessful())
+        {
+            return allPartsResult;
+        }
+
+        var allParts = allPartsResult.GetValueOrThrow();
+        foreach (var part in allParts)
+        {
+            if (part is not IValidatableDialogPart validatableDialogPart)
+            {
+                continue;
+            }
+            
+            var valueResult = dialog.GetResultValueByPartId(part.Id);
+            object? value;
+            if (valueResult.Status == ResultStatus.NotFound)
+            {
+                value = null;
+            }
+            else if (valueResult.Status == ResultStatus.Ok)
+            {
+                value = valueResult.Value;
+            }
+            else
+            {
+                // something went wrong
+                return valueResult;
+            }
+
+            var validationResult = validatableDialogPart.Validate(value, dialog);
+            if (!validationResult.IsSuccessful())
+            {
+                return validationResult;
+            }
+
+            if (validationResult.Status == ResultStatus.Invalid)
+            {
+                validationErrors.AddRange(validationResult.ValidationErrors);
+            }
+        }
+
+        return validationErrors.Any()
+            ? Result.Invalid("Validation failed", validationErrors)
+            : Result.Success();
     }
 }

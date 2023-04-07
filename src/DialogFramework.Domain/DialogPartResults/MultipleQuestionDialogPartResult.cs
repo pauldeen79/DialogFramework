@@ -2,6 +2,6 @@
 
 public partial record MultipleQuestionDialogPartResult<T>
 {
-    public override object? GetValue() => Values;
+    public override Result<object?> GetValue() => Result<object?>.Success(Values);
 }
 

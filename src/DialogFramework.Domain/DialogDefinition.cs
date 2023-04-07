@@ -18,4 +18,6 @@ public partial record DialogDefinition : IValidatableObject
     }
 
     public Result<DialogPart> GetPartById(string id) => Sections.SelectMany(x => x.Parts).FirstOrDefault(x => x.Id == id).ToResult($"Dialog part id [{id}] could not be found");
+
+    public Result<IEnumerable<DialogPart>> GetAllParts() => Result<IEnumerable<DialogPart>>.Success(Sections.SelectMany(x => x.Parts));
 }

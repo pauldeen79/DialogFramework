@@ -15,4 +15,13 @@ public partial record Dialog
               context)
     {
     }
+
+    public Result<object?> GetResultValueByPartId(string partId)
+    {
+        var dialogPartResult = Results.FirstOrDefault(x => x.PartId == partId);
+
+        return dialogPartResult == null
+            ? Result<object?>.NotFound($"Could not find dialog part result with id [{partId}]")
+            : dialogPartResult.GetValue();
+    }
 }

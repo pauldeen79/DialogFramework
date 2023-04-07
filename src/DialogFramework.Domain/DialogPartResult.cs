@@ -2,5 +2,5 @@
 
 public partial record DialogPartResult
 {
-    public abstract object? GetValue();
+    public abstract Result<object?> GetValue();
 }
