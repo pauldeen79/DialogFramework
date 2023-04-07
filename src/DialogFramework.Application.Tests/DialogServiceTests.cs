@@ -4,11 +4,16 @@ public sealed class DialogServiceTests : IDisposable
 {
     private readonly ServiceProvider _provider;
     private readonly Mock<IDialogSubmitter> _dialogSubmitterMock;
+    private readonly Mock<IDialogRepository> _dialogRepositoryMock;
 
     public DialogServiceTests()
     {
         _dialogSubmitterMock = new();
-        _provider = new ServiceCollection().AddDialogFramework(x => x.AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)).BuildServiceProvider();
+        _dialogRepositoryMock = new();
+        _provider = new ServiceCollection().AddDialogFramework(x =>
+            x.AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)
+             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock.Object)
+            ).BuildServiceProvider();
     }
 
     [Fact]
@@ -16,7 +21,9 @@ public sealed class DialogServiceTests : IDisposable
     {
         // Arrange
         var dialog = TestDialogFactory.Create();
+        var definition = TestDialogDefinitionFactory.Create();
         _dialogSubmitterMock.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(false);
+        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
 
         // Act
         var result = CreateSut().Submit(dialog);
@@ -30,14 +37,18 @@ public sealed class DialogServiceTests : IDisposable
     {
         // Arrange
         var dialog = TestDialogFactory.Create();
+        var definition = TestDialogDefinitionFactory.Create();
         var resultDialog = TestDialogFactory.Create();
         _dialogSubmitterMock.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(true);
         _dialogSubmitterMock.Setup(x => x.Submit(It.IsAny<Dialog>())).Returns(Result<Dialog>.Success(resultDialog));
+        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
         var dialogSubmitterMock1 = new Mock<IDialogSubmitter>();
         dialogSubmitterMock1.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(true);
         using var provider = new ServiceCollection().AddDialogFramework(x =>
             x.AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1.Object)
-             .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)).BuildServiceProvider();
+             .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)
+             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock.Object)
+             ).BuildServiceProvider();
         var sut = provider.GetRequiredService<IDialogService>();
 
         // Act

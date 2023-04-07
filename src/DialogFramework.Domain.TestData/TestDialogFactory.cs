@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.TestData;
+﻿namespace DialogFramework.Domain.TestData;
 
 public static class TestDialogFactory
 {

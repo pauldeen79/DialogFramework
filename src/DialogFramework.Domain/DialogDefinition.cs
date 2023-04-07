@@ -16,4 +16,6 @@ public partial record DialogDefinition : IValidatableObject
             yield return new ValidationResult($"Duplicate part ids: {string.Join(", ", duplicatePartIds.Select(x => x.Key))}", new[] { nameof(Sections) });
         }
     }
+
+    public Result<DialogPart> GetPartById(string id) => Sections.SelectMany(x => x.Parts).FirstOrDefault(x => x.Id == id).ToResult($"Dialog part id [{id}] could not be found");
 }

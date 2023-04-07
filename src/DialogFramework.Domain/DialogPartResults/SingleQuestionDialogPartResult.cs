@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace DialogFramework.Domain.DialogPartResults;
 
-namespace DialogFramework.Domain.DialogPartResults
+public partial record SingleQuestionDialogPartResult<T>
 {
-    public partial record SingleQuestionDialogPartResult
-    {
-    }
+    public override object? GetValue() => Value;
 }
 

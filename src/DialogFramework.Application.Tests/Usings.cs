@@ -2,7 +2,7 @@
 global using DialogFramework.Application.Extensions;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Contracts;
-global using DialogFramework.Domain.Tests.TestData;
+global using DialogFramework.Domain.TestData;
 global using FluentAssertions;
 global using Microsoft.Extensions.DependencyInjection;
 global using Moq;

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace DialogFramework.Domain.DialogParts;
 
-namespace DialogFramework.Domain.DialogParts
+public partial record MultipleClosedQuestionDialogPart : IValidatableDialogPart
 {
-    public partial record MultipleClosedQuestionDialogPart
-    {
-    }
+    public Result Validate<T>(T value, Dialog dialog) => Validate(value, dialog, ValidationRules);
 }
 
