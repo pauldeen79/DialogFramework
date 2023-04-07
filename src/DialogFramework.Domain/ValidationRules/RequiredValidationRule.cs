@@ -13,3 +13,7 @@ public partial record RequiredValidationRule
     }
 }
 
+public partial record RequiredValidationRuleBase
+{
+    public override Result Validate<T>(string id, T value, Dialog dialog) => throw new NotImplementedException();
+}

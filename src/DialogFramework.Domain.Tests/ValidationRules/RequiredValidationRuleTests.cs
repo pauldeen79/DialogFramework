@@ -63,4 +63,15 @@ public class RequiredValidationRuleTests
         // Assert
         actual.Status.Should().Be(ResultStatus.Ok);
     }
+
+    [Fact]
+    public void BaseClass_Cannot_Validate()
+    {
+        // Arrange
+        var sut = new RequiredValidationRuleBase();
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
+
+        // Act & Assert
+        sut.Invoking(x => x.Validate("Id", false, dialog)).Should().Throw<NotImplementedException>();
+    }
 }

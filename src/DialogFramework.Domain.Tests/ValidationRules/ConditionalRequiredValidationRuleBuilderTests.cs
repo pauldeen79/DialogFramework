@@ -116,4 +116,20 @@ public class ConditionalRequiredValidationRuleBuilderTests
         actual.Status.Should().Be(ResultStatus.Error);
         actual.ErrorMessage.Should().Be("Condition evaluation failed");
     }
+
+    [Fact]
+    public void BaseClass_Cannot_Validate()
+    {
+        // Arrange
+        var condition = new SingleEvaluatableBuilder()
+            .WithLeftExpression(new EmptyExpressionBuilder())
+            .WithOperator(new EqualsOperatorBuilder())
+            .WithRightExpression(new EmptyExpressionBuilder())
+            .Build();
+        var sut = new ConditionalRequiredValidationRuleBase(condition);
+        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
+
+        // Act & Assert
+        sut.Invoking(x => x.Validate("Id", false, dialog)).Should().Throw<NotImplementedException>();
+    }
 }

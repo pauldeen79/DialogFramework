@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.4.2" />
-    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.6.39" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.4.3" />
+    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.6.40" />
   </ItemGroup>
 
   <ItemGroup>
