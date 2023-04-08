@@ -24,4 +24,14 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     {
         yield return new KeyValuePair<string, string>("ExpressionFramework.Domain", "ExpressionFramework.Domain.Builders");
     }
+
+    protected override void FixImmutableBuilderProperty(ClassPropertyBuilder property, string typeName)
+    {
+        if (typeName == typeof(Version).FullName)
+        {
+            property.SetDefaultValueForBuilderClassConstructor(new Literal($"new {typeof(Version).FullName}(1, 0, 0)"));
+        }
+        
+        base.FixImmutableBuilderProperty(property, typeName);
+    }
 }

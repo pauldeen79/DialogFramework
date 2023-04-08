@@ -10,6 +10,7 @@ global using DialogFramework.CodeGeneration.Models;
 global using DialogFramework.CodeGeneration.Models.DialogParts.BaseTypes;
 global using ExpressionFramework.Domain;
 global using ModelFramework.CodeGeneration.CodeGenerationProviders;
+global using ModelFramework.Common;
 global using ModelFramework.Objects.Builders;
 global using ModelFramework.Objects.Contracts;
 global using ModelFramework.Objects.Settings;

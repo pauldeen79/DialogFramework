@@ -32,7 +32,7 @@ public class DialogTests
         var validationResults = builder.Validate(new ValidationContext(builder));
 
         // Assert
-        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.", "The DefinitionVersion field is required.");
+        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.");
     }
 
     [Fact]
@@ -42,7 +42,6 @@ public class DialogTests
         var sut = new DialogBuilder()
             .WithId(Guid.NewGuid().ToString())
             .WithDefinitionId("MyDialog")
-            .WithDefinitionVersion(new Version(1, 0, 0))
             .AddResults(new SingleQuestionDialogPartResultBuilder<string>().WithPartId("MyPart").WithValue("Paul Deen"))
             .WithContext(new { PropertyName = "Some Value" })
             .Build();
