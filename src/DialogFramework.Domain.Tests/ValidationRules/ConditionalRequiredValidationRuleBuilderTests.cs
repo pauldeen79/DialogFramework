@@ -24,7 +24,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
+        var dialog = TestDialogFactory.Create(id: "Wrong");
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -127,7 +127,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
             .WithRightExpression(new EmptyExpressionBuilder())
             .Build();
         var sut = new ConditionalRequiredValidationRuleBase(condition);
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
+        var dialog = TestDialogFactory.Create(id: "Wrong");
 
         // Act
         var result = sut.Validate("Id", false, dialog);

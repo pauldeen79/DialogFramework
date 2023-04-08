@@ -2,5 +2,5 @@
 
 public interface IDialogRepository
 {
-    Result<DialogDefinition> Get(string id, string version);
+    Result<DialogDefinition> Get(string id, Version version);
 }

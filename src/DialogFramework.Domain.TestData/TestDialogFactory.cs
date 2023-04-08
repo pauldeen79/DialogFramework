@@ -2,5 +2,10 @@
 
 public static class TestDialogFactory
 {
-    public static Dialog Create() => new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Correct").Build();
+    public static Dialog Create(string id = "Correct")
+        => new DialogBuilder()
+            .WithDefinitionId("MyDialogDefinition")
+            .WithDefinitionVersion(new Version(1, 0, 0))
+            .WithId(id)
+            .Build();
 }

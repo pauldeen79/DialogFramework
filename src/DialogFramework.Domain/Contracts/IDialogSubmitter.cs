@@ -2,6 +2,6 @@
 
 public interface IDialogSubmitter
 {
-    bool SupportsDialog(string id, string version);
+    bool SupportsDialog(string id, Version version);
     Result<Dialog> Submit(Dialog dialog);
 }

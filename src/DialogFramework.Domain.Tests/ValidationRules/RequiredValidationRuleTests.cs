@@ -69,7 +69,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBase();
-        var dialog = new DialogBuilder().WithDefinitionId("MyDialogDefinition").WithDefinitionVersion("1.0.0").WithId("Wrong").Build();
+        var dialog = TestDialogFactory.Create(id: "Wrong");
 
         // Act
         var result = sut.Validate("Id", false, dialog);

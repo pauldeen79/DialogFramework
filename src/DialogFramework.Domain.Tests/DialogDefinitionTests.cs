@@ -11,7 +11,7 @@ public class DialogDefinitionTests
         var sut = new DialogDefinitionBuilder()
             .WithId("MyNamespace.MyId")
             .WithName("MyDialog")
-            .WithVersion("1.0.0")
+            .WithVersion(new Version(1, 0, 0))
             .AddSections
             (
                 new DialogPartSectionBuilder()
@@ -49,7 +49,7 @@ public class DialogDefinitionTests
         var sut = new DialogDefinitionBuilder()
             .WithId("MyNamespace.MyId")
             .WithName("MyDialog")
-            .WithVersion("1.0.0")
+            .WithVersion(new Version(1, 0, 0))
             .AddSections
             (
                 new DialogPartSectionBuilder()
@@ -84,7 +84,7 @@ public class DialogDefinitionTests
         // Arrange
         var builder = new DialogDefinitionBuilder()
             .WithId("Test")
-            .WithVersion("1.0.0")
+            .WithVersion(new Version(1, 0, 0))
             .WithName("Test dialog definition")
             .AddSections(
                 new DialogPartSectionBuilder().WithId("Id1").WithName("Name1"),
@@ -101,7 +101,7 @@ public class DialogDefinitionTests
         // Arrange
         var builder = new DialogDefinitionBuilder()
             .WithId("Test")
-            .WithVersion("1.0.0")
+            .WithVersion(new Version(1, 0, 0))
             .WithName("Test dialog definition")
             .AddSections(
                 new DialogPartSectionBuilder()

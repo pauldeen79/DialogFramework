@@ -10,7 +10,7 @@ public interface IDialogDefinition
     [Required]
     string Name { get; }
     [Required]
-    string Version { get; }
+    Version Version { get; }
     [Required]
     IReadOnlyCollection<IDialogPartSection> Sections { get; }
 }

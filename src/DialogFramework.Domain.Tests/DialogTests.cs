@@ -42,7 +42,7 @@ public class DialogTests
         var sut = new DialogBuilder()
             .WithId(Guid.NewGuid().ToString())
             .WithDefinitionId("MyDialog")
-            .WithDefinitionVersion("1.0.0")
+            .WithDefinitionVersion(new Version(1, 0, 0))
             .AddResults(new SingleQuestionDialogPartResultBuilder<string>().WithPartId("MyPart").WithValue("Paul Deen"))
             .WithContext(new { PropertyName = "Some Value" })
             .Build();
