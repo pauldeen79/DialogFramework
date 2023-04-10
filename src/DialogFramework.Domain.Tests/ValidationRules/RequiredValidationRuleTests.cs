@@ -7,7 +7,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", "filled", dialog);
@@ -21,7 +21,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -38,7 +38,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", string.Empty, dialog);
@@ -55,7 +55,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBuilder().BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", default(int), dialog);
@@ -69,7 +69,7 @@ public class RequiredValidationRuleTests
     {
         // Arrange
         var sut = new RequiredValidationRuleBase();
-        var dialog = TestDialogFactory.Create(id: "Wrong");
+        var dialog = TestDialogFactory.CreateEmpty(id: "Wrong");
 
         // Act
         var result = sut.Validate("Id", false, dialog);

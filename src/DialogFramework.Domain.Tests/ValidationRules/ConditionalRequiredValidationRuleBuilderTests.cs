@@ -24,7 +24,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = TestDialogFactory.Create(id: "Wrong");
+        var dialog = TestDialogFactory.CreateEmpty(id: "Wrong");
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -45,7 +45,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", "filled", dialog);
@@ -66,7 +66,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -90,7 +90,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
             .BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -107,7 +107,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(new MyEvaluatableWithEmptyErrorMessageBuilder())
             .BuildTyped();
-        var dialog = TestDialogFactory.Create();
+        var dialog = TestDialogFactory.CreateEmpty();
 
         // Act
         var actual = sut.Validate("MyId", default(string?), dialog);
@@ -127,7 +127,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
             .WithRightExpression(new EmptyExpressionBuilder())
             .Build();
         var sut = new ConditionalRequiredValidationRuleBase(condition);
-        var dialog = TestDialogFactory.Create(id: "Wrong");
+        var dialog = TestDialogFactory.CreateEmpty(id: "Wrong");
 
         // Act
         var result = sut.Validate("Id", false, dialog);

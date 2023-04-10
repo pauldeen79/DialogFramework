@@ -43,13 +43,7 @@ public class DialogService : IDialogService
         var definition = definitionResult.GetValueOrThrow();
         var validationErrors = new List<ValidationError>();
 
-        var allPartsResult = definition.GetAllParts();
-        if (!allPartsResult.IsSuccessful())
-        {
-            return allPartsResult;
-        }
-
-        var allParts = allPartsResult.GetValueOrThrow();
+        var allParts = definition.GetAllParts();
         foreach (var part in allParts)
         {
             if (part is not IValidatableDialogPart validatableDialogPart)
@@ -63,25 +57,21 @@ public class DialogService : IDialogService
             {
                 value = null;
             }
-            else if (valueResult.Status == ResultStatus.Ok)
+            else // valueResult.Status is currently always ResultStatus.Ok
             {
                 value = valueResult.Value;
             }
-            else
-            {
-                // something went wrong
-                return valueResult;
-            }
 
             var validationResult = validatableDialogPart.Validate(value, dialog);
-            if (!validationResult.IsSuccessful())
-            {
-                return validationResult;
-            }
-
             if (validationResult.Status == ResultStatus.Invalid)
             {
                 validationErrors.AddRange(validationResult.ValidationErrors);
+            }
+            else if (!validationResult.IsSuccessful())
+            {
+                // something went wrong. this is an abstract method, so we need to check it.
+                // note that this is a short-circuit result instead of aggregated validation results.
+                return validationResult;
             }
         }
 
