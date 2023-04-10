@@ -17,11 +17,9 @@ public partial record Dialog
     }
 
     public Result<object?> GetResultValueByPartId(string partId)
-    {
-        var dialogPartResult = Results.FirstOrDefault(x => x.PartId == partId);
-
-        return dialogPartResult == null
-            ? Result<object?>.NotFound($"Could not find dialog part result with id [{partId}]")
-            : dialogPartResult.GetValue();
-    }
+        => Results.FirstOrDefault(x => x.PartId == partId) switch
+        {
+            DialogPartResult result => result.GetValue(),
+            _ => Result<object?>.NotFound($"Could not find dialog part result with id [{partId}]")
+        };
 }
