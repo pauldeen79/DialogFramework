@@ -12,22 +12,47 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
 
     public override object CreateModel()
         => GetOverrideModels(typeof(IValidationRule))
-            .Select(x => new ClassBuilder()
-                .WithNamespace(CurrentNamespace)
-                .WithName(x.Name)
-                .WithPartial()
-                .WithRecord()
-                .AddMethods(new ClassMethodBuilder()
-                    .WithName("Validate")
-                    .WithOverride()
-                    .AddGenericTypeArguments("T")
-                    .AddParameters(
-                        new ParameterBuilder().WithName("id").WithType(typeof(string)),
-                        new ParameterBuilder().WithName("value").WithTypeName("T"),
-                        new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
+            .SelectMany(x => new[]
+            {
+                new ClassBuilder()
+                    .WithNamespace(CurrentNamespace)
+                    .WithName(x.Name)
+                    .WithPartial()
+                    .WithRecord()
+                    .AddMethods(new ClassMethodBuilder()
+                        .WithName("Validate")
+                        .WithOverride()
+                        .AddGenericTypeArguments("T")
+                        .AddParameters(
+                            new ParameterBuilder().WithName("id").WithType(typeof(string)),
+                            new ParameterBuilder().WithName("value").WithTypeName("T"),
+                            new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
+                        )
+                        .WithType(typeof(Result))
+                        .AddNotImplementedException()
                     )
-                    .WithType(typeof(Result))
-                    .AddNotImplementedException()
-                )
-                .Build());
+                    .AddGenericTypeArguments(x.GenericTypeArguments)
+                    .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
+                    .Build(),
+                new ClassBuilder()
+                    .WithNamespace(CurrentNamespace)
+                    .WithName($"{x.Name}Base")
+                    .WithPartial()
+                    .WithRecord()
+                    .AddMethods(new ClassMethodBuilder()
+                        .WithName("Validate")
+                        .WithOverride()
+                        .AddGenericTypeArguments("T")
+                        .AddParameters(
+                            new ParameterBuilder().WithName("id").WithType(typeof(string)),
+                            new ParameterBuilder().WithName("value").WithTypeName("T"),
+                            new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
+                        )
+                        .WithType(typeof(Result))
+                        .AddLiteralCodeStatements("return Result.NotSupported();")
+                    )
+                    .AddGenericTypeArguments(x.GenericTypeArguments)
+                    .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
+                    .Build(),
+            });
 }

@@ -23,6 +23,8 @@ public class DialogPartResults : DialogFrameworkCSharpClassBase
                     .WithTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
                     .AddNotImplementedException()
                 )
+                .AddGenericTypeArguments(x.GenericTypeArguments)
+                .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
                 .Build());
 
 }

@@ -12,8 +12,3 @@ public partial record RequiredValidationRule
         return Result.Invalid(new[] { new ValidationError($"The {id} field is required.", new[] { id }) });
     }
 }
-
-public partial record RequiredValidationRuleBase
-{
-    public override Result Validate<T>(string id, T value, Dialog dialog) => Result.NotSupported();
-}
