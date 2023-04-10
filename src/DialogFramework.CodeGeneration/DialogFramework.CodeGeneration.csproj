@@ -18,8 +18,4 @@
     <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.6.45" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CodeGenerationProviders\Domains\" />
-  </ItemGroup>
-
 </Project>

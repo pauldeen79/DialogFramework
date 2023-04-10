@@ -17,14 +17,12 @@ public class DialogPartResults : DialogFrameworkCSharpClassBase
                 .WithName(x.Name)
                 .WithPartial()
                 .WithRecord()
-                //.AddMethods(new ClassMethodBuilder()
-                //    .WithName("DialogPartResult")
-                //    .WithOverride()
-                //    .AddParameters(new ParameterBuilder().WithName("context").WithType(typeof(object)).WithIsNullable())
-                //    .AddParameters(new ParameterBuilder().WithName("secondExpression").WithTypeName("DialogFramework.Domain.Expression"))
-                //    .WithTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
-                //    .AddLiteralCodeStatements("throw new NotImplementedException();")
-                //)
+                .AddMethods(new ClassMethodBuilder()
+                    .WithName("GetValue")
+                    .WithOverride()
+                    .WithTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
+                    .AddNotImplementedException()
+                )
                 .Build());
 
 }
