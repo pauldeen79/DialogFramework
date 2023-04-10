@@ -23,6 +23,16 @@ public class DialogTests
     }
 
     [Fact]
+    public void Constructing_Dialog_With_Null_Optional_Parameters_Initializes_Correctly()
+    {
+        // Act
+        var sut = new Dialog(TestDialogDefinitionFactory.CreateEmpty(), null, null, null);
+
+        // Assert
+        sut.Id.Should().NotBeEmpty();
+    }
+
+    [Fact]
     public void Can_Validate_Builder_Before_Building_Entity()
     {
         // Arrange

@@ -13,6 +13,10 @@ public static class TypeExtensions
         {
             return string.IsNullOrEmpty(s);
         }
+        else if (value is IEnumerable e)
+        {
+            return !e.OfType<object>().Any();
+        }
 
         return (object?)value == instance.GetDefaultValue();
     }

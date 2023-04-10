@@ -2,7 +2,7 @@
 
 public partial record DialogPart
 {
-    protected Result Validate<T>(T value, Dialog dialog, IReadOnlyCollection<ValidationRule> validationRules)
+    public Result Validate<T>(T value, Dialog dialog, IReadOnlyCollection<ValidationRule> validationRules)
     {
         var validationErrors = new List<ValidationError>();
         foreach (var rule in validationRules)
