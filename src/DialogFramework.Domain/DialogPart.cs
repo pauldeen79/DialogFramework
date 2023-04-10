@@ -19,8 +19,6 @@ public partial record DialogPart
             }
         }
 
-        return validationErrors.Any()
-            ? Result.Invalid($"Validation for dialog part with id [{Id}] failed", validationErrors)
-            : Result.Success();
+        return Result.FromValidationErrors(validationErrors, $"Validation for dialog part with id [{Id}] failed");
     }
 }

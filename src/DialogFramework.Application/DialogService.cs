@@ -75,8 +75,6 @@ public class DialogService : IDialogService
             }
         }
 
-        return validationErrors.Any()
-            ? Result.Invalid("Validation failed", validationErrors)
-            : Result.Success();
+        return Result.FromValidationErrors(validationErrors, "Validation failed");
     }
 }
