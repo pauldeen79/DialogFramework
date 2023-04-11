@@ -15,12 +15,12 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override bool AddBackingFieldsForCollectionProperties => true;
     protected override bool AddPrivateSetters => true;
     protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.Optional;
-    protected override string[] GetModelAbstractBaseTyped() => new[] { "IEditableQuestionDialogPart" };
-    protected override string[] GetExternalCustomBuilderTypes() => new[] { "Evaluatable" };
+    protected override string[] GetModelAbstractBaseTyped() => new[] { nameof(IEditableQuestionDialogPart) };
+    protected override string[] GetExternalCustomBuilderTypes() => new[] { nameof(Evaluatable) };
 
     protected override IEnumerable<KeyValuePair<string, string>> GetCustomBuilderNamespaceMapping()
     {
-        yield return new KeyValuePair<string, string>("ExpressionFramework.Domain", "ExpressionFramework.Domain.Builders");
+        yield return new KeyValuePair<string, string>(typeof(Evaluatable).Namespace!, $"{typeof(Evaluatable).Namespace!}.Builders");
     }
 
     protected override void FixImmutableBuilderProperty(ClassPropertyBuilder property, string typeName)
