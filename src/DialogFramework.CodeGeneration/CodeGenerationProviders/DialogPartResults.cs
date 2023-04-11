@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class DialogPartResults : DialogFrameworkCSharpClassBase
 {
-    public override string Path => $"{Constants.Namespaces.Domain}/DialogPartResults";
+    public override string Path => $"{Constants.Namespaces.Domain}/{nameof(DialogPartResults)}";
     public override string LastGeneratedFilesFileName => string.Empty;
 
     protected override string FileNameSuffix => string.Empty;
@@ -12,7 +12,7 @@ public class DialogPartResults : DialogFrameworkCSharpClassBase
     public override object CreateModel()
         => GetOverrideModels(typeof(IDialogPartResult))
             .Select(x => new ClassBuilder()
-                .WithNamespace($"{Constants.Namespaces.Domain}.DialogPartResults")
+                .WithNamespace(CurrentNamespace)
                 .WithName(x.Name)
                 .WithPartial()
                 .WithRecord()

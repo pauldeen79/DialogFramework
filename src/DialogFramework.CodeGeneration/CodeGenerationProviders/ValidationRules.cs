@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class ValidationRules : DialogFrameworkCSharpClassBase
 {
-    public override string Path => $"{Constants.Namespaces.Domain}/ValidationRules";
+    public override string Path => $"{Constants.Namespaces.Domain}/{nameof(ValidationRules)}";
     public override string LastGeneratedFilesFileName => string.Empty;
 
     protected override string FileNameSuffix => string.Empty;
