@@ -24,6 +24,6 @@ public static class TestDialogDefinitionFactory
     public static DialogDefinition CreateDialogWithCustomDialogPart(DialogPart part) => new(
         "MyDialogWithRequiredQuestion",
         "My dialog with required question",
-        new Version(),
+        new Version(1, 0, 0),
         new[] { new DialogPartSection("Id", null, "Name", new[] { part }) });
 }
