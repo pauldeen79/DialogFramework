@@ -14,15 +14,15 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 6.0.x
+          dotnet-version: 7.0.x
       - name: Restore
         run: dotnet restore
       - name: Build code generation
         run: dotnet build src/DialogFramework.CodeGeneration/DialogFramework.CodeGeneration.csproj -c Release --no-restore
       - name: Run code generation
-        run: dotnet src/DialogFramework.CodeGeneration/bin/Release/net6.0/DialogFramework.CodeGeneration.dll
+        run: dotnet src/DialogFramework.CodeGeneration/bin/Release/net7.0/DialogFramework.CodeGeneration.dll
       - name: sonarscan-dotnet
-        uses: highbyte/sonarscan-dotnet@v2.1.2
+        uses: highbyte/sonarscan-dotnet@v2.2.2
         with:
           sonarProjectKey: pauldeen79_DialogFramework
           sonarProjectName: DialogFramework
