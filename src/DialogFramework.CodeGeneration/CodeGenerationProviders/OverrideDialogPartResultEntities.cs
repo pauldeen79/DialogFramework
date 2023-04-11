@@ -3,14 +3,13 @@
 [ExcludeFromCodeCoverage]
 public class OverrideDialogPartResultEntities : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Domain/DialogPartResults";
-    public override string DefaultFileName => "Entities.generated.cs";
+    public override string Path => $"{Constants.Namespaces.Domain}/DialogPartResults";
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override IClass? BaseClass => CreateBaseclass(typeof(IDialogPartResult), "DialogFramework.Domain");
+    protected override IClass? BaseClass => CreateBaseclass(typeof(IDialogPartResult), Constants.Namespaces.Domain);
     protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.Never; // there are no properties in DialogPartResults, so this is not necessary
 
     public override object CreateModel()
-        => GetImmutableClasses(GetOverrideModels(typeof(IDialogPartResult)), "DialogFramework.Domain.DialogPartResults");
+        => GetImmutableClasses(GetOverrideModels(typeof(IDialogPartResult)), $"{Constants.Namespaces.Domain}.DialogPartResults");
 }

@@ -3,16 +3,15 @@
 [ExcludeFromCodeCoverage]
 public class DialogPartResultBuilderFactory : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Domain.Builders";
-    public override string DefaultFileName => "Builders.template.generated.cs";
+    public override string Path => Constants.Namespaces.DomainBuilders;
 
     public override object CreateModel()
         => CreateBuilderFactoryModels(
             GetOverrideModels(typeof(IDialogPartResult)),
-            new("DialogFramework.Domain.Builders",
-            "DialogPartResultBuilderFactory",
-            "DialogFramework.Domain.DialogPartResult",
-            "DialogFramework.Domain.Builders.DialogPartResults",
+            new(Constants.Namespaces.DomainBuilders,
+            nameof(DialogPartResultBuilderFactory),
+            $"{Constants.Namespaces.Domain}.DialogPartResult",
+            $"{Constants.Namespaces.DomainBuilders}.DialogPartResults",
             "DialogPartResultBuilder",
-            "DialogFramework.Domain.DialogPartResults"));
+            $"{Constants.Namespaces.Domain}.DialogPartResults"));
 }

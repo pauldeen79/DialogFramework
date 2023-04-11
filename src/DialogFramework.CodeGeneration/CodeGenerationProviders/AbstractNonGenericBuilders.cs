@@ -3,8 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Domain.Builders";
-    public override string DefaultFileName => "Builders.generated.cs";
+    public override string Path => Constants.Namespaces.DomainBuilders;
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
@@ -13,6 +12,6 @@ public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
     public override object CreateModel()
         => GetImmutableNonGenericBuilderClasses(
             GetAbstractModels(),
-            "DialogFramework.Domain",
-            "DialogFramework.Domain.Builders");
+            Constants.Namespaces.Domain,
+            Constants.Namespaces.DomainBuilders);
 }

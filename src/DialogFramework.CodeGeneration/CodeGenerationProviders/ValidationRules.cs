@@ -3,8 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class ValidationRules : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Domain/ValidationRules";
-    public override string DefaultFileName => "ValidationRules.cs";
+    public override string Path => $"{Constants.Namespaces.Domain}/ValidationRules";
     public override string LastGeneratedFilesFileName => string.Empty;
 
     protected override string FileNameSuffix => string.Empty;
@@ -49,7 +48,7 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
                             new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
                         )
                         .WithType(typeof(Result))
-                        .AddLiteralCodeStatements("return Result.NotSupported();")
+                        .AddLiteralCodeStatements($"return {typeof(Result).FullName}.NotSupported();")
                     )
                     .AddGenericTypeArguments(x.GenericTypeArguments)
                     .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)

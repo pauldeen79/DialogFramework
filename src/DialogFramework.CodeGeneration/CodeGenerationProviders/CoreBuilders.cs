@@ -3,12 +3,11 @@
 [ExcludeFromCodeCoverage]
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => "DialogFramework.Domain.Builders";
-    public override string DefaultFileName => "Builders.template.generated.cs";
+    public override string Path => Constants.Namespaces.DomainBuilders;
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(
             GetCoreModels(),
-            "DialogFramework.Domain",
-            "DialogFramework.Domain.Builders");
+            Constants.Namespaces.Domain,
+            Constants.Namespaces.DomainBuilders);
 }
