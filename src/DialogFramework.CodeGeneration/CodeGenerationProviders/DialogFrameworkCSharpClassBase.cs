@@ -15,7 +15,7 @@ public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
     protected override Type BuilderClassCollectionType => typeof(IEnumerable<>);
     protected override bool AddBackingFieldsForCollectionProperties => true;
     protected override bool AddPrivateSetters => true;
-    protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.Optional;
+    protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.Shared;
     protected override string[] GetModelAbstractBaseTyped() => new[] { nameof(IEditableQuestionDialogPart) };
     protected override string[] GetExternalCustomBuilderTypes() => new[] { nameof(Evaluatable) };
 

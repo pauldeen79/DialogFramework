@@ -24,7 +24,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.Builders", "src\DialogFramework.Domain.Builders\DialogFramework.Domain.Builders.csproj", "{39AEABCB-20A5-41AB-B233-70935120C655}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogFramework.Domain.TestData", "src\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj", "{481029AF-1897-424E-AAB4-93E5FF8F0C98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.TestData", "src\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj", "{481029AF-1897-424E-AAB4-93E5FF8F0C98}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
