@@ -32,10 +32,6 @@ internal static class Program
         {
             Console.WriteLine($"Code generation completed, check the output in {basePath}");
             Console.WriteLine($"Generated files: {multipleContentBuilder.Contents.Count()}");
-            foreach (var content in multipleContentBuilder.Contents)
-            {
-                Console.WriteLine(content.FileName);
-            }
         }
     }
 }
