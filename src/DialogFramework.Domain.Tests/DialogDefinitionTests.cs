@@ -19,7 +19,7 @@ public class DialogDefinitionTests
                     .WithCondition
                     (
                         new SingleEvaluatableBuilder()
-                            .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
+                            .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
                             .WithOperator(new EqualsOperatorBuilder())
                             .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
                     )
@@ -61,7 +61,7 @@ public class DialogDefinitionTests
                             .WithCondition
                             (
                                 new SingleEvaluatableBuilder()
-                                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
+                                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue("Context.PropertyName")).WithExpression(new ContextExpressionBuilder()))
                                     .WithOperator(new EqualsOperatorBuilder())
                                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
                             )

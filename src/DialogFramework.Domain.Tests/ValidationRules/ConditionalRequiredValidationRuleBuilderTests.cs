@@ -19,7 +19,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(
                 new SingleEvaluatableBuilder()
-                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
+                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
                     .WithOperator(new EqualsOperatorBuilder())
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
@@ -40,7 +40,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(
                 new SingleEvaluatableBuilder()
-                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
+                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
                     .WithOperator(new EqualsOperatorBuilder())
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
@@ -61,7 +61,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(
                 new SingleEvaluatableBuilder()
-                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
+                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue(nameof(Dialog.Id))).WithExpression(new ContextExpressionBuilder()))
                     .WithOperator(new EqualsOperatorBuilder())
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
@@ -85,7 +85,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var sut = new ConditionalRequiredValidationRuleBuilder()
             .WithCondition(
                 new SingleEvaluatableBuilder()
-                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new ConstantExpressionBuilder().WithValue("NonExistingPropertyName")).WithExpression(new ContextExpressionBuilder()))
+                    .WithLeftExpression(new FieldExpressionBuilder().WithFieldNameExpression(new TypedConstantExpressionBuilder<string>().WithValue("NonExistingPropertyName")).WithExpression(new ContextExpressionBuilder()))
                     .WithOperator(new EqualsOperatorBuilder())
                     .WithRightExpression(new ConstantExpressionBuilder().WithValue("Correct"))
             )
