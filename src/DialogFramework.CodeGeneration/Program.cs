@@ -16,12 +16,16 @@ internal static class Program
         var settings = new CodeGenerationSettings(basePath, generateMultipleFiles, false, dryRun);
 
         // Generate code
-        var generationTypeNames = new[] { "Entities", "Builders", "BuilderFactory" };
-        var generators = typeof(DialogFrameworkCSharpClassBase).Assembly.GetExportedTypes().Where(x => x.BaseType == typeof(DialogFrameworkCSharpClassBase)).ToArray();
+        var generationTypeNames = new[] { "Entities", "Builders", "Models", "BuilderFactory", "ModelFactory" };
+        var generators = typeof(DialogFrameworkCSharpClassBase).Assembly.GetExportedTypes().Where(x => !x.IsAbstract && x.BaseType == typeof(DialogFrameworkCSharpClassBase)).ToArray();
         var generationTypes = generators.Where(x => x.Name.EndsWithAny(generationTypeNames));
         var scaffoldingTypes = generators.Where(x => !x.Name.EndsWithAny(generationTypeNames));
         _ = generationTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(settings.ForGeneration(), multipleContentBuilder, x)).ToArray();
         _ = scaffoldingTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(settings.ForScaffolding(), multipleContentBuilder, x)).ToArray();
+
+        var modelGenerators = typeof(DialogFrameworkModelClassBase).Assembly.GetExportedTypes().Where(x => !x.IsAbstract && x.BaseType == typeof(DialogFrameworkModelClassBase)).ToArray();
+        var modelGenerationTypes = modelGenerators.Where(x => x.Name.EndsWithAny(generationTypeNames));
+        _ = modelGenerationTypes.Select(x => (DialogFrameworkModelClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(settings.ForGeneration(), multipleContentBuilder, x)).ToArray();
 
         // Log output to console
         if (string.IsNullOrEmpty(basePath))
