@@ -12,7 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="pauldeen79.CrossCutting.Common" Version="2.9.0" />
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.5.9" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.5.14" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,10 @@
     <PackageId>pauldeen79.DialogFramework.Domain.Models</PackageId>
 	<RepositoryUrl>https://github.com/pauldeen79/DialogFramework</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain.Models" Version="0.5.14" />
+  </ItemGroup>
     
   <ItemGroup>
     <ProjectReference Include="..\DialogFramework.Domain\DialogFramework.Domain.csproj" />
