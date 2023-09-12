@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - sonar/*
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -11,24 +12,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 7.0.x
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Install SonarCloud scanners
+        run: |
+          dotnet tool install --global dotnet-sonarscanner
+
       - name: Restore
         run: dotnet restore
       - name: Build code generation
-        run: dotnet build src/DialogFramework.CodeGeneration/DialogFramework.CodeGeneration.csproj -c Release --no-restore
+        run: dotnet build src/CodeGeneration/CodeGeneration.csproj -c Release --no-restore
       - name: Run code generation
-        run: dotnet src/DialogFramework.CodeGeneration/bin/Release/net7.0/DialogFramework.CodeGeneration.dll
-      - name: sonarscan-dotnet
-        uses: highbyte/sonarscan-dotnet@v2.2.2
-        with:
-          sonarProjectKey: pauldeen79_DialogFramework
-          sonarProjectName: DialogFramework
-          sonarOrganization: pauldeen79
-          dotnetTestArguments: --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
-          sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
-    env:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet src/CodeGeneration/bin/Release/net6.0/CodeGeneration.dll
+
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet-sonarscanner begin /k:"pauldeen79_DialogFramework" /n:"DialogFramework" /o:"pauldeen79" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+          dotnet build --no-restore
+          dotnet test --no-restore --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

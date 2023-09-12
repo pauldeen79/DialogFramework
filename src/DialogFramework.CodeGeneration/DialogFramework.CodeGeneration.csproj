@@ -6,12 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-    <CodeAnalysisRuleSet>..\..\.sonarlint\pauldeen79_dialogframeworkcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
-  <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\pauldeen79_dialogframework\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.5.9" />
