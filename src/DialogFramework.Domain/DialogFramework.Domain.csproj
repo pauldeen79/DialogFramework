@@ -7,16 +7,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>pauldeen79.DialogFramework.Domain</PackageId>
 	<RepositoryUrl>https://github.com/pauldeen79/DialogFramework</RepositoryUrl>
-	<CodeAnalysisRuleSet>..\..\.sonarlint\pauldeen79_dialogframeworkcsharp.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\..\.sonarlint\pauldeen79_dialogframework\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="pauldeen79.CrossCutting.Common" Version="2.7.25" />
+    <PackageReference Include="pauldeen79.CrossCutting.Common" Version="2.9.0" />
     <PackageReference Include="pauldeen79.ExpressionFramework.Core" Version="0.3.0" />
   </ItemGroup>
 
