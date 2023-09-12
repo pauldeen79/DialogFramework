@@ -3,6 +3,7 @@
 public sealed class DialogServiceTests : IDisposable
 {
     private readonly ServiceProvider _provider;
+    private readonly IServiceScope _scope;
     private readonly Mock<IDialogSubmitter> _dialogSubmitterMock;
     private readonly Mock<IDialogRepository> _dialogRepositoryMock;
 
@@ -11,9 +12,11 @@ public sealed class DialogServiceTests : IDisposable
         _dialogSubmitterMock = new();
         _dialogRepositoryMock = new();
         _provider = new ServiceCollection().AddDialogFramework(x =>
-            x.AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)
-             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock.Object)
-            ).BuildServiceProvider();
+            x.AddScoped(_ => _dialogSubmitterMock.Object)
+             .AddScoped(_ => _dialogRepositoryMock.Object)
+            ).BuildServiceProvider(true);
+
+        _scope = _provider.CreateScope();
     }
 
     [Fact]
@@ -137,9 +140,13 @@ public sealed class DialogServiceTests : IDisposable
         result.ErrorMessage.Should().Be("Kaboom");
     }
 
-    private IDialogService CreateSut() => _provider.GetRequiredService<IDialogService>();
+    private IDialogService CreateSut() => _scope.ServiceProvider.GetRequiredService<IDialogService>();
 
-    public void Dispose() => _provider.Dispose();
+    public void Dispose()
+    {
+        _scope.Dispose();
+        _provider.Dispose();
+    }
 
     private sealed record MyMalfunctioningDialogPart : DialogPart, IValidatableDialogPart
     {

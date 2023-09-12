@@ -4,6 +4,6 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddDialogFramework(this IServiceCollection instance, Action<IServiceCollection>? configureAction = null)
         => instance
-        .AddSingleton<IDialogService, DialogService>()
+        .AddScoped<IDialogService, DialogService>()
         .Then(() => configureAction?.Invoke(instance));
 }
