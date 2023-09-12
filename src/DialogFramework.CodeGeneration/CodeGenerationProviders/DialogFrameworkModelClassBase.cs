@@ -11,6 +11,7 @@ public abstract class DialogFrameworkModelClassBase : DialogFrameworkCSharpClass
     protected override string BuilderName => "Model";
     protected override string BuildersName => "Models";
     protected override bool UseLazyInitialization => false; // we don't want lazy stuff in models, just getters and setters
+    protected override bool ConvertStringToStringBuilderOnBuilders => false; // we don't want string builders in models, just strings
 
     protected override IEnumerable<KeyValuePair<string, string>> GetCustomBuilderNamespaceMapping()
     {
