@@ -11,10 +11,11 @@ public sealed class DialogServiceTests : IDisposable
     {
         _dialogSubmitterMock = Substitute.For<IDialogSubmitter>();
         _dialogRepositoryMock = Substitute.For<IDialogRepository>();
-        _provider = new ServiceCollection().AddDialogFramework(x =>
-            x.AddScoped(_ => _dialogSubmitterMock)
-             .AddScoped(_ => _dialogRepositoryMock)
-            ).BuildServiceProvider(true);
+        _provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddScoped(_ => _dialogSubmitterMock)
+            .AddScoped(_ => _dialogRepositoryMock)
+            .BuildServiceProvider(true);
 
         _scope = _provider.CreateScope();
     }
@@ -47,11 +48,12 @@ public sealed class DialogServiceTests : IDisposable
         _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
         var dialogSubmitterMock1 = Substitute.For<IDialogSubmitter>();
         dialogSubmitterMock1.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion).Returns(true);
-        using var provider = new ServiceCollection().AddDialogFramework(x =>
-            x.AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1)
-             .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock)
-             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock)
-             ).BuildServiceProvider(true);
+        using var provider = new ServiceCollection()
+            .AddDialogFramework()
+            .AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1)
+            .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock)
+            .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock)
+            .BuildServiceProvider(true);
         using var scope = provider.CreateScope();
         var sut = scope.ServiceProvider.GetRequiredService<IDialogService>();
 
