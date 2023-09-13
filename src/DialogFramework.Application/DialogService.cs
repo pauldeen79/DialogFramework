@@ -27,7 +27,7 @@ public class DialogService : IDialogService
 
         // In case multiple submitters are found, take the last one.
         // Best way is to first register most generic submitters, then more specific, and last the one to indicate the dialog is not supported.
-        var submitter = supportedSubmitters.Last();
+        var submitter = supportedSubmitters[supportedSubmitters.Length - 1];
 
         return submitter.Submit(dialog);
     }
