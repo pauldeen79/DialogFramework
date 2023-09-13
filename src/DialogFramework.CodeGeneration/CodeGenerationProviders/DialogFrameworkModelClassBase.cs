@@ -1,5 +1,6 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
+[ExcludeFromCodeCoverage]
 public abstract class DialogFrameworkModelClassBase : DialogFrameworkCSharpClassBase
 {
     protected override string AddMethodNameFormatString => string.Empty; // we don't want Add methods for collection properties
