@@ -1,11 +1,5 @@
-﻿global using CrossCutting.Common;
+﻿global using CrossCutting.Common.Extensions;
 global using CrossCutting.Common.Results;
-global using DialogFramework.Abstractions;
-global using DialogFramework.Application.Requests;
 global using DialogFramework.Domain;
-global using DialogFramework.Domain.Builders;
-global using DialogFramework.Domain.DialogPartResultAnswerDefinitions;
-global using DialogFramework.Domain.Extensions;
-global using ExpressionFramework.Abstractions;
-global using MediatR;
-global using Microsoft.Extensions.Logging;
+global using DialogFramework.Domain.Contracts;
+global using Microsoft.Extensions.DependencyInjection;

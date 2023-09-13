@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>11.0</LangVersion>
+	<Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PackageId>pauldeen79.DialogFramework.Domain.Builders</PackageId>
+	<RepositoryUrl>https://github.com/pauldeen79/DialogFramework</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain.Builders" Version="0.5.14" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DialogFramework.Domain\DialogFramework.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

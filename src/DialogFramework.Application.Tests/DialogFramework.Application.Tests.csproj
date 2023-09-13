@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -10,8 +10,9 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.12.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
-    <PackageReference Include="Moq" Version="4.18.4" />
+    <PackageReference Include="NSubstitute" Version="5.1.0" />
     <PackageReference Include="pauldeen79.CrossCutting.Common.Testing" Version="2.9.0" />
     <PackageReference Include="xunit" Version="2.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
@@ -25,8 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DialogFramework.Application.TestData\DialogFramework.Application.TestData.csproj" />
     <ProjectReference Include="..\DialogFramework.Application\DialogFramework.Application.csproj" />
+    <ProjectReference Include="..\DialogFramework.Domain.Builders\DialogFramework.Domain.Builders.csproj" />
+    <ProjectReference Include="..\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj" />
   </ItemGroup>
 
 </Project>

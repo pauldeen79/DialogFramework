@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Abstractions", "src\DialogFramework.Abstractions\DialogFramework.Abstractions.csproj", "{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain", "src\DialogFramework.Domain\DialogFramework.Domain.csproj", "{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.Tests", "src\DialogFramework.Domain.Tests\DialogFramework.Domain.Tests.csproj", "{1CECF992-6EF9-43CB-9792-3F310A67BCD0}"
@@ -12,29 +10,23 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E0B20E9B-055B-4D2A-B04A-3156ECB19017}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
-		ExampleDialog.json = ExampleDialog.json
-		ExampleDialogDefinition.json = ExampleDialogDefinition.json
 		README.md = README.md
 		TestFlow.png = TestFlow.png
 		TestFlow.svg = TestFlow.svg
 		TestFlow.txt = TestFlow.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework", "src\DialogFramework\DialogFramework.csproj", "{50E0D748-4834-4044-B84D-0A221FA68D79}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Tests", "src\DialogFramework.Tests\DialogFramework.Tests.csproj", "{272DABF5-0303-4FDC-A8AC-68806E23C04B}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGeneration", "src\CodeGeneration\CodeGeneration.csproj", "{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.CodeGeneration", "src\DialogFramework.CodeGeneration\DialogFramework.CodeGeneration.csproj", "{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application", "src\DialogFramework.Application\DialogFramework.Application.csproj", "{8CC2A534-76E7-4299-97FD-3BA0F58E4C95}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application.Tests", "src\DialogFramework.Application.Tests\DialogFramework.Application.Tests.csproj", "{55F47A68-C284-4872-9D41-A2FBEA162A50}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.TestData", "src\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj", "{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.Builders", "src\DialogFramework.Domain.Builders\DialogFramework.Domain.Builders.csproj", "{39AEABCB-20A5-41AB-B233-70935120C655}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Application.TestData", "src\DialogFramework.Application.TestData\DialogFramework.Application.TestData.csproj", "{0BE430A1-F4FB-404B-A643-519F41951F46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DialogFramework.Domain.TestData", "src\DialogFramework.Domain.TestData\DialogFramework.Domain.TestData.csproj", "{481029AF-1897-424E-AAB4-93E5FF8F0C98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogFramework.SpecFlow.Tests", "src\DialogFramework.SpecFlow.Tests\DialogFramework.SpecFlow.Tests.csproj", "{D3536861-48A8-49FD-9615-DA6625911B10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DialogFramework.Domain.Models", "src\DialogFramework.Domain.Models\DialogFramework.Domain.Models.csproj", "{86691D8E-42EE-4C4F-89D1-D88E80B1FA4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,10 +34,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F3D6A62A-D77F-4063-9F8D-D70F1C4264E1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D37F5A3B-976D-4FF3-B18D-A719AF29CF91}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -54,14 +42,6 @@ Global
 		{1CECF992-6EF9-43CB-9792-3F310A67BCD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CECF992-6EF9-43CB-9792-3F310A67BCD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CECF992-6EF9-43CB-9792-3F310A67BCD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50E0D748-4834-4044-B84D-0A221FA68D79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50E0D748-4834-4044-B84D-0A221FA68D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50E0D748-4834-4044-B84D-0A221FA68D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50E0D748-4834-4044-B84D-0A221FA68D79}.Release|Any CPU.Build.0 = Release|Any CPU
-		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{272DABF5-0303-4FDC-A8AC-68806E23C04B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DBCEA97F-BE1E-4152-8BD5-910CA28466F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -74,18 +54,18 @@ Global
 		{55F47A68-C284-4872-9D41-A2FBEA162A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55F47A68-C284-4872-9D41-A2FBEA162A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55F47A68-C284-4872-9D41-A2FBEA162A50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6A467E4D-468A-4408-8EC8-DCCF7B7DA73A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0BE430A1-F4FB-404B-A643-519F41951F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0BE430A1-F4FB-404B-A643-519F41951F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0BE430A1-F4FB-404B-A643-519F41951F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0BE430A1-F4FB-404B-A643-519F41951F46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D3536861-48A8-49FD-9615-DA6625911B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D3536861-48A8-49FD-9615-DA6625911B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D3536861-48A8-49FD-9615-DA6625911B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D3536861-48A8-49FD-9615-DA6625911B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39AEABCB-20A5-41AB-B233-70935120C655}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39AEABCB-20A5-41AB-B233-70935120C655}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39AEABCB-20A5-41AB-B233-70935120C655}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39AEABCB-20A5-41AB-B233-70935120C655}.Release|Any CPU.Build.0 = Release|Any CPU
+		{481029AF-1897-424E-AAB4-93E5FF8F0C98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{481029AF-1897-424E-AAB4-93E5FF8F0C98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{481029AF-1897-424E-AAB4-93E5FF8F0C98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{481029AF-1897-424E-AAB4-93E5FF8F0C98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86691D8E-42EE-4C4F-89D1-D88E80B1FA4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86691D8E-42EE-4C4F-89D1-D88E80B1FA4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86691D8E-42EE-4C4F-89D1-D88E80B1FA4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86691D8E-42EE-4C4F-89D1-D88E80B1FA4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

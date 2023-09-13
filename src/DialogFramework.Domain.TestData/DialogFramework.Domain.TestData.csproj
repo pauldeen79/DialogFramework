@@ -1,20 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>10.0</LangVersion>
-	<Nullable>enable</Nullable>
+    <LangVersion>11.0</LangVersion>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.18.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\DialogFramework.Domain\DialogFramework.Domain.csproj" />
+    <ProjectReference Include="..\DialogFramework.Domain.Builders\DialogFramework.Domain.Builders.csproj" />
   </ItemGroup>
 
 </Project>
