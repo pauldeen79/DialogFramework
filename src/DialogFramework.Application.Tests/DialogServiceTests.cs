@@ -51,8 +51,9 @@ public sealed class DialogServiceTests : IDisposable
             x.AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1)
              .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock)
              .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock)
-             ).BuildServiceProvider();
-        var sut = provider.GetRequiredService<IDialogService>();
+             ).BuildServiceProvider(true);
+        using var scope = provider.CreateScope();
+        var sut = scope.ServiceProvider.GetRequiredService<IDialogService>();
 
         // Act
         var result = sut.Submit(dialog);
