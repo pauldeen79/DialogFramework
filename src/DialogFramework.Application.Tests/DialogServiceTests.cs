@@ -4,16 +4,16 @@ public sealed class DialogServiceTests : IDisposable
 {
     private readonly ServiceProvider _provider;
     private readonly IServiceScope _scope;
-    private readonly Mock<IDialogSubmitter> _dialogSubmitterMock;
-    private readonly Mock<IDialogRepository> _dialogRepositoryMock;
+    private readonly IDialogSubmitter _dialogSubmitterMock;
+    private readonly IDialogRepository _dialogRepositoryMock;
 
     public DialogServiceTests()
     {
-        _dialogSubmitterMock = new();
-        _dialogRepositoryMock = new();
+        _dialogSubmitterMock = Substitute.For<IDialogSubmitter>();
+        _dialogRepositoryMock = Substitute.For<IDialogRepository>();
         _provider = new ServiceCollection().AddDialogFramework(x =>
-            x.AddScoped(_ => _dialogSubmitterMock.Object)
-             .AddScoped(_ => _dialogRepositoryMock.Object)
+            x.AddScoped(_ => _dialogSubmitterMock)
+             .AddScoped(_ => _dialogRepositoryMock)
             ).BuildServiceProvider(true);
 
         _scope = _provider.CreateScope();
@@ -25,8 +25,8 @@ public sealed class DialogServiceTests : IDisposable
         // Arrange
         var dialog = TestDialogFactory.CreateEmpty();
         var definition = TestDialogDefinitionFactory.CreateEmpty();
-        _dialogSubmitterMock.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(false);
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
+        _dialogSubmitterMock.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion).Returns(false);
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
 
         // Act
         var result = CreateSut().Submit(dialog);
@@ -42,15 +42,15 @@ public sealed class DialogServiceTests : IDisposable
         var dialog = TestDialogFactory.CreateEmpty();
         var definition = TestDialogDefinitionFactory.CreateEmpty();
         var resultDialog = TestDialogFactory.CreateEmpty();
-        _dialogSubmitterMock.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(true);
-        _dialogSubmitterMock.Setup(x => x.Submit(It.IsAny<Dialog>())).Returns(Result<Dialog>.Success(resultDialog));
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
-        var dialogSubmitterMock1 = new Mock<IDialogSubmitter>();
-        dialogSubmitterMock1.Setup(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(true);
+        _dialogSubmitterMock.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion).Returns(true);
+        _dialogSubmitterMock.Submit(Arg.Any<Dialog>()).Returns(Result<Dialog>.Success(resultDialog));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
+        var dialogSubmitterMock1 = Substitute.For<IDialogSubmitter>();
+        dialogSubmitterMock1.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion).Returns(true);
         using var provider = new ServiceCollection().AddDialogFramework(x =>
-            x.AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1.Object)
-             .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock.Object)
-             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock.Object)
+            x.AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1)
+             .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock)
+             .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock)
              ).BuildServiceProvider();
         var sut = provider.GetRequiredService<IDialogService>();
 
@@ -67,7 +67,7 @@ public sealed class DialogServiceTests : IDisposable
     {
         // Arrange
         var dialog = TestDialogFactory.CreateEmpty();
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Error("Kaboom"));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Error("Kaboom"));
 
         // Act
         var result = CreateSut().Submit(dialog);
@@ -82,7 +82,7 @@ public sealed class DialogServiceTests : IDisposable
     {
         // Arrange
         var dialog = TestDialogFactory.CreateEmpty();
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Error("Kaboom"));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Error("Kaboom"));
 
         // Act
         var result = CreateSut().Validate(dialog);
@@ -98,7 +98,7 @@ public sealed class DialogServiceTests : IDisposable
         // Arrange
         var dialog = TestDialogFactory.CreateDialogWithRequiredQuestion(answer: null);
         var definition = TestDialogDefinitionFactory.CreateDialogWithRequiredQuestion();
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
 
         // Act
         var result = CreateSut().Validate(dialog);
@@ -115,7 +115,7 @@ public sealed class DialogServiceTests : IDisposable
         // Arrange
         var dialog = TestDialogFactory.CreateDialogWithRequiredQuestion(answer: "Some value");
         var definition = TestDialogDefinitionFactory.CreateDialogWithRequiredQuestion();
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
 
         // Act
         var result = CreateSut().Validate(dialog);
@@ -130,7 +130,7 @@ public sealed class DialogServiceTests : IDisposable
         // Arrange
         var dialog = TestDialogFactory.CreateDialogWithRequiredQuestion(answer: "Some value");
         var definition = TestDialogDefinitionFactory.CreateDialogWithCustomDialogPart(new MyMalfunctioningDialogPart("Question", null, "title"));
-        _dialogRepositoryMock.Setup(x => x.Get(dialog.DefinitionId, dialog.DefinitionVersion)).Returns(Result<DialogDefinition>.Success(definition));
+        _dialogRepositoryMock.Get(dialog.DefinitionId, dialog.DefinitionVersion).Returns(Result<DialogDefinition>.Success(definition));
 
         // Act
         var result = CreateSut().Validate(dialog);

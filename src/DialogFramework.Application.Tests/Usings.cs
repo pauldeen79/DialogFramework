@@ -6,5 +6,5 @@ global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Domain;
 global using FluentAssertions;
 global using Microsoft.Extensions.DependencyInjection;
-global using Moq;
+global using NSubstitute;
 global using Xunit;
