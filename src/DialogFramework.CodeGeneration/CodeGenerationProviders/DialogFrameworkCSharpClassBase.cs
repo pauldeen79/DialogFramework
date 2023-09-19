@@ -1,7 +1,7 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public abstract partial class DialogFrameworkCSharpClassBase : CSharpClassBase
+public abstract class DialogFrameworkCSharpClassBase : CSharpClassBase
 {
     public override bool RecurseOnDeleteGeneratedFiles => false;
     public override string DefaultFileName => string.Empty; // not used because we're using multiple files, but it's abstract so we need to fill ilt
