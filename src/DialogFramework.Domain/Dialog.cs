@@ -20,6 +20,6 @@ public partial record Dialog
         => Results.FirstOrDefault(x => x.PartId == partId) switch
         {
             DialogPartResult result => result.GetValue(),
-            _ => Result<object?>.NotFound($"Could not find dialog part result with id [{partId}]")
+            _ => Result.NotFound<object?>($"Could not find dialog part result with id [{partId}]")
         };
 }

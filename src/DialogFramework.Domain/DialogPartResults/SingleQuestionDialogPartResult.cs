@@ -2,6 +2,6 @@
 
 public partial record SingleQuestionDialogPartResult<T>
 {
-    public override Result<object?> GetValue() => Result<object?>.Success(Value);
+    public override Result<object?> GetValue() => Result.Success<object?>(Value);
 }
 

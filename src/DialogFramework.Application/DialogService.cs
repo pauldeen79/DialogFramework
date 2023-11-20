@@ -16,13 +16,13 @@ public class DialogService : IDialogService
         var validationResult = Validate(dialog);
         if (!validationResult.IsSuccessful())
         {
-            return Result<Dialog>.FromExistingResult(validationResult, dialog);
+            return Result.FromExistingResult(validationResult, dialog);
         }
 
         var supportedSubmitters = _submitters.Where(x => x.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion)).ToArray();
         if (supportedSubmitters.Length == 0)
         {
-            return Result<Dialog>.NotSupported($"The dialog definition Id [{dialog.DefinitionId}], version [{dialog.DefinitionVersion}] is not supported");
+            return Result.NotSupported<Dialog>($"The dialog definition Id [{dialog.DefinitionId}], version [{dialog.DefinitionVersion}] is not supported");
         }
 
         // In case multiple submitters are found, take the last one.

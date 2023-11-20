@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 internal sealed record MyEvaluatableWithEmptyErrorMessage : Evaluatable
 {
-    public override Result<bool> Evaluate(object? context) => Result<bool>.Error(); // no error message on purpose
+    public override Result<bool> Evaluate(object? context) => Result.Error<bool>(); // no error message on purpose
 }
 [ExcludeFromCodeCoverage]
 internal sealed class MyEvaluatableWithEmptyErrorMessageBuilder : EvaluatableBuilder
