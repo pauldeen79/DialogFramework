@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain.Models" Version="0.6.0" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain.Models" Version="0.6.1" />
   </ItemGroup>
     
   <ItemGroup>
