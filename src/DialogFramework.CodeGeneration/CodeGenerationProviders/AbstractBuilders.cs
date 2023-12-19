@@ -7,6 +7,7 @@ public class AbstractBuilders : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
+    protected override bool IsAbstract => true;
 
     public override object CreateModel()
         => GetImmutableBuilderClasses(
