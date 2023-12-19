@@ -7,6 +7,7 @@ public class AbstractNonGenericModels : DialogFrameworkModelClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
+    protected override bool IsAbstract => true;
     protected override string FileNameSuffix => ".nongeneric.template.generated";
 
     public override object CreateModel()

@@ -6,7 +6,7 @@ public class DialogPartModelFactory : DialogFrameworkModelClassBase
     public override string Path => Constants.Namespaces.DomainModels;
 
     public override object CreateModel()
-        => CreateBuilderFactoryModels(
+        => CreateBuilderFactories(
             GetOverrideModels(typeof(IDialogPart)),
             new(Constants.Namespaces.DomainModels,
             nameof(DialogPartModelFactory),

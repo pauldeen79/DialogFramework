@@ -6,7 +6,7 @@ public class ValidationRuleBuilderFactory : DialogFrameworkCSharpClassBase
     public override string Path => Constants.Namespaces.DomainBuilders;
 
     public override object CreateModel()
-        => CreateBuilderFactoryModels(
+        => CreateBuilderFactories(
             GetOverrideModels(typeof(IValidationRule)),
             new(Constants.Namespaces.DomainBuilders,
             nameof(ValidationRuleBuilderFactory),

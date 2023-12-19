@@ -6,7 +6,7 @@ public class DialogPartBuilderFactory : DialogFrameworkCSharpClassBase
     public override string Path => Constants.Namespaces.DomainBuilders;
 
     public override object CreateModel()
-        => CreateBuilderFactoryModels(
+        => CreateBuilderFactories(
             GetOverrideModels(typeof(IDialogPart)),
             new(Constants.Namespaces.DomainBuilders,
             nameof(DialogPartBuilderFactory),
