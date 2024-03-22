@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.6.1" />
-    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.8.3" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.6.3" />
+    <PackageReference Include="pauldeen79.ModelFramework.CodeGeneration" Version="0.8.4" />
   </ItemGroup>
 
 </Project>
