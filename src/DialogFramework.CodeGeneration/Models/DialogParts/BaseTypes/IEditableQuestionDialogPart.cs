@@ -2,6 +2,5 @@
 
 public interface IEditableQuestionDialogPart
 {
-    [Required]
-    IReadOnlyCollection<IValidationRule> ValidationRules { get; }
+    [Required][ValidateObject] IReadOnlyCollection<IValidationRule> ValidationRules { get; }
 }

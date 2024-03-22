@@ -2,6 +2,5 @@
 
 public interface ISingleClosedQuestionDialogPart : IDialogPart, IEditableQuestionDialogPart
 {
-    [Required]
-    IReadOnlyCollection<IClosedQuestionOption> Options { get; }
+    [Required][ValidateObject] IReadOnlyCollection<IClosedQuestionOption> Options { get; }
 }

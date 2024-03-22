@@ -5,12 +5,8 @@
 /// </summary>
 public interface IDialogDefinition
 {
-    [Required]
-    string Id { get; }
-    [Required]
-    string Name { get; }
-    [Required]
-    Version Version { get; }
-    [Required]
-    IReadOnlyCollection<IDialogPartSection> Sections { get; }
+    [Required] string Id { get; }
+    [Required] string Name { get; }
+    [Required] Version Version { get; }
+    [Required] [ValidateObject] IReadOnlyCollection<IDialogPartSection> Sections { get; }
 }

@@ -2,6 +2,5 @@
 
 public interface IMultipleQuestionDialogPartResult<out T> : IDialogPartResult
 {
-    [Required]
-    IReadOnlyCollection<T> Values { get; }
+    [Required][ValidateObject] IReadOnlyCollection<T> Values { get; }
 }

@@ -2,6 +2,5 @@
 
 public interface IDialogPartResult
 {
-    [Required]
-    string PartId { get; }
+    [Required] string PartId { get; }
 }

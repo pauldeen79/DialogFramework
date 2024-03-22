@@ -2,9 +2,7 @@
 
 public interface IClosedQuestionOption
 {
-    Evaluatable? Condition { get; }
-    [Required]
-    string Key { get; }
-    [Required]
-    string DisplayName { get; }
+    [ValidateObject] Evaluatable? Condition { get; }
+    [Required] string Key { get; }
+    [Required] string DisplayName { get; }
 }

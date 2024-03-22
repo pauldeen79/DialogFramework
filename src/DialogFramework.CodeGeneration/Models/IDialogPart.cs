@@ -2,9 +2,7 @@
 
 public interface IDialogPart
 {
-    [Required]
-    string Id { get; }
-    Evaluatable? Condition { get; }
-    [Required]
-    string Title { get; }
+    [Required] string Id { get; }
+    [ValidateObject] Evaluatable? Condition { get; }
+    [Required] string Title { get; }
 }

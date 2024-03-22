@@ -2,5 +2,5 @@
 
 public interface ISingleQuestionDialogPartResult<out T> : IDialogPartResult
 {
-    T? Value { get; }
+    [ValidateObject] T? Value { get; }
 }
