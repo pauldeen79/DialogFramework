@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record DialogPartResult
+public partial class DialogPartResult
 {
     public abstract Result<object?> GetValue();
 }

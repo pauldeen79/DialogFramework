@@ -3,38 +3,61 @@
 [ExcludeFromCodeCoverage]
 internal static class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         // Setup code generation
         var currentDirectory = Directory.GetCurrentDirectory();
-        var basePath = currentDirectory.EndsWith("DialogFramework")
+        var basePath = currentDirectory.EndsWith("QueryFramework")
             ? Path.Combine(currentDirectory, @"src/")
             : Path.Combine(currentDirectory, @"../../../../");
-        var generateMultipleFiles = true;
         var dryRun = false;
-        var multipleContentBuilder = new MultipleContentBuilder { BasePath = basePath };
+        var codeGenerationSettings = new CodeGenerationSettings(basePath, "GeneratedCode.cs", dryRun);
+        var services = new ServiceCollection()
+            .AddParsers()
+            .AddPipelines()
+            .AddTemplateFramework()
+            .AddTemplateFrameworkChildTemplateProvider()
+            .AddTemplateFrameworkCodeGeneration()
+            .AddTemplateFrameworkRuntime()
+            .AddCsharpExpressionDumper()
+            .AddClassFrameworkTemplates()
+            .AddScoped<IAssemblyInfoContextService, MyAssemblyInfoContextService>();
+
+        var generators = typeof(Program).Assembly.GetExportedTypes()
+            .Where(x => !x.IsAbstract && x.BaseType == typeof(DialogFrameworkCSharpClassBase))
+            .ToArray();
+
+        foreach (var type in generators)
+        {
+            services.AddScoped(type);
+        }
+
+        using var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var instances = generators
+            .Select(x => (ICodeGenerationProvider)scope.ServiceProvider.GetRequiredService(x))
+            .ToArray();
+        var engine = scope.ServiceProvider.GetRequiredService<ICodeGenerationEngine>();
 
         // Generate code
-        var generationTypeNames = new[] { "Entities", "Builders", "Models", "BuilderFactory", "ModelFactory" };
-        var generators = typeof(DialogFrameworkCSharpClassBase).Assembly.GetExportedTypes().Where(x => !x.IsAbstract && x.BaseType == typeof(DialogFrameworkCSharpClassBase)).ToArray();
-        var generationTypes = generators.Where(x => x.Name.EndsWithAny(generationTypeNames));
-        var scaffoldingTypes = generators.Where(x => !x.Name.EndsWithAny(generationTypeNames));
-        _ = generationTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(new(basePath, generateMultipleFiles, false, dryRun), multipleContentBuilder, x)).ToArray();
-        _ = scaffoldingTypes.Select(x => (DialogFrameworkCSharpClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(new(basePath, generateMultipleFiles, true, dryRun), multipleContentBuilder, x)).ToArray();
+        var count = 0;
+        foreach (var instance in instances)
+        {
+            var generationEnvironment = new MultipleContentBuilderEnvironment();
+            await engine.Generate(instance, generationEnvironment, codeGenerationSettings);
+            count += generationEnvironment.Builder.Contents.Count();
 
-        var modelGenerators = typeof(DialogFrameworkModelClassBase).Assembly.GetExportedTypes().Where(x => !x.IsAbstract && x.BaseType == typeof(DialogFrameworkModelClassBase)).ToArray();
-        var modelGenerationTypes = modelGenerators.Where(x => x.Name.EndsWithAny(generationTypeNames));
-        _ = modelGenerationTypes.Select(x => (DialogFrameworkModelClassBase)Activator.CreateInstance(x)!).Select(x => GenerateCode.For(new(basePath, generateMultipleFiles, false, dryRun), multipleContentBuilder, x)).ToArray();
+            if (string.IsNullOrEmpty(basePath))
+            {
+                Console.WriteLine(generationEnvironment.Builder.ToString());
+            }
+        }
 
         // Log output to console
-        if (string.IsNullOrEmpty(basePath))
-        {
-            Console.WriteLine(multipleContentBuilder.ToString());
-        }
-        else
+        if (!string.IsNullOrEmpty(basePath))
         {
             Console.WriteLine($"Code generation completed, check the output in {basePath}");
-            Console.WriteLine($"Generated files: {multipleContentBuilder.Contents.Count()}");
+            Console.WriteLine($"Generated files: {count}");
         }
     }
 }

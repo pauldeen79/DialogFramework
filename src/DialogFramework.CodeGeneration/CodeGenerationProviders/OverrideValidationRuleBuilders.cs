@@ -3,16 +3,20 @@
 [ExcludeFromCodeCoverage]
 public class OverrideValidationRuleBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => $"{Constants.Namespaces.DomainBuilders}/ValidationRules";
+    public OverrideValidationRuleBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
+
+    public override string Path => $"{Constants.Paths.DomainBuilders}/ValidationRules";
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override IClass? BaseClass => CreateBaseclass(typeof(IValidationRule), Constants.Namespaces.Domain);
+    protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IValidationRule), Constants.Namespaces.Domain);
     protected override string BaseClassBuilderNamespace => Constants.Namespaces.DomainBuilders;
 
-    public override object CreateModel()
-        => GetImmutableBuilderClasses(
-            GetOverrideModels(typeof(IValidationRule)),
-            $"{Constants.Namespaces.Domain}.ValidationRules",
-            $"{Constants.Namespaces.DomainBuilders}.ValidationRules");
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => await GetBuilders(
+            await GetOverrideModels(typeof(IValidationRule)),
+            $"{Constants.Namespaces.DomainBuilders}.ValidationRules",
+            $"{Constants.Namespaces.Domain}.ValidationRules");
 }

@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain.Builders" Version="0.6.3" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DialogFramework.Domain\DialogFramework.Domain.csproj" />
   </ItemGroup>
 

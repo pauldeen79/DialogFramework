@@ -1,7 +1,6 @@
 ﻿namespace DialogFramework.Domain.DialogPartResults;
 
-public partial record MultipleQuestionDialogPartResult<T>
+public partial class MultipleQuestionDialogPartResult<T>
 {
     public override Result<object?> GetValue() => Result.Success<object?>(Values);
 }
-

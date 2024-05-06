@@ -3,16 +3,20 @@
 [ExcludeFromCodeCoverage]
 public class OverrideDialogPartBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => $"{Constants.Namespaces.DomainBuilders}/DialogParts";
+    public OverrideDialogPartBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
+
+    public override string Path => $"{Constants.Paths.DomainBuilders}/DialogParts";
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override IClass? BaseClass => CreateBaseclass(typeof(IDialogPart), Constants.Namespaces.Domain);
+    protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IDialogPart), Constants.Namespaces.Domain);
     protected override string BaseClassBuilderNamespace => Constants.Namespaces.DomainBuilders;
 
-    public override object CreateModel()
-        => GetImmutableBuilderClasses(
-            GetOverrideModels(typeof(IDialogPart)),
-            $"{Constants.Namespaces.Domain}.DialogParts",
-            $"{Constants.Namespaces.DomainBuilders}.DialogParts");
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => await GetBuilders(
+            await GetOverrideModels(typeof(IDialogPart)),
+            $"{Constants.Namespaces.DomainBuilders}.DialogParts",
+            $"{Constants.Namespaces.Domain}.DialogParts");
 }

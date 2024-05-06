@@ -3,55 +3,39 @@
 [ExcludeFromCodeCoverage]
 public class ValidationRules : DialogFrameworkCSharpClassBase
 {
+    public ValidationRules(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
+
     public override string Path => $"{Constants.Namespaces.Domain}/{nameof(ValidationRules)}";
-    public override string LastGeneratedFilesFileName => string.Empty;
+    public override string LastGeneratedFilesFilename => string.Empty;
 
-    protected override string FileNameSuffix => string.Empty;
+    protected override string FilenameSuffix => string.Empty;
     protected override bool CreateCodeGenerationHeader => false;
+    protected override bool SkipWhenFileExists => true;
 
-    public override object CreateModel()
-        => GetOverrideModels(typeof(IValidationRule))
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => (await GetOverrideModels(typeof(IValidationRule)))
             .SelectMany(x => new[]
             {
                 new ClassBuilder()
                     .WithNamespace(CurrentNamespace)
-                    .WithName(x.Name)
+                    .WithName(x.WithoutInterfacePrefix())
                     .WithPartial()
-                    .WithRecord()
-                    .AddMethods(new ClassMethodBuilder()
+                    .AddMethods(new MethodBuilder()
                         .WithName("Validate")
                         .WithOverride()
                         .AddGenericTypeArguments("T")
                         .AddParameters(
                             new ParameterBuilder().WithName("id").WithType(typeof(string)),
                             new ParameterBuilder().WithName("value").WithTypeName("T"),
-                            new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
+                            new ParameterBuilder().WithName("dialog").WithType(typeof(IDialog))
                         )
-                        .WithType(typeof(Result))
-                        .AddNotImplementedException()
+                        .WithReturnType(typeof(Result))
+                        .NotImplemented()
                     )
                     .AddGenericTypeArguments(x.GenericTypeArguments)
                     .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
-                    .Build(),
-                new ClassBuilder()
-                    .WithNamespace(CurrentNamespace)
-                    .WithName($"{x.Name}Base")
-                    .WithPartial()
-                    .WithRecord()
-                    .AddMethods(new ClassMethodBuilder()
-                        .WithName("Validate")
-                        .WithOverride()
-                        .AddGenericTypeArguments("T")
-                        .AddParameters(
-                            new ParameterBuilder().WithName("id").WithType(typeof(string)),
-                            new ParameterBuilder().WithName("value").WithTypeName("T"),
-                            new ParameterBuilder().WithName("dialog").WithTypeName(GetModelTypeName(typeof(IDialog)))
-                        )
-                        .WithType(typeof(Result))
-                        .AddLiteralCodeStatements($"return {typeof(Result).FullName}.NotSupported();")
-                    )
-                    .AddGenericTypeArguments(x.GenericTypeArguments)
-                    .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
-                    .Build(),
+                    .Build()
             });
 }
