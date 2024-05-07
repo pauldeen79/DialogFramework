@@ -23,6 +23,11 @@ public class DialogPartTests
 
     private sealed record MaliciousValidationRule : ValidationRule
     {
+        public override ValidationRuleBuilder ToBuilder()
+        {
+            throw new NotImplementedException();
+        }
+
         public override Result Validate<T>(string id, T value, Dialog dialog) => Result.Error("Kaboom");
     }
 }

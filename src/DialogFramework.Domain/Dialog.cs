@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial class Dialog
+public partial record Dialog
 {
     public Dialog(
         DialogDefinition definition,

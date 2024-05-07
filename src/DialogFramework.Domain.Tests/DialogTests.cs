@@ -37,11 +37,13 @@ public class DialogTests
     {
         // Arrange
         var builder = new DialogBuilder().WithId(string.Empty);
+        var validationResults = new List<ValidationResult>();
 
         // Act
-        var validationResults = builder.Validate(new ValidationContext(builder));
+        var success = builder.TryValidate(validationResults);
 
         // Assert
+        success.Should().BeFalse();
         validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.");
     }
 

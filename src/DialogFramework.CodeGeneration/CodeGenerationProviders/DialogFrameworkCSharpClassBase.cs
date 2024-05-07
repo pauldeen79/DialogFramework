@@ -15,10 +15,10 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
 
     protected override string ProjectName => Constants.ProjectName;
     protected override string CoreNamespace => $"{ProjectName}.Domain";
-    protected override bool CreateRecord => false;
-    protected override bool AddBackingFields => true;
-    protected override bool AddSetters => true;
-    protected override SubVisibility SetterVisibility => SubVisibility.Private;
+    protected override bool CreateRecord => true;
+    //protected override bool AddBackingFields => true;
+    //protected override bool AddSetters => true;
+    //protected override SubVisibility SetterVisibility => SubVisibility.Private;
 
     protected override bool IsAbstractType(Type type)
     {

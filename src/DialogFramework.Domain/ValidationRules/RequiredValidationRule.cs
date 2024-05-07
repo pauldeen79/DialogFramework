@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain.ValidationRules;
 
-public partial class RequiredValidationRule
+public partial record RequiredValidationRule
 {
     public override Result Validate<T>(string id, T value, Dialog dialog)
     {

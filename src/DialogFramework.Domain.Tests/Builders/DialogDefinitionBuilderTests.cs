@@ -4,7 +4,7 @@ public class DialogDefinitionBuilderTests
 {
     private static DialogDefinitionBuilder CreateSut() => new DialogDefinitionBuilder();
 
-    [Fact(Skip = "Can only pass after fixing problem in ClassFramework, and then replace ModelFramework code generation in DialogFramework with ClassFramework")]
+    [Fact]
     public void Can_Validate_Recursively()
     {
         // Arrange

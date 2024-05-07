@@ -1,6 +1,7 @@
 ﻿global using CrossCutting.Common.Results;
 global using DialogFramework.Application.Extensions;
 global using DialogFramework.Domain;
+global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.Contracts;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Domain;

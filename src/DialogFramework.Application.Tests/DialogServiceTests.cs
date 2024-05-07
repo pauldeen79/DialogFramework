@@ -153,12 +153,13 @@ public sealed class DialogServiceTests : IDisposable
 
     private sealed record MyMalfunctioningDialogPart : DialogPart, IValidatableDialogPart
     {
-        public MyMalfunctioningDialogPart(DialogPart original) : base(original)
+        public MyMalfunctioningDialogPart(string id, Evaluatable? condition, string title) : base(id, condition, title)
         {
         }
 
-        public MyMalfunctioningDialogPart(string id, Evaluatable? condition, string title) : base(id, condition, title)
+        public override DialogPartBuilder ToBuilder()
         {
+            throw new NotImplementedException();
         }
 
         public Result Validate<T>(T value, Dialog dialog) => Result.Error("Kaboom");

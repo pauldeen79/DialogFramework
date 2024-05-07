@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial class DialogDefinition : IValidatableObject
+public partial record DialogDefinition : IValidatableObject
 {
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
