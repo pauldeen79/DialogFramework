@@ -16,9 +16,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
     protected override string ProjectName => Constants.ProjectName;
     protected override string CoreNamespace => $"{ProjectName}.Domain";
     protected override bool CreateRecord => true;
-    //protected override bool AddBackingFields => true;
-    //protected override bool AddSetters => true;
-    //protected override SubVisibility SetterVisibility => SubVisibility.Private;
+    protected override bool AddBackingFields => true;
 
     protected override bool IsAbstractType(Type type)
     {
@@ -35,7 +33,6 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
 
     protected override Type EntityCollectionType => typeof(IReadOnlyCollection<>);
     protected override Type EntityConcreteCollectionType => typeof(ReadOnlyValueCollection<>);
-    //protected override Type EntityConcreteCollectionType => typeof(IReadOnlyCollection<>); // when using backing fields, we can't use ReadOnlyValueCollection<> because the value can't be cast on the property setters...
     protected override Type BuilderCollectionType => typeof(ObservableCollection<>);
 
     protected override IEnumerable<TypenameMappingBuilder> CreateAdditionalTypenameMappings()
@@ -48,7 +45,6 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
                 (
                     new MetadataBuilder().WithValue(typeof(EvaluatableBuilder).Namespace).WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderNamespace),
                     new MetadataBuilder().WithValue(TypeNameDotClassNameBuilder).WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderName),
-                    //new MetadataBuilder().WithValue("source.{Name}.ToBuilder()").WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderConstructorInitializeExpression),
                     new MetadataBuilder().WithValue("[Name][NullableSuffix].ToBuilder()[ForcedNullableSuffix]").WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderSourceExpression),
                     new MetadataBuilder().WithValue(new Literal($"new {typeof(ConstantEvaluatableBuilder).FullName}()", null)).WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderDefaultValue),
                     new MetadataBuilder().WithValue("[Name][NullableSuffix].Build()").WithName(ClassFramework.Pipelines.MetadataNames.CustomBuilderMethodParameterExpression)
