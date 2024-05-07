@@ -7,7 +7,7 @@ internal static class Program
     {
         // Setup code generation
         var currentDirectory = Directory.GetCurrentDirectory();
-        var basePath = currentDirectory.EndsWith("QueryFramework")
+        var basePath = currentDirectory.EndsWith("DialogFramework")
             ? Path.Combine(currentDirectory, @"src/")
             : Path.Combine(currentDirectory, @"../../../../");
         var dryRun = false;
