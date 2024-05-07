@@ -3,27 +3,30 @@
 [ExcludeFromCodeCoverage]
 public class DialogPartResults : DialogFrameworkCSharpClassBase
 {
+    public DialogPartResults(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
+
     public override string Path => $"{Constants.Namespaces.Domain}/{nameof(DialogPartResults)}";
-    public override string LastGeneratedFilesFileName => string.Empty;
+    public override string LastGeneratedFilesFilename => string.Empty;
 
-    protected override string FileNameSuffix => string.Empty;
+    protected override string FilenameSuffix => string.Empty;
     protected override bool CreateCodeGenerationHeader => false;
+    protected override bool SkipWhenFileExists => true;
 
-    public override object CreateModel()
-        => GetOverrideModels(typeof(IDialogPartResult))
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => (await GetOverrideModels(typeof(IDialogPartResult)))
             .Select(x => new ClassBuilder()
                 .WithNamespace(CurrentNamespace)
-                .WithName(x.Name)
+                .WithName(x.WithoutInterfacePrefix())
                 .WithPartial()
-                .WithRecord()
-                .AddMethods(new ClassMethodBuilder()
+                .AddMethods(new MethodBuilder()
                     .WithName("GetValue")
                     .WithOverride()
-                    .WithTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
-                    .AddNotImplementedException()
+                    .WithReturnTypeName($"{typeof(Result<>).WithoutGenerics()}<{typeof(object).FullName}?>")
+                    .NotImplemented()
                 )
                 .AddGenericTypeArguments(x.GenericTypeArguments)
                 .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
                 .Build());
-
 }

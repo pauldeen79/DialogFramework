@@ -3,11 +3,12 @@
 [ExcludeFromCodeCoverage]
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
-    public override string Path => Constants.Namespaces.DomainBuilders;
+    public CoreBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
 
-    public override object CreateModel()
-        => GetImmutableBuilderClasses(
-            GetCoreModels(),
-            Constants.Namespaces.Domain,
-            Constants.Namespaces.DomainBuilders);
+    public override string Path => Constants.Paths.DomainBuilders;
+
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => await GetBuilders(await GetCoreModels(), Constants.Namespaces.DomainBuilders, Constants.Namespaces.Domain);
 }

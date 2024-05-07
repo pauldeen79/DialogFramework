@@ -3,12 +3,17 @@
 [ExcludeFromCodeCoverage]
 public class OverrideValidationRuleEntities : DialogFrameworkCSharpClassBase
 {
-    public override string Path => $"{Constants.Namespaces.Domain}/ValidationRules";
+    public OverrideValidationRuleEntities(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
+
+    public override string Path => $"{Constants.Paths.Domain}/ValidationRules";
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override IClass? BaseClass => CreateBaseclass(typeof(IValidationRule), Constants.Namespaces.Domain);
+    //protected override bool AddNullChecks => false; // seems to be necessary :(
+    protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IValidationRule), Constants.Namespaces.Domain);
 
-    public override object CreateModel()
-        => GetImmutableClasses(GetOverrideModels(typeof(IValidationRule)), $"{Constants.Namespaces.Domain}.ValidationRules");
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => await GetEntities(await GetOverrideModels(typeof(IValidationRule)), $"{Constants.Namespaces.Domain}.ValidationRules");
 }

@@ -5,11 +5,8 @@ public class DialogTests
     [Fact]
     public void Constructing_Dialog_With_Null_Id_Throws()
     {
-        // Arrange
-        var builder = new DialogBuilder().WithId(default(string)!);
-
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+        this.Invoking(_ => new Dialog(id: default!, string.Empty, new Version(), Enumerable.Empty<DialogPartResult>(), default)).Should().Throw<ValidationException>();
     }
 
     [Fact]
@@ -37,11 +34,13 @@ public class DialogTests
     {
         // Arrange
         var builder = new DialogBuilder().WithId(string.Empty);
+        var validationResults = new List<ValidationResult>();
 
         // Act
-        var validationResults = builder.Validate(new ValidationContext(builder));
+        var success = builder.TryValidate(validationResults);
 
         // Assert
+        success.Should().BeFalse();
         validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.");
     }
 

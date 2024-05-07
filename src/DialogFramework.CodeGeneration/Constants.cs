@@ -9,6 +9,11 @@ public static class Constants
     {
         public const string Domain = "DialogFramework.Domain";
         public const string DomainBuilders = "DialogFramework.Domain.Builders";
-        public const string DomainModels = "DialogFramework.Domain.Models";
+    }
+
+    public static class Paths
+    {
+        public const string Domain = "DialogFramework.Domain";
+        public const string DomainBuilders = "DialogFramework.Domain/Builders";
     }
 }

@@ -63,18 +63,4 @@ public class RequiredValidationRuleTests
         // Assert
         actual.Status.Should().Be(ResultStatus.Ok);
     }
-
-    [Fact]
-    public void BaseClass_Cannot_Validate()
-    {
-        // Arrange
-        var sut = new RequiredValidationRuleBase();
-        var dialog = TestDialogFactory.CreateEmpty(id: "Wrong");
-
-        // Act
-        var result = sut.Validate("Id", false, dialog);
-
-        // Assert
-        result.Status.Should().Be(ResultStatus.NotSupported);
-    }
 }

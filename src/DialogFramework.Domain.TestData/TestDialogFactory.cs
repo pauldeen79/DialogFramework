@@ -12,7 +12,7 @@ public static class TestDialogFactory
         => new DialogBuilder()
             .WithDefinitionId("MyDialogWithRequiredQuestion")
             .WithId(Guid.NewGuid().ToString())
-            .AddResults(answer == null
+            .AddResults(answer is null
                 ? Array.Empty<DialogPartResultBuilder>() 
                 : new[] { new SingleQuestionDialogPartResultBuilder<string>().WithPartId("Question").WithValue(answer) }
             )

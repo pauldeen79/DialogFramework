@@ -9,8 +9,8 @@ public partial record Dialog
         string? id = null)
         : this(
               id ?? Guid.NewGuid().ToString(),
-              definition.Id,
-              definition.Version,
+              definition?.Id!,
+              definition?.Version!,
               results ?? Enumerable.Empty<DialogPartResult>(),
               context)
     {

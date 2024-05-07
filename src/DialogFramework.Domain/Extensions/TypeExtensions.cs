@@ -3,7 +3,7 @@
 public static class TypeExtensions
 {
     public static object? GetDefaultValue(this Type instance)
-        => instance.IsValueType && Nullable.GetUnderlyingType(instance) == null
+        => instance.IsValueType && Nullable.GetUnderlyingType(instance) is null
             ? Activator.CreateInstance(instance)
             : null;
 

@@ -4,7 +4,7 @@ public class DialogDefinitionBuilderTests
 {
     private static DialogDefinitionBuilder CreateSut() => new DialogDefinitionBuilder();
 
-    [Fact(Skip = "Can only pass after fixing problem in ClassFramework, and then replace ModelFramework code generation in DialogFramework with ClassFramework")]
+    [Fact]
     public void Can_Validate_Recursively()
     {
         // Arrange
@@ -16,6 +16,11 @@ public class DialogDefinitionBuilderTests
 
         // Assert
         success.Should().BeFalse();
-        validationResults.Should().HaveCount(2); //both the validation errors in Class and Field
+        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo
+        (
+            "The Id field is required.",
+            "The Name field is required.",
+            "The field Sections is invalid."
+        );
     }
 }

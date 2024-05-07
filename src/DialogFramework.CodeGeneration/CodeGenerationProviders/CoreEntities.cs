@@ -3,8 +3,14 @@
 [ExcludeFromCodeCoverage]
 public class CoreEntities : DialogFrameworkCSharpClassBase
 {
-    public override string Path => Constants.Namespaces.Domain;
+    public CoreEntities(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    {
+    }
 
-    public override object CreateModel()
-        => GetImmutableClasses(GetCoreModels(), Constants.Namespaces.Domain);
+    //protected override bool AddNullChecks => false; // seems to be necessary :(
+
+    public override string Path => Constants.Paths.Domain;
+
+    public override async Task<IEnumerable<TypeBase>> GetModel()
+        => await GetEntities(await GetCoreModels(), Constants.Namespaces.Domain);
 }

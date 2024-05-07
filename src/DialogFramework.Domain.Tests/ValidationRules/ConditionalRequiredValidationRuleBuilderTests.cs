@@ -3,13 +3,13 @@
 public class ConditionalRequiredValidationRuleBuilderTests
 {
     [Fact]
-    public void Ctor_Throws_On_Null_Condition()
+    public void WithCondition_Throws_On_Null_Condition()
     {
         // Arrange
-        var builder = new ConditionalRequiredValidationRuleBuilder().WithCondition(default(EvaluatableBuilder)!);
+        var builder = new ConditionalRequiredValidationRuleBuilder();
 
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+        builder.Invoking(x => x.WithCondition(default!)).Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
@@ -115,24 +115,5 @@ public class ConditionalRequiredValidationRuleBuilderTests
         // Assert
         actual.Status.Should().Be(ResultStatus.Error);
         actual.ErrorMessage.Should().Be("Condition evaluation failed");
-    }
-
-    [Fact]
-    public void BaseClass_Cannot_Validate()
-    {
-        // Arrange
-        var condition = new SingleEvaluatableBuilder()
-            .WithLeftExpression(new EmptyExpressionBuilder())
-            .WithOperator(new EqualsOperatorBuilder())
-            .WithRightExpression(new EmptyExpressionBuilder())
-            .Build();
-        var sut = new ConditionalRequiredValidationRuleBase(condition);
-        var dialog = TestDialogFactory.CreateEmpty(id: "Wrong");
-
-        // Act
-        var result = sut.Validate("Id", false, dialog);
-
-        // Assert
-        result.Status.Should().Be(ResultStatus.NotSupported);
     }
 }
