@@ -3,13 +3,13 @@
 public class ConditionalRequiredValidationRuleBuilderTests
 {
     [Fact]
-    public void Ctor_Throws_On_Null_Condition()
+    public void WithCondition_Throws_On_Null_Condition()
     {
         // Arrange
-        var builder = new ConditionalRequiredValidationRuleBuilder().WithCondition(default(EvaluatableBuilder)!);
+        var builder = new ConditionalRequiredValidationRuleBuilder();
 
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+        builder.Invoking(x => x.WithCondition(default!)).Should().Throw<ArgumentNullException>();
     }
 
     [Fact]

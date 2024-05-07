@@ -16,6 +16,11 @@ public class DialogDefinitionBuilderTests
 
         // Assert
         success.Should().BeFalse();
-        validationResults.Should().HaveCount(2); //both the validation errors in Class and Field
+        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo
+        (
+            "The Id field is required.",
+            "The Name field is required.",
+            "The field Sections is invalid."
+        );
     }
 }
