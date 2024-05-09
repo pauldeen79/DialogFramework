@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class AbstractBuilders : DialogFrameworkCSharpClassBase
 {
-    public AbstractBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public AbstractBuilders(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -14,5 +14,5 @@ public class AbstractBuilders : DialogFrameworkCSharpClassBase
     protected override bool IsAbstract => true;
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetBuilders(await GetAbstractModels(), Constants.Namespaces.DomainBuilders, Constants.Namespaces.Domain);
+        => await GetBuilders(await GetAbstractModels(), CurrentNamespace, Constants.Namespaces.Domain);
 }

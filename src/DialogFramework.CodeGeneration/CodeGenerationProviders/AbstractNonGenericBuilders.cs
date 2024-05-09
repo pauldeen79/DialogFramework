@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
 {
-    public AbstractNonGenericBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public AbstractNonGenericBuilders(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -24,5 +24,5 @@ public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
     protected override string AddMethodNameFormatString => string.Empty;
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetNonGenericBuilders(await GetAbstractModels(), Constants.Namespaces.DomainBuilders, Constants.Namespaces.Domain);
+        => await GetNonGenericBuilders(await GetAbstractModels(), CurrentNamespace, Constants.Namespaces.Domain);
 }

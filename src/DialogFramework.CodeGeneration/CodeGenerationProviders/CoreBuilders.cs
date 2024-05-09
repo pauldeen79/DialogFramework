@@ -3,12 +3,14 @@
 [ExcludeFromCodeCoverage]
 public class CoreBuilders : DialogFrameworkCSharpClassBase
 {
-    public CoreBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public CoreBuilders(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
     public override string Path => Constants.Paths.DomainBuilders;
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetBuilders(await GetCoreModels(), Constants.Namespaces.DomainBuilders, Constants.Namespaces.Domain);
+        => await GetBuilders(await GetCoreModels(), CurrentNamespace, Constants.Namespaces.Domain);
+
+    protected override bool CreateAsObservable => true;
 }

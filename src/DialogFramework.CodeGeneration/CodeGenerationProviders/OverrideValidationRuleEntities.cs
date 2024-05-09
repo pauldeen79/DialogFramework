@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class OverrideValidationRuleEntities : DialogFrameworkCSharpClassBase
 {
-    public OverrideValidationRuleEntities(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public OverrideValidationRuleEntities(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -11,9 +11,9 @@ public class OverrideValidationRuleEntities : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    //protected override bool AddNullChecks => false; // seems to be necessary :(
+    protected override bool GenerateMultipleFiles => true;
     protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IValidationRule), Constants.Namespaces.Domain);
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetEntities(await GetOverrideModels(typeof(IValidationRule)), $"{Constants.Namespaces.Domain}.ValidationRules");
+        => await GetEntities(await GetOverrideModels(typeof(IValidationRule)), CurrentNamespace);
 }

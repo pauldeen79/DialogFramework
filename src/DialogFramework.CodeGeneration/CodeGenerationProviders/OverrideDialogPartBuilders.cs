@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class OverrideDialogPartBuilders : DialogFrameworkCSharpClassBase
 {
-    public OverrideDialogPartBuilders(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public OverrideDialogPartBuilders(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -11,12 +11,10 @@ public class OverrideDialogPartBuilders : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
+    protected override bool CreateAsObservable => true;
     protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IDialogPart), Constants.Namespaces.Domain);
     protected override string BaseClassBuilderNamespace => Constants.Namespaces.DomainBuilders;
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetBuilders(
-            await GetOverrideModels(typeof(IDialogPart)),
-            $"{Constants.Namespaces.DomainBuilders}.DialogParts",
-            $"{Constants.Namespaces.Domain}.DialogParts");
+        => await GetBuilders(await GetOverrideModels(typeof(IDialogPart)), CurrentNamespace, $"{Constants.Namespaces.Domain}.DialogParts");
 }

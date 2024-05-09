@@ -5,7 +5,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
 {
     private const string TypeNameDotClassNameBuilder = "{TypeName.ClassName}Builder";
 
-    protected DialogFrameworkCSharpClassBase(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    protected DialogFrameworkCSharpClassBase(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -18,6 +18,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
     protected override bool CreateRecord => true;
     protected override bool AddBackingFields => true;
     protected override bool CopyAttributes => true;
+    protected override bool GenerateMultipleFiles => false;
     protected override SubVisibility SetterVisibility => SubVisibility.Private;
 
     protected override bool IsAbstractType(Type type)

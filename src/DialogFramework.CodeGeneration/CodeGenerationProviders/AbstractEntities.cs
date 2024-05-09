@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class AbstractEntities : DialogFrameworkCSharpClassBase
 {
-    public AbstractEntities(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public AbstractEntities(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -17,5 +17,5 @@ public class AbstractEntities : DialogFrameworkCSharpClassBase
     protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.None; // not needed for abstract entities, because each derived class will do its own validation
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetEntities(await GetAbstractModels(), Constants.Namespaces.Domain);
+        => await GetEntities(await GetAbstractModels(), CurrentNamespace);
 }

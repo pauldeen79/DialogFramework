@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public class DialogPartResults : DialogFrameworkCSharpClassBase
 {
-    public DialogPartResults(IMediator mediator, ICsharpExpressionDumper csharpExpressionDumper) : base(mediator, csharpExpressionDumper)
+    public DialogPartResults(IPipelineService pipelineService) : base(pipelineService)
     {
     }
 
@@ -13,6 +13,7 @@ public class DialogPartResults : DialogFrameworkCSharpClassBase
     protected override string FilenameSuffix => string.Empty;
     protected override bool CreateCodeGenerationHeader => false;
     protected override bool SkipWhenFileExists => true;
+    protected override bool GenerateMultipleFiles => true;
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
         => (await GetOverrideModels(typeof(IDialogPartResult)))
@@ -20,6 +21,7 @@ public class DialogPartResults : DialogFrameworkCSharpClassBase
                 .WithNamespace(CurrentNamespace)
                 .WithName(x.WithoutInterfacePrefix())
                 .WithPartial()
+                .WithRecord()
                 .AddMethods(new MethodBuilder()
                     .WithName("GetValue")
                     .WithOverride()
