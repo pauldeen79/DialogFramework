@@ -11,7 +11,6 @@ public class OverrideDialogPartBuilders : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override bool CreateAsObservable => true;
     protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IDialogPart), Constants.Namespaces.Domain);
     protected override string BaseClassBuilderNamespace => Constants.Namespaces.DomainBuilders;
 

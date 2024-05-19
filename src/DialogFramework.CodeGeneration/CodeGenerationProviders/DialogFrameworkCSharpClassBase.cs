@@ -19,6 +19,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
     protected override bool AddBackingFields => true;
     protected override bool CopyAttributes => true;
     protected override bool GenerateMultipleFiles => false;
+    protected override bool CreateAsObservable => true;
     protected override SubVisibility SetterVisibility => SubVisibility.Private;
 
     protected override bool IsAbstractType(Type type)
@@ -34,8 +35,8 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
 
     protected override string[] GetModelAbstractBaseTyped() => new[] { nameof(IEditableQuestionDialogPart) };
 
-    protected override Type EntityCollectionType => typeof(IReadOnlyCollection<>);
-    protected override Type EntityConcreteCollectionType => typeof(ReadOnlyValueCollection<>);
+    protected override Type EntityCollectionType => typeof(ObservableCollection<>);
+    protected override Type EntityConcreteCollectionType => typeof(ObservableCollection<>);
     protected override Type BuilderCollectionType => typeof(ObservableCollection<>);
 
     protected override IEnumerable<TypenameMappingBuilder> CreateAdditionalTypenameMappings()

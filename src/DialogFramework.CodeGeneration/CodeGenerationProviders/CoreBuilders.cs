@@ -11,6 +11,4 @@ public class CoreBuilders : DialogFrameworkCSharpClassBase
 
     public override async Task<IEnumerable<TypeBase>> GetModel()
         => await GetBuilders(await GetCoreModels(), CurrentNamespace, Constants.Namespaces.Domain);
-
-    protected override bool CreateAsObservable => true;
 }

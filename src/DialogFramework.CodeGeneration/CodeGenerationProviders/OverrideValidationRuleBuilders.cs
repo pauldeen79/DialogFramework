@@ -11,7 +11,6 @@ public class OverrideValidationRuleBuilders : DialogFrameworkCSharpClassBase
 
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
-    protected override bool CreateAsObservable => true;
     protected override async Task<TypeBase?> GetBaseClass() => await CreateBaseClass(typeof(IValidationRule), Constants.Namespaces.Domain);
     protected override string BaseClassBuilderNamespace => Constants.Namespaces.DomainBuilders;
 

@@ -15,7 +15,6 @@ public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
     protected override bool EnableEntityInheritance => true;
     protected override bool EnableBuilderInhericance => true;
     protected override bool IsAbstract => true;
-    protected override bool CreateAsObservable => true;
 
     protected override string FilenameSuffix => ".nongeneric.template.generated";
 
