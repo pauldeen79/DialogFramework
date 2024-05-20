@@ -21,7 +21,7 @@ public class DialogPartTests
         public override ValidationRule Build() => new MaliciousValidationRule();
     }
 
-    private sealed record MaliciousValidationRule : ValidationRule
+    private sealed class MaliciousValidationRule : ValidationRule
     {
         public override ValidationRuleBuilder ToBuilder()
         {

@@ -1,6 +1,6 @@
 ﻿namespace DialogFramework.Domain;
 
-public partial record DialogPart
+public partial class DialogPart
 {
     public Result Validate<T>(T value, Dialog dialog, IReadOnlyCollection<ValidationRule> validationRules)
     {

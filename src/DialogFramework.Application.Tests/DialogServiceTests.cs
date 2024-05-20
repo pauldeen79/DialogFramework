@@ -151,7 +151,7 @@ public sealed class DialogServiceTests : IDisposable
         _provider.Dispose();
     }
 
-    private sealed record MyMalfunctioningDialogPart : DialogPart, IValidatableDialogPart
+    private sealed class MyMalfunctioningDialogPart : DialogPart, IValidatableDialogPart
     {
         public MyMalfunctioningDialogPart(string id, Evaluatable? condition, string title) : base(id, condition, title)
         {

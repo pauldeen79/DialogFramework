@@ -15,7 +15,6 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
 
     protected override string ProjectName => Constants.ProjectName;
     protected override string CoreNamespace => $"{ProjectName}.Domain";
-    protected override bool CreateRecord => true;
     protected override bool AddBackingFields => true;
     protected override bool CopyAttributes => true;
     protected override bool GenerateMultipleFiles => false;
