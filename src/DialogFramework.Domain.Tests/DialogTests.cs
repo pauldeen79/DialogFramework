@@ -61,4 +61,143 @@ public class DialogTests
         sut.Context.Should().NotBeNull();
         sut.Context!.GetType().GetProperty("PropertyName").Should().NotBeNull();
     }
+
+    [Fact]
+    public void Can_Change_Nullable_Property_To_Null_Value()
+    {
+        // Arrange
+        var sut = new TestDialog(new DialogDefinitionBuilder().WithId("Id").WithName("MyDialog").Build());
+
+        // Act
+        sut.Context = null;
+        sut.Context = 1;
+        sut.Context = null;
+
+        // Assert
+        sut.Context.Should().BeNull();
+    }
+
+    public partial class TestDialog : System.ComponentModel.INotifyPropertyChanged
+    {
+        private string _id;
+
+        private string _definitionId;
+
+        private Version _definitionVersion;
+
+        private System.Collections.ObjectModel.ObservableCollection<DialogPartResult> _results;
+
+        private object? _context;
+
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+
+        [Required]
+        public string Id
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_id, value);
+                _id = value ?? throw new ArgumentNullException(nameof(value));
+                if (hasChanged) HandlePropertyChanged(nameof(Id));
+            }
+        }
+
+        [Required]
+        public string DefinitionId
+        {
+            get
+            {
+                return _definitionId;
+            }
+            set
+            {
+                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_definitionId, value);
+                _definitionId = value ?? throw new ArgumentNullException(nameof(value));
+                if (hasChanged) HandlePropertyChanged(nameof(DefinitionId));
+            }
+        }
+
+        [Required]
+        public Version DefinitionVersion
+        {
+            get
+            {
+                return _definitionVersion;
+            }
+            set
+            {
+                bool hasChanged = !EqualityComparer<Version>.Default.Equals(_definitionVersion, value);
+                _definitionVersion = value ?? throw new ArgumentNullException(nameof(value));
+                if (hasChanged) HandlePropertyChanged(nameof(DefinitionVersion));
+            }
+        }
+
+        [Required]
+        [CrossCutting.Common.DataAnnotations.ValidateObject]
+        public System.Collections.ObjectModel.ObservableCollection<DialogPartResult> Results
+        {
+            get
+            {
+                return _results;
+            }
+            set
+            {
+                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogPartResult>>.Default.Equals(_results, value);
+                _results = value ?? throw new ArgumentNullException(nameof(value));
+                if (hasChanged) HandlePropertyChanged(nameof(Results));
+            }
+        }
+
+        public object? Context
+        {
+            get
+            {
+                return _context;
+            }
+            set
+            {
+                bool hasChanged = !EqualityComparer<System.Object>.Default.Equals(_context, value);
+                _context = value;
+                if (hasChanged) HandlePropertyChanged(nameof(Context));
+            }
+        }
+
+        public TestDialog(string id, string definitionId, Version definitionVersion, IEnumerable<DialogPartResult> results, object? context)
+        {
+            this._id = id;
+            this._definitionId = definitionId;
+            this._definitionVersion = definitionVersion;
+            this._results = results is null ? null! : new System.Collections.ObjectModel.ObservableCollection<DialogPartResult>(results);
+            this._context = context;
+            Validator.ValidateObject(this, new ValidationContext(this, null, null), true);
+        }
+
+        public TestDialog(
+            DialogDefinition definition,
+            IEnumerable<DialogPartResult>? results = null,
+            object? context = null,
+            string? id = null)
+            : this(
+          id ?? Guid.NewGuid().ToString(),
+          definition?.Id!,
+          definition?.Version!,
+          results ?? Enumerable.Empty<DialogPartResult>(),
+          context)
+        {
+        }
+
+        public DialogBuilder ToBuilder()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected void HandlePropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+        }
+    }
 }
