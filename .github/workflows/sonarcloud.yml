@@ -35,10 +35,6 @@ jobs:
 
       - name: Restore
         run: dotnet restore
-      - name: Build code generation
-        run: dotnet build src/DialogFramework.CodeGeneration/DialogFramework.CodeGeneration.csproj -c Release --no-restore
-      - name: Run code generation
-        run: dotnet src/DialogFramework.CodeGeneration/bin/Release/net8.0/DialogFramework.CodeGeneration.dll
 
       - name: Build and analyze
         env:
