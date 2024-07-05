@@ -7,13 +7,13 @@ public partial class DialogDefinition : IValidatableObject
         var duplicateSectionIds = Sections.GroupBy(x => x.Id).Where(x => x.Count() > 1).ToArray();
         if (duplicateSectionIds.Any())
         {
-            yield return new ValidationResult($"Duplicate section ids: {string.Join(", ", duplicateSectionIds.Select(x => x.Key))}", new[] { nameof(Sections) });
+            yield return new ValidationResult($"Duplicate section ids: {string.Join(", ", duplicateSectionIds.Select(x => x.Key))}", [nameof(Sections)]);
         }
 
         var duplicatePartIds = Sections.SelectMany(x => x.Parts).GroupBy(x => x.Id).Where(x => x.Count() > 1).ToArray();
         if (duplicatePartIds.Any())
         {
-            yield return new ValidationResult($"Duplicate part ids: {string.Join(", ", duplicatePartIds.Select(x => x.Key))}", new[] { nameof(Sections) });
+            yield return new ValidationResult($"Duplicate part ids: {string.Join(", ", duplicatePartIds.Select(x => x.Key))}", [nameof(Sections)]);
         }
     }
 

@@ -9,6 +9,6 @@ public partial class RequiredValidationRule
             return Result.Success();
         }
 
-        return Result.Invalid(new[] { new ValidationError($"The {id} field is required.", new[] { id }) });
+        return Result.Invalid(new[] { new ValidationError($"The {id} field is required.", [id]) });
     }
 }

@@ -25,5 +25,5 @@ public static class TestDialogDefinitionFactory
         "MyDialogWithRequiredQuestion",
         "My dialog with required question",
         new Version(1, 0, 0),
-        new[] { new DialogPartSection("Id", null, "Name", new[] { part }) });
+        [new DialogPartSection("Id", null, "Name", [part])]);
 }

@@ -32,7 +32,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
         return base.IsAbstractType(type);
     }
 
-    protected override string[] GetModelAbstractBaseTyped() => new[] { nameof(IEditableQuestionDialogPart) };
+    protected override string[] GetModelAbstractBaseTyped() => [nameof(IEditableQuestionDialogPart)];
 
     protected override Type EntityCollectionType => typeof(ObservableCollection<>);
     protected override Type EntityConcreteCollectionType => typeof(ObservableCollection<>);

@@ -14,7 +14,7 @@ public static class TestDialogFactory
             .WithId(Guid.NewGuid().ToString())
             .AddResults(answer is null
                 ? Array.Empty<DialogPartResultBuilder>() 
-                : new[] { new SingleQuestionDialogPartResultBuilder<string>().WithPartId("Question").WithValue(answer) }
+                : [new SingleQuestionDialogPartResultBuilder<string>().WithPartId("Question").WithValue(answer)]
             )
             .Build();
 }
