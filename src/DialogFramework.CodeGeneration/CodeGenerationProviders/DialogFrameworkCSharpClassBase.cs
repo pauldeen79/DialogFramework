@@ -20,6 +20,7 @@ public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipel
     protected override bool GenerateMultipleFiles => false;
     protected override bool CreateAsObservable => true;
     protected override SubVisibility SetterVisibility => SubVisibility.Private;
+    protected override bool EnableGlobalUsings => true;
 
     protected override bool IsAbstractType(Type type)
     {
