@@ -24,7 +24,7 @@ namespace DialogFramework.Domain.ValidationRules
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition!, value!);
                 _condition = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Condition));
             }

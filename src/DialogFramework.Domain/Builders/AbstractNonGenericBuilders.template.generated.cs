@@ -29,8 +29,9 @@ namespace DialogFramework.Domain.Builders
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_id!, value!);
                 _id = value;
-                HandlePropertyChanged(nameof(Id));
+                if (hasChanged) HandlePropertyChanged(nameof(Id));
             }
         }
 
@@ -43,8 +44,9 @@ namespace DialogFramework.Domain.Builders
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<ExpressionFramework.Domain.Builders.EvaluatableBuilder>.Default.Equals(_condition!, value!);
                 _condition = value;
-                HandlePropertyChanged(nameof(Condition));
+                if (hasChanged) HandlePropertyChanged(nameof(Condition));
             }
         }
 
@@ -57,8 +59,9 @@ namespace DialogFramework.Domain.Builders
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_title!, value!);
                 _title = value;
-                HandlePropertyChanged(nameof(Title));
+                if (hasChanged) HandlePropertyChanged(nameof(Title));
             }
         }
 
@@ -100,8 +103,9 @@ namespace DialogFramework.Domain.Builders
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_partId!, value!);
                 _partId = value;
-                HandlePropertyChanged(nameof(PartId));
+                if (hasChanged) HandlePropertyChanged(nameof(PartId));
             }
         }
 

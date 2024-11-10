@@ -29,7 +29,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition!, value!);
                 _condition = value;
                 if (hasChanged) HandlePropertyChanged(nameof(Condition));
             }
@@ -44,7 +44,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_key, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_key!, value!);
                 _key = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Key));
             }
@@ -59,7 +59,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_displayName, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_displayName!, value!);
                 _displayName = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(DisplayName));
             }
@@ -106,7 +106,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_id, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_id!, value!);
                 _id = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Id));
             }
@@ -121,7 +121,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_definitionId, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_definitionId!, value!);
                 _definitionId = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(DefinitionId));
             }
@@ -136,7 +136,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Version>.Default.Equals(_definitionVersion, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Version>.Default.Equals(_definitionVersion!, value!);
                 _definitionVersion = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(DefinitionVersion));
             }
@@ -152,7 +152,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPartResult>>.Default.Equals(_results, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPartResult>>.Default.Equals(_results!, value!);
                 _results = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Results));
             }
@@ -166,7 +166,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Object>.Default.Equals(_context, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Object>.Default.Equals(_context!, value!);
                 _context = value;
                 if (hasChanged) HandlePropertyChanged(nameof(Context));
             }
@@ -213,7 +213,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_id, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_id!, value!);
                 _id = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Id));
             }
@@ -228,7 +228,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_name, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_name!, value!);
                 _name = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Name));
             }
@@ -243,7 +243,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Version>.Default.Equals(_version, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Version>.Default.Equals(_version!, value!);
                 _version = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Version));
             }
@@ -259,7 +259,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPartSection>>.Default.Equals(_sections, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPartSection>>.Default.Equals(_sections!, value!);
                 _sections = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Sections));
             }
@@ -305,7 +305,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_id, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_id!, value!);
                 _id = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Id));
             }
@@ -320,7 +320,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<ExpressionFramework.Domain.Evaluatable>.Default.Equals(_condition!, value!);
                 _condition = value;
                 if (hasChanged) HandlePropertyChanged(nameof(Condition));
             }
@@ -335,7 +335,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.String>.Default.Equals(_name, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.String>.Default.Equals(_name!, value!);
                 _name = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Name));
             }
@@ -351,7 +351,7 @@ namespace DialogFramework.Domain
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPart>>.Default.Equals(_parts, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.DialogPart>>.Default.Equals(_parts!, value!);
                 _parts = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Parts));
             }

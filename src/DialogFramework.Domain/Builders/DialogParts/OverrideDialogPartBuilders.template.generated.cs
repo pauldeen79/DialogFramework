@@ -45,8 +45,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ClosedQuestionOptionBuilder>>.Default.Equals(_options!, value!);
                 _options = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(Options));
+                if (hasChanged) HandlePropertyChanged(nameof(Options));
             }
         }
 
@@ -60,8 +61,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ValidationRuleBuilder>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(ValidationRules));
+                if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
         }
 
@@ -128,8 +130,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ValidationRuleBuilder>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(ValidationRules));
+                if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
         }
 
@@ -182,8 +185,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ClosedQuestionOptionBuilder>>.Default.Equals(_options!, value!);
                 _options = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(Options));
+                if (hasChanged) HandlePropertyChanged(nameof(Options));
             }
         }
 
@@ -197,8 +201,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ValidationRuleBuilder>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(ValidationRules));
+                if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
         }
 
@@ -265,8 +270,9 @@ namespace DialogFramework.Domain.Builders.DialogParts
             }
             set
             {
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.Builders.ValidationRuleBuilder>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
-                HandlePropertyChanged(nameof(ValidationRules));
+                if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
         }
 

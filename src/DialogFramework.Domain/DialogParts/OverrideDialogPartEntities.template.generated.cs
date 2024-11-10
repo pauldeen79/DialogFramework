@@ -43,7 +43,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ClosedQuestionOption>>.Default.Equals(_options, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ClosedQuestionOption>>.Default.Equals(_options!, value!);
                 _options = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Options));
             }
@@ -59,7 +59,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
@@ -96,7 +96,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
@@ -134,7 +134,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ClosedQuestionOption>>.Default.Equals(_options, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ClosedQuestionOption>>.Default.Equals(_options!, value!);
                 _options = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Options));
             }
@@ -150,7 +150,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }
@@ -187,7 +187,7 @@ namespace DialogFramework.Domain.DialogParts
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<DialogFramework.Domain.ValidationRule>>.Default.Equals(_validationRules!, value!);
                 _validationRules = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(ValidationRules));
             }

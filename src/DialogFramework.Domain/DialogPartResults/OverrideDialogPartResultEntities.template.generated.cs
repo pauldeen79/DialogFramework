@@ -24,7 +24,7 @@ namespace DialogFramework.Domain.DialogPartResults
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<System.Collections.ObjectModel.ObservableCollection<T>>.Default.Equals(_values, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<System.Collections.ObjectModel.ObservableCollection<T>>.Default.Equals(_values!, value!);
                 _values = value ?? throw new System.ArgumentNullException(nameof(value));
                 if (hasChanged) HandlePropertyChanged(nameof(Values));
             }
@@ -59,7 +59,7 @@ namespace DialogFramework.Domain.DialogPartResults
             }
             private set
             {
-                bool hasChanged = !EqualityComparer<T>.Default.Equals(_value, value);
+                bool hasChanged = !System.Collections.Generic.EqualityComparer<T>.Default.Equals(_value!, value!);
                 _value = value;
                 if (hasChanged) HandlePropertyChanged(nameof(Value));
             }
