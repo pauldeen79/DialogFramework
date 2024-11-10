@@ -22,4 +22,32 @@ public class SystemTests
         result.Should().BeTrue();
         validationResult.Should().BeEmpty();
     }
+
+    [Fact]
+    public void Can_Use_Null_In_Compare_As_Source()
+    {
+        // Arrange
+        var sut = new DialogBuilder().WithId("id").WithDefinitionId("definitionId").Build();
+
+        // Act
+        ///sut.Context = new object(); // can't do this because the setter is private
+        sut.GetType().GetProperty(nameof(sut.Context))!.SetValue(sut, new object());
+
+        // Assert
+        sut.Context.Should().NotBeNull();
+    }
+
+    [Fact]
+    public void Can_Use_Null_In_Compare_As_Target()
+    {
+        // Arrange
+        var sut = new DialogBuilder().WithId("id").WithDefinitionId("definitionId").WithContext(new object()).Build();
+
+        // Act
+        ///sut.Context = null; // can't do this because the setter is private
+        sut.GetType().GetProperty(nameof(sut.Context))!.SetValue(sut, null);
+
+        // Assert
+        sut.Context.Should().BeNull();
+    }
 }
