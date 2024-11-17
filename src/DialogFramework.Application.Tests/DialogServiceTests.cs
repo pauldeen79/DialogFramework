@@ -50,9 +50,9 @@ public sealed class DialogServiceTests : IDisposable
         dialogSubmitterMock1.SupportsDialog(dialog.DefinitionId, dialog.DefinitionVersion).Returns(true);
         using var provider = new ServiceCollection()
             .AddDialogFramework()
-            .AddSingleton(typeof(IDialogSubmitter), dialogSubmitterMock1)
-            .AddSingleton(typeof(IDialogSubmitter), _dialogSubmitterMock)
-            .AddSingleton(typeof(IDialogRepository), _dialogRepositoryMock)
+            .AddSingleton(dialogSubmitterMock1)
+            .AddSingleton(_dialogSubmitterMock)
+            .AddSingleton(_dialogRepositoryMock)
             .BuildServiceProvider(true);
         using var scope = provider.CreateScope();
         var sut = scope.ServiceProvider.GetRequiredService<IDialogService>();

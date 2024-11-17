@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>12.0</LangVersion>
+    <LangVersion>13.0</LangVersion>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageId>pauldeen79.DialogFramework.Domain</PackageId>
@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="pauldeen79.CrossCutting.Common" Version="3.13.0" />
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.8.0" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.9.0" />
   </ItemGroup>
 
   <ItemGroup>
