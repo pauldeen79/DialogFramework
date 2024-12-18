@@ -3,7 +3,7 @@
 [ExcludeFromCodeCoverage]
 public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipelineCodeGenerationProviderBase
 {
-    private const string TypeNameDotClassNameBuilder = "{TypeName.ClassName}Builder";
+    private const string TypeNameDotClassNameBuilder = "{ClassName(NoGenerics($property.TypeName))}Builder";
 
     protected DialogFrameworkCSharpClassBase(IPipelineService pipelineService) : base(pipelineService)
     {
