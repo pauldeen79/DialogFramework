@@ -1,13 +1,9 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public abstract class DialogFrameworkCSharpClassBase : CsharpClassGeneratorPipelineCodeGenerationProviderBase
+public abstract class DialogFrameworkCSharpClassBase(IPipelineService pipelineService) : CsharpClassGeneratorPipelineCodeGenerationProviderBase(pipelineService)
 {
     private const string TypeNameDotClassNameBuilder = "{ClassName(NoGenerics($property.TypeName))}Builder";
-
-    protected DialogFrameworkCSharpClassBase(IPipelineService pipelineService) : base(pipelineService)
-    {
-    }
 
     public override bool RecurseOnDeleteGeneratedFiles => false;
     public override string LastGeneratedFilesFilename => string.Empty;

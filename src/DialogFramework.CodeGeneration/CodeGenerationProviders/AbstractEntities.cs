@@ -1,12 +1,8 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public class AbstractEntities : DialogFrameworkCSharpClassBase
+public class AbstractEntities(IPipelineService pipelineService) : DialogFrameworkCSharpClassBase(pipelineService)
 {
-    public AbstractEntities(IPipelineService pipelineService) : base(pipelineService)
-    {
-    }
-
     public override string Path => Constants.Paths.Domain;
 
     protected override bool EnableEntityInheritance => true;
@@ -16,6 +12,6 @@ public class AbstractEntities : DialogFrameworkCSharpClassBase
 
     protected override ArgumentValidationType ValidateArgumentsInConstructor => ArgumentValidationType.None; // not needed for abstract entities, because each derived class will do its own validation
 
-    public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetEntities(await GetAbstractModels(), CurrentNamespace);
+    public override Task<Result<IEnumerable<TypeBase>>> GetModel(CancellationToken cancellationToken)
+        => GetEntities(GetAbstractModels(), CurrentNamespace);
 }

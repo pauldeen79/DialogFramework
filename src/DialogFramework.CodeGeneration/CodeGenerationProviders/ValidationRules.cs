@@ -1,12 +1,8 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public class ValidationRules : DialogFrameworkCSharpClassBase
+public class ValidationRules(IPipelineService pipelineService) : DialogFrameworkCSharpClassBase(pipelineService)
 {
-    public ValidationRules(IPipelineService pipelineService) : base(pipelineService)
-    {
-    }
-
     public override string Path => $"{Constants.Namespaces.Domain}/{nameof(ValidationRules)}";
     public override string LastGeneratedFilesFilename => string.Empty;
 
@@ -15,9 +11,10 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
     protected override bool SkipWhenFileExists => true;
     protected override bool GenerateMultipleFiles => true;
 
-    public override async Task<IEnumerable<TypeBase>> GetModel()
+    public override async Task<Result<IEnumerable<TypeBase>>> GetModel(CancellationToken cancellationToken)
         => (await GetOverrideModels(typeof(IValidationRule)))
-            .Select(x => new ClassBuilder()
+            .OnSuccess(result =>
+                Result.Success(result.Value!.Select(x => new ClassBuilder()
                 .WithNamespace(CurrentNamespace)
                 .WithName(x.WithoutInterfacePrefix())
                 .WithPartial()
@@ -37,5 +34,5 @@ public class ValidationRules : DialogFrameworkCSharpClassBase
                 .AddGenericTypeArguments(x.GenericTypeArguments)
                 .AddGenericTypeArgumentConstraints(x.GenericTypeArgumentConstraints)
                 .Build()
-            );
+            )));
 }

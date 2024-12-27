@@ -1,12 +1,8 @@
 ﻿namespace DialogFramework.CodeGeneration.CodeGenerationProviders;
 
 [ExcludeFromCodeCoverage]
-public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
+public class AbstractNonGenericBuilders(IPipelineService pipelineService) : DialogFrameworkCSharpClassBase(pipelineService)
 {
-    public AbstractNonGenericBuilders(IPipelineService pipelineService) : base(pipelineService)
-    {
-    }
-
     public override string Path => Constants.Paths.DomainBuilders;
 
     protected override bool AddNullChecks => false; // not needed for abstract builders, because each derived class will do its own validation
@@ -22,6 +18,6 @@ public class AbstractNonGenericBuilders : DialogFrameworkCSharpClassBase
     protected override string SetMethodNameFormatString => string.Empty;
     protected override string AddMethodNameFormatString => string.Empty;
 
-    public override async Task<IEnumerable<TypeBase>> GetModel()
-        => await GetNonGenericBuilders(await GetAbstractModels(), CurrentNamespace, Constants.Namespaces.Domain);
+    public override Task<Result<IEnumerable<TypeBase>>> GetModel(CancellationToken cancellationToken)
+        => GetNonGenericBuilders(GetAbstractModels(), CurrentNamespace, Constants.Namespaces.Domain);
 }
