@@ -28,7 +28,6 @@ global using DialogFramework.CodeGeneration.Models.DialogParts.BaseTypes;
 global using ExpressionFramework.Domain;
 global using ExpressionFramework.Domain.Builders;
 global using ExpressionFramework.Domain.Builders.Evaluatables;
-global using ExpressionFramework.Parser.Extensions;
 global using Microsoft.Extensions.DependencyInjection;
 global using TemplateFramework.Abstractions.CodeGeneration;
 global using TemplateFramework.Abstractions.Extensions;
