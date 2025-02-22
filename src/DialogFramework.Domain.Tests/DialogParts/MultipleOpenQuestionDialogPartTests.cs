@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.DialogParts;
+namespace DialogFramework.Domain.Tests.DialogParts;
 
 public class MultipleOpenQuestionDialogPartTests
 {
@@ -16,6 +16,6 @@ public class MultipleOpenQuestionDialogPartTests
         var result = sut.Validate(Array.Empty<string>(), TestDialogFactory.CreateEmpty());
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Invalid);
+        result.Status.ShouldBe(ResultStatus.Invalid);
     }
 }

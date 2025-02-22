@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Application.Tests;
+namespace DialogFramework.Application.Tests;
 
 public sealed class DialogServiceTests : IDisposable
 {
@@ -33,7 +33,7 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Submit(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.NotSupported);
+        result.Status.ShouldBe(ResultStatus.NotSupported);
     }
 
     [Fact]
@@ -61,8 +61,8 @@ public sealed class DialogServiceTests : IDisposable
         var result = sut.Submit(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Ok);
-        result.Value.Should().BeSameAs(resultDialog);
+        result.Status.ShouldBe(ResultStatus.Ok);
+        result.Value.ShouldBeSameAs(resultDialog);
     }
 
     [Fact]
@@ -76,8 +76,8 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Submit(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Error);
-        result.ErrorMessage.Should().Be("Kaboom");
+        result.Status.ShouldBe(ResultStatus.Error);
+        result.ErrorMessage.ShouldBe("Kaboom");
     }
 
     [Fact]
@@ -91,8 +91,8 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Validate(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Error);
-        result.ErrorMessage.Should().Be("Kaboom");
+        result.Status.ShouldBe(ResultStatus.Error);
+        result.ErrorMessage.ShouldBe("Kaboom");
     }
 
     [Fact]
@@ -107,9 +107,9 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Validate(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Invalid);
-        result.ValidationErrors.Should().ContainSingle();
-        result.ValidationErrors.First().ErrorMessage.Should().Be("The Question field is required.");
+        result.Status.ShouldBe(ResultStatus.Invalid);
+        result.ValidationErrors.ShouldHaveSingleItem();
+        result.ValidationErrors.First().ErrorMessage.ShouldBe("The Question field is required.");
     }
 
     [Fact]
@@ -124,7 +124,7 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Validate(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Ok);
+        result.Status.ShouldBe(ResultStatus.Ok);
     }
 
     [Fact]
@@ -139,8 +139,8 @@ public sealed class DialogServiceTests : IDisposable
         var result = CreateSut().Validate(dialog);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Error);
-        result.ErrorMessage.Should().Be("Kaboom");
+        result.Status.ShouldBe(ResultStatus.Error);
+        result.ErrorMessage.ShouldBe("Kaboom");
     }
 
     private IDialogService CreateSut() => _scope.ServiceProvider.GetRequiredService<IDialogService>();

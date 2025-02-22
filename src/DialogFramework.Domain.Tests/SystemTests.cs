@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests;
+namespace DialogFramework.Domain.Tests;
 
 public class SystemTests
 {
@@ -19,8 +19,8 @@ public class SystemTests
         var result = this.TryValidate(validationResult);
 
         // Assert
-        result.Should().BeTrue();
-        validationResult.Should().BeEmpty();
+        result.ShouldBeTrue();
+        validationResult.ShouldBeEmpty();
     }
 
     [Fact]
@@ -34,7 +34,7 @@ public class SystemTests
         sut.GetType().GetProperty(nameof(sut.Context))!.SetValue(sut, new object());
 
         // Assert
-        sut.Context.Should().NotBeNull();
+        sut.Context.ShouldNotBeNull();
     }
 
     [Fact]
@@ -48,6 +48,6 @@ public class SystemTests
         sut.GetType().GetProperty(nameof(sut.Context))!.SetValue(sut, null);
 
         // Assert
-        sut.Context.Should().BeNull();
+        sut.Context.ShouldBeNull();
     }
 }

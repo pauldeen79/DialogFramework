@@ -1,4 +1,6 @@
-﻿namespace DialogFramework.Domain.Tests;
+﻿using CrossCutting.Common.Abstractions;
+
+namespace DialogFramework.Domain.Tests;
 
 public class DialogTests
 {
@@ -6,7 +8,8 @@ public class DialogTests
     public void Constructing_Dialog_With_Null_Id_Throws()
     {
         // Act & Assert
-        this.Invoking(_ => new Dialog(id: default!, string.Empty, new Version(), Enumerable.Empty<DialogPartResult>(), default)).Should().Throw<ValidationException>();
+        Action a = () => _ = new Dialog(id: default!, string.Empty, new Version(), Enumerable.Empty<DialogPartResult>(), default);
+        a.ShouldThrow<ValidationException>();
     }
 
     [Fact]
@@ -16,7 +19,8 @@ public class DialogTests
         var builder = new DialogBuilder().WithId(string.Empty);
 
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>();
+        Action a = () => builder.Build();
+        a.ShouldThrow<ValidationException>();
     }
 
     [Fact]
@@ -26,7 +30,7 @@ public class DialogTests
         var sut = new Dialog(TestDialogDefinitionFactory.CreateEmpty(), null, null, null);
 
         // Assert
-        sut.Id.Should().NotBeEmpty();
+        sut.Id.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -40,8 +44,8 @@ public class DialogTests
         var success = builder.TryValidate(validationResults);
 
         // Assert
-        success.Should().BeFalse();
-        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo("The Id field is required.", "The DefinitionId field is required.");
+        success.ShouldBeFalse();
+        validationResults.Select(x => x.ErrorMessage).ToArray().ShouldBeEquivalentTo(new[] { "The Id field is required.", "The DefinitionId field is required." });
     }
 
     [Fact]
@@ -56,10 +60,10 @@ public class DialogTests
             .Build();
 
         // Assert
-        sut.Should().NotBeNull();
-        sut.Results.Should().ContainSingle();
-        sut.Context.Should().NotBeNull();
-        sut.Context!.GetType().GetProperty("PropertyName").Should().NotBeNull();
+        sut.ShouldNotBeNull();
+        sut.Results.ShouldHaveSingleItem();
+        sut.Context.ShouldNotBeNull();
+        sut.Context!.GetType().GetProperty("PropertyName").ShouldNotBeNull();
     }
 
     [Fact]
@@ -74,10 +78,10 @@ public class DialogTests
         sut.Context = null;
 
         // Assert
-        sut.Context.Should().BeNull();
+        sut.Context.ShouldBeNull();
     }
 
-    public partial class TestDialog : System.ComponentModel.INotifyPropertyChanged
+    public partial class TestDialog : System.ComponentModel.INotifyPropertyChanged, IBuildableEntity<DialogBuilder>
     {
         private string _id;
 

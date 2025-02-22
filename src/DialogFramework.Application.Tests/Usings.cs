@@ -1,11 +1,11 @@
-﻿global using CrossCutting.Common.Results;
+global using CrossCutting.Common.Results;
 global using DialogFramework.Application.Extensions;
 global using DialogFramework.Domain;
 global using DialogFramework.Domain.Builders;
 global using DialogFramework.Domain.Contracts;
 global using DialogFramework.Domain.TestData;
 global using ExpressionFramework.Domain;
-global using FluentAssertions;
+global using Shouldly;
 global using Microsoft.Extensions.DependencyInjection;
 global using NSubstitute;
 global using Xunit;

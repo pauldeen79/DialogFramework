@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.DialogPartResults;
+namespace DialogFramework.Domain.Tests.DialogPartResults;
 
 public class SingleQuestionDialogPartResultTests
 {
@@ -12,6 +12,6 @@ public class SingleQuestionDialogPartResultTests
         var result = sut.GetValue();
 
         // Assert
-        result.GetValueOrThrow().Should().BeEquivalentTo("test");
+        result.GetValueOrThrow().ShouldBeEquivalentTo("test");
     }
 }

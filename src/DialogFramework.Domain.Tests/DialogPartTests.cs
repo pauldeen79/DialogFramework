@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests;
+namespace DialogFramework.Domain.Tests;
 
 public class DialogPartTests
 {
@@ -12,8 +12,8 @@ public class DialogPartTests
         var result = sut.Validate("some value", TestDialogFactory.CreateEmpty(), sut.ValidationRules);
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Error);
-        result.ErrorMessage.Should().Be("Kaboom");
+        result.Status.ShouldBe(ResultStatus.Error);
+        result.ErrorMessage.ShouldBe("Kaboom");
     }
 
     private sealed class MaliciousValidationRuleBuilder : ValidationRuleBuilder

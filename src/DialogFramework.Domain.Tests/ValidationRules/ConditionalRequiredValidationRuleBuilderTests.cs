@@ -9,7 +9,8 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var builder = new ConditionalRequiredValidationRuleBuilder();
 
         // Act & Assert
-        builder.Invoking(x => x.WithCondition(default!)).Should().Throw<ArgumentNullException>();
+        Action a = () => builder.WithCondition(default!);
+        a.ShouldThrow<ArgumentNullException>();
     }
 
     [Fact]
@@ -30,7 +31,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var actual = sut.Validate("MyId", default(string?), dialog);
 
         // Assert
-        actual.Status.Should().Be(ResultStatus.Ok);
+        actual.Status.ShouldBe(ResultStatus.Ok);
     }
 
     [Fact]
@@ -51,7 +52,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var actual = sut.Validate("MyId", "filled", dialog);
 
         // Assert
-        actual.Status.Should().Be(ResultStatus.Ok);
+        actual.Status.ShouldBe(ResultStatus.Ok);
     }
 
     [Fact]
@@ -72,10 +73,10 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var actual = sut.Validate("MyId", default(string?), dialog);
 
         // Assert
-        actual.Status.Should().Be(ResultStatus.Invalid);
-        actual.ValidationErrors.Should().ContainSingle();
-        actual.ValidationErrors.First().ErrorMessage.Should().Be("The MyId field is required.");
-        actual.ValidationErrors.First().MemberNames.Should().BeEquivalentTo("MyId");
+        actual.Status.ShouldBe(ResultStatus.Invalid);
+        actual.ValidationErrors.ShouldHaveSingleItem();
+        actual.ValidationErrors.First().ErrorMessage.ShouldBe("The MyId field is required.");
+        actual.ValidationErrors.First().MemberNames.ToArray().ShouldBeEquivalentTo(new[] { "MyId" });
     }
 
     [Fact]
@@ -96,8 +97,8 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var actual = sut.Validate("MyId", default(string?), dialog);
 
         // Assert
-        actual.Status.Should().Be(ResultStatus.Error);
-        actual.ErrorMessage.Should().Be("Fieldname [NonExistingPropertyName] is not found on type [DialogFramework.Domain.Dialog]");
+        actual.Status.ShouldBe(ResultStatus.Error);
+        actual.ErrorMessage.ShouldBe("Fieldname [NonExistingPropertyName] is not found on type [DialogFramework.Domain.Dialog]");
     }
 
     [Fact]
@@ -113,7 +114,7 @@ public class ConditionalRequiredValidationRuleBuilderTests
         var actual = sut.Validate("MyId", default(string?), dialog);
 
         // Assert
-        actual.Status.Should().Be(ResultStatus.Error);
-        actual.ErrorMessage.Should().Be("Condition evaluation failed");
+        actual.Status.ShouldBe(ResultStatus.Error);
+        actual.ErrorMessage.ShouldBe("Condition evaluation failed");
     }
 }

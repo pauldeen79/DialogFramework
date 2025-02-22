@@ -12,6 +12,6 @@ public class MultipleQuestionDialogPartResultTests
         var result = sut.GetValue();
 
         // Assert
-        result.GetValueOrThrow().Should().BeEquivalentTo(new[] { "test" });
+        result.GetValueOrThrow().ShouldBeEquivalentTo(new ObservableCollection<string>(new List<string> { "test" }));
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace DialogFramework.Domain.Tests.DialogParts;
+namespace DialogFramework.Domain.Tests.DialogParts;
 
 public class SingleOpenQuestionDialogPartTests
 {
@@ -16,6 +16,6 @@ public class SingleOpenQuestionDialogPartTests
         var result = sut.Validate(default(int?), TestDialogFactory.CreateEmpty());
 
         // Assert
-        result.Status.Should().Be(ResultStatus.Invalid);
+        result.Status.ShouldBe(ResultStatus.Invalid);
     }
 }

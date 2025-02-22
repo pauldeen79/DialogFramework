@@ -15,12 +15,15 @@ public class DialogDefinitionBuilderTests
         var success = sut.TryValidate(validationResults);
 
         // Assert
-        success.Should().BeFalse();
-        validationResults.Select(x => x.ErrorMessage).Should().BeEquivalentTo
+        success.ShouldBeFalse();
+        validationResults.Select(x => x.ErrorMessage).ToArray().ShouldBeEquivalentTo
         (
-            "The Id field is required.",
-            "The Name field is required.",
-            "The field Sections is invalid."
+            new[]
+            {
+                "The Id field is required.",
+                "The Name field is required.",
+                "The field Sections is invalid."
+            }
         );
     }
 }

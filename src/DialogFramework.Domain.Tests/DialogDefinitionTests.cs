@@ -33,10 +33,10 @@ public class DialogDefinitionTests
         var dialog = new Dialog(sut, Enumerable.Empty<DialogPartResult>(), context: new { PropertyName = propertyValue });
 
         // Act
-        var evaluationResult = sut.Sections.First().Condition!.Evaluate(dialog);
+        var evaluationResult = sut.Sections[0].Condition!.Evaluate(dialog);
 
         // Assert
-        evaluationResult.Value.Should().Be(conditionResult);
+        evaluationResult.Value.ShouldBe(conditionResult);
     }
 
     [Theory,
@@ -70,10 +70,10 @@ public class DialogDefinitionTests
         var dialog = new Dialog(sut, Enumerable.Empty<DialogPartResult>(), context: new { PropertyName = propertyValue });
 
         // Act
-        var evaluationResult = sut.Sections.First().Parts.First().Condition!.Evaluate(dialog);
+        var evaluationResult = sut.Sections[0].Parts[0].Condition!.Evaluate(dialog);
 
         // Assert
-        evaluationResult.Value.Should().Be(conditionResult);
+        evaluationResult.Value.ShouldBe(conditionResult);
     }
 
     [Fact]
@@ -89,7 +89,8 @@ public class DialogDefinitionTests
             );
 
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate section ids: Id1");
+        Action a = () => builder.Build();
+        a.ShouldThrow<ValidationException>().Message.ShouldBe("Duplicate section ids: Id1");
     }
 
     [Fact]
@@ -110,6 +111,7 @@ public class DialogDefinitionTests
             );
 
         // Act & Assert
-        builder.Invoking(x => x.Build()).Should().Throw<ValidationException>().WithMessage("Duplicate part ids: Id1");
+        Action a = () => builder.Build();
+        a.ShouldThrow<ValidationException>().Message.ShouldBe("Duplicate part ids: Id1");
     }
 }
