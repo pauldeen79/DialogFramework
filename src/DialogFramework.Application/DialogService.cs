@@ -40,7 +40,7 @@ public class DialogService : IDialogService
             return definitionResult;
         }
 
-        var definition = definitionResult.GetValueOrThrow();
+        var definition = definitionResult.Value!;
         var validationErrors = new List<ValidationError>();
 
         var allParts = definition.GetAllParts();
