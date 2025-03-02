@@ -11,9 +11,9 @@
   <ItemGroup>
     <PackageReference Include="CsharpExpressionDumper.Core" Version="1.5.7" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-    <PackageReference Include="pauldeen79.ClassFramework.TemplateFramework" Version="0.21.3" />
-    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.9.9" />
-    <PackageReference Include="pauldeen79.TemplateFramework.Core.CodeGeneration" Version="2.0.9" />
+    <PackageReference Include="pauldeen79.ClassFramework.TemplateFramework" Version="0.21.4" />
+    <PackageReference Include="pauldeen79.ExpressionFramework.Domain" Version="0.9.10" />
+    <PackageReference Include="pauldeen79.TemplateFramework.Core.CodeGeneration" Version="2.0.10" />
   </ItemGroup>
 
 </Project>
